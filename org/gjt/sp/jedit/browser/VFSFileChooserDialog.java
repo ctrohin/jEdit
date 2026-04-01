@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.browser;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
 import java.awt.BorderLayout;
@@ -226,7 +226,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 	 *
 	 * @return a String array containing paths, since jEdit 5.6pre1 it is never null (might be an empty array)
 	 */
-	@Nonnull
+	
 	public String[] getSelectedFiles()
 	{
 		if(!isOK)
@@ -407,7 +407,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 	} //}}}
 
 	//{{{ getSelectedFiles() method
-	@Nonnull
+	
 	private String[] getSelectedFiles(int type1, int type2)
 	{
 		VFSFile[] selectedFiles = browser.getSelectedFiles();

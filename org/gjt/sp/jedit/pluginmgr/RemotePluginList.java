@@ -27,7 +27,7 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ProgressObserver;
 import org.jedit.io.HttpException;
 
-import javax.annotation.Nonnull;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class RemotePluginList
 	} //}}}
 
 	//{{{ openPluginListStream() method
-	@Nonnull
+	
 	String getPluginList() throws IOException, URISyntaxException
 	{
 
@@ -122,7 +122,7 @@ public class RemotePluginList
 	} //}}}
 
 	//{{{ buildMirror() method
-	@Nonnull
+	
 	private static String buildMirror(String id)
 	{
 		return id != null && !MirrorList.Mirror.NONE.equals(id) ? id : "default";

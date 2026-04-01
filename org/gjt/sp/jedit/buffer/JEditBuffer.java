@@ -37,7 +37,7 @@ import org.gjt.sp.util.IntegerArray;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
 
-import javax.annotation.Nonnull;
+
 import javax.swing.text.Position;
 import javax.swing.text.Segment;
 import java.util.*;
@@ -1950,7 +1950,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	 * to the name of the mode. A bit inelegant, I know...
 	 * @param mode The mode
 	 */
-	public void setMode(@Nonnull Mode mode)
+	public void setMode( Mode mode)
 	{
 		setMode(mode, false);
 	}
@@ -1965,7 +1965,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	 * value is false
 	 * @since jEdit 4.5pre1
 	 */
-	public void setMode(@Nonnull Mode mode, boolean forceContextInsensitive)
+	public void setMode( Mode mode, boolean forceContextInsensitive)
 	{
 		/* This protects against stupid people (like me)
 		 * doing stuff like buffer.setMode(jEdit.getMode(...)); */
@@ -2162,7 +2162,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	 * @return the current buffer's fold handler.
 	 * @since jEdit 4.2pre1
 	 */
-	@Nonnull
+	
 	public FoldHandler getFoldHandler()
 	{
 		return foldHandler;
@@ -2174,7 +2174,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	 * @param foldHandler the fold handler
 	 * @since jEdit 4.2pre2
 	 */
-	public void setFoldHandler(@Nonnull FoldHandler foldHandler)
+	public void setFoldHandler( FoldHandler foldHandler)
 	{
 		FoldHandler oldFoldHandler = this.foldHandler;
 
@@ -2821,7 +2821,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	//{{{ Used to store property values
 	protected static class PropValue
 	{
-		PropValue(@Nonnull Object value, boolean defaultValue)
+		PropValue( Object value, boolean defaultValue)
 		{
 			Objects.requireNonNull(value);
 			this.value = value;
@@ -2855,7 +2855,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 	private final ContentManager contentMgr;
 	private final LineManager lineMgr;
 	private final PositionManager positionMgr;
-	@Nonnull
+	
 	private FoldHandler foldHandler;
 	private final IntegerArray integerArray;
 	private boolean undoInProgress;

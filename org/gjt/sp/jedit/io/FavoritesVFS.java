@@ -30,7 +30,7 @@ import java.util.*;
 import org.gjt.sp.jedit.msg.DynamicMenuChanged;
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nonnull;
+
 //}}}
 
 /**
@@ -62,7 +62,7 @@ public class FavoritesVFS extends VFS
 
 	//{{{ getParentOfPath() method
 	@Override
-	@Nonnull
+	
 	public String getParentOfPath(String path)
 	{
 		return PROTOCOL + ':';

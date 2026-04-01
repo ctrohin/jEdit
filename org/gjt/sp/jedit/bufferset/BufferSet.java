@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import javax.annotation.Nullable;
+
 //}}}
 
 /** An ordered list of buffers, normally attached to an EditPane
@@ -160,7 +160,7 @@ public class BufferSet
 	    can be null if there is no sorting 
 		@since jEdit 5.2
 	*/
-	@Nullable
+	
 	public Comparator<Buffer> getSorter() {
 		return sorter;
 	}//}}}

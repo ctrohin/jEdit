@@ -40,8 +40,8 @@ import java.awt.*;
 import org.gjt.sp.jedit.View.ViewConfig;
 import org.gjt.sp.jedit.bsh.UtilEvalError;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
@@ -3361,7 +3361,7 @@ public class jEdit
 	 *
 	 * @since 4.3pre10
 	 */
-	@Nullable
+	
 	public static View getActiveViewInternal()
 	{
 		return viewManager.getActiveViewInternal();
@@ -4081,8 +4081,8 @@ public class jEdit
 
 	} //}}}
 
-	@Nonnull
-	private static String getPLAFClassName(@Nullable String lf)
+	
+	private static String getPLAFClassName( String lf)
 	{
 		if (lf != null && !lf.isEmpty())
 		{

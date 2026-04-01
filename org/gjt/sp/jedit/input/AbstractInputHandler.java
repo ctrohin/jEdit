@@ -29,8 +29,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 
 import org.gjt.sp.jedit.JEditAbstractEditAction;
 import org.gjt.sp.jedit.gui.ShortcutPrefixActiveEvent;
@@ -200,8 +200,8 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 	 * @param keyBinding The key binding
 	 * @since jEdit 3.2pre5
 	 */
-	@Nullable
-	public Object getKeyBinding(@Nonnull String keyBinding)
+	
+	public Object getKeyBinding( String keyBinding)
 	{
 		Hashtable current = bindings;
 		StringTokenizer st = new StringTokenizer(keyBinding);

@@ -44,8 +44,8 @@ import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.StringList;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 //}}}
 
 /**
@@ -74,8 +74,8 @@ public class MiscUtilities
 	 * @param path The path name
 	 * @since jEdit 4.0pre2
 	 */
-	@Nonnull
-	public static String canonPath(@Nonnull String path)
+	
+	public static String canonPath( String path)
 	{
 		if(path.isEmpty())
 			return path;
@@ -235,7 +235,7 @@ public class MiscUtilities
 	 * names only.</b>
 	 * @since jEdit 4.2pre1
 	 */
-	public static String resolveSymlinks(@Nonnull String path)
+	public static String resolveSymlinks( String path)
 	{
 		if(isURL(path))
 			return path;
@@ -268,7 +268,7 @@ public class MiscUtilities
 	 * Returns if the specified path name is an absolute path or URL.
 	 * @since jEdit 4.1pre11
 	 */
-	public static boolean isAbsolutePath(@Nonnull String path)
+	public static boolean isAbsolutePath( String path)
 	{
 		if(isURL(path))
 			return true;
@@ -311,7 +311,7 @@ public class MiscUtilities
 	 * @param parent The directory
 	 * @param path The path name
 	 */
-	public static String constructPath(@Nullable String parent, @Nonnull String path)
+	public static String constructPath( String parent,  String path)
 	{
 		if(isAbsolutePath(path))
 			return canonPath(path);
@@ -392,7 +392,7 @@ public class MiscUtilities
 	 * @param parent the parent path
 	 * @param path the path to append to the parent
 	 */
-	public static String concatPath(@Nonnull String parent, @Nonnull String path)
+	public static String concatPath( String parent,  String path)
 	{
 		parent = canonPath(parent);
 		path = canonPath(path);
@@ -437,7 +437,7 @@ public class MiscUtilities
 	 * @param path The path
 	 * @since jEdit 4.3pre3
 	 */
-	public static int getLastSeparatorIndex(@Nonnull String path)
+	public static int getLastSeparatorIndex( String path)
 	{
 		return getLastSeparatorIndex(path, false);
 	}
@@ -448,7 +448,7 @@ public class MiscUtilities
 	 * @param path The path
 	 * @since jEdit 5.8pre1
 	 */
-	public static int getLastSeparatorIndex(@Nonnull String path, boolean ignoreTrailingSeparators)
+	public static int getLastSeparatorIndex( String path, boolean ignoreTrailingSeparators)
 	{
 		int lastIndex = path.length() - 1;
 		if(ignoreTrailingSeparators)
@@ -477,7 +477,7 @@ public class MiscUtilities
 	 *    .gz
 	 * @see #getCompleteBaseName(String)
 	 */
-	@Nonnull
+	
 	public static String getFileExtension(String path)
 	{
 		int fsIndex = getLastSeparatorIndex(path);
@@ -570,7 +570,7 @@ public class MiscUtilities
 	 * @param str The string to check
 	 * @return True if the string is a URL, false otherwise
 	 */
-	public static boolean isURL(@Nonnull String str)
+	public static boolean isURL( String str)
 	{
 		int fsIndex = getFirstSeparatorIndex(str);
 		if(fsIndex == 0) // /etc/passwd
@@ -604,7 +604,7 @@ public class MiscUtilities
 	 * @param str The string to check
 	 * @return {@code true} if the string is a UNC path, {@code false} otherwise
 	 */
-	public static boolean isUncPath(@Nonnull String str)
+	public static boolean isUncPath( String str)
 	{
 		return (str.length() >= 2)
 				&& (((str.charAt(0) == File.separatorChar) && (str.charAt(1) == File.separatorChar))
@@ -1672,7 +1672,7 @@ loop:		for(;;)
 		sorted.store(out, comments);
 	} //}}}
 
-	@Nullable
+	
 	static VarCompressor svc;
 
 	//{{{ VarCompressor class

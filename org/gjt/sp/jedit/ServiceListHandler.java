@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.gjt.sp.util.XMLUtilities;
 
-import javax.annotation.Nullable;
+
 //}}}
 
 /**
@@ -142,7 +142,7 @@ class ServiceListHandler extends DefaultHandler
 	} //}}}
 
 	//{{{ peekElement() method
-	@Nullable
+	
 	private String peekElement()
 	{
 		return stateStack.peek();

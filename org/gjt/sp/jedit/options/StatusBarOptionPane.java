@@ -33,7 +33,7 @@ import org.gjt.sp.jedit.gui.statusbar.StatusWidgetFactory;
 import org.gjt.sp.jedit.gui.statusbar.Widget;
 import org.gjt.sp.jedit.jEdit;
 
-import javax.annotation.Nonnull;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
@@ -294,7 +294,7 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		}
 
 		@Override
-		@Nonnull
+		
 		public Iterator<TableEntry> iterator()
 		{
 			return widgets.iterator();

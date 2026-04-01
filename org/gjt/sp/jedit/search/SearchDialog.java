@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.search;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.border.*;
 import javax.swing.*;
 
@@ -59,7 +59,7 @@ public class SearchDialog extends EnhancedDialog
 	//}}}
 
 	//{{{ getSearchDialog() method
-	@Nonnull
+	
 	public static SearchDialog getSearchDialog(View view)
 	{
 		SearchDialog searchDialog = viewHash.get(view);

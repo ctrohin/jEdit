@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.msg;
 
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 /**
@@ -37,7 +37,7 @@ public class VFSUpdate extends EBMessage
 	 * Creates a VFS update message.
 	 * @param path The path in question
 	 */
-	public VFSUpdate(@Nonnull String path)
+	public VFSUpdate( String path)
 	{
 		super(null);
 		Objects.requireNonNull(path);

@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.menu;
 
 //{{{ Imports
-import javax.annotation.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
@@ -131,7 +131,7 @@ public class EnhancedMenuItem extends JMenuItem
 	//{{{ Private members
 
 	//{{{ Instance variables
-	@Nullable
+	
 	private String shortcut;
 	//}}}
 

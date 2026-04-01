@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.Nullable;
+
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -442,7 +442,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 	private JPopupMenu popup;
 
 	// remember the most recent dockable
-	@Nullable
+	
 	private String mostRecent;
 	//}}}
 

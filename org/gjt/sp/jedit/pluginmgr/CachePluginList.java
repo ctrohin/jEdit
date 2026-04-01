@@ -24,7 +24,7 @@ package org.gjt.sp.jedit.pluginmgr;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nullable;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +60,7 @@ class CachePluginList
 	} //}}}
 
 	//{{{ saveCache() method
-	void saveCache(@Nullable CharSequence xml)
+	void saveCache( CharSequence xml)
 	{
 		if (xml == null)
 			return;

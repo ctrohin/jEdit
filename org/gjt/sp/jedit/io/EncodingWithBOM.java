@@ -33,7 +33,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
+
 //}}}
 
 /**
@@ -58,8 +58,8 @@ public class EncodingWithBOM implements Encoding
 
 	//{{{ implements Encoding
 	@Override
-	@Nonnull
-	public Reader getTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getTextReader( InputStream in) throws IOException
 	{
 		byte[] actualMark = new byte[bom.length];
 		int count = in.read(actualMark);
@@ -71,16 +71,16 @@ public class EncodingWithBOM implements Encoding
 	}
 
 	@Override
-	@Nonnull
-	public Writer getTextWriter(@Nonnull OutputStream out) throws IOException
+	
+	public Writer getTextWriter( OutputStream out) throws IOException
 	{
 		out.write(bom);
 		return plain.getTextWriter(out);
 	}
 
 	@Override
-	@Nonnull
-	public Reader getPermissiveTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getPermissiveTextReader( InputStream in) throws IOException
 	{
 		byte[] actualMark = new byte[bom.length];
 		int count = in.read(actualMark);

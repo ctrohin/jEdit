@@ -25,7 +25,7 @@ package org.gjt.sp.jedit.gui;
 //{{{ Imports
 import java.awt.*;
 import java.awt.event.*;
-import javax.annotation.Nullable;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
@@ -440,7 +440,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		}
 
 		@Override
-		public boolean passFilter(int row, @Nullable String filter)
+		public boolean passFilter(int row,  String filter)
 		{
 			if (filter == null || filter.isEmpty())
 				return true;

@@ -34,7 +34,7 @@ import org.gjt.sp.jedit.ServiceManager;
 import org.gjt.sp.jedit.bufferio.BufferIORequest;
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nullable;
+
 //}}}
 
 /**
@@ -210,7 +210,7 @@ public class AutoDetection
 	/**
 	 * Returns a service of EncodingDetector for name.
 	 */
-	@Nullable
+	
 	private static EncodingDetector getEncodingDetectorService(String name)
 	{
 		String serviceClass = "org.gjt.sp.jedit.io.EncodingDetector";

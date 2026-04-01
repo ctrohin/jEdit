@@ -44,8 +44,6 @@ import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.Task;
 import org.gjt.sp.util.ThreadUtilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 //}}}
 
 /**
@@ -341,7 +339,6 @@ public abstract class VFS
 	 * @param path The path
 	 * @since jEdit 2.6pre5
 	 */
-	@Nonnull
 	public String getParentOfPath(String path)
 	{
 		// ignore last character(s) of path to properly handle
@@ -442,7 +439,6 @@ public abstract class VFS
 	 * @param path The path name
 	 * @since jEdit 4.1pre7
 	 */
-	@Nullable
 	public String getTwoStageSaveName(String path)
 	{
 		return MiscUtilities.constructPath(getParentOfPath(path),
@@ -935,7 +931,6 @@ public abstract class VFS
 	 * @return The specified directory entry, or null if it doesn't exist.
 	 * @since jEdit 4.3pre2
 	 */
-	@Nullable
 	public VFSFile _getFile(Object session, String path, Component comp) throws IOException
 	{
 		return null;

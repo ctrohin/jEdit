@@ -16,7 +16,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-import javax.annotation.Nonnull;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -272,7 +272,7 @@ public class ExtendedGridLayout implements LayoutManager2
 	  * @throws NullPointerException if {@code component} is {@code null}
 	  * @see ExtendedGridLayoutConstraints
 	  */
-	private ExtendedGridLayoutConstraints lookupConstraints(@Nonnull Component component)
+	private ExtendedGridLayoutConstraints lookupConstraints( Component component)
 	{
 		Objects.requireNonNull(component);
 		ExtendedGridLayoutConstraints constraints = comptable.get(component);
@@ -372,7 +372,7 @@ public class ExtendedGridLayout implements LayoutManager2
 		return computeLayoutSize(parent, LayoutSize.MAXIMUM);
 	}
 
-	@Nonnull
+	
 	private Dimension computeLayoutSize(Container parent, LayoutSize layoutSize)
 	{
 		synchronized (parent.getTreeLock())

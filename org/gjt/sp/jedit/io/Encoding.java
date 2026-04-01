@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import javax.annotation.Nonnull;
+
 
 /**
  * An interface to represent an encoding.
@@ -46,22 +46,22 @@ public interface Encoding
 	* Decode-error while reading from this Reader should be reported
 	* by throwing an IOException.
 	*/
-	@Nonnull
-	Reader getTextReader(@Nonnull InputStream in) throws IOException;
+	
+	Reader getTextReader( InputStream in) throws IOException;
 
 	/**
 	* Map an OutputStream to a Writer.
 	* Encode-error while writing to this Writer should be reported
 	* by throwing an IOException.
 	*/
-	@Nonnull
-	Writer getTextWriter(@Nonnull OutputStream out) throws IOException;
+	
+	Writer getTextWriter( OutputStream out) throws IOException;
 
 	/**
 	* Map an InputStream to a Reader.
 	* Decode-error while reading from this Reader should be ignored
 	* or replaced.
 	*/
-	@Nonnull
-	Reader getPermissiveTextReader(@Nonnull InputStream in) throws IOException;
+	
+	Reader getPermissiveTextReader( InputStream in) throws IOException;
 }

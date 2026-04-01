@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.buffer;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.text.Position;
 import java.util.*;
 import org.gjt.sp.util.Log;
@@ -220,7 +220,7 @@ class PositionManager
 
 		//{{{ compareTo() method
 		@Override
-		public int compareTo(@Nonnull PosBottomHalf posBottomHalf)
+		public int compareTo( PosBottomHalf posBottomHalf)
 		{
 			if(iteration)
 				Log.log(Log.ERROR,this,"Consistency failure");

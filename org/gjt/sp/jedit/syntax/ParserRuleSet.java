@@ -24,7 +24,7 @@
 package org.gjt.sp.jedit.syntax;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -182,7 +182,7 @@ public class ParserRuleSet
 	} //}}}
 
 	//{{{ getRules() method
-	@Nonnull
+	
 	public List<ParserRule> getRules(char key)
 	{
 		List<ParserRule> rulesForKey = null;

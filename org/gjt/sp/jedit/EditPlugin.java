@@ -26,7 +26,7 @@ import org.gjt.sp.jedit.browser.VFSBrowser;
 import org.gjt.sp.jedit.menu.EnhancedMenu;
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nullable;
+
 import javax.swing.*;
 import java.io.*;
 
@@ -334,7 +334,7 @@ public abstract class EditPlugin
 	 * @see #getResourceAsOutputStream
 	 * @see #getResourcePath
 	 */
-	@Nullable
+	
 	public File getPluginHome()
 	{
 		return getPluginHome(getClassName());
@@ -362,7 +362,7 @@ public abstract class EditPlugin
 	 * @see #getResourceAsOutputStream
 	 * @see #getResourcePath
 	 */
-	@Nullable
+	
 	public static File getPluginHome(Class<? extends EditPlugin> clazz)
 	{
 		return getPluginHome(clazz.getName());
@@ -388,7 +388,7 @@ public abstract class EditPlugin
 	 * @see #getResourceAsOutputStream
 	 * @see #getResourcePath
 	 */
-	@Nullable
+	
 	public static File getPluginHome(EditPlugin plugin)
 	{
 		return getPluginHome(plugin.getClassName());
@@ -405,7 +405,7 @@ public abstract class EditPlugin
 	 * @see #getResourceAsOutputStream
 	 * @see #getResourcePath
 	 */
-	@Nullable
+	
 	private static File getPluginHome(String pluginClassName)
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -672,7 +672,7 @@ public abstract class EditPlugin
 	 * @see #getResourceAsOutputStream
 	 * @see #getResourceAsStream
 	 */
-	@Nullable
+	
 	private static File getResourcePath(String pluginClassName, String path)
 	{
 		File home = getPluginHome(pluginClassName);

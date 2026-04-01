@@ -34,7 +34,7 @@ import org.gjt.sp.util.Task;
 import org.gjt.sp.util.TaskListener;
 import org.gjt.sp.util.TaskManager;
 
-import javax.annotation.Nullable;
+
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -283,7 +283,7 @@ public class StatusBar extends JPanel
 	private Component messageComp;
 	private final JLabel message;
 
-	@Nullable
+	
 	private Timer tempTimer;
 	private boolean currentMessageIsIO;
 	//}}}

@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.annotation.Nonnull;
+
 
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.PluginJAR;
@@ -138,7 +138,7 @@ public class PluginResURLConnection extends URLConnection
 	 * @throws	IOException	on error
 	 * @throws	FileNotFoundException if resource is not found
 	 */
-	@Nonnull
+	
 	public InputStream getInputStream()
 		throws IOException, FileNotFoundException
 	{

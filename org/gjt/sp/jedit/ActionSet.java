@@ -31,7 +31,7 @@ import org.gjt.sp.util.StandardUtilities;
 import org.jedit.keymap.Keymap;
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nonnull;
+
 //}}}
 
 /**
@@ -225,7 +225,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 	 * @param label The label, shown in the shortcuts option pane
 	 * @since jEdit 4.0pre1
 	 */
-	public ActionSet(@Nonnull String label)
+	public ActionSet( String label)
 	{
 		this();
 		setLabel(label);
@@ -247,7 +247,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 	 * @param label The label
 	 * @since jEdit 4.0pre1
 	 */
-	public void setLabel(@Nonnull String label)
+	public void setLabel( String label)
 	{
 		Objects.requireNonNull(label);
 		this.label = label;

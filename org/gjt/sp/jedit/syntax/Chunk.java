@@ -24,8 +24,8 @@
 package org.gjt.sp.jedit.syntax;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 import javax.swing.text.*;
 import java.awt.font.*;
 import java.awt.geom.*;
@@ -550,14 +550,14 @@ public class Chunk extends Token
 	private static boolean fontSubstEnabled;
 	private static boolean fontSubstSystemFontsEnabled;
 	private static Font[] preferredFonts;
-	@Nullable
+	
 	private static Font[] fontSubstList;
 	/**
 	 * lastSubstFont contains the last font that was used in Font substitution.
 	 * It is set there to make searching subst font faster as when one font was found
 	 * there are great chances that it matches the other chars of the same textarea.
 	 */
-	@Nullable
+	
 	private static Font lastSubstFont;
 
 	// This cache is meant to reduce calls of layoutGlyphVector(),
@@ -838,7 +838,7 @@ public class Chunk extends Token
 		private final FontRenderContext frc;
 		private final char[] text;
 		private int rangeStart;
-		@Nullable
+		
 		private Font rangeFont;
 		private int rangeLength;
 		private final List<GlyphVector> glyphs;
@@ -882,7 +882,7 @@ public class Chunk extends Token
 		public final FontRenderContext context;
 		private final int hashCode;
 
-		GlyphKey(@Nonnull char[] chars, @Nonnull Font font, @Nonnull FontRenderContext context)
+		GlyphKey( char[] chars,  Font font,  FontRenderContext context)
 		{
 			this.chars = chars;
 			this.font = font;

@@ -25,7 +25,7 @@ package org.gjt.sp.util;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.Nullable;
+
 
 /**
  * IO tools that depend on JDK only.
@@ -96,7 +96,7 @@ public class IOUtilities
 	 * @return <code>true</code> if the copy was done, <code>false</code> if it was interrupted
 	 * @throws IOException  IOException If an I/O error occurs
 	 */
-	public static boolean copyStream(int bufferSize, @Nullable ProgressObserver progress,
+	public static boolean copyStream(int bufferSize,  ProgressObserver progress,
 					 String progressPrefix, InputStream in, OutputStream out,
 					 boolean canStop)
 		throws IOException
@@ -135,7 +135,7 @@ public class IOUtilities
 	 * @return <code>true</code> if the copy was done, <code>false</code> if it was interrupted
 	 * @throws IOException  IOException If an I/O error occurs
 	 */
-	public static boolean copyStream(int bufferSize, @Nullable ProgressObserver progress,
+	public static boolean copyStream(int bufferSize,  ProgressObserver progress,
 					InputStream in, OutputStream out, boolean canStop)
 		throws IOException
 	{
@@ -152,7 +152,7 @@ public class IOUtilities
 	 * @return <code>true</code> if the copy was done, <code>false</code> if it was interrupted
 	 * @throws IOException  IOException If an I/O error occurs
 	 */
-	public static boolean copyStream(@Nullable ProgressObserver progress,
+	public static boolean copyStream( ProgressObserver progress,
 					 InputStream in, OutputStream out, boolean canStop)
 		throws IOException
 	{
@@ -170,7 +170,7 @@ public class IOUtilities
 	 * @return <code>true</code> if the copy was done, <code>false</code> if it was interrupted
 	 * @throws IOException  IOException If an I/O error occurs
 	 */
-	public static boolean copyStream(@Nullable ProgressObserver progress, String progressPrefix,
+	public static boolean copyStream( ProgressObserver progress, String progressPrefix,
 					 InputStream in, OutputStream out, boolean canStop)
 		throws IOException
 	{
@@ -253,7 +253,7 @@ public class IOUtilities
 	 * @param closeable the closeable to close.
 	 * @since jEdit 5.8pre1
 	 */
-	public static void closeQuietly(@Nullable AutoCloseable closeable)
+	public static void closeQuietly( AutoCloseable closeable)
 	{
 		if(closeable != null)
 		{
@@ -287,7 +287,7 @@ public class IOUtilities
 	 * @deprecated As of jEdit 5.8pre1, replaced by {@link #closeQuietly(AutoCloseable)}
 	 */
 	@Deprecated
-	public static void closeQuietly(@Nullable Closeable closeable)
+	public static void closeQuietly( Closeable closeable)
 	{
 		closeQuietly((AutoCloseable)closeable);
 	}
@@ -300,7 +300,7 @@ public class IOUtilities
 	 * @deprecated As of jEdit 5.8pre1, replaced by {@link #closeQuietly(AutoCloseable)}
 	 */
 	@Deprecated
-	public void closeQuietly(@Nullable ObjectInput in)
+	public void closeQuietly( ObjectInput in)
 	{
 		closeQuietly((AutoCloseable)in);
 	}
@@ -312,7 +312,7 @@ public class IOUtilities
 	 * @deprecated As of jEdit 5.8pre1, replaced by {@link #closeQuietly(AutoCloseable)}
 	 */
 	@Deprecated
-	public void closeQuietly(@Nullable ObjectOutput out)
+	public void closeQuietly( ObjectOutput out)
 	{
 		closeQuietly((AutoCloseable)out);
 	} //}}}

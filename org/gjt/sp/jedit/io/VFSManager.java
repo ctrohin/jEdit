@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.io;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -146,7 +146,7 @@ public class VFSManager
 	 * @param protocol The protocol
 	 * @since jEdit 2.5pre1
 	 */
-	@Nonnull
+	
 	public static VFS getVFSForProtocol(String protocol)
 	{
 		if(protocol.equals("file"))
@@ -168,7 +168,7 @@ public class VFSManager
 	 * @param path The path
 	 * @since jEdit 2.6pre4
 	 */
-	@Nonnull
+	
 	public static VFS getVFSForPath(String path)
 	{
 		if(MiscUtilities.isURL(path))

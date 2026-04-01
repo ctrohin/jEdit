@@ -24,7 +24,7 @@ package org.gjt.sp.jedit.textarea;
 
 //{{{ Imports
 import java.util.*;
-import javax.annotation.Nonnull;
+
 
 import org.gjt.sp.jedit.buffer.*;
 //}}}
@@ -57,7 +57,7 @@ class SelectionManager
 	 * Returns the current selection.
 	 * @since jEdit 3.2pre1
 	 */
-	@Nonnull
+	
 	public Selection[] getSelection()
 	{
 		return selection.toArray(new Selection[0]);

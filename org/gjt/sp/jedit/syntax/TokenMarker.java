@@ -24,7 +24,7 @@
 package org.gjt.sp.jedit.syntax;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.text.Segment;
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -885,7 +885,7 @@ unwind:		while(context.parent != null)
 	} //}}}
 
 	//{{{ checkHashString() method
-	private boolean checkHashString(@Nonnull char[] upHashChar)
+	private boolean checkHashString( char[] upHashChar)
 	{
 		for (int i = 0; i < upHashChar.length; i++)
 		{

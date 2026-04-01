@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.Log;
@@ -100,7 +100,7 @@ public class CopyFileWorker extends Task
 	 * @param target the target path (it is the file path, not a parent directory)
 	 * @param latch a latch so the caller knows when the copy is done
 	 */
-	private CopyFileWorker(Component comp, @Nonnull String source, @Nonnull String target, @Nullable CountDownLatch latch)
+	private CopyFileWorker(Component comp,  String source,  String target,  CountDownLatch latch)
 	{
 		Objects.requireNonNull(source);
 		Objects.requireNonNull(target);
@@ -138,7 +138,7 @@ public class CopyFileWorker extends Task
 	 * @param behavior the behavior if the target file already exists
 	 * @since jEdit 5.0
 	 */
-	public CopyFileWorker(Component comp, @Nonnull List<String> sources, @Nonnull String target, Behavior behavior)
+	public CopyFileWorker(Component comp,  List<String> sources,  String target, Behavior behavior)
 	{
 		Objects.requireNonNull(sources);
 		Objects.requireNonNull(target);
@@ -253,7 +253,7 @@ public class CopyFileWorker extends Task
 	} //}}}
 
 	//{{{ getTargetName() method
-	@Nullable
+	
 	private String getTargetName(Object session, VFS vfs, String path, String baseName) throws IOException
 	{
 		if (behavior == Behavior.OVERWRITE)

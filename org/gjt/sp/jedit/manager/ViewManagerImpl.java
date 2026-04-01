@@ -23,7 +23,7 @@ package org.gjt.sp.jedit.manager;
 
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nullable;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -126,7 +126,7 @@ public class ViewManagerImpl implements ViewManager
 	 * Returns the internal active view, which might be null.
 	 */
 	@Override
-	@Nullable
+	
 	public View getActiveViewInternal()
 	{
 		return activeView;

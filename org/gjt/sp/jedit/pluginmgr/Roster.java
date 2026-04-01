@@ -23,7 +23,7 @@
 package org.gjt.sp.jedit.pluginmgr;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.io.*;
@@ -288,7 +288,7 @@ class Roster
 		int size;
 
 		//{{{ Install constructor
-		Install(String installed, @Nonnull String url, String installDirectory, int size)
+		Install(String installed,  String url, String installDirectory, int size)
 		{
 			// catch those hooligans passing null urls
 			Objects.requireNonNull(url);

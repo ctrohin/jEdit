@@ -44,7 +44,7 @@ import java.util.*;
 import java.util.List;
 import java.lang.ref.SoftReference;
 
-import javax.annotation.Nonnull;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -507,7 +507,7 @@ public class GUIUtilities
 	 * @param name The name of the button
 	 * @return a button
 	 */
-	@Nonnull
+	
 	public static EnhancedButton loadToolButton(String name)
 	{
 		return loadToolButton(jEdit.getActionContext(),name);
@@ -527,7 +527,7 @@ public class GUIUtilities
 	 * @return the button
 	 * @since jEdit 4.2pre1
 	 */
-	@Nonnull
+	
 	public static EnhancedButton loadToolButton(ActionContext context,
 		String name)
 	{
@@ -1012,7 +1012,7 @@ public class GUIUtilities
 	 * @return The selected file(s)
 	 * @since jEdit 2.6pre2
 	 */
-	@Nonnull
+	
 	public static String[] showVFSFileDialog(View view, String path,
 		int type, boolean multipleSelection)
 	{
@@ -1045,7 +1045,7 @@ public class GUIUtilities
 	 * @return The selected file(s)
 	 * @since jEdit 4.3pre10
 	 */
-	@Nonnull
+	
 	public static String[] showVFSFileDialog(Dialog parent, View view,
 		String path, int type, boolean multipleSelection)
 	{
@@ -1071,7 +1071,7 @@ public class GUIUtilities
 	 * @return The selected file(s)
 	 * @since jEdit 4.3pre10
 	 */
-	@Nonnull
+	
 	public static String[] showVFSFileDialog(Frame parent, View view,
 		String path, int type, boolean multipleSelection)
 	{
@@ -1513,7 +1513,7 @@ public class GUIUtilities
 	 * @since jEdit 4.3pre6
 	 * @see #saveGeometry(Window,String)
 	 */
-	public static void addSizeSaver(@Nonnull Frame frame, @Nonnull String name)
+	public static void addSizeSaver( Frame frame,  String name)
 	{
 		addSizeSaver(frame,frame.getParent(),name);
 	} //}}}
@@ -1528,7 +1528,7 @@ public class GUIUtilities
 	 * @since jEdit 4.3pre7
 	 * @see #saveGeometry(Window,Container,String)
 	 */
-	public static void addSizeSaver(@Nonnull Frame frame, Container parent, @Nonnull String name)
+	public static void addSizeSaver( Frame frame, Container parent,  String name)
 	{
 		SizeSaver ss = new SizeSaver(frame,parent,name);
 		frame.addWindowStateListener(ss);
@@ -1837,7 +1837,7 @@ public class GUIUtilities
 		 * @param parent The parent to be relative to.
 		 * @param name The prefix for the settings
 		 */
-		SizeSaver(@Nonnull Frame frame, Container parent, @Nonnull String name)
+		SizeSaver( Frame frame, Container parent,  String name)
 		{
 			Objects.requireNonNull(frame);
 			Objects.requireNonNull(name);

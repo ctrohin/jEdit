@@ -26,7 +26,7 @@ package org.gjt.sp.jedit.browser;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.bsh.*;
 
-import javax.annotation.Nullable;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.*;
@@ -558,7 +558,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 	} //}}}
 
 	//{{{ setFilenameFilter() method
-	public void setFilenameFilter(@Nullable String filter)
+	public void setFilenameFilter( String filter)
 	{
 		if(filter == null || filter.isEmpty() || "*".equals(filter))
 			filterCheckbox.setSelected(false);

@@ -22,11 +22,12 @@
 
 package org.gjt.sp.util;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.awt.EventQueue;
 import java.util.LinkedList;
 
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * A queue for runnables that should run in the EDT after all pending 

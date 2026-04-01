@@ -39,8 +39,8 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -2086,12 +2086,12 @@ loop:		while (true)
 	} //}}}
 
 	//{{{ createEditPane() methods
-	private EditPane createEditPane(@Nonnull Buffer buffer)
+	private EditPane createEditPane( Buffer buffer)
 	{
 		return createEditPane(null, buffer);
 	}
 
-	private EditPane createEditPane(@Nullable BufferSet bufferSetSource, @Nonnull Buffer buffer)
+	private EditPane createEditPane( BufferSet bufferSetSource,  Buffer buffer)
 	{
 		EditPane editPane = new EditPane(this, bufferSetSource, buffer);
 		JEditTextArea textArea = editPane.getTextArea();

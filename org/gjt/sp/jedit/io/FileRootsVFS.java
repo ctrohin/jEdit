@@ -25,7 +25,7 @@
 package org.gjt.sp.jedit.io;
 
 //{{{ Imports
-import javax.annotation.Nonnull;
+
 import javax.swing.Icon;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.Component;
@@ -62,7 +62,7 @@ public class FileRootsVFS extends VFS
 
 	//{{{ getParentOfPath() method
 	@Override
-	@Nonnull
+	
 	public String getParentOfPath(String path)
 	{
 		return PROTOCOL + ':';

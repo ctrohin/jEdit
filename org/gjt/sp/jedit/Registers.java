@@ -38,7 +38,7 @@ import org.gjt.sp.jedit.textarea.TextArea;
 import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nullable;
+
 //}}}
 
 /**
@@ -529,7 +529,7 @@ public class Registers
 	 * (eg, "a b $ % ^").
 	 * @since jEdit 4.2pre2
 	 */
-	@Nullable
+	
 	public static String getRegisterNameString()
 	{
 		if(!loaded)

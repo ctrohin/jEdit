@@ -21,6 +21,7 @@
 
 package org.gjt.sp.jedit.manager;
 
+import net.jcip.annotations.GuardedBy;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.gui.FilesChangedDialog;
@@ -32,7 +33,6 @@ import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.util.AwtRunnableQueue;
 import org.gjt.sp.util.StandardUtilities;
 
-import javax.annotation.concurrent.GuardedBy;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;

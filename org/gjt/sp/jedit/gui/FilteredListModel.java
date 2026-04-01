@@ -21,7 +21,7 @@
  */
 package org.gjt.sp.jedit.gui;
 
-import javax.annotation.Nullable;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
@@ -103,7 +103,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 	} //}}}
 
 	//{{{ setFilter() method
-	public void setFilter(@Nullable final String filter)
+	public void setFilter( final String filter)
 	{
 		Runnable runner = new Runnable()
 		{
@@ -142,8 +142,8 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 	} //}}}
 
 	//{{{ prepareFilter() method
-	@Nullable
-	public String prepareFilter(@Nullable String filter)
+	
+	public String prepareFilter( String filter)
 	{
 		return filter;
 	} //}}}
@@ -156,7 +156,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 	 * @param filter the filter string
 	 * @return true if the row must be visible
 	 */
-	public abstract boolean passFilter(int row, @Nullable String filter);
+	public abstract boolean passFilter(int row,  String filter);
 	//}}}
 
 	//{{{ saveSelection()

@@ -24,7 +24,7 @@ package org.gjt.sp.jedit.msg;
 
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 /**
@@ -71,7 +71,7 @@ public class ViewUpdate extends EBMessage
 	 * @param view The view
 	 * @param what What happened
 	 */
-	public ViewUpdate(View view, @Nonnull Object what)
+	public ViewUpdate(View view,  Object what)
 	{
 		super(view);
 		Objects.requireNonNull(what);

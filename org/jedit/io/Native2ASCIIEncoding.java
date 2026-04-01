@@ -35,8 +35,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 
 import org.gjt.sp.jedit.io.CharsetEncoding;
 import org.gjt.sp.jedit.io.Encoding;
@@ -52,29 +52,29 @@ public class Native2ASCIIEncoding implements Encoding
 {
 	//{{{ implements Encoding
 	@Override
-	@Nonnull
-	public Reader getTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getTextReader( InputStream in) throws IOException
 	{
 		return new Native2ASCIIReader(in, false);
 	}
 
 	@Override
-	@Nonnull
-	public Writer getTextWriter(@Nonnull OutputStream out) throws IOException
+	
+	public Writer getTextWriter( OutputStream out) throws IOException
 	{
 		return new FilterWriter(asciiEncoding.getTextWriter(out))
 		{
 			@Override
-			@Nonnull
-			public Writer append(@Nullable CharSequence csq) throws IOException
+			
+			public Writer append( CharSequence csq) throws IOException
 			{
 				write((csq == null) ? "null" : csq.toString());
 				return this;
 			}
 
 			@Override
-			@Nonnull
-			public Writer append(@Nullable CharSequence csq, int start, int end) throws IOException
+			
+			public Writer append( CharSequence csq, int start, int end) throws IOException
 			{
 				CharSequence cs = (csq == null ? "null" : csq);
 				write(cs.subSequence(start, end).toString());
@@ -82,7 +82,7 @@ public class Native2ASCIIEncoding implements Encoding
 			}
 
 			@Override
-			@Nonnull
+			
 			public Writer append(char c) throws IOException
 			{
 				write(c);
@@ -90,25 +90,25 @@ public class Native2ASCIIEncoding implements Encoding
 			}
 
 			@Override
-			public void write(@Nonnull String str) throws IOException
+			public void write( String str) throws IOException
 			{
 				write(str, 0, str.length());
 			}
 
 			@Override
-			public void write(@Nonnull char[] cbuf) throws IOException
+			public void write( char[] cbuf) throws IOException
 			{
 				write(cbuf, 0, cbuf.length);
 			}
 
 			@Override
-			public void write(@Nonnull String str, int off, int len) throws IOException
+			public void write( String str, int off, int len) throws IOException
 			{
 				write(str.substring(off, off + len).toCharArray());
 			}
 
 			@Override
-			public void write(@Nonnull char[] cbuf, int off, int len) throws IOException
+			public void write( char[] cbuf, int off, int len) throws IOException
 			{
 				char[] buf = new char[len * 6];
 				int i = 0;
@@ -143,24 +143,24 @@ public class Native2ASCIIEncoding implements Encoding
 	}
 
 	@Override
-	@Nonnull
-	public Reader getPermissiveTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getPermissiveTextReader( InputStream in) throws IOException
 	{
 		return new Native2ASCIIReader(in, true);
 	}
 	//}}}
 
 	//{{{ Package private members
-	@Nonnull
-	Reader getTextReader(@Nonnull InputStream in, @Nullable Class<? extends PushbackReader> clazz)
+	
+	Reader getTextReader( InputStream in,  Class<? extends PushbackReader> clazz)
 		throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
 		       IllegalAccessException
 	{
 		return new Native2ASCIIReader(in, false, clazz);
 	}
 
-	@Nonnull
-	Reader getPermissiveTextReader(@Nonnull InputStream in, @Nullable Class<? extends PushbackReader> clazz)
+	
+	Reader getPermissiveTextReader( InputStream in,  Class<? extends PushbackReader> clazz)
 		throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
 		       IllegalAccessException
 	{
@@ -177,15 +177,15 @@ public class Native2ASCIIEncoding implements Encoding
 
 	private static class Native2ASCIIReader extends FilterReader
 	{
-		private Native2ASCIIReader(@Nonnull InputStream in, boolean permissive) throws IOException
+		private Native2ASCIIReader( InputStream in, boolean permissive) throws IOException
 		{
 			super(new PushbackReader(iso_8859_1Encoding.getTextReader(in), 5));
 			this.in = (PushbackReader) super.in;
 			this.permissive = permissive;
 		}
 
-		private Native2ASCIIReader(@Nonnull InputStream in, boolean permissive,
-					   @Nullable Class<? extends PushbackReader> clazz)
+		private Native2ASCIIReader( InputStream in, boolean permissive,
+					    Class<? extends PushbackReader> clazz)
 			throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException,
 			       InstantiationException
 		{

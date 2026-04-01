@@ -24,8 +24,8 @@ package org.gjt.sp.jedit.msg;
 
 import java.io.File;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 
 import org.gjt.sp.jedit.*;
 
@@ -81,7 +81,7 @@ public class PluginUpdate extends EBMessage
 	 * @param exit Is the editor exiting?
 	 * @since jEdit 4.2pre3
 	 */
-	public PluginUpdate(@Nonnull PluginJAR jar, @Nonnull Object what, boolean exit)
+	public PluginUpdate( PluginJAR jar,  Object what, boolean exit)
 	{
 		super(jar);
 		Objects.requireNonNull(jar);
@@ -106,7 +106,7 @@ public class PluginUpdate extends EBMessage
 	 * @param exit Is the editor exiting?
 	 * @since jEdit 4.2pre3
 	 */
-	public PluginUpdate(File file, @Nonnull Object what, boolean exit)
+	public PluginUpdate(File file,  Object what, boolean exit)
 	{
 		super(file);
 		Objects.requireNonNull(what);
@@ -141,7 +141,7 @@ public class PluginUpdate extends EBMessage
 	 * Returns the plugin involved.
 	 * It might be null when the plugin is removed
 	 */
-	@Nullable
+	
 	public PluginJAR getPluginJAR()
 	{
 		return jar;

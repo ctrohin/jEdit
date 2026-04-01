@@ -21,7 +21,7 @@ package org.gjt.sp.jedit.msg;
 
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 /**
@@ -68,7 +68,7 @@ public class EditPaneUpdate extends EBMessage
 	 * @param editPane The edit pane
 	 * @param what What happened
 	 */
-	public EditPaneUpdate(EditPane editPane, @Nonnull Object what)
+	public EditPaneUpdate(EditPane editPane,  Object what)
 	{
 		super(editPane);
 		Objects.requireNonNull(what);

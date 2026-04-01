@@ -24,7 +24,7 @@
 package org.gjt.sp.jedit.textarea;
 
 // {{{ Imports
-import javax.annotation.Nonnull;
+
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.text.AttributedCharacterIterator;
@@ -118,7 +118,7 @@ class InputMethodSupport
 
 	// {{{ implements InputMethodRequests
 	@Override
-	@Nonnull
+	
 	public Rectangle getTextLocation(TextHitInfo offset)
 	{
 		int caretPosition = owner.getCaretPosition();

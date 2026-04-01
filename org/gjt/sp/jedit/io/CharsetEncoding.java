@@ -31,7 +31,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-import javax.annotation.Nonnull;
+
 //}}}
 
 /**
@@ -55,8 +55,8 @@ public class CharsetEncoding implements Encoding
 
 	//{{{ implements Encoding
 	@Override
-	@Nonnull
-	public Reader getTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getTextReader( InputStream in) throws IOException
 	{
 		// Pass the decoder explicitly to report a decode error
 		// as an exception instead of replacing with "\uFFFD".
@@ -66,8 +66,8 @@ public class CharsetEncoding implements Encoding
 	}
 
 	@Override
-	@Nonnull
-	public Writer getTextWriter(@Nonnull OutputStream out) throws IOException
+	
+	public Writer getTextWriter( OutputStream out) throws IOException
 	{
 		// Pass the encoder explicitly because of same reason
 		// in getTextReader();
@@ -75,8 +75,8 @@ public class CharsetEncoding implements Encoding
 	}
 
 	@Override
-	@Nonnull
-	public Reader getPermissiveTextReader(@Nonnull InputStream in) throws IOException
+	
+	public Reader getPermissiveTextReader( InputStream in) throws IOException
 	{
 		// Use REPLACE action to indicate where the coding error
 		// happened by the replacement character "\uFFFD".

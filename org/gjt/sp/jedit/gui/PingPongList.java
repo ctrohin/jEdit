@@ -24,7 +24,7 @@ package org.gjt.sp.jedit.gui;
 //{{{ Imports
 import org.gjt.sp.util.Log;
 
-import javax.annotation.Nonnull;
+
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -329,7 +329,7 @@ public class PingPongList<E> extends JPanel
 		}
 
 		@Override
-		@Nonnull
+		
 		public Iterator<E> iterator()
 		{
 			return data.iterator();
@@ -482,7 +482,7 @@ public class PingPongList<E> extends JPanel
 		}
 
 		@Override
-		@Nonnull
+		
 		public Object getTransferData(DataFlavor flavor)
 		{
 			return data;

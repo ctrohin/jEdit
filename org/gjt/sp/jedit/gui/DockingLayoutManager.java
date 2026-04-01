@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
+
 import javax.swing.JOptionPane;
 
 import org.gjt.sp.jedit.ActionSet;
@@ -272,7 +272,7 @@ public class DockingLayoutManager implements EBComponent
 		saveModeLayout(view, mode);
 	}
 
-	@Nonnull
+	
 	private static String getModePerspective(String mode)
 	{
 		if (mode == null)

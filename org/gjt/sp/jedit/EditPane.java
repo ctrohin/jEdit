@@ -30,8 +30,8 @@ import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 import javax.swing.*;
 
 import org.gjt.sp.jedit.EditBus.EBHandler;
@@ -132,7 +132,7 @@ public class EditPane extends JPanel implements BufferSetListener
 	 * @param buffer The buffer to edit.
 	 * @since jEdit 2.5pre2
 	 */
-	public void setBuffer(@Nonnull Buffer buffer)
+	public void setBuffer( Buffer buffer)
 	{
 		setBuffer(buffer, true);
 	}
@@ -143,7 +143,7 @@ public class EditPane extends JPanel implements BufferSetListener
 	 * @param requestFocus true if the textarea should request focus, false otherwise
 	 * @since jEdit 4.3pre6
 	 */
-	public void setBuffer(@Nonnull final Buffer buffer, boolean requestFocus)
+	public void setBuffer( final Buffer buffer, boolean requestFocus)
 	{
 		if(this.buffer == buffer)
 			return;
@@ -756,7 +756,7 @@ public class EditPane extends JPanel implements BufferSetListener
 	//{{{ Package-private members
 
 	//{{{ EditPane constructor
-	EditPane(@Nonnull View view, @Nullable BufferSet bufferSetSource, @Nonnull Buffer buffer)
+	EditPane( View view,  BufferSet bufferSetSource,  Buffer buffer)
 	{
 		super(new BorderLayout());
 		BufferSet.Scope scope = jEdit.getBufferSetManager().getScope();

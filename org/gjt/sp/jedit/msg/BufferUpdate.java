@@ -24,7 +24,7 @@ package org.gjt.sp.jedit.msg;
 
 import org.gjt.sp.jedit.*;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 /**
@@ -97,7 +97,7 @@ public class BufferUpdate extends EBMessage
 	 * @param buffer The buffer
 	 * @param what What happened
 	 */
-	public BufferUpdate(Buffer buffer, View view, @Nonnull Object what)
+	public BufferUpdate(Buffer buffer, View view,  Object what)
 	{
 		super(buffer);
 		Objects.requireNonNull(what);

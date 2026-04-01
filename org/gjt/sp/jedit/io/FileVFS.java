@@ -27,8 +27,8 @@ package org.gjt.sp.jedit.io;
 //{{{ Imports
 import java.io.Closeable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.*;
 
@@ -110,7 +110,7 @@ public class FileVFS extends VFS
 
 	//{{{ getParentOfPath() method
 	@Override
-	@Nonnull
+	
 	public String getParentOfPath(String path)
 	{
 		if(OperatingSystem.isWindows())
@@ -173,7 +173,7 @@ public class FileVFS extends VFS
 	 * @param path The path name
 	 */
 	@Override
-	@Nullable
+	
 	public String getTwoStageSaveName(String path)
 	{
 		File parent = new File(getParentOfPath(path));

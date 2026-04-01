@@ -22,7 +22,7 @@
 package org.gjt.sp.util;
 
 //{{{ imports
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 //}}}
@@ -78,7 +78,7 @@ public class StringList extends ArrayList<String>
 
 	// {{{ toArray()
 	/** @return an array of String */
-	@Nonnull
+	
 	@Override
 	public String[] toArray() 
 	{
