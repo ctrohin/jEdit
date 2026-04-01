@@ -43,6 +43,7 @@ import org.gjt.sp.jedit.msg.PositionChanging;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
 import org.gjt.sp.jedit.options.GlobalOptions;
 import org.gjt.sp.jedit.print.PageBreakExtension;
+import org.gjt.sp.jedit.textarea.fold.FoldPainter;
 //}}}
 
 /**
@@ -438,7 +439,7 @@ public class JEditTextArea extends TextArea
 	 * @since jEdit 4.3pre16
 	 */
 	public static final String FOLD_PAINTER_PROPERTY = "foldPainter";
-	public static final String FOLD_PAINTER_SERVICE = "org.gjt.sp.jedit.textarea.FoldPainter";
+	public static final String FOLD_PAINTER_SERVICE = "org.gjt.sp.jedit.textarea.fold.FoldPainter";
 	public static final String DEFAULT_FOLD_PAINTER_SERVICE = "Triangle";
 
 	//{{{ getFoldPainterService() method

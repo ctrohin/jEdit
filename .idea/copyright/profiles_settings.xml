@@ -1,8 +1,11 @@
 <component name="CopyrightManager">
   <settings default="GPL v2">
-    <module2copyright />
     <LanguageOptions name="HTML">
       <option name="fileLocation" value="2" />
+    </LanguageOptions>
+    <LanguageOptions name="JAVA">
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
     </LanguageOptions>
     <LanguageOptions name="JSP">
       <option name="fileLocation" value="2" />

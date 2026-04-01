@@ -30,6 +30,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
@@ -62,31 +63,19 @@ public class ColorChooserDialog extends JDialog
         contents.setLayout( new BorderLayout() );
         contents.setBorder( BorderFactory.createEmptyBorder( 12, 12, 11, 11 ) );
         colorChooser = new JColorChooser(initialColor);
-        for (var panel : colorChooser.getChooserPanels()) {
-            // Seems rendering colors with transparency has some issues,
-            // so better disabling the transparency selection
-            panel.setColorTransparencySelectionEnabled(false);
-        }
+        // Seems rendering colors with transparency has some issues,
+        // so better disabling the transparency selection
+        Arrays.stream(colorChooser.getChooserPanels()).forEach(this::hideColorTransparency);
         contents.add( colorChooser, BorderLayout.CENTER );
         
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(17, 0, 0, 0));
         JButton ok = new JButton(jEdit.getProperty("common.ok"));
-        ok.addActionListener(
-            ae -> {
-                ColorChooserDialog.this.setVisible(false);
-                ColorChooserDialog.this.dispose();
-            }
-        );
+        ok.addActionListener(this::destroy);
         getRootPane().setDefaultButton(ok);
         JButton cancel = new JButton(jEdit.getProperty("common.cancel"));
-        cancel.addActionListener(
-            ae -> {
-                ColorChooserDialog.this.setVisible(false);
-                ColorChooserDialog.this.dispose();
-            }
-        );
+        cancel.addActionListener(this::destroy);
         JButton reset = new JButton(jEdit.getProperty("common.reset"));
         reset.addActionListener(
             ae -> colorChooser.setColor(initialColor)
@@ -107,8 +96,18 @@ public class ColorChooserDialog extends JDialog
         setLocationRelativeTo( getParent() );
         setVisible(true);
     }
+
     //}}}
-    
+
+    private void hideColorTransparency(AbstractColorChooserPanel panel) {
+        panel.setColorTransparencySelectionEnabled(false);
+    }
+
+    private void destroy(ActionEvent actionEvent) {
+        this.setVisible(false);
+        this.dispose();
+    }
+
     //{{{ getColor()
     public Color getColor()
     {

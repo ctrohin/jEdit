@@ -26,6 +26,7 @@ package org.gjt.sp.jedit.textarea;
 
 import java.awt.Graphics2D;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
+import org.gjt.sp.jedit.textarea.fold.FoldPainter;
 
 // {{{ class TriangleFoldHandler
 public class TriangleFoldPainter implements FoldPainter

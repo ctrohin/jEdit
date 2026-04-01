@@ -23,13 +23,13 @@
 	</SERVICE>
 
 	<!-- Fold painters -->
-	<SERVICE CLASS="org.gjt.sp.jedit.textarea.FoldPainter" NAME="Triangle">
+	<SERVICE CLASS="org.gjt.sp.jedit.textarea.fold.FoldPainter" NAME="Triangle">
 		new TriangleFoldPainter();
 	</SERVICE>
-	<SERVICE CLASS="org.gjt.sp.jedit.textarea.FoldPainter" NAME="Square">
+	<SERVICE CLASS="org.gjt.sp.jedit.textarea.fold.FoldPainter" NAME="Square">
 		new SquareFoldPainter();
 	</SERVICE>
-	<SERVICE CLASS="org.gjt.sp.jedit.textarea.FoldPainter" NAME="Circle">
+	<SERVICE CLASS="org.gjt.sp.jedit.textarea.fold.FoldPainter" NAME="Circle">
 		new CircleFoldPainter();
 	</SERVICE>
 
