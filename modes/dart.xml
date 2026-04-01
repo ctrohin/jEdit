@@ -145,7 +145,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 			<KEYWORD3>double</KEYWORD3>
 			<KEYWORD3>num</KEYWORD3>
 			<KEYWORD3>void</KEYWORD3>
-			
+			<KEYWORD3>dynamic</KEYWORD3>
+
 			<!-- stdlib types -->
 			<!-- comment out for consistency with user-defined types -->
 			<KEYWORD4>AssertionError</KEYWORD4>

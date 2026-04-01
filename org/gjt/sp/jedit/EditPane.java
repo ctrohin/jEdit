@@ -1251,7 +1251,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		{
 			this.markerHighlight = markerHighlight;
 		} //}}}
-
+		private static final int FOLD_MARKER_SIZE = 12;
 		//{{{ paintValidLine() method
 		@Override
 		public void paintValidLine(Graphics2D gfx, int screenLine,
@@ -1264,7 +1264,7 @@ public class EditPane extends JPanel implements BufferSetListener
 				{
 					gfx.setColor(getMarkerHighlightColor());
 					int height = textArea.getPainter().getLineHeight();
-					gfx.fillRect(0, y, textArea.getGutter().getWidth(), height);
+					gfx.fillRect(FOLD_MARKER_SIZE, y, textArea.getGutter().getWidth(), height);
 				}
 			}
 		} //}}}

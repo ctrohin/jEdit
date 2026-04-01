@@ -143,7 +143,7 @@ public class Gutter extends JComponent implements SwingConstants
 		updateBorder();
 		setFoldPainter(textArea.getFoldPainter());
 	} //}}}
-
+	static final Color backupBg = new Color(210,210,210);
 	//{{{ paintComponent() method
 	@Override
 	public void paintComponent(Graphics _gfx)
@@ -156,10 +156,14 @@ public class Gutter extends JComponent implements SwingConstants
 		int bgColorWidth = isSelectionAreaEnabled() ? FOLD_MARKER_SIZE :
 			clip.width; 
 		gfx.fillRect(clip.x, clip.y, bgColorWidth, clip.height);
+		gfx.setColor(getBackground());
 		if (isSelectionAreaEnabled())
 		{
 			if (selectionAreaBgColor == null)
 				selectionAreaBgColor = getBackground();
+			if (selectionAreaBgColor.equals(getBackground())) {
+				selectionAreaBgColor = backupBg;
+			}
 			gfx.setColor(selectionAreaBgColor);
 			gfx.fillRect(clip.x + FOLD_MARKER_SIZE, clip.y,
 				clip.width - FOLD_MARKER_SIZE, clip.height);
@@ -187,7 +191,8 @@ public class Gutter extends JComponent implements SwingConstants
 			Log.log(Log.ERROR,this,"     clip.height=" + clip.height);
 			Log.log(Log.ERROR,this,"     lineHeight=" + lineHeight);
 		}
-	
+
+
 		int y = clip.y - clip.y % lineHeight + textArea.getPainter().getLineExtraSpacing();
 
 		extensionMgr.paintScreenLineRange(textArea,gfx,
@@ -198,6 +203,7 @@ public class Gutter extends JComponent implements SwingConstants
 		{
 			paintLine(gfx,line,y);
 		}
+
 	} //}}}
 
 	//{{{ addExtension() method
@@ -322,7 +328,7 @@ public class Gutter extends JComponent implements SwingConstants
 				 collapsedSize.width += selectionAreaWidth;
 			collapsedSize.height = gutterSize.height
 				= insets.top + insets.bottom;
-			lineNumberWidth = fm.charWidth('5') * getLineNumberDigitCount(); 
+			lineNumberWidth = fm.charWidth('5') * getLineNumberDigitCount() + 20;
 			gutterSize.width = FOLD_MARKER_SIZE + insets.right
 				+ lineNumberWidth;
 		}
@@ -700,6 +706,7 @@ public class Gutter extends JComponent implements SwingConstants
 	private Color currentLineHighlight;
 	private Color foldColor;
 	private Color selectionAreaBgColor;
+	private Color leftExtraGutterBgColor;
 
 	private FontMetrics fm;
 

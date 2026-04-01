@@ -365,8 +365,9 @@ public class JEditBuffer
 		{
 			readLock();
 
-			if(offset < 0 || offset > getLength())
+			if(offset < 0 || offset > getLength()) {
 				throw new ArrayIndexOutOfBoundsException(offset);
+			}
 
 			return lineMgr.getLineOfOffset(offset);
 		}

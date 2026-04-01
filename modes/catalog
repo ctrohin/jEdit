@@ -297,7 +297,7 @@
         FILE_NAME_GLOB="*.fx" />
 
 <MODE NAME="javascript"		FILE="javascript.xml"
-        FILE_NAME_GLOB="{*.js,Buildsub}" />
+        FILE_NAME_GLOB="{*.js,*.jsx,Buildsub}" />
 
 <MODE NAME="jcl"		FILE="jcl.xml"
         FILE_NAME_GLOB="*.jcl" />
@@ -666,7 +666,7 @@
         FILE_NAME_GLOB="*.twiki"/>
 
 <MODE NAME="typoscript"		FILE="typoscript.xml"
-        FILE_NAME_GLOB="*.ts"/>
+        FILE_NAME_GLOB="*.{ts,tsx}"/>
 
 <MODE NAME='url'		FILE='url.xml'
         FILE_NAME_GLOB='*.url' />

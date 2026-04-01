@@ -255,19 +255,25 @@ public class MarkerViewer extends JPanel implements ActionListener
 			super.getListCellRendererComponent(list,value,
 			index,isSelected,cellHasFocus);
 
-			if(value instanceof Marker)
+			if(value instanceof Marker mark)
 			{
-				Marker mark = (Marker)value;
-				JEditTextArea textArea = view.getTextArea();
-				int pos = textArea.getLineOfOffset(mark.getPosition());
-				String txt = view.getTextArea().getLineText(pos);
-				if (txt.isEmpty())
-					txt = jEdit.getProperty("markers.blank-line");
-				char shortcut_char = mark.getShortcut();
-				String shortcut = "";
-				if (shortcut_char > 0)
-					shortcut = "["+shortcut_char+"]";
-				setText((pos+1)+" "+shortcut+": "+txt);
+                JEditTextArea textArea = view.getTextArea();
+				try {
+					int pos = textArea.getLineOfOffset(mark.getPosition());
+					String txt = view.getTextArea().getLineText(pos);
+					if (txt.isEmpty()) {
+						txt = jEdit.getProperty("markers.blank-line");
+					}
+					char shortcut_char = mark.getShortcut();
+					String shortcut = "";
+					if (shortcut_char > 0) {
+						shortcut = "[" + shortcut_char + "]";
+					}
+					setText((pos + 1) + " " + shortcut + ": " + txt.trim());
+				}
+				catch (Exception e) {
+					System.out.println("Exception during marker rendering: " + e.getMessage());
+				}
 			}
 			return this;
 		}

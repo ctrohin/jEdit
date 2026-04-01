@@ -24,8 +24,13 @@ package org.gjt.sp.jedit.gui;
 
 //{{{ Imports
 import javax.swing.*;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.colorchooser.ColorSelectionModel;
 import java.awt.event.*;
 import java.awt.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
 //}}}
@@ -47,7 +52,8 @@ public class ColorChooserDialog extends JDialog
         init();
     }
     //}}}
-    
+
+
     //{{{ init()
     private void init()
     {
@@ -56,43 +62,34 @@ public class ColorChooserDialog extends JDialog
         contents.setLayout( new BorderLayout() );
         contents.setBorder( BorderFactory.createEmptyBorder( 12, 12, 11, 11 ) );
         colorChooser = new JColorChooser(initialColor);
+        for (var panel : colorChooser.getChooserPanels()) {
+            // Seems rendering colors with transparency has some issues,
+            // so better disabling the transparency selection
+            panel.setColorTransparencySelectionEnabled(false);
+        }
         contents.add( colorChooser, BorderLayout.CENTER );
         
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(17, 0, 0, 0));
         JButton ok = new JButton(jEdit.getProperty("common.ok"));
-        ok.addActionListener( 
-            new ActionListener() 
-            {
-                public void actionPerformed( ActionEvent ae ) 
-                {
-                    ColorChooserDialog.this.setVisible(false);
-                    ColorChooserDialog.this.dispose();
-                }
+        ok.addActionListener(
+            ae -> {
+                ColorChooserDialog.this.setVisible(false);
+                ColorChooserDialog.this.dispose();
             }
         );
         getRootPane().setDefaultButton(ok);
         JButton cancel = new JButton(jEdit.getProperty("common.cancel"));
-        cancel.addActionListener( 
-            new ActionListener() 
-            {
-                public void actionPerformed( ActionEvent ae ) 
-                {
-                    ColorChooserDialog.this.setVisible(false);
-                    ColorChooserDialog.this.dispose();
-                }
+        cancel.addActionListener(
+            ae -> {
+                ColorChooserDialog.this.setVisible(false);
+                ColorChooserDialog.this.dispose();
             }
         );
         JButton reset = new JButton(jEdit.getProperty("common.reset"));
-        reset.addActionListener( 
-            new ActionListener() 
-            {
-                public void actionPerformed( ActionEvent ae ) 
-                {
-                    colorChooser.setColor(initialColor);
-                }
-            }
+        reset.addActionListener(
+            ae -> colorChooser.setColor(initialColor)
         );
         GenericGUIUtilities.makeSameSize(ok, cancel, reset);
 
