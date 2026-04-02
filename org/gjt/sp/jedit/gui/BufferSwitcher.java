@@ -61,13 +61,18 @@ public class BufferSwitcher extends JComboBox<Buffer>
 	// actual colors will be set in constructor, here are just fallback values
 	static Color defaultColor   = Color.BLACK;
 	static Color defaultBGColor = Color.LIGHT_GRAY;
-	private CustomTabHeader tabs;
+	private final CustomTabHeader tabs;
 	private JPanel fullPane;
 
 	public BufferSwitcher(final EditPane editPane)
 	{
 		this.editPane = editPane;
-		tabs = new CustomTabHeader((idx) -> editPane.setBuffer(getSortedBuffers()[idx]));
+		tabs = new CustomTabHeader(
+			(idx) -> editPane.setBuffer(getSortedBuffers()[idx]),
+			(idx) -> {
+				jEdit.getBufferSetManager().removeBuffer(getSortedBuffers()[idx]);
+			}
+		);
 		//setFont(new Font("Dialog",Font.BOLD,10));
 		setTransferHandler(new ComboBoxTransferHandler(this));
 		setRenderer(new BufferCellRenderer());
@@ -178,7 +183,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			setMaximumRowCount(jEdit.getIntegerProperty("bufferSwitcher.maxRowCount",10));
 			Buffer[] buffers = getSortedBuffers();
 			setModel(new DefaultComboBoxModel<>(buffers));
-			tabs.setTabs(buffers);
+			tabs.setTabs(buffers, editPane.getBuffer());
 			// FIXME: editPane.getBuffer() returns wrong buffer (old buffer) after last non-untitled buffer close.
 			// When the only non-untitled (last) buffer is closed a new untitled buffer is added to BufferSet
 			// directly from BufferSetManager (@see BufferSetManager.bufferRemoved() and BufferSetManager.addBuffer())

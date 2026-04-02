@@ -23,26 +23,37 @@ package org.gjt.sp.jedit.gui.components;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CustomTab extends JPanel {
-    private static final Border SELECTED_BORDER = new LineBorder(Color.RED, 2, true);
-    private static final Border NOT_SELECTED_BORDER = new LineBorder(Color.LIGHT_GRAY, 2, true);
+    private static final Border SELECTED_BORDER = new CompoundBorder(
+        BorderFactory.createMatteBorder(0, 0, 2, 0, Color.RED),
+        BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY)
+    );
+    //new LineBorder(Color.RED, 2, true);
+    private static final Border NOT_SELECTED_BORDER = new CompoundBorder(
+        BorderFactory.createMatteBorder(0, 0, 2, 0, Color.LIGHT_GRAY),
+        BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY)
+    );
+    //new LineBorder(Color.LIGHT_GRAY, 2, true);
     private final JButton close;
+    private final JLabel label;
     public CustomTab(String str, CustomTabInterfaces.OnSelectionChanged selectAction) {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel label = new JLabel(str);
+        label = new JLabel(str);
         add(label);
-        label.addMouseListener(new MouseAdapter() {
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                selectAction.setSelected(CustomTab.this);
+            selectAction.setSelected(CustomTab.this);
             }
         });
         close = new JButton("x");
+        close.setMargin(new Insets(1,4,1,4));
         add(close);
     }
 
@@ -52,6 +63,7 @@ public class CustomTab extends JPanel {
 
     public void setSelected(final boolean selected) {
         setBorder(selected ? SELECTED_BORDER : NOT_SELECTED_BORDER);
+        label.setFont(label.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN));
         repaint();
     }
 }

@@ -34,14 +34,15 @@ public class CustomTabHeader extends JPanel {
     private final SingleSelectionModel selectionModel;
     private final ArrayList<CustomTab> tabs = new ArrayList<>();
     private final VoidCallback onParentSelect;
+    private final VoidCallback onTabClose;
     private final Color selectedColor = new Color(180, 200, 255);
     private final Color hoverColor = new Color(230, 230, 230);
 
-    public CustomTabHeader(VoidCallback onSelect) {
+    public CustomTabHeader(VoidCallback onSelect, VoidCallback onTabClose) {
         this.selectionModel = new DefaultSingleSelectionModel();
         this.onParentSelect = onSelect;
-        setLayout(new WrapLayout(FlowLayout.LEFT, 5, 5));
-//			setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        this.onTabClose = onTabClose;
+        setLayout(new WrapLayout(FlowLayout.LEFT, 0, 5));
 
         // Repaint when selection changes
         selectionModel.addChangeListener(e -> {
@@ -50,17 +51,19 @@ public class CustomTabHeader extends JPanel {
         });
     }
 
-    public void addTab(String title) {
+    public void addTab(String title, boolean selected) {
         int index = tabs.size();
         final var tab = new CustomTab(
             title,
             (t) -> selectParentIndex(tabs.indexOf(t))
         );
         tab.setOnClose(() -> {
-            remove(tab);
-            tabs.remove(tab);
-            revalidate();
+            closeBuffer(tabs.indexOf(tab));
+//            remove(tab);
+//            tabs.remove(tab);
+//            revalidate();
         });
+        tab.setSelected(selected);
         tabs.add(tab);
 
         add(tab);
@@ -76,12 +79,14 @@ public class CustomTabHeader extends JPanel {
         revalidate();
     }
 
-    public void setTabs(Buffer[] buffers) {
+    public void setTabs(Buffer[] buffers, Buffer selectedBuffer) {
         removeAll();
         tabs.clear();
-        for (var buffer : buffers) {
-            addTab(buffer.getName());
+
+        for (Buffer buffer : buffers) {
+            addTab(buffer.getName(), buffer == selectedBuffer);
         }
+        revalidate();
     }
 
     public void addChangeListener(ChangeListener l) {
@@ -94,6 +99,10 @@ public class CustomTabHeader extends JPanel {
 
     public void selectParentIndex(final int index) {
         onParentSelect.apply(index);
+    }
+
+    public void closeBuffer(final int index) {
+        onTabClose.apply(index);
     }
 
     public void setSelectedIndex(int index) {
