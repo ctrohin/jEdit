@@ -3393,10 +3393,10 @@ public class jEdit
 	private static KeymapManager keymapManager;
 
 	private static BufferSetManager bufferSetManager;
-	private static BufferManagerImpl bufferManager = new BufferManagerImpl();
+	private static final BufferManagerImpl bufferManager = new BufferManagerImpl();
 	private static final Map<Window,Boolean> windowState = new HashMap<>();
-	private static ViewManagerImpl viewManager = new ViewManagerImpl();
-	private static EditPaneManager editPaneManager = new EditPaneManagerImpl(viewManager);
+	private static final ViewManagerImpl viewManager = new ViewManagerImpl();
+	private static final EditPaneManager editPaneManager = new EditPaneManagerImpl(viewManager);
 	public static SystemManager systemManager = new SystemManager();
 
 	private static final Object editBusOrderingLock	= new Object();

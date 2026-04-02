@@ -39,6 +39,7 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.bufferset.BufferSetManager;
+import org.gjt.sp.jedit.gui.components.CustomTabHeader;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
 import org.gjt.sp.util.ThreadUtilities;
 
@@ -60,11 +61,13 @@ public class BufferSwitcher extends JComboBox<Buffer>
 	// actual colors will be set in constructor, here are just fallback values
 	static Color defaultColor   = Color.BLACK;
 	static Color defaultBGColor = Color.LIGHT_GRAY;
+	private CustomTabHeader tabs;
+	private JPanel fullPane;
 
 	public BufferSwitcher(final EditPane editPane)
 	{
 		this.editPane = editPane;
-
+		tabs = new CustomTabHeader((idx) -> editPane.setBuffer(getSortedBuffers()[idx]));
 		//setFont(new Font("Dialog",Font.BOLD,10));
 		setTransferHandler(new ComboBoxTransferHandler(this));
 		setRenderer(new BufferCellRenderer());
@@ -104,13 +107,25 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			{
 				Buffer buffer = (Buffer) evt.getItem();
 				updateStyle(buffer);
+				var selectedIndex = getSelectedIndex();
+				tabs.setSelectedIndex(selectedIndex);
 			}
 		});
-
 		defaultColor   = getForeground();
 		defaultBGColor = getBackground();
 
 		updateStyle(editPane.getBuffer());
+	}
+
+
+	public JComponent getFullPane() {
+		if (fullPane != null) {
+			return fullPane;
+		}
+		fullPane = new JPanel(new BorderLayout());
+		fullPane.add(this, BorderLayout.CENTER);
+		fullPane.add(tabs, BorderLayout.NORTH);
+		return fullPane;
 	}
 
 	static void updateStyle(JComponent target, boolean isBackup, String path)
@@ -161,18 +176,9 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		{
 			updating = true;
 			setMaximumRowCount(jEdit.getIntegerProperty("bufferSwitcher.maxRowCount",10));
-			Buffer[] buffers = bufferSet.getAllBuffers();
-			if (jEdit.getBooleanProperty("bufferswitcher.sortBuffers", true))
-			{
-				Arrays.sort(buffers, (a, b) ->
-				{
-					if (jEdit.getBooleanProperty("bufferswitcher.sortByName", true))
-						return a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
-					else
-						return a.getPath().toLowerCase().compareTo(b.getPath().toLowerCase());
-				});
-			}
+			Buffer[] buffers = getSortedBuffers();
 			setModel(new DefaultComboBoxModel<>(buffers));
+			tabs.setTabs(buffers);
 			// FIXME: editPane.getBuffer() returns wrong buffer (old buffer) after last non-untitled buffer close.
 			// When the only non-untitled (last) buffer is closed a new untitled buffer is added to BufferSet
 			// directly from BufferSetManager (@see BufferSetManager.bufferRemoved() and BufferSetManager.addBuffer())
@@ -184,6 +190,22 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			updating = false;
 		};
 		ThreadUtilities.runInDispatchThread(runnable);
+	}
+
+	private Buffer[] getSortedBuffers() {
+		final BufferSet bufferSet = editPane.getBufferSet();
+		Buffer[] buffers = bufferSet.getAllBuffers();
+		if (jEdit.getBooleanProperty("bufferswitcher.sortBuffers", true))
+		{
+			Arrays.sort(buffers, (a, b) ->
+			{
+				if (jEdit.getBooleanProperty("bufferswitcher.sortByName", true))
+					return a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
+				else
+					return a.getPath().toLowerCase().compareTo(b.getPath().toLowerCase());
+			});
+		}
+		return buffers;
 	}
 
 	@EBHandler

@@ -343,7 +343,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		topBox.add(pathAndFilterPanel);
 		add(BorderLayout.NORTH,topBox);
 
-		add(BorderLayout.CENTER,browserView = new BrowserView(this));
+		add(BorderLayout.CENTER,browserView = new BrowserView(this, false));
 		if(isHorizontalLayout())
 			browserView.setBorder(new EmptyBorder(0,12,0,12));
 		defaultFocusComponent = browserView.getTable();

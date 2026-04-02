@@ -326,7 +326,7 @@ public class Gutter extends JComponent implements SwingConstants {
                 collapsedSize.width += selectionAreaWidth;
             collapsedSize.height = gutterSize.height
                 = insets.top + insets.bottom;
-            lineNumberWidth = fm.charWidth('5') * getLineNumberDigitCount() + 20;
+            lineNumberWidth = getLineNumberWidth();
             gutterSize.width = FOLD_MARKER_SIZE + insets.right
                 + lineNumberWidth;
         }
@@ -400,13 +400,18 @@ public class Gutter extends JComponent implements SwingConstants {
 
         Border border = getBorder();
         if (border != null) {
-            lineNumberWidth = fm.charWidth('5') * getLineNumberDigitCount();
+            lineNumberWidth = getLineNumberWidth();
             gutterSize.width = FOLD_MARKER_SIZE
                 + border.getBorderInsets(this).right
                 + lineNumberWidth;
             revalidate();
         }
     } //}}}
+
+
+    private int getLineNumberWidth() {
+        return Math.max(fm.charWidth('5') * getLineNumberDigitCount() + 20, 60);
+    }
 
     //{{{ Getters and setters
 

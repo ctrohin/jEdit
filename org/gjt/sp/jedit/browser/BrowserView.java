@@ -50,11 +50,11 @@ import org.gjt.sp.util.ThreadUtilities;
 class BrowserView extends JPanel
 {
 	//{{{ BrowserView constructor
-	BrowserView(final VFSBrowser browser)
+	BrowserView(final VFSBrowser browser, final boolean showRoots)
 	{
 		this.browser = browser;
 
-		tmpExpanded = new HashSet<>();
+        tmpExpanded = new HashSet<>();
 		DockableWindowManager dwm = jEdit.getActiveView().getDockableWindowManager();
 		KeyListener keyListener = dwm.closeListener(VFSBrowser.NAME);
 
@@ -78,24 +78,29 @@ class BrowserView extends JPanel
 		tableScroller.setMinimumSize(new Dimension(0,0));
 		tableScroller.getViewport().setBackground(table.getBackground());
 		tableScroller.getViewport().addMouseListener(new TableMouseHandler());
-		splitPane = new JSplitPane(
-			browser.isHorizontalLayout()
-			? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT,
-			parentScroller, tableScroller);
-		splitPane.setOneTouchExpandable(true);
+		setLayout(new BorderLayout());
+		if (showRoots) {
+			splitPane = new JSplitPane(
+				browser.isHorizontalLayout()
+					? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT,
+				parentScroller, tableScroller);
+			splitPane.setOneTouchExpandable(true);
+			add(BorderLayout.CENTER, splitPane);
+		}
+		else {
+			add(BorderLayout.CENTER, tableScroller);
+		}
 
 		EventQueue.invokeLater(() -> parentDirectories.ensureIndexIsVisible(parentDirectories.getModel().getSize()));
 
-		if(browser.isMultipleSelectionEnabled())
+		if(browser.isMultipleSelectionEnabled()) {
 			table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		else
+		}
+		else {
 			table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
-
-		setLayout(new BorderLayout());
-
-		add(BorderLayout.CENTER,splitPane);
+		}
 
 		propertiesChanged();
 	} //}}}
@@ -169,7 +174,7 @@ class BrowserView extends JPanel
 
 			// -1 means the divider should be reset to a value that attempts
 			// to honor the preferred size of the left/top component
-			splitPane.setDividerLocation(-1);
+			doOnSplitPane(s -> s.setDividerLocation(-1));
 		};
 		ThreadUtilities.runInBackground(new ListDirectoryBrowserTask(browser,
 			session, vfs, path, loadInfo, awtRunnable));
@@ -307,7 +312,7 @@ class BrowserView extends JPanel
 	{
 		showIcons = jEdit.getBooleanProperty("vfs.browser.showIcons");
 		table.propertiesChanged();
-		splitPane.setBorder(null);
+		doOnSplitPane(s -> s.setBorder(null));
 	} //}}}
 
 	//{{{ getBrowser() method
@@ -337,13 +342,13 @@ class BrowserView extends JPanel
 	//{{{ Instance variables
 	private final VFSBrowser browser;
 
-	private final JSplitPane splitPane;
+	private JSplitPane splitPane;
 	private final JList parentDirectories;
 	private final VFSDirectoryEntryTable table;
 	private final Set<String> tmpExpanded;
 	private BrowserCommandsMenu popup;
 	private boolean showIcons;
-	//}}}
+    //}}}
 
 	//{{{ showFilePopup() method
 	private void showFilePopup(VFSFile[] files, Component comp,
@@ -769,4 +774,10 @@ class BrowserView extends JPanel
 		}
 	}
 
+	private interface IDoOnSplitPane {
+		void act(final JSplitPane splitPane);
+	}
+	private void doOnSplitPane(final IDoOnSplitPane action) {
+		Optional.ofNullable(splitPane).ifPresent(action::act);
+	}
 }
