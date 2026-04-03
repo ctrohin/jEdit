@@ -1038,13 +1038,18 @@ public class EditPane extends JPanel implements BufferSetListener
 	//{{{ loadBufferSwitcher() method
 	void loadBufferSwitcher()
 	{
-		if(jEdit.getBooleanProperty("view.showBufferSwitcher"))
+		if(jEdit.getBooleanProperty("view.showBufferSwitcher") || jEdit.getBooleanProperty("view.showBufferTabs"))
 		{
 			if(bufferSwitcher == null)
 			{
 				bufferSwitcher = new BufferSwitcher(this);
 				EditBus.addToBus(bufferSwitcher);
 				add(BorderLayout.NORTH,bufferSwitcher.getFullPane());
+				bufferSwitcher.updateBufferList();
+				revalidate();
+			}
+			else {
+				bufferSwitcher.updateLayout();
 				bufferSwitcher.updateBufferList();
 				revalidate();
 			}

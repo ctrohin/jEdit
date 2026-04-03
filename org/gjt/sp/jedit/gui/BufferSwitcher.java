@@ -122,14 +122,32 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		updateStyle(editPane.getBuffer());
 	}
 
-
+	public void updateLayout() {
+		if (fullPane == null) {
+			return;
+		}
+		if (jEdit.getBooleanProperty("view.showBufferSwitcher")) {
+			fullPane.add(this, BorderLayout.CENTER);
+		} else {
+			fullPane.remove(this);
+		}
+		if (jEdit.getBooleanProperty("view.showBufferTabs")) {
+			fullPane.add(tabs, BorderLayout.NORTH);
+		} else {
+			fullPane.remove(tabs);
+		}
+	}
 	public JComponent getFullPane() {
 		if (fullPane != null) {
 			return fullPane;
 		}
 		fullPane = new JPanel(new BorderLayout());
-		fullPane.add(this, BorderLayout.CENTER);
-		fullPane.add(tabs, BorderLayout.NORTH);
+		if (jEdit.getBooleanProperty("view.showBufferSwitcher")) {
+			fullPane.add(this, BorderLayout.CENTER);
+		}
+		if (jEdit.getBooleanProperty("view.showBufferTabs")) {
+			fullPane.add(tabs, BorderLayout.NORTH);
+		}
 		return fullPane;
 	}
 

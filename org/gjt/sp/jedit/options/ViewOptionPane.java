@@ -126,17 +126,15 @@ public class ViewOptionPane extends AbstractOptionPane
 		addComponent(showBufferSwitcher);
 		showBufferSwitcher.addActionListener(actionHandler);
 
+		showBufferTabs = new JCheckBox(jEdit.getProperty("options.view.showBufferTabs"));
+		showBufferTabs.setSelected(jEdit.getBooleanProperty("view.showBufferTabs", true));
+		addComponent(showBufferTabs);
+
 		/* Sort buffer switcher */
 		sortBufferSwitcher = new JCheckBox(jEdit.getProperty(
 			"options.view.bufferswitcher.sortBuffers"));
 		sortBufferSwitcher.setSelected(jEdit.getBooleanProperty("bufferswitcher.sortBuffers", true));
-		sortBufferSwitcher.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				sortBufferSwitcherByName.setEnabled(sortBufferSwitcher.isSelected());
-			}
-		});
+		sortBufferSwitcher.addActionListener(evt -> sortBufferSwitcherByName.setEnabled(sortBufferSwitcher.isSelected()));
 
 		addComponent(sortBufferSwitcher);
 
@@ -245,6 +243,7 @@ public class ViewOptionPane extends AbstractOptionPane
 			.isSelected());
 		jEdit.setBooleanProperty("view.showBufferSwitcher",
 			showBufferSwitcher.isSelected());
+		jEdit.setBooleanProperty("view.showBufferTabs", showBufferTabs.isSelected());
 		jEdit.setBooleanProperty("bufferswitcher.sortBuffers", sortBufferSwitcher.isSelected());
 		jEdit.setBooleanProperty("bufferswitcher.sortByName", sortBufferSwitcherByName.isSelected());
 		jEdit.setProperty("bufferSwitcher.maxRowCount",
@@ -276,6 +275,8 @@ public class ViewOptionPane extends AbstractOptionPane
 	private JCheckBox fullScreenIncludesStatus;
 	private JCheckBox sortBufferSwitcher;
 	private JCheckBox sortBufferSwitcherByName;
+	private JCheckBox showBufferList;
+	private JCheckBox showBufferTabs;
 
 	//}}}
 
