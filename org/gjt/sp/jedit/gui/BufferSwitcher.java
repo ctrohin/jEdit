@@ -34,6 +34,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
@@ -264,18 +265,29 @@ public class BufferSwitcher extends JComboBox<Buffer>
 
 	private void addDnD()
 	{
-		ComboBoxUI ui = getUI();
-		if (ui instanceof BasicComboBoxUI)
-		{
-			Accessible acc = ui.getAccessibleChild(null, 0);
-			if (acc instanceof BasicComboPopup)
-			{
-				JList<Object> list = ((BasicComboPopup)acc).getList();
+		Optional.of(getUI())
+			.filter(BasicComboBoxUI.class::isInstance)
+			.map(ui -> ui.getAccessibleChild(null, 0))
+			.filter(BasicComboPopup.class::isInstance)
+			.map(BasicComboPopup.class::cast)
+			.map(BasicComboPopup::getList)
+			.ifPresent(list -> {
 				list.setDragEnabled(true);
 				list.setDropMode(DropMode.INSERT);
 				list.setTransferHandler(new BufferSwitcherTransferHandler());
-			}
-		}
+			});
+//		ComboBoxUI ui = getUI();
+//		if (ui instanceof BasicComboBoxUI)
+//		{
+//			Accessible acc = ui.getAccessibleChild(null, 0);
+//			if (acc instanceof BasicComboPopup)
+//			{
+//				JList<Object> list = ((BasicComboPopup)acc).getList();
+//				list.setDragEnabled(true);
+//				list.setDropMode(DropMode.INSERT);
+//				list.setTransferHandler(new BufferSwitcherTransferHandler());
+//			}
+//		}
 	}
 
 	private static class ComboBoxTransferHandler extends TransferHandler
@@ -337,26 +349,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		}
 	}
 
-	private class BufferTransferableData
-	{
-		private final Buffer buffer;
-		private final JComponent source;
-
-		BufferTransferableData(Buffer buffer, JComponent source)
-		{
-			this.buffer = buffer;
-			this.source = source;
-		}
-
-		public Buffer getBuffer()
-		{
-			return buffer;
-		}
-
-		public JComponent getSource()
-		{
-			return source;
-		}
+	private record BufferTransferableData(Buffer buffer, JComponent source) {
 	}
 
 	private class BufferSwitcherTransferHandler extends TransferHandler
@@ -389,7 +382,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			}
 			JComponent target = (JComponent) support.getComponent();
 			EditPane sourceEditPane = (EditPane) GUIUtilities.getComponentParent(
-					data.getSource(), EditPane.class);
+					data.source(), EditPane.class);
 			EditPane targetEditPane = (EditPane) GUIUtilities.getComponentParent(
 					target, EditPane.class);
 			BufferSet.Scope scope = jEdit.getBufferSetManager().getScope();
@@ -435,7 +428,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			EditPane targetEditPane = (EditPane) GUIUtilities.getComponentParent(
 					target, EditPane.class);
 
-			Buffer buffer = data.getBuffer();
+			Buffer buffer = data.buffer();
 
 			View view = targetEditPane.getView();
 
@@ -475,7 +468,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 					return;
 				}
 
-				Buffer buffer = data.getBuffer();
+				Buffer buffer = data.buffer();
 
 				EditPane editPane = (EditPane) GUIUtilities.getComponentParent(c,
 						EditPane.class);
@@ -491,16 +484,12 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		@Override
 		public Transferable createTransferable(JComponent c)
 		{
-			JList<Buffer> list = castUnchecked(c);
-			Buffer buffer = list.getSelectedValue();
-			if (buffer == null)
-			{
-				return null;
-			}
-			else
-			{
-				return new BufferSwitcherTransferable(buffer, c);
-			}
+			return Optional.of(c)
+				.map(JList.class::cast)
+				.map(JList::getSelectedValue)
+				.map(Buffer.class::cast)
+				.map(b -> new BufferSwitcherTransferable(b, c))
+				.orElse(null);
 		}
 	}
 }

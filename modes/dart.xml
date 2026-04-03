@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 		
 		<SEQ_REGEXP HASH_CHAR="$" TYPE="LITERAL4">\$[_a-zA-Z][_a-zA-Z0-9]*</SEQ_REGEXP>
 	</RULES>
-	
+
 	<RULES SET="DART_EXPRESSION"
 		HIGHLIGHT_DIGITS="TRUE"
 		DIGIT_RE="(0x[\p{XDigit}]+[lL]?|[\p{Digit}]+(e[\p{Digit}]*)?[lLdDfF]?)">
@@ -106,6 +106,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 		
 		<SEQ TYPE="OPERATOR">=</SEQ>
 		<SEQ TYPE="OPERATOR">!</SEQ>
+		<SEQ TYPE="OPERATOR">?</SEQ>
 		<SEQ TYPE="OPERATOR">&gt;=</SEQ>
 		<SEQ TYPE="OPERATOR">&lt;=</SEQ>
 		<SEQ TYPE="OPERATOR">+</SEQ>
@@ -185,6 +186,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 			<KEYWORD4>Strings</KEYWORD4>
 			<KEYWORD4>TimeZone</KEYWORD4>
 			<KEYWORD4>TypeError</KEYWORD4>
+			<KEYWORD4>Future</KEYWORD4>
+			<KEYWORD4>FutureOr</KEYWORD4>
+			<KEYWORD4>DateTime</KEYWORD4>
+			<KEYWORD4>Color</KEYWORD4>
+			<KEYWORD4>Colors</KEYWORD4>
+			<KEYWORD4>json</KEYWORD4>
+			<COMMENT4>Type</COMMENT4>
 			
 			<!-- stdlib exceptions -->
 			<KEYWORD4>BadNumberFormatException</KEYWORD4>
@@ -212,6 +220,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 			
 			<KEYWORD1>const</KEYWORD1>
 			<KEYWORD1>new</KEYWORD1>
+			<KEYWORD1>async</KEYWORD1>
+			<KEYWORD1>await</KEYWORD1>
+			<KEYWORD1>as</KEYWORD1>
+			<KEYWORD1>required</KEYWORD1>
+			<KEYWORD1>extension</KEYWORD1>
+			<KEYWORD1>on</KEYWORD1>
 			<LITERAL2>this</LITERAL2>
 			<LITERAL2>super</LITERAL2>
 		</KEYWORDS>
@@ -230,12 +244,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 		<SEQ TYPE="KEYWORD2">#import</SEQ>
 		<SEQ TYPE="KEYWORD2">#source</SEQ>
 		<SEQ TYPE="KEYWORD2">#resource</SEQ>
-		
+
+		<!-- Annotation types -->
+		<SEQ_REGEXP TYPE="KEYWORD2">@[a-zA-Z_][a-zA-Z0-9_]*</SEQ_REGEXP>
+
 		<KEYWORDS>
 			<!-- general keywords -->
 			<KEYWORD1>abstract</KEYWORD1>
 			<KEYWORD1>assert</KEYWORD1>
 			<KEYWORD1>class</KEYWORD1>
+			<KEYWORD1>enum</KEYWORD1>
 			<KEYWORD1>extends</KEYWORD1>
 			<KEYWORD1>factory</KEYWORD1>
 			<KEYWORD1>get</KEYWORD1>
@@ -252,6 +270,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 			<!-- control keywords -->
 			<KEYWORD1>var</KEYWORD1>
 			<KEYWORD1>final</KEYWORD1>
+			<KEYWORD1>late</KEYWORD1>
 			<KEYWORD1>if</KEYWORD1>
 			<KEYWORD1>else</KEYWORD1>
 			<KEYWORD1>for</KEYWORD1>
