@@ -55,7 +55,7 @@ public class TextAreaOptionPane extends AbstractOptionPane
 	public void _init()
 	{
 		/* Font */
-		font = new FontSelector(jEdit.getFontProperty("view.font"));
+		font = new FontSelector(jEdit.getFontProperty("view.font"), false, true);
 
 		addComponent(jEdit.getProperty("options.textarea.font"),font);
 
@@ -404,7 +404,7 @@ public class TextAreaOptionPane extends AbstractOptionPane
 			{
 				JDialog parent = GenericGUIUtilities.getParentDialog(this);
 				Font selected =
-					new FontSelectorDialog(parent, null).getSelectedFont();
+					new FontSelectorDialog(parent, null, false).getSelectedFont();
 
 				if (selected != null)
 				{

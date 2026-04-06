@@ -27,6 +27,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import org.gjt.sp.jedit.*;
@@ -46,37 +48,41 @@ public class FontSelectorDialog extends EnhancedDialog
 {
 	//{{{ FontSelectorDialog constructor
 	public FontSelectorDialog(Frame parent,
-				  Font font)
+				  Font font, boolean monospacedOnly)
 	{
 		super(parent,jEdit.getProperty("font-selector.title"),true);
+		this.monospacedOnly = monospacedOnly;
 		init(font);
 	} //}}}
 
 	//{{{ FontSelectorDialog constructor
 	public FontSelectorDialog(Dialog parent,
-				  Font font)
+				  Font font, boolean monospacedOnly)
 	{
 		super(parent,jEdit.getProperty("font-selector.title"),true);
+		this.monospacedOnly = monospacedOnly;
 		init(font);
 	} //}}}
 
 	//{{{ FontSelectorDialog constructor
 	FontSelectorDialog(Frame parent,
 			   Font font,
-			   FontSelector fontSelector)
+			   FontSelector fontSelector, boolean monospacedOnly)
 	{
 		super(parent,jEdit.getProperty("font-selector.title"),true);
 		this.fontSelector = fontSelector;
+		this.monospacedOnly = monospacedOnly;
 		init(font);
 	} //}}}
 
 	//{{{ FontSelectorDialog constructor
 	FontSelectorDialog(Dialog parent,
 			   Font font,
-			   FontSelector fontSelector)
+			   FontSelector fontSelector, boolean monospacedOnly)
 	{
 		super(parent,jEdit.getProperty("font-selector.title"),true);
 		this.fontSelector = fontSelector;
+		this.monospacedOnly = monospacedOnly;
 		init(font);
 	} //}}}
 
@@ -129,6 +135,7 @@ public class FontSelectorDialog extends EnhancedDialog
 	private JLabel preview;
 	private JButton ok;
 	private JButton cancel;
+	private boolean monospacedOnly;
 	//}}}
 
 	/**
@@ -152,7 +159,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		String[] fonts;
 		try
 		{
-			fonts = getFontList();
+			fonts = getFontList(monospacedOnly);
 		}
 		catch(Exception e)
 		{
@@ -261,7 +268,7 @@ public class FontSelectorDialog extends EnhancedDialog
 	} //}}}
 
 	//{{{ getFontList() method
-	private static String[] getFontList()
+	private static String[] getFontList(final boolean monospacedOnly)
 	{
 		String[] nameArray = GraphicsEnvironment
 			.getLocalGraphicsEnvironment()
@@ -277,14 +284,31 @@ public class FontSelectorDialog extends EnhancedDialog
 					break;
 			}
 
-			if(j == HIDEFONTS.length)
-				nameVector.add(nameArray[i]);
+			if(j == HIDEFONTS.length) {
+				if (!monospacedOnly || isMonospaced(nameArray[i])) {
+					nameVector.add(nameArray[i]);
+				}
+			}
 		}
 
 		String[] _array = new String[nameVector.size()];
 		return nameVector.toArray(_array);
 	} //}}}
 
+	public static boolean isMonospaced(final String familyName) {
+		Font font = new Font(familyName, Font.PLAIN, 12);
+		return isMonospaced(font);
+	}
+	public static boolean isMonospaced(final Font font) {
+		final FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
+
+		// Compare the width of 'i' and 'W'
+		double iWidth = font.getStringBounds("i", frc).getWidth();
+		double wWidth = font.getStringBounds("W", frc).getWidth();
+
+		// Using a small delta for double comparison to handle precision issues
+		return Math.abs(iWidth - wWidth) < 0.0001;
+	}
 	//{{{ createTextFieldAndListPanel() method
 	private static JPanel createTextFieldAndListPanel(String label,
 		JTextField textField, JList list)

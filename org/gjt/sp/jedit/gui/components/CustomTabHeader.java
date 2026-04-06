@@ -42,7 +42,7 @@ public class CustomTabHeader extends JPanel {
         this.selectionModel = new DefaultSingleSelectionModel();
         this.onParentSelect = onSelect;
         this.onTabClose = onTabClose;
-        setLayout(new WrapLayout(FlowLayout.LEFT, 0, 5));
+        setLayout(new WrapLayout(FlowLayout.LEFT, 2, 2));
 
         // Repaint when selection changes
         selectionModel.addChangeListener(e -> {

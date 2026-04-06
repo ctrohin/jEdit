@@ -30,16 +30,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CustomTab extends JPanel {
-    private static final Border SELECTED_BORDER = new CompoundBorder(
-        BorderFactory.createMatteBorder(0, 0, 2, 0, Color.RED),
-        BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY)
-    );
-    //new LineBorder(Color.RED, 2, true);
-    private static final Border NOT_SELECTED_BORDER = new CompoundBorder(
-        BorderFactory.createMatteBorder(0, 0, 2, 0, Color.LIGHT_GRAY),
-        BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY)
-    );
-    //new LineBorder(Color.LIGHT_GRAY, 2, true);
     private final JButton close;
     private final JLabel label;
     public CustomTab(String str, CustomTabInterfaces.OnSelectionChanged selectAction) {
@@ -62,8 +52,39 @@ public class CustomTab extends JPanel {
     }
 
     public void setSelected(final boolean selected) {
-        setBorder(selected ? SELECTED_BORDER : NOT_SELECTED_BORDER);
+        setBackground(getTabBackground(selected));
+        close.setBackground(getTabBackground(selected));
+        setBorder(getBorder(selected));
         label.setFont(label.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN));
         repaint();
+    }
+
+    private Color getJListSelectionBackground() {
+        return UIManager.getColor("ComboBox.selectionBackground");
+    }
+
+    private Color getLabelBackground() {
+        return UIManager.getColor("Label.background");
+    }
+
+    private Color getTextAreaBackground() {
+        return UIManager.getColor("TextArea.background");
+    }
+
+    private Color getTextAreaDisabledBackground() {
+        return getLabelBackground().darker();
+    }
+
+    private Color getTabBackground(final boolean selected) {
+        return selected ? getTextAreaBackground() : getLabelBackground();
+    }
+
+    private Border getBorder(final boolean selected) {
+        if (selected) {
+            return new LineBorder(getJListSelectionBackground(), 2, true);
+        }
+        return new CompoundBorder(
+            new LineBorder(getTextAreaDisabledBackground(), 1, true),
+            new LineBorder(getTabBackground(false), 1, true));
     }
 }

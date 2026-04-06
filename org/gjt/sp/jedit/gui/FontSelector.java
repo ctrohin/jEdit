@@ -50,6 +50,11 @@ public class FontSelector extends JButton
 		this(font,false);
 	} //}}}
 
+	public FontSelector(Font font, boolean antiAlias)
+	{
+		this(font,false, false);
+	} //}}}
+
 	//{{{ FontSelector constructor
 	/**
 	 * Creates a new font selector control.
@@ -57,10 +62,11 @@ public class FontSelector extends JButton
 	 * @param antiAlias Is anti-aliasing enabled?
 	 * @since jEdit 4.2pre7
 	 */
-	public FontSelector(Font font, boolean antiAlias)
+	public FontSelector(Font font, boolean antiAlias, boolean monospacedOnly)
 	{
 		setFont(font);
 		this.antiAlias = antiAlias;
+		this.monospacedOnly = monospacedOnly;
 
 		updateText();
 
@@ -128,6 +134,7 @@ public class FontSelector extends JButton
 	} //}}}
 
 	private boolean antiAlias;
+	private boolean monospacedOnly;
 
 	//{{{ ActionHandler class
 	class ActionHandler implements ActionListener
@@ -143,13 +150,13 @@ public class FontSelector extends JButton
 				font = new FontSelectorDialog(
 					JOptionPane.getFrameForComponent(
 					FontSelector.this),getFont(),
-					FontSelector.this)
+					FontSelector.this, monospacedOnly)
 					.getSelectedFont();
 			}
 			else
 			{
 				font = new FontSelectorDialog(dialog,getFont(),
-					FontSelector.this)
+					FontSelector.this, monospacedOnly)
 					.getSelectedFont();
 			}
 
