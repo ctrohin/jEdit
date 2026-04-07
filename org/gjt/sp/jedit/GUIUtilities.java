@@ -23,12 +23,16 @@
 package org.gjt.sp.jedit;
 
 //{{{ Imports
+import io.vavr.control.Try;
+import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.swing.IconFontSwing;
 import org.gjt.sp.jedit.browser.VFSFileChooserDialog;
 import org.gjt.sp.jedit.gui.DynamicContextMenuService;
 import org.gjt.sp.jedit.gui.EnhancedButton;
 import org.gjt.sp.jedit.gui.FloatingWindowContainer;
 import org.gjt.sp.jedit.gui.SplashScreen;
 import org.gjt.sp.jedit.gui.VariableGridLayout;
+import org.gjt.sp.jedit.gui.components.CachedDynamicMultiResolution;
 import org.jedit.keymap.Keymap;
 import org.gjt.sp.jedit.menu.EnhancedCheckBoxMenuItem;
 import org.gjt.sp.jedit.menu.EnhancedMenu;
@@ -39,6 +43,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.SyntaxUtilities;
 
+import java.awt.image.BaseMultiResolutionImage;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -110,6 +115,13 @@ public class GUIUtilities
 		iconCache = null;
 	} //}}}
 
+	private static URL getUrl(final String iconName) throws Exception {
+		if(MiscUtilities.isURL(iconName))
+			return new URL(iconName);
+		else
+			return new URL(iconPath + iconName);
+	}
+
 	//{{{ loadIcon() method
 	/**
 	 * Loads an icon.
@@ -123,8 +135,9 @@ public class GUIUtilities
 			return null;
 
 		// * Enable old icon naming scheme support
-		if(deprecatedIcons.containsKey(iconName))
-			iconName = deprecatedIcons.get(iconName);
+		final var iconString = deprecatedIcons.getOrDefault(iconName, iconName);
+		// TODO: Check if it is possible to render a multiresolution image properly
+		final IconAndSize materialIcon = null;//materialIcons.get(iconString);
 
 		// check if there is a cached version first
 		Map<String, Icon> cache = null;
@@ -132,44 +145,52 @@ public class GUIUtilities
 		{
 			cache = iconCache.get();
 		}
+
 		if(cache == null)
 		{
 			cache = new HashMap<>();
 			iconCache = new SoftReference<>(cache);
 		}
-		Icon icon = cache.get(iconName);
+
+		Icon icon = cache.get(iconString);
+
 		if(icon != null)
 			return icon;
 
-		URL url;
+		final var finalCache = cache;
 
-		try
-		{
-			// get the icon
-			if(MiscUtilities.isURL(iconName))
-				url = new URL(iconName);
-			else
-				url = new URL(iconPath + iconName);
+		if (materialIcon != null) {
+			var imageIcon = new ImageIcon(getMultiRes(materialIcon));
+			cache.put(iconString, imageIcon);
+			return imageIcon;
+//			return Try.of(() -> getUrl(iconString))
+//				.onFailure(e -> {
+//					Log.log(Log.ERROR,GUIUtilities.class, "Icon not found: " + iconString);
+//					Log.log(Log.ERROR,GUIUtilities.class, e);
+//				})
+//				.map(url -> {
+//					SVGLoader loader = new SVGLoader();
+//					SVGDocument svgDocument = loader.load(url);
+//					int size = extractSize(iconName);
+//					return new SVGIcon(svgDocument,  size, size);
+//				})
+//				.onSuccess(i -> {
+//					finalCache.put(iconString, i);
+//				})
+//				.getOrElse((SVGIcon) null);
 		}
-		catch(Exception e)
-		{
-			try
-			{
-				url = new URL(defaultIconPath + iconName);
-			}
-			catch(Exception ex)
-			{
-				Log.log(Log.ERROR,GUIUtilities.class,
-					"Icon not found: " + iconName);
-				Log.log(Log.ERROR,GUIUtilities.class,ex);
-				return null;
-			}
-		}
+		return Try.of(() -> getUrl(iconString))
+			.recoverAllAndTry(() -> new URL(defaultIconPath + iconString))
+			.onFailure(e -> {
+				Log.log(Log.ERROR,GUIUtilities.class, "Icon not found: " + iconString);
+				Log.log(Log.ERROR,GUIUtilities.class, e);
+			})
+			.map(ImageIcon::new)
+			.onSuccess((i) -> {
+				finalCache.put(iconString, i);
+			})
+			.getOrElse((ImageIcon)null);
 
-		icon = new ImageIcon(url);
-
-		cache.put(iconName,icon);
-		return icon;
 	} //}}}
 
 	//{{{ getEditorIcon() method
@@ -1543,9 +1564,16 @@ public class GUIUtilities
 	 */
 	private static void initializeDeprecatedIcons()
 	{
+		IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
 		deprecatedIcons.put("File.png",       "16x16/mimetypes/text-x-generic.png");
+		materialIcons.put("16x16/mimetypes/text-x-generic.png", ics(GoogleMaterialDesignIcons.CODE, 12));
+
 		deprecatedIcons.put("Folder.png",     "16x16/places/folder.png");
+		materialIcons.put("16x16/places/folder.png", ics(GoogleMaterialDesignIcons.FOLDER, 16));
+
 		deprecatedIcons.put("OpenFolder.png", "16x16/status/folder-open.png");
+		materialIcons.put("16x16/status/folder-open.png", ics(GoogleMaterialDesignIcons.FOLDER_OPEN, 16));
+
 		deprecatedIcons.put("OpenFile.png",   "16x16/actions/edit-select-all.png");
 		deprecatedIcons.put("ReloadSmall.png","16x16/actions/view-refresh.png");
 		deprecatedIcons.put("DriveSmall.png", "16x16/devices/drive-harddisk.png");
@@ -1569,11 +1597,22 @@ public class GUIUtilities
 		deprecatedIcons.put("Find.png",       "22x22/actions/edit-find.png");
 		deprecatedIcons.put("FindAgain.png",  "22x22/actions/edit-find-next.png");
 		deprecatedIcons.put("FindInDir.png",  "22x22/actions/edit-find-in-folder.png");
+
 		deprecatedIcons.put("Parse.png",      "22x22/actions/document-reload2.png");
+		materialIcons.put("22x22/actions/document-reload2.png", ics(GoogleMaterialDesignIcons.REFRESH, 22));
+
 		deprecatedIcons.put("Delete.png",     "22x22/actions/edit-delete.png");
+		materialIcons.put("22x22/actions/edit-delete.png", ics(GoogleMaterialDesignIcons.DELETE, 22));
+
 		deprecatedIcons.put("Paste.png",      "22x22/actions/edit-paste.png");
+		materialIcons.put("22x22/actions/edit-paste.png", ics(GoogleMaterialDesignIcons.CONTENT_PASTE, 22));
+
 		deprecatedIcons.put("Cut.png",        "22x22/actions/edit-cut.png");
+		materialIcons.put("22x22/actions/edit-cut.png", ics(GoogleMaterialDesignIcons.CONTENT_CUT, 22));
+
 		deprecatedIcons.put("Copy.png",       "22x22/actions/edit-copy.png");
+		materialIcons.put("22x22/actions/edit-copy.png", ics(GoogleMaterialDesignIcons.CONTENT_COPY, 22));
+
 		deprecatedIcons.put("Undo.png",       "22x22/actions/edit-undo.png");
 		deprecatedIcons.put("Redo.png",       "22x22/actions/edit-redo.png");
 		deprecatedIcons.put("CurrentDir.png", "22x22/status/folder-visiting.png");
@@ -1583,7 +1622,10 @@ public class GUIUtilities
 		deprecatedIcons.put("Floppy.png",     "22x22/devices/media-floppy.png");
 		deprecatedIcons.put("Stop.png",       "22x22/actions/process-stop.png");
 		deprecatedIcons.put("Cancel.png",     "22x22/actions/process-stop.png");
+
 		deprecatedIcons.put("Home.png",       "22x22/actions/go-home.png");
+		materialIcons.put("22x22/actions/go-home.png", ics(GoogleMaterialDesignIcons.HOME, 22));
+
 		deprecatedIcons.put("Help.png",       "22x22/apps/help-browser.png");
 		deprecatedIcons.put("Properties.png", "22x22/actions/document-properties.png");
 		deprecatedIcons.put("Preferences.png","22x22/categories/preferences-system.png");
@@ -1621,6 +1663,7 @@ public class GUIUtilities
 		deprecatedIcons.put("SplitHorizontal.png", "22x22/actions/window-split-horizontal.png");
 
 		deprecatedIcons.put("ButtonProperties.png", "22x22/actions/document-properties.png");
+
 
 	}
 	//}}}
@@ -1674,6 +1717,7 @@ public class GUIUtilities
 	private static String iconPath = "jeditresource:/org/gjt/sp/jedit/icons/themes/";
 	private static final String defaultIconPath = "jeditresource:/org/gjt/sp/jedit/icons/themes/";
 	private static final Map<String, String> deprecatedIcons = new HashMap<>();
+	private static final Map<String, IconAndSize> materialIcons = new HashMap<>();
 
 	//{{{ _loadMenuItem() method
 	private static JMenuItem _loadMenuItem(String name, ActionContext context, boolean setMnemonic)
@@ -1909,4 +1953,37 @@ public class GUIUtilities
 	} //}}}
 
 	//}}}
+
+	public static double getScaleFactor(Graphics g) {
+		var g2d = (Graphics2D) g;
+		var at = g2d.getTransform();
+		return Math.min(at.getScaleX(), at.getScaleY());
+	}
+
+	private static int extractSize(final String iconPath) {
+		String[] parts = iconPath.split(":");
+		if (parts.length == 1) {
+			return 22;
+		}
+		return Integer.parseInt(parts[1]);
+	}
+
+	private static String extractIconUrl(final String iconPath) {
+		return iconPath.split(":")[0];
+	}
+
+	private static final int[] RESOLUTIONS = {
+		12, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 52, 56, 60, 64//, 72, 80, 96, 128
+	};
+	private static BaseMultiResolutionImage getMultiRes(final IconAndSize icon) {
+		return new CachedDynamicMultiResolution(icon.icon(), icon.size());
+	}
+
+	private static IconAndSize ics(GoogleMaterialDesignIcons icon, int size) {
+		return new IconAndSize(icon, size);
+	}
+
+	record IconAndSize(GoogleMaterialDesignIcons icon, int size) {
+	}
+
 }

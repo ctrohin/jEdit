@@ -21,6 +21,8 @@
 
 package org.gjt.sp.jedit.gui.components;
 
+import org.gjt.sp.jedit.gui.borders.RoundedBorder;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -81,10 +83,10 @@ public class CustomTab extends JPanel {
 
     private Border getBorder(final boolean selected) {
         if (selected) {
-            return new LineBorder(getJListSelectionBackground(), 2, true);
+            return new LineBorder(getJListSelectionBackground(), 2, false);
         }
         return new CompoundBorder(
-            new LineBorder(getTextAreaDisabledBackground(), 1, true),
-            new LineBorder(getTabBackground(false), 1, true));
+            new LineBorder(getTextAreaDisabledBackground(), 1, false),
+            new LineBorder(getTabBackground(false), 1, false));
     }
 }

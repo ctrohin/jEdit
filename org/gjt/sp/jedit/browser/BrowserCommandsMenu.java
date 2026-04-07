@@ -125,8 +125,8 @@ public class BrowserCommandsMenu extends JPopupMenu
 			if(delete)
 				add(createMenuItem("delete", "22x22/actions/edit-delete.png"));
 
-			add(createMenuItem("copy-path", "22x22/actions/edit-copy.png"));
-			add(createMenuItem("paste", "22x22/actions/edit-paste.png"));
+			add(createMenuItem("copy-path", "svg/actions/copy-icon.svg:22"));
+			add(createMenuItem("paste", "svg/actions/paste-icon.svg:22"));
 
 			if((files.length == 1) || (browser.getSelectedFiles().length != 0))
 		   		add(createMenuItem("properties", "22x22/actions/document-properties.png"));
