@@ -37,6 +37,7 @@ import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.EnhancedDialog;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 
@@ -88,23 +89,23 @@ public class PrintPreview extends EnhancedDialog
 		// toolbar components
 		pages = new JComboBox<Integer>();
 
-		nextPage = new JButton( GUIUtilities.loadIcon( "22x22/actions/go-next.png" ) );
+		nextPage = new JButton( IconManager.loadIcon( "22x22/actions/go-next.png" ) );
 		nextPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.nextPage", "Next Page" ) );
 
-		prevPage = new JButton( GUIUtilities.loadIcon( "22x22/actions/go-previous.png" ) );
+		prevPage = new JButton( IconManager.loadIcon( "22x22/actions/go-previous.png" ) );
 		prevPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.prevPage", "Previous Page" ) );
 
-		zoomIn = new JButton( GUIUtilities.loadIcon( "22x22/actions/zoom-in.png" ) );
+		zoomIn = new JButton( IconManager.loadIcon( "22x22/actions/zoom-in.png" ) );
 		zoomIn.setToolTipText( jEdit.getProperty( "printpreview.dialog.zoomin", "Zoom In" ) );
 
-		zoomOut = new JButton( GUIUtilities.loadIcon( "22x22/actions/zoom-out.png" ) );
+		zoomOut = new JButton( IconManager.loadIcon( "22x22/actions/zoom-out.png" ) );
 		zoomOut.setToolTipText( jEdit.getProperty( "printpreview.dialog.zoomout", "Zoom Out" ) );
 
 		// horisontal! yes, that's right
-		fullWidth = new JButton( GUIUtilities.loadIcon( "22x22/actions/resize-horisontal.png" ) );
+		fullWidth = new JButton( IconManager.loadIcon( "22x22/actions/resize-horisontal.png" ) );
 		fullWidth.setToolTipText( jEdit.getProperty( "printpreview.dialog.pageWidth", "Show page full width" ) );
 
-		fullPage = new JButton( GUIUtilities.loadIcon( "22x22/actions/resize-vertical.png" ) );
+		fullPage = new JButton( IconManager.loadIcon( "22x22/actions/resize-vertical.png" ) );
 		fullPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.fullPage", "Show full page" ) );
 
 		// create toolbar

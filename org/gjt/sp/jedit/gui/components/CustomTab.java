@@ -21,6 +21,7 @@
 
 package org.gjt.sp.jedit.gui.components;
 
+import com.formdev.flatlaf.ui.FlatLineBorder;
 import org.gjt.sp.jedit.gui.borders.RoundedBorder;
 
 import javax.swing.*;
@@ -83,10 +84,8 @@ public class CustomTab extends JPanel {
 
     private Border getBorder(final boolean selected) {
         if (selected) {
-            return new LineBorder(getJListSelectionBackground(), 2, false);
+            return new FlatLineBorder(new Insets(2, 2, 2, 2), getJListSelectionBackground(), 2, 10);
         }
-        return new CompoundBorder(
-            new LineBorder(getTextAreaDisabledBackground(), 1, false),
-            new LineBorder(getTabBackground(false), 1, false));
+        return new FlatLineBorder(new Insets(2, 2, 2, 2), getTextAreaDisabledBackground(), 1, 10);
     }
 }

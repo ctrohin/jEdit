@@ -34,6 +34,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import com.formdev.flatlaf.*;
 import org.gjt.sp.jedit.gui.ColorWellButton;
 import org.gjt.sp.jedit.gui.FontSelector;
 import org.gjt.sp.jedit.gui.NumericTextField;
@@ -64,6 +65,14 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		super("appearance");
 	} //}}}
 
+	private static UIManager.LookAndFeelInfo[] getFlatLafThemes() {
+		return new UIManager.LookAndFeelInfo[] {
+			new UIManager.LookAndFeelInfo("FlatLaf Light", FlatLightLaf.class.getName()),
+			new UIManager.LookAndFeelInfo("FlatLaf Dark", FlatDarkLaf.class.getName()),
+			new UIManager.LookAndFeelInfo("FlatLaf IntelliJ", FlatIntelliJLaf.class.getName()),
+			new UIManager.LookAndFeelInfo("FlatLaf Darcula", FlatDarculaLaf.class.getName())
+		};
+	}
 	//{{{ _init() method
 	@Override
 	protected void _init()
@@ -71,7 +80,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		/* Look and feel */
 //		addComponent(new JLabel(jEdit.getProperty("options.appearance.lf.note")));
 
-		lfs = UIManager.getInstalledLookAndFeels();
+		lfs = getFlatLafThemes();
 		String[] names = new String[lfs.length];
 		String lf = UIManager.getLookAndFeel().getClass().getName();
 		int index = 0;

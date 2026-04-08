@@ -25,8 +25,10 @@ package org.gjt.sp.jedit;
 import java.io.Closeable;
 import java.io.IOException;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import org.gjt.sp.jedit.datatransfer.JEditTransferableService;
 import org.gjt.sp.jedit.gui.tray.JTrayIconManager;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.manager.*;
 import org.gjt.sp.util.*;
 import org.jedit.core.MigrationService;
@@ -503,7 +505,7 @@ public class jEdit
 		initLocalizationProperties(false);
 
 		GUIUtilities.advanceSplashProgress("init GUI");
-		GUIUtilities.init();
+		IconManager.init();
 
 		bufferSetManager = new BufferSetManager();
 		//}}}
@@ -3958,35 +3960,23 @@ public class jEdit
 		// Second, this will fail to load the look and feel as set in the
 		// LookAndFeel plugin on initial start up because the plugins haven't
 		// been loaded yet.
+//		FlatLightLaf.setup();
+		final Runnable setLaf = () -> {
+            try {
+                UIManager.setLookAndFeel(sLf);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                     UnsupportedLookAndFeelException e) {
+            }
+        };
 		if (EventQueue.isDispatchThread())
 		{
-			try
-			{
-				UIManager.setLookAndFeel(sLf);
-			}
-			catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
-			{
-				// ignored, there really isn't anything to do and this may be
-				// bogus, the lnf may be from the Look And Feel plugin
-			}
+			setLaf.run();
 		}
 		else
 		{
 			try
 			{
-				EventQueue.invokeAndWait(() ->
-					{
-						try
-						{
-							UIManager.setLookAndFeel(sLf);
-						}
-						catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e)
-						{
-							// same as above, there really isn't anything to do and this may be
-							// bogus, the lnf may be from the Look And Feel plugin
-						}
-					}
-				);
+				EventQueue.invokeAndWait(setLaf);
 			}
 			catch (InterruptedException | InvocationTargetException e)
 			{
@@ -3995,15 +3985,16 @@ public class jEdit
 		}
 
 		LookAndFeel lfNew = UIManager.getLookAndFeel();
-		if (lfNew != null)
+		if (lfNew != null) {
 			sLfNew = lfNew.getClass().getName();
 			Log.log(Log.DEBUG, jEdit.class,
 				"initPLAF " +
-				(EventQueue.isDispatchThread() ? "edt"
-				                               : "non-edt") +
-				" old=" + sLfOld +
-				" requested=" + lf +
-				" new=" + sLfNew );
+					(EventQueue.isDispatchThread() ? "edt"
+						: "non-edt") +
+					" old=" + sLfOld +
+					" requested=" + lf +
+					" new=" + sLfNew);
+		}
 		if (!sLf.equals(sLfNew))
 			Log.log(Log.WARNING, jEdit.class,
 				"initPLAF failed to set requested l&f " + lf);

@@ -51,7 +51,7 @@ import static javax.swing.Box.createHorizontalStrut;
 import static javax.swing.BoxLayout.X_AXIS;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 import static org.gjt.sp.jedit.GUIUtilities.error;
-import static org.gjt.sp.jedit.GUIUtilities.loadIcon;
+import static org.gjt.sp.jedit.icons.IconManager.loadIcon;
 import static org.gjt.sp.jedit.MiscUtilities.getLastSeparatorIndex;
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
 // }}}

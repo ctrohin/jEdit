@@ -43,6 +43,7 @@ import org.gjt.sp.jedit.bufferio.BufferIORequest;
 import org.gjt.sp.jedit.bufferio.MarkersSaveRequest;
 import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.io.FileVFS;
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSFile;
@@ -1076,13 +1077,13 @@ public class Buffer extends JEditBuffer
 	public Icon getIcon()
 	{
 		if(isDirty())
-			return GUIUtilities.loadIcon("dirty.gif");
+			return IconManager.loadIcon("dirty.gif");
 		else if(isReadOnly() || isLocked())
-			return GUIUtilities.loadIcon("readonly.gif");
+			return IconManager.loadIcon("readonly.gif");
 		else if(getFlag(NEW_FILE))
-			return GUIUtilities.loadIcon("new.gif");
+			return IconManager.loadIcon("new.gif");
 		else
-			return GUIUtilities.loadIcon("normal.gif");
+			return IconManager.loadIcon("normal.gif");
 	} //}}}
 
 	//}}}

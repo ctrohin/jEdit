@@ -21,6 +21,7 @@
 
 package org.gjt.sp.jedit.gui.components;
 
+import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
 
@@ -32,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 
 public class CachedDynamicMultiResolution extends BaseMultiResolutionImage {
-    private final GoogleMaterialDesignIcons icon;
+    private final IconCode icon;
     private final Map<Float, Image> cache = new Hashtable<>();
     private final List<Image> variants = new ArrayList<>();
 
-    public CachedDynamicMultiResolution(GoogleMaterialDesignIcons icon, final int baseSize) {
+    public CachedDynamicMultiResolution(IconCode icon, final int baseSize) {
         super(IconFontSwing.buildImage(icon, baseSize, Color.gray));
         this.icon = icon;
     }

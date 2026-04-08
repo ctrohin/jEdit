@@ -1,6 +1,7 @@
 package org.gjt.sp.jedit.options;
 
 import org.gjt.sp.jedit.GUIUtilities;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 
 public class IconTheme
@@ -19,7 +20,7 @@ public class IconTheme
 	
 	public static void set(String name)
 	{
-		GUIUtilities.setIconPath("jeditresource:/org/gjt/sp/jedit/icons/themes/" + name + "/");
+		IconManager.setIconPath("jeditresource:/org/gjt/sp/jedit/icons/themes/" + name + "/");
 		jEdit.setProperty("icon-theme", name);
 	}
 	
