@@ -101,6 +101,7 @@
 		<dependency org="com.github.jiconfont" name="jiconfont" rev="1.0.0"/>
 		<dependency org="com.github.jiconfont" name="jiconfont-swing" rev="1.0.1"/>
 		<dependency org="com.github.jiconfont" name="jiconfont-google_material_design_icons" rev="2.2.0.1"/>
+		<dependency org="com.github.jiconfont" name="jiconfont-font_awesome" rev="4.7.0.1"/>
 		<dependency org="com.formdev" name="flatlaf" rev="3.7.1"/>
 		<dependency org="com.formdev" name="flatlaf-extras" rev="3.7.1"/>
 	</dependencies>

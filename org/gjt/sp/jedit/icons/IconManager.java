@@ -181,61 +181,61 @@ public class IconManager {
     {
         IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
         deprecatedIcons.put("File.png",       "16x16/mimetypes/text-x-generic.png");
-        materialIcons.put("16x16/mimetypes/text-x-generic.png", ics(GoogleMaterialDesignIcons.CODE, 12));
+        materialIcons.put("16x16/mimetypes/text-x-generic.png", ics(MatIcons.CODE, 12));
 
         deprecatedIcons.put("Folder.png",     "16x16/places/folder.png");
-        materialIcons.put("16x16/places/folder.png", ics(GoogleMaterialDesignIcons.FOLDER, 16));
+        materialIcons.put("16x16/places/folder.png", ics(MatIcons.FOLDER, 16));
 
         deprecatedIcons.put("OpenFolder.png", "16x16/status/folder-open.png");
-        materialIcons.put("16x16/status/folder-open.png", ics(GoogleMaterialDesignIcons.FOLDER_OPEN, 16));
+        materialIcons.put("16x16/status/folder-open.png", ics(MatIcons.FOLDER_OPEN, 16));
 
         deprecatedIcons.put("OpenFile.png",   "16x16/actions/edit-select-all.png");
-        materialIcons.put("16x16/actions/edit-select-all.png", ics(GoogleMaterialDesignIcons.SELECT_ALL, 16));
+        materialIcons.put("16x16/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 16));
 
         deprecatedIcons.put("ReloadSmall.png","16x16/actions/view-refresh.png");
-        materialIcons.put("16x16/actions/view-refresh.png", ics(GoogleMaterialDesignIcons.REFRESH, 16));
+        materialIcons.put("16x16/actions/view-refresh.png", ics(MatIcons.REFRESH, 16));
 
         deprecatedIcons.put("DriveSmall.png", "16x16/devices/drive-harddisk.png");
-        materialIcons.put("16x16/devices/drive-harddisk.png", ics(CustomIconCode.HARD_DISK, 16));
+        materialIcons.put("16x16/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 16));
 
         deprecatedIcons.put("New.png",        "22x22/actions/document-new.png");
-        materialIcons.put("22x22/actions/document-new.png", ics(CustomIconCode.NOTE_ADD, 22));
-        materialIcons.put("16x16/actions/document-new.png", ics(CustomIconCode.NOTE_ADD, 16));
+        materialIcons.put("22x22/actions/document-new.png", ics(MatIcons.NOTE_ADD, 22));
+        materialIcons.put("16x16/actions/document-new.png", ics(MatIcons.NOTE_ADD, 16));
 
         deprecatedIcons.put("NewDir.png",     "22x22/actions/folder-new.png");
-        materialIcons.put("22x22/actions/folder-new.png", ics(GoogleMaterialDesignIcons.CREATE_NEW_FOLDER, 22));
+        materialIcons.put("22x22/actions/folder-new.png", ics(MatIcons.CREATE_NEW_FOLDER, 22));
 
         deprecatedIcons.put("Reload.png",     "22x22/actions/view-refresh.png");
-        materialIcons.put("22x22/actions/view-refresh.png", ics(GoogleMaterialDesignIcons.REFRESH, 22));
+        materialIcons.put("22x22/actions/view-refresh.png", ics(MatIcons.REFRESH, 22));
 
         deprecatedIcons.put("Load.png",       "22x22/places/plugins.png");
-        materialIcons.put("22x22/places/plugins.png", ics(CustomIconCode.PLUGINS, 22));
+        materialIcons.put("22x22/places/plugins.png", ics(MatIcons.PLUGINS, 22));
 
         deprecatedIcons.put("Save.png",       "22x22/actions/document-save.png");
-        materialIcons.put("22x22/actions/document-save.png", ics(GoogleMaterialDesignIcons.SAVE, 22));
-        materialIcons.put("16x16/actions/document-save.png", ics(GoogleMaterialDesignIcons.SAVE, 16));
+        materialIcons.put("22x22/actions/document-save.png", ics(MatIcons.SAVE, 22));
+        materialIcons.put("16x16/actions/document-save.png", ics(MatIcons.SAVE, 16));
 
         deprecatedIcons.put("SaveAs.png",     "22x22/actions/document-save-as.png");
-        materialIcons.put("22x22/actions/document-save-as.png", ics(GoogleMaterialDesignIcons.SAVE, 22));
-        materialIcons.put("16x16/actions/document-save-as.png", ics(GoogleMaterialDesignIcons.SAVE, 16));
+        materialIcons.put("22x22/actions/document-save-as.png", ics(MatIcons.SAVE, 22));
+        materialIcons.put("16x16/actions/document-save-as.png", ics(MatIcons.SAVE, 16));
 
         deprecatedIcons.put("SaveAll.png",    "22x22/actions/document-save-all.png");
-        materialIcons.put("22x22/actions/document-save-all.png", ics(GoogleMaterialDesignIcons.SAVE, 22));
-        materialIcons.put("16x16/actions/document-save-all.png", ics(GoogleMaterialDesignIcons.SAVE, 16));
+        materialIcons.put("22x22/actions/document-save-all.png", ics(MatIcons.SAVE, 22));
+        materialIcons.put("16x16/actions/document-save-all.png", ics(MatIcons.SAVE, 16));
 
         deprecatedIcons.put("Open.png",       "22x22/actions/document-open.png");
-        materialIcons.put("22x22/actions/document-open.png", ics(CustomIconCode.FILE_OPEN, 22));
-        materialIcons.put("16x16/actions/document-open.png", ics(CustomIconCode.FILE_OPEN, 16));
+        materialIcons.put("22x22/actions/document-open.png", ics(MatIcons.FILE_OPEN, 22));
+        materialIcons.put("16x16/actions/document-open.png", ics(MatIcons.FILE_OPEN, 16));
 
         deprecatedIcons.put("Print.png",      "22x22/actions/document-print.png");
-        materialIcons.put("22x22/actions/document-print.png", ics(GoogleMaterialDesignIcons.PRINT, 22));
-        materialIcons.put("16x16/actions/document-print.png", ics(GoogleMaterialDesignIcons.PRINT, 16));
+        materialIcons.put("22x22/actions/document-print.png", ics(MatIcons.PRINT, 22));
+        materialIcons.put("16x16/actions/document-print.png", ics(MatIcons.PRINT, 16));
 
         deprecatedIcons.put("Drive.png",      "22x22/devices/drive-harddisk.png");
-        materialIcons.put("22x22/devices/drive-harddisk.png", ics(CustomIconCode.HARD_DISK, 22));
+        materialIcons.put("22x22/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 22));
 
         deprecatedIcons.put("Clear.png",      "22x22/actions/edit-clear.png");
-        materialIcons.put("22x22/actions/edit-clear.png", ics(GoogleMaterialDesignIcons.CLEAR, 22));
+        materialIcons.put("22x22/actions/edit-clear.png", ics(MatIcons.CLEAR, 22));
 
         deprecatedIcons.put("Run.png",        "22x22/actions/application-run.png");
         deprecatedIcons.put("RunAgain.png",   "22x22/actions/application-run-again.png");
@@ -243,61 +243,61 @@ public class IconManager {
         deprecatedIcons.put("CopyToBuffer.png", "22x22/actions/copy-to-buffer.png");
 
         deprecatedIcons.put("Plus.png",       "22x22/actions/list-add.png");
-        materialIcons.put("22x22/actions/list-add.png", ics(GoogleMaterialDesignIcons.ADD, 22));
-        materialIcons.put("16x16/actions/list-add.png", ics(GoogleMaterialDesignIcons.ADD, 16));
+        materialIcons.put("22x22/actions/list-add.png", ics(MatIcons.ADD, 22));
+        materialIcons.put("16x16/actions/list-add.png", ics(MatIcons.ADD, 16));
 
         deprecatedIcons.put("Minus.png",      "22x22/actions/list-remove.png");
-        materialIcons.put("22x22/actions/list-remove.png", ics(GoogleMaterialDesignIcons.REMOVE, 22));
-        materialIcons.put("16x16/actions/list-remove.png", ics(GoogleMaterialDesignIcons.REMOVE, 16));
+        materialIcons.put("22x22/actions/list-remove.png", ics(MatIcons.REMOVE, 22));
+        materialIcons.put("16x16/actions/list-remove.png", ics(MatIcons.REMOVE, 16));
 
         deprecatedIcons.put("Find.png",       "22x22/actions/edit-find.png");
-        materialIcons.put("22x22/actions/edit-find.png", ics(GoogleMaterialDesignIcons.SEARCH, 22));
-        materialIcons.put("16x16/actions/edit-find.png", ics(GoogleMaterialDesignIcons.SEARCH, 16));
+        materialIcons.put("22x22/actions/edit-find.png", ics(MatIcons.SEARCH, 22));
+        materialIcons.put("16x16/actions/edit-find.png", ics(MatIcons.SEARCH, 16));
 
         deprecatedIcons.put("FindAgain.png",  "22x22/actions/edit-find-next.png");
-        materialIcons.put("22x22/actions/edit-find-next.png", ics(GoogleMaterialDesignIcons.NAVIGATE_NEXT, 22));
-        materialIcons.put("16x16/actions/edit-find-next.png", ics(GoogleMaterialDesignIcons.NAVIGATE_NEXT, 16));
+        materialIcons.put("22x22/actions/edit-find-next.png", ics(MatIcons.NAVIGATE_NEXT, 22));
+        materialIcons.put("16x16/actions/edit-find-next.png", ics(MatIcons.NAVIGATE_NEXT, 16));
 
         deprecatedIcons.put("FindInDir.png",  "22x22/actions/edit-find-in-folder.png");
-        materialIcons.put("22x22/actions/edit-find-in-folder.png", ics(GoogleMaterialDesignIcons.SEARCH, 22));
-        materialIcons.put("16x16/actions/edit-find-in-folder.png", ics(GoogleMaterialDesignIcons.SEARCH, 16));
+        materialIcons.put("22x22/actions/edit-find-in-folder.png", ics(MatIcons.SEARCH, 22));
+        materialIcons.put("16x16/actions/edit-find-in-folder.png", ics(MatIcons.SEARCH, 16));
 
         deprecatedIcons.put("Parse.png",      "22x22/actions/document-reload2.png");
-        materialIcons.put("22x22/actions/document-reload2.png", ics(GoogleMaterialDesignIcons.REFRESH, 22));
-        materialIcons.put("22x22/actions/document-reload.png", ics(GoogleMaterialDesignIcons.REFRESH, 22));
-        materialIcons.put("16x16/actions/document-reload2.png", ics(GoogleMaterialDesignIcons.REFRESH, 16));
+        materialIcons.put("22x22/actions/document-reload2.png", ics(MatIcons.REFRESH, 22));
+        materialIcons.put("22x22/actions/document-reload.png", ics(MatIcons.REFRESH, 22));
+        materialIcons.put("16x16/actions/document-reload2.png", ics(MatIcons.REFRESH, 16));
 
         deprecatedIcons.put("Delete.png",     "22x22/actions/edit-delete.png");
-        materialIcons.put("22x22/actions/edit-delete.png", ics(GoogleMaterialDesignIcons.DELETE, 22));
-        materialIcons.put("16x16/actions/edit-delete.png", ics(GoogleMaterialDesignIcons.DELETE, 16));
+        materialIcons.put("22x22/actions/edit-delete.png", ics(MatIcons.DELETE, 22));
+        materialIcons.put("16x16/actions/edit-delete.png", ics(MatIcons.DELETE, 16));
 
         deprecatedIcons.put("Paste.png",      "22x22/actions/edit-paste.png");
-        materialIcons.put("22x22/actions/edit-paste.png", ics(GoogleMaterialDesignIcons.CONTENT_PASTE, 22));
-        materialIcons.put("16x16/actions/edit-paste.png", ics(GoogleMaterialDesignIcons.CONTENT_PASTE, 16));
+        materialIcons.put("22x22/actions/edit-paste.png", ics(MatIcons.CONTENT_PASTE, 22));
+        materialIcons.put("16x16/actions/edit-paste.png", ics(MatIcons.CONTENT_PASTE, 16));
 
         deprecatedIcons.put("Cut.png",        "22x22/actions/edit-cut.png");
-        materialIcons.put("22x22/actions/edit-cut.png", ics(GoogleMaterialDesignIcons.CONTENT_CUT, 22));
-        materialIcons.put("16x16/actions/edit-cut.png", ics(GoogleMaterialDesignIcons.CONTENT_CUT, 16));
+        materialIcons.put("22x22/actions/edit-cut.png", ics(MatIcons.CONTENT_CUT, 22));
+        materialIcons.put("16x16/actions/edit-cut.png", ics(MatIcons.CONTENT_CUT, 16));
 
         deprecatedIcons.put("Copy.png",       "22x22/actions/edit-copy.png");
-        materialIcons.put("22x22/actions/edit-copy.png", ics(GoogleMaterialDesignIcons.CONTENT_COPY, 22));
-        materialIcons.put("16x16/actions/edit-copy.png", ics(GoogleMaterialDesignIcons.CONTENT_COPY, 16));
+        materialIcons.put("22x22/actions/edit-copy.png", ics(MatIcons.CONTENT_COPY, 22));
+        materialIcons.put("16x16/actions/edit-copy.png", ics(MatIcons.CONTENT_COPY, 16));
 
         deprecatedIcons.put("Undo.png",       "22x22/actions/edit-undo.png");
-        materialIcons.put("22x22/actions/edit-undo.png", ics(GoogleMaterialDesignIcons.UNDO, 22));
-        materialIcons.put("16x16/actions/edit-undo.png", ics(GoogleMaterialDesignIcons.UNDO, 16));
+        materialIcons.put("22x22/actions/edit-undo.png", ics(MatIcons.UNDO, 22));
+        materialIcons.put("16x16/actions/edit-undo.png", ics(MatIcons.UNDO, 16));
 
         deprecatedIcons.put("Redo.png",       "22x22/actions/edit-redo.png");
-        materialIcons.put("22x22/actions/edit-redo.png", ics(GoogleMaterialDesignIcons.REDO, 22));
-        materialIcons.put("16x16/actions/edit-redo.png", ics(GoogleMaterialDesignIcons.REDO, 16));
+        materialIcons.put("22x22/actions/edit-redo.png", ics(MatIcons.REDO, 22));
+        materialIcons.put("16x16/actions/edit-redo.png", ics(MatIcons.REDO, 16));
 
         deprecatedIcons.put("CurrentDir.png", "22x22/status/folder-visiting.png");
-        materialIcons.put("22x22/status/folder-visiting.png", ics(GoogleMaterialDesignIcons.FOLDER, 22));
-        materialIcons.put("16x16/status/folder-visiting.png", ics(GoogleMaterialDesignIcons.FOLDER, 16));
+        materialIcons.put("22x22/status/folder-visiting.png", ics(MatIcons.FOLDER, 22));
+        materialIcons.put("16x16/status/folder-visiting.png", ics(MatIcons.FOLDER, 16));
 
         deprecatedIcons.put("ParentDir.png",  "22x22/actions/go-parent.png");
-        materialIcons.put("22x22/actions/go-parent.png", ics(GoogleMaterialDesignIcons.ARROW_UPWARD, 22));
-        materialIcons.put("16x16/actions/go-parent.png", ics(GoogleMaterialDesignIcons.ARROW_UPWARD, 16));
+        materialIcons.put("22x22/actions/go-parent.png", ics(MatIcons.ARROW_UPWARD, 22));
+        materialIcons.put("16x16/actions/go-parent.png", ics(MatIcons.ARROW_UPWARD, 16));
 
         deprecatedIcons.put("PageSetup.png",  "22x22/actions/printer-setup.png");
         deprecatedIcons.put("Plugins.png",    "22x22/apps/system-installer.png");
@@ -305,33 +305,33 @@ public class IconManager {
 
         deprecatedIcons.put("Stop.png",       "22x22/actions/process-stop.png");
         deprecatedIcons.put("Cancel.png",     "22x22/actions/process-stop.png");
-        materialIcons.put("22x22/actions/process-stop.png", ics(CustomIconCode.STOP, 22));
-        materialIcons.put("16x16/actions/process-stop.png", ics(CustomIconCode.STOP, 16));
+        materialIcons.put("22x22/actions/process-stop.png", ics(MatIcons.STOP, 22));
+        materialIcons.put("16x16/actions/process-stop.png", ics(MatIcons.STOP, 16));
 
         deprecatedIcons.put("Home.png",       "22x22/actions/go-home.png");
-        materialIcons.put("22x22/actions/go-home.png", ics(GoogleMaterialDesignIcons.HOME, 22));
-        materialIcons.put("16x16/actions/go-home.png", ics(GoogleMaterialDesignIcons.HOME, 16));
+        materialIcons.put("22x22/actions/go-home.png", ics(MatIcons.HOME, 22));
+        materialIcons.put("16x16/actions/go-home.png", ics(MatIcons.HOME, 16));
 
         deprecatedIcons.put("Help.png",       "22x22/apps/help-browser.png");
-        materialIcons.put("22x22/apps/help-browser.png", ics(GoogleMaterialDesignIcons.HELP, 22));
+        materialIcons.put("22x22/apps/help-browser.png", ics(MatIcons.HELP, 22));
 
         deprecatedIcons.put("Properties.png", "22x22/actions/document-properties.png");
-        materialIcons.put("22x22/actions/document-properties.png", ics(CustomIconCode.WRENCH, 22));
+        materialIcons.put("22x22/actions/document-properties.png", ics(MatIcons.WRENCH, 22));
 
         deprecatedIcons.put("Preferences.png","22x22/categories/preferences-system.png");
-        materialIcons.put("22x22/categories/preferences-system.png", ics(GoogleMaterialDesignIcons.SETTINGS, 22));
-        materialIcons.put("16x16/categories/preferences-system.png", ics(GoogleMaterialDesignIcons.SETTINGS, 16));
+        materialIcons.put("22x22/categories/preferences-system.png", ics(MatIcons.SETTINGS, 22));
+        materialIcons.put("16x16/categories/preferences-system.png", ics(MatIcons.SETTINGS, 16));
 
         deprecatedIcons.put("ZoomIn.png",     "22x22/actions/zoom-in.png");
-        materialIcons.put("22x22/actions/zoom-in.png", ics(CustomIconCode.ZOOM_IN, 22));
+        materialIcons.put("22x22/actions/zoom-in.png", ics(MatIcons.ZOOM_IN, 22));
 
         deprecatedIcons.put("ZoomOut.png",    "22x22/actions/zoom-out.png");
-        materialIcons.put("22x22/actions/zoom-out.png", ics(CustomIconCode.ZOOM_OUT, 22));
+        materialIcons.put("22x22/actions/zoom-out.png", ics(MatIcons.ZOOM_OUT, 22));
 
         deprecatedIcons.put("BrokenImage.png","22x22/status/image-missing.png");
 
         deprecatedIcons.put("AdjustWidth.png","22x22/actions/resize-horisontal.png");
-        materialIcons.put("22x22/actions/resize-horisontal.png", ics(CustomIconCode.RESIZE_HORIZONTAL, 22));
+        materialIcons.put("22x22/actions/resize-horisontal.png", ics(MatIcons.RESIZE_HORIZONTAL, 22));
 
         deprecatedIcons.put("ToolbarMenu.gif","ToolbarMenu.gif");
 
@@ -339,77 +339,77 @@ public class IconManager {
         deprecatedIcons.put("Pause.png","22x22/actions/media-playback-pause.png");
 
         deprecatedIcons.put("MultipleResults.png", "22x22/actions/edit-find-multiple.png");
-        materialIcons.put("22x22/actions/edit-find-multiple.png", ics(CustomIconCode.FIND_MULTIPLE, 22));
+        materialIcons.put("22x22/actions/edit-find-multiple.png", ics(MatIcons.FIND_MULTIPLE, 22));
 
         deprecatedIcons.put("SingleResult.png",    "22x22/actions/edit-find-single.png");
-        materialIcons.put("22x22/actions/edit-find-single.png", ics(CustomIconCode.TARGET, 22));
+        materialIcons.put("22x22/actions/edit-find-single.png", ics(MatIcons.TARGET, 22));
 
         deprecatedIcons.put("NextFile.png",    "22x22/go-last.png");
         deprecatedIcons.put("PreviousFile.png","22x22/go-first.png");
-        materialIcons.put("22x22/go-first.png", ics(CustomIconCode.FIRST, 22));
-        materialIcons.put("22x22/go-last.png", ics(CustomIconCode.LAST, 22));
-        materialIcons.put("22x22/actions/go-first.png", ics(CustomIconCode.FIRST, 22));
-        materialIcons.put("22x22/actions/go-last.png", ics(CustomIconCode.LAST, 22));
+        materialIcons.put("22x22/go-first.png", ics(MatIcons.FIRST, 22));
+        materialIcons.put("22x22/go-last.png", ics(MatIcons.LAST, 22));
+        materialIcons.put("22x22/actions/go-first.png", ics(MatIcons.FIRST, 22));
+        materialIcons.put("22x22/actions/go-last.png", ics(MatIcons.LAST, 22));
 
         deprecatedIcons.put("closebox.gif",   "10x10/actions/close.png");
-        materialIcons.put("10x10/actions/close.png", ics(GoogleMaterialDesignIcons.CLOSE, 16));
+        materialIcons.put("10x10/actions/close.png", ics(MatIcons.CLOSE, 16));
 
         deprecatedIcons.put("normal.gif",   "10x10/status/document-unmodified.png");
         deprecatedIcons.put("readonly.gif",   "10x10/emblem/emblem-readonly.png");
         deprecatedIcons.put("dirty.gif",    "10x10/status/document-modified.png");
         deprecatedIcons.put("new.gif",    "10x10/status/document-new.png");
 
-        materialIcons.put("16x16/actions/document-close.png", ics(GoogleMaterialDesignIcons.CLOSE, 16));
+        materialIcons.put("16x16/actions/document-close.png", ics(MatIcons.CLOSE, 16));
 
         deprecatedIcons.put("ArrowU.png", "22x22/actions/go-up.png");
-        materialIcons.put("22x22/actions/go-up.png", ics(GoogleMaterialDesignIcons.ARROW_UPWARD, 22));
+        materialIcons.put("22x22/actions/go-up.png", ics(MatIcons.ARROW_UPWARD, 22));
 
         deprecatedIcons.put("ArrowR.png", "22x22/actions/go-next.png");
-        materialIcons.put("22x22/actions/go-next.png", ics(GoogleMaterialDesignIcons.ARROW_FORWARD, 22));
+        materialIcons.put("22x22/actions/go-next.png", ics(MatIcons.ARROW_FORWARD, 22));
 
         deprecatedIcons.put("ArrowD.png", "22x22/actions/go-down.png");
-        materialIcons.put("22x22/actions/go-down.png", ics(GoogleMaterialDesignIcons.ARROW_DOWNWARD, 22));
+        materialIcons.put("22x22/actions/go-down.png", ics(MatIcons.ARROW_DOWNWARD, 22));
 
         deprecatedIcons.put("ArrowL.png", "22x22/actions/go-previous.png");
-        materialIcons.put("22x22/actions/go-previous.png", ics(GoogleMaterialDesignIcons.ARROW_BACK, 22));
+        materialIcons.put("22x22/actions/go-previous.png", ics(MatIcons.ARROW_BACK, 22));
 
         deprecatedIcons.put("arrow1.png", "16x16/actions/group-expand.png");
-        materialIcons.put("16x16/actions/group-expand.png", ics(CustomIconCode.CHEVRON_RIGHT, 16));
+        materialIcons.put("16x16/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 16));
 
         deprecatedIcons.put("arrow2.png", "16x16/actions/group-collapse.png");
-        materialIcons.put("16x16/actions/group-collapse.png", ics(CustomIconCode.CHEVRON_DOWN, 16));
+        materialIcons.put("16x16/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 16));
 
         deprecatedIcons.put("NewView.png", "22x22/actions/window-new.png");
-        materialIcons.put("22x22/actions/window-new.png", ics(GoogleMaterialDesignIcons.OPEN_IN_NEW, 22));
+        materialIcons.put("22x22/actions/window-new.png", ics(MatIcons.OPEN_IN_NEW, 22));
 
         deprecatedIcons.put("UnSplit.png", "22x22/actions/window-unsplit.png");
-        materialIcons.put("22x22/actions/window-unsplit.png", ics(CustomIconCode.SPLIT_MERGE, 22));
+        materialIcons.put("22x22/actions/window-unsplit.png", ics(MatIcons.SPLIT_MERGE, 22));
 
         deprecatedIcons.put("SplitVertical.png", "22x22/actions/window-split-vertical.png");
-        materialIcons.put("22x22/actions/window-split-vertical.png", ics(CustomIconCode.SPLIT_VERTICAL, 22));
+        materialIcons.put("22x22/actions/window-split-vertical.png", ics(MatIcons.SPLIT_VERTICAL, 22));
 
         deprecatedIcons.put("SplitHorizontal.png", "22x22/actions/window-split-horizontal.png");
-        materialIcons.put("22x22/actions/window-split-horizontal.png", ics(CustomIconCode.SPLIT_HORIZONTAL, 22));
+        materialIcons.put("22x22/actions/window-split-horizontal.png", ics(MatIcons.SPLIT_HORIZONTAL, 22));
 
         deprecatedIcons.put("ButtonProperties.png", "22x22/actions/document-properties.png");
-        materialIcons.put("16x16/actions/document-properties.png", ics(CustomIconCode.PROPERTIES, 16));
-        materialIcons.put("22x22/actions/document-properties.png", ics(CustomIconCode.PROPERTIES, 22));
+        materialIcons.put("16x16/actions/document-properties.png", ics(MatIcons.PROPERTIES, 16));
+        materialIcons.put("22x22/actions/document-properties.png", ics(MatIcons.PROPERTIES, 22));
 
 
-        materialIcons.put("16x16/actions/close.png", ics(GoogleMaterialDesignIcons.CLOSE, 16));
-        materialIcons.put("22x22/actions/edit-find-replace.png", ics(GoogleMaterialDesignIcons.FIND_REPLACE, 22));
+        materialIcons.put("16x16/actions/close.png", ics(MatIcons.CLOSE, 16));
+        materialIcons.put("22x22/actions/edit-find-replace.png", ics(MatIcons.FIND_REPLACE, 22));
 
-        materialIcons.put("16x16/actions/media-record.png", ics(CustomIconCode.RECORD, 16));
-        materialIcons.put("16x16/actions/media-playback-stop.png", ics(CustomIconCode.STOP, 16));
-        materialIcons.put("22x22/actions/document-close.png", ics(GoogleMaterialDesignIcons.CLOSE, 22));
-        materialIcons.put("22x22/actions/bookmark-new.png", ics(GoogleMaterialDesignIcons.BOOKMARK, 22));
-        materialIcons.put("22x22/actions/go-jump.png", ics(CustomIconCode.JUMP, 22));
-        materialIcons.put("16x16/actions/window-new.png", ics(CustomIconCode.WINDOW, 16));
-        materialIcons.put("16x16/apps/system-file-manager.png", ics(CustomIconCode.FILE_MANAGER, 16));
-        materialIcons.put("22x22/actions/system-search.png", ics(GoogleMaterialDesignIcons.SEARCH, 22));
-        materialIcons.put("arrow-asc.png", ics(CustomIconCode.CHEVRON_UP, 16));
-        materialIcons.put("arrow-desc.png", ics(CustomIconCode.CHEVRON_DOWN, 10));
-        materialIcons.put("16x16/status/image-loading.png", ics(CustomIconCode.CLOCK, 16));
+        materialIcons.put("16x16/actions/media-record.png", ics(MatIcons.RECORD, 16));
+        materialIcons.put("16x16/actions/media-playback-stop.png", ics(MatIcons.STOP, 16));
+        materialIcons.put("22x22/actions/document-close.png", ics(MatIcons.CLOSE, 22));
+        materialIcons.put("22x22/actions/bookmark-new.png", ics(MatIcons.BOOKMARK, 22));
+        materialIcons.put("22x22/actions/go-jump.png", ics(MatIcons.JUMP, 22));
+        materialIcons.put("16x16/actions/window-new.png", ics(MatIcons.WINDOW, 16));
+        materialIcons.put("16x16/apps/system-file-manager.png", ics(MatIcons.FILE_MANAGER, 16));
+        materialIcons.put("22x22/actions/system-search.png", ics(MatIcons.SEARCH, 22));
+        materialIcons.put("arrow-asc.png", ics(MatIcons.CHEVRON_UP, 16));
+        materialIcons.put("arrow-desc.png", ics(MatIcons.CHEVRON_DOWN, 10));
+        materialIcons.put("16x16/status/image-loading.png", ics(MatIcons.CLOCK, 16));
         //
     }
     //}}}
