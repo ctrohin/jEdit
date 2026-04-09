@@ -4,9 +4,11 @@ import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 
+import java.util.Arrays;
+
 public class IconTheme
 {
-	static final String[] builtIn  = new String[] { "tango", "classic" };
+	static final String[] builtIn  = new String[] { "material", "font-awesome" };
 	
 	public static String[] builtInNames()
 	{
@@ -15,7 +17,11 @@ public class IconTheme
 
 	public static String get() 
 	{
-		return jEdit.getProperty("icon-theme", "tango");
+		var theme = jEdit.getProperty("icon-theme", "material");
+		if (Arrays.stream(builtIn).noneMatch(theme::equals)) {
+			return builtIn[0];
+		}
+		return theme;
 	}
 	
 	public static void set(String name)
