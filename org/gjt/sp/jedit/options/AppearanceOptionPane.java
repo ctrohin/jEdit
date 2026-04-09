@@ -102,7 +102,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		/* Icon Theme */
 		String[] themes = IconTheme.builtInNames();
 		iconThemes = new JComboBox<String>(themes);
-		addComponent(jEdit.getProperty("options.appearance.iconTheme"), iconThemes);
+//		addComponent(jEdit.getProperty("options.appearance.iconTheme"), iconThemes);
 		String oldTheme = IconTheme.get();
 		for (int i=0; i<themes.length; ++i)
 		{

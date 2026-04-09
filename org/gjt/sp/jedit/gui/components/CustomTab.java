@@ -28,6 +28,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -58,13 +59,10 @@ public class CustomTab extends JPanel {
         setBackground(getTabBackground(selected));
         close.setBackground(getTabBackground(selected));
         setBorder(getBorder(selected));
-        label.setFont(label.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN));
+//        label.setFont(label.getFont().deriveFont(selected ? Font.BOLD : Font.PLAIN));
         repaint();
     }
 
-    private Color getJListSelectionBackground() {
-        return UIManager.getColor("ComboBox.selectionBackground");
-    }
 
     private Color getLabelBackground() {
         return UIManager.getColor("Label.background");
@@ -84,8 +82,11 @@ public class CustomTab extends JPanel {
 
     private Border getBorder(final boolean selected) {
         if (selected) {
-            return new FlatLineBorder(new Insets(2, 2, 2, 2), getJListSelectionBackground(), 2, 10);
+
+//            return new MatteBorder(0, 0, 3, 0, UIManager.getColor("TabbedPane.underlineColor"));
+            return new FlatLineBorder(new Insets(2, 2, 2, 2), UIManager.getColor("TabbedPane.underlineColor"), 2, 10);
         }
+//        return new MatteBorder(0, 0, 3, 0, UIManager.getColor("TabbedPane.background"));
         return new FlatLineBorder(new Insets(2, 2, 2, 2), getTextAreaDisabledBackground(), 1, 10);
     }
 }

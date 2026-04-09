@@ -29,7 +29,7 @@ defer=false
 startup=true
 
 broken-image.icon=22x22/status/image-missing.png
-dropdown-arrow.icon=ToolbarMenu.gif
+dropdown-arrow.icon=16x16/actions/group-collapse.png
 #}}}
 
 #{{{ Tool bar
@@ -163,23 +163,23 @@ file=new-file \
 	 print \
 	 - \
 	 exit
-new-file.icon.small=16x16/actions/document-new.png
-new-file-in-mode.icon.small=16x16/actions/document-new.png
-open-file.icon.small=16x16/actions/document-open.png
-reload.icon.small=16x16/actions/view-refresh.png
-reload-all.icon.small=16x16/actions/view-refresh.png
-close-buffer.icon.small=16x16/actions/document-close.png
-closeall-bufferset.icon.small=16x16/actions/document-close.png
-closeall-except-active.icon.small=16x16/actions/document-close.png
-global-close-buffer.icon.small=16x16/actions/document-close.png
-close-all.icon.small=16x16/actions/document-close.png
-save.icon.small=16x16/actions/document-save.png
-save-as.icon.small=16x16/actions/document-save-as.png
-save-a-copy-as.icon.small=16x16/actions/document-save-as.png
-save-all.icon.small=16x16/actions/document-save-all.png
-print.icon.small=16x16/actions/document-print.png
-page-setup.icon.small=16x16/actions/document-properties.png
-exit.icon.small=16x16/actions/process-stop.png
+new-file.icon.small=22x22/actions/document-new.png
+new-file-in-mode.icon.small=22x22/actions/document-new.png
+open-file.icon.small=22x22/actions/document-open.png
+reload.icon.small=22x22/actions/view-refresh.png
+reload-all.icon.small=22x22/actions/view-refresh.png
+close-buffer.icon.small=22x22/actions/document-close.png
+closeall-bufferset.icon.small=22x22/actions/document-close.png
+closeall-except-active.icon.small=22x22/actions/document-close.png
+global-close-buffer.icon.small=22x22/actions/document-close.png
+close-all.icon.small=22x22/actions/document-close.png
+save.icon.small=22x22/actions/document-save.png
+save-as.icon.small=22x22/actions/document-save-as.png
+save-a-copy-as.icon.small=22x22/actions/document-save-as.png
+save-all.icon.small=22x22/actions/document-save-all.png
+print.icon.small=22x22/actions/document-print.png
+page-setup.icon.small=22x22/actions/document-properties.png
+exit.icon.small=22x22/actions/process-stop.png
 exit.icon.medium=22x22/actions/process-stop.png
 
 #{{{ Recent Files menu
@@ -211,12 +211,12 @@ edit=undo \
 	 %text \
 	 %indent \
 	 %source
-undo.icon.small=16x16/actions/edit-undo.png
-redo.icon.small=16x16/actions/edit-redo.png
-cut.icon.small=16x16/actions/edit-cut.png
-copy.icon.small=16x16/actions/edit-copy.png
-paste.icon.small=16x16/actions/edit-paste.png
-select-all.icon.small=16x16/actions/edit-select-all.png
+undo.icon.small=22x22/actions/edit-undo.png
+redo.icon.small=22x22/actions/edit-redo.png
+cut.icon.small=22x22/actions/edit-cut.png
+copy.icon.small=22x22/actions/edit-copy.png
+paste.icon.small=22x22/actions/edit-paste.png
+select-all.icon.small=22x22/actions/edit-select-all.png
 
 #{{{ More Clipboard menu
 clipboard=cut-append \
@@ -388,9 +388,9 @@ view=new-view \
 	 - \
 	 set-view-title \
 	 toggle-full-screen
-new-view.icon.small=16x16/actions/window-new.png
-new-plain-view.icon.small=16x16/actions/window-new.png
-close-view.icon.small=16x16/actions/document-close.png
+new-view.icon.small=22x22/actions/window-new.png
+new-plain-view.icon.small=22x22/actions/window-new.png
+close-view.icon.small=22x22/actions/document-close.png
 
 #{{{ Scrolling menu
 scrolling=scroll-to-current-line \
@@ -454,9 +454,9 @@ utils=vfs.browser \
 	  - \
 	  %quick-options
 
-buffer-options.icon.small=16x16/actions/document-properties.png
-global-options.icon.small=16x16/categories/preferences-system.png
-combined-options.icon.small=16x16/categories/preferences-system.png
+buffer-options.icon.small=22x22/actions/document-properties.png
+global-options.icon.small=22x22/categories/preferences-system.png
+combined-options.icon.small=22x22/categories/preferences-system.png
 
 #{{{ Recent Directories menu
 recent-directories.code=new RecentDirectoriesProvider();
@@ -518,9 +518,9 @@ macros=new-macro \
 	   rescan-macros \
 	   -
 macros.code=new MacrosProvider();
-new-macro.icon.small=16x16/actions/document-new.png
-record-macro.icon.small=16x16/actions/media-record.png
-stop-recording.icon.small=16x16/actions/media-playback-stop.png
+new-macro.icon.small=22x22/actions/document-new.png
+record-macro.icon.small=22x22/actions/media-record.png
+stop-recording.icon.small=22x22/actions/media-playback-stop.png
 #}}}
 
 #{{{ Plugins menu
@@ -947,13 +947,13 @@ vfs.browser.default-filter=*[^~#]
 vfs.browser.filter-enabled=true
 vfs.browser.file.icon=16x16/mimetypes/text-x-generic.png
 vfs.browser.icon.small=16x16/apps/system-file-manager.png
-vfs.browser.open-file.icon=16x16/actions/edit-select-all.png
-vfs.browser.dir.icon=16x16/places/folder.png
-vfs.browser.open-dir.icon=16x16/status/folder-open.png
-vfs.browser.filesystem.icon=16x16/devices/drive-harddisk.png
+vfs.browser.open-file.icon=12x12/actions/opened-file.png
+vfs.browser.dir.icon=12x12/places/folder.png
+vfs.browser.open-dir.icon=12x12/status/folder-open.png
+vfs.browser.filesystem.icon=12x12/devices/drive-harddisk.png
 vfs.browser.loading.icon=16x16/status/image-loading.png
-vfs.browser.expand.icon=16x16/actions/group-expand.png
-vfs.browser.collapse.icon=16x16/actions/group-collapse.png
+vfs.browser.expand.icon=12x12/actions/group-expand.png
+vfs.browser.collapse.icon=12x12/actions/group-collapse.png
 vfs.browser.dock-position=left
 
 #{{{ Actions

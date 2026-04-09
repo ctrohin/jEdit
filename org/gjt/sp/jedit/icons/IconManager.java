@@ -24,12 +24,10 @@ package org.gjt.sp.jedit.icons;
 import io.vavr.control.Try;
 import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
-import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.gui.components.CachedDynamicMultiResolution;
-import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.options.IconTheme;
 import org.gjt.sp.util.Log;
 
@@ -50,7 +48,6 @@ public class IconManager {
     private static final String defaultIconPath = "jeditresource:/org/gjt/sp/jedit/icons/themes/";
     private static final Map<String, String> deprecatedIcons = new HashMap<>();
     private static final Map<String, IconAndSize> material = new HashMap<>();
-    private static final Map<String, IconAndSize> fontawesome = new HashMap<>();
     private static SoftReference<Map<String, Icon>> iconCache;
     private static String iconPath = "jeditresource:/org/gjt/sp/jedit/icons/themes/";
 
@@ -67,12 +64,10 @@ public class IconManager {
         if(iconName == null)
             return null;
 
-        boolean isMaterial = iconPath.contains("/material/");
-
         // * Enable old icon naming scheme support
         final var iconString = deprecatedIcons.getOrDefault(iconName, iconName);
         // TODO: Check if it is possible to render a multiresolution image properly
-        final IconAndSize fontIcon = isMaterial ? material.get(iconString) : fontawesome.get(iconString);
+        final IconAndSize fontIcon = material.get(iconString);
         if (fontIcon == null) {
             Log.log(Log.ERROR, null, "Icon material mapping found: " + iconString);
         }
@@ -130,13 +125,15 @@ public class IconManager {
         }
         Image[] imgs = new Image[res.length];
         for (int i = 0; i < res.length; i++) {
-            imgs[i] = IconFontSwing.buildImage(icon.icon(), res[i], UIManager.getColor("ComboBox.selectionBackground"));
-            Log.log(Log.ERROR,
-                "",
-                "Resolution scale " + res[i] + " initial size " + icon.size() + " Computed width " + imgs[i].getWidth(null) + " Computed height " + imgs[i].getHeight(null));
+            imgs[i] = IconFontSwing.buildImage(icon.icon(), res[i], NEUTRAL_GREY);
+//            Log.log(Log.ERROR,
+//                "",
+//                "Resolution scale " + res[i] + " initial size " + icon.size() + " Computed width " + imgs[i].getWidth(null) + " Computed height " + imgs[i].getHeight(null));
         }
         return new BaseMultiResolutionImage(0, imgs);
     }
+
+    private static final Color NEUTRAL_GREY = new Color(128, 128, 128);
 
     private static final HashMap<Integer, int[]> resolutions = new HashMap<>();
     private static final double[] SCALES = {1d, 1.25, 1.5, 2d, 2.5, 3};
@@ -175,7 +172,6 @@ public class IconManager {
     {
         initializeDeprecatedIcons();
         initializeMaterialIcons();
-        initializeFontawesomeIcons();
 
         // Load the icon theme but fallback on the old icons
         String theme = IconTheme.get();
@@ -291,18 +287,35 @@ public class IconManager {
         material.put("22x22/actions/go-previous.png", ics(MatIcons.ARROW_BACK, 22));
         material.put("16x16/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 16));
         material.put("16x16/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 16));
+
+        material.put("12x12/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 10));
+        material.put("12x12/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 10));
+
+        material.put("12x12/actions/opened-file.png", ics(MatIcons.PLAY_ARROW, 10));
+
         material.put("22x22/actions/window-new.png", ics(MatIcons.OPEN_IN_NEW, 22));
         material.put("22x22/actions/window-unsplit.png", ics(MatIcons.SPLIT_MERGE, 22));
         material.put("22x22/actions/window-split-vertical.png", ics(MatIcons.SPLIT_VERTICAL, 22));
         material.put("22x22/actions/window-split-horizontal.png", ics(MatIcons.SPLIT_HORIZONTAL, 22));
-        material.put("16x16/mimetypes/text-x-generic.png", ics(MatIcons.CODE, 10));
+
+        material.put("16x16/mimetypes/text-x-generic.png", ics(MatIcons.INSERT_DRIVE_FILE, 10));
         material.put("16x16/places/folder.png", ics(MatIcons.FOLDER, 16));
         material.put("16x16/status/folder-open.png", ics(MatIcons.FOLDER_OPEN, 16));
         material.put("16x16/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 16));
+        material.put("22x22/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 22));
         material.put("16x16/actions/view-refresh.png", ics(MatIcons.REFRESH, 16));
         material.put("16x16/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 16));
-        material.put("22x22/actions/document-new.png", ics(MatIcons.NOTE_ADD, 22));
         material.put("16x16/actions/document-new.png", ics(MatIcons.NOTE_ADD, 16));
+
+        material.put("12x12/places/folder.png", ics(MatIcons.FOLDER, 10));
+        material.put("12x12/status/folder-open.png", ics(MatIcons.FOLDER_OPEN, 10));
+        material.put("12x12/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 10));
+        material.put("12x12/actions/view-refresh.png", ics(MatIcons.REFRESH, 10));
+        material.put("12x12/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 10));
+        material.put("12x12/actions/document-new.png", ics(MatIcons.NOTE_ADD, 10));
+
+
+        material.put("22x22/actions/document-new.png", ics(MatIcons.NOTE_ADD, 22));
         material.put("22x22/actions/folder-new.png", ics(MatIcons.CREATE_NEW_FOLDER, 22));
         material.put("22x22/actions/view-refresh.png", ics(MatIcons.REFRESH, 22));
         material.put("22x22/places/plugins.png", ics(MatIcons.PLUGINS, 22));
@@ -314,8 +327,10 @@ public class IconManager {
         material.put("16x16/actions/document-save-all.png", ics(MatIcons.SAVE, 16));
         material.put("22x22/actions/document-open.png", ics(MatIcons.FILE_OPEN, 22));
         material.put("16x16/actions/document-open.png", ics(MatIcons.FILE_OPEN, 16));
+        material.put("12x12/actions/document-open.png", ics(MatIcons.FILE_OPEN, 12));
         material.put("22x22/actions/document-print.png", ics(MatIcons.PRINT, 22));
         material.put("16x16/actions/document-print.png", ics(MatIcons.PRINT, 16));
+        material.put("12x12/actions/document-print.png", ics(MatIcons.PRINT, 12));
         material.put("22x22/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 22));
         material.put("22x22/actions/edit-clear.png", ics(MatIcons.CLEAR, 22));
         material.put("22x22/actions/list-add.png", ics(MatIcons.ADD, 22));
@@ -352,7 +367,9 @@ public class IconManager {
         material.put("16x16/actions/close.png", ics(MatIcons.CLOSE, 16));
         material.put("22x22/actions/edit-find-replace.png", ics(MatIcons.FIND_REPLACE, 22));
         material.put("16x16/actions/media-record.png", ics(MatIcons.RECORD, 16));
+        material.put("22x22/actions/media-record.png", ics(MatIcons.RECORD, 22));
         material.put("16x16/actions/media-playback-stop.png", ics(MatIcons.STOP, 16));
+        material.put("22x22/actions/media-playback-stop.png", ics(MatIcons.STOP, 22));
         material.put("22x22/actions/document-close.png", ics(MatIcons.CLOSE, 22));
         material.put("22x22/actions/bookmark-new.png", ics(MatIcons.BOOKMARK, 22));
         material.put("22x22/actions/go-jump.png", ics(MatIcons.JUMP, 22));
@@ -362,114 +379,27 @@ public class IconManager {
         material.put("arrow-asc.png", ics(MatIcons.CHEVRON_UP, 10));
         material.put("arrow-desc.png", ics(MatIcons.CHEVRON_DOWN, 10));
         material.put("16x16/status/image-loading.png", ics(MatIcons.CLOCK, 16));
+        material.put("10x10/status/document-unmodified.png", ics(MatIcons.WEB_ASSET, 10));
+        material.put("10x10/status/document-modified.png", ics(MatIcons.CREATE, 10));
+        material.put("10x10/status/document-new.png", ics(MatIcons.NEW_RELEASES, 10));
 
-    }
+        /*
+reload.icon.small=12x12/actions/view-refresh.png
+reload-all.icon.small=12x12/actions/view-refresh.png
+close-buffer.icon.small=12x12/actions/document-close.png
+closeall-bufferset.icon.small=12x12/actions/document-close.png
+closeall-except-active.icon.small=12x12/actions/document-close.png
+global-close-buffer.icon.small=12x12/actions/document-close.png
+close-all.icon.small=12x12/actions/document-close.png
+save.icon.small=12x12/actions/document-save.png
+save-as.icon.small=12x12/actions/document-save-as.png
+save-a-copy-as.icon.small=12x12/actions/document-save-as.png
+save-all.icon.small=12x12/actions/document-save-all.png
+print.icon.small=12x12/actions/document-print.png
+page-setup.icon.small=12x12/actions/document-properties.png
+exit.icon.small=12x12/actions/process-stop.png
+         */
 
-    private static void initializeFontawesomeIcons() {
-        IconFontSwing.register(FontAwesome.getIconFont());
-        final int _22 = faSize(22);
-        final int _16 = faSize(16);
-        final int _10 = faSize(10);
-
-        fontawesome.put("22x22/actions/process-stop.png", ics(FAIcons.STOP, _22));
-        fontawesome.put("16x16/actions/process-stop.png", ics(FAIcons.STOP, _16));
-        fontawesome.put("22x22/actions/go-home.png", ics(FAIcons.HOME, _22));
-        fontawesome.put("16x16/actions/go-home.png", ics(FAIcons.HOME, _16));
-        fontawesome.put("22x22/apps/help-browser.png", ics(FAIcons.HELP, _22));
-        fontawesome.put("22x22/categories/preferences-system.png", ics(FAIcons.COG, _22));
-        fontawesome.put("16x16/categories/preferences-system.png", ics(FAIcons.COG, _16));
-        fontawesome.put("22x22/actions/zoom-in.png", ics(FAIcons.SEARCH_PLUS, _22));
-        fontawesome.put("22x22/actions/zoom-out.png", ics(FAIcons.SEARCH_MINUS, _22));
-        fontawesome.put("22x22/actions/edit-find-single.png", ics(FAIcons.CROSSHAIRS, _22));
-        fontawesome.put("22x22/actions/edit-find-multiple.png", ics(FAIcons.LIST_OL, _22));
-        fontawesome.put("22x22/actions/resize-horisontal.png", ics(FAIcons.ARROWS_H, _22));
-        fontawesome.put("22x22/go-first.png", ics(FAIcons.STEP_BACKWARD, _22));
-        fontawesome.put("22x22/go-last.png", ics(FAIcons.STEP_FORWARD, _22));
-        fontawesome.put("22x22/actions/go-first.png", ics(FAIcons.STEP_BACKWARD, _22));
-        fontawesome.put("22x22/actions/go-last.png", ics(FAIcons.STEP_FORWARD, _22));
-        fontawesome.put("10x10/actions/close.png", ics(FAIcons.TIMES, _16));
-        fontawesome.put("16x16/actions/document-close.png", ics(FAIcons.TIMES, _22));
-        fontawesome.put("22x22/actions/go-up.png", ics(FAIcons.LONG_ARROW_UP, _22));
-        fontawesome.put("22x22/actions/go-next.png", ics(FAIcons.LONG_ARROW_RIGHT, _22));
-        fontawesome.put("22x22/actions/go-down.png", ics(FAIcons.LONG_ARROW_DOWN, _22));
-        fontawesome.put("22x22/actions/go-previous.png", ics(FAIcons.LONG_ARROW_LEFT, _22));
-        fontawesome.put("16x16/actions/group-expand.png", ics(FAIcons.CHEVRON_RIGHT, _16));
-        fontawesome.put("16x16/actions/group-collapse.png", ics(FAIcons.CHEVRON_DOWN, _16));
-        fontawesome.put("22x22/actions/window-new.png", ics(FAIcons.WINDOW_MAXIMIZE, _22));
-        fontawesome.put("22x22/actions/window-unsplit.png", ics(FAIcons.OBJECT_GROUP, _22));
-        fontawesome.put("22x22/actions/window-split-vertical.png", ics(FAIcons.OBJECT_UNGROUP, _22));
-        fontawesome.put("22x22/actions/window-split-horizontal.png", ics(FAIcons.OBJECT_UNGROUP, _22));
-        fontawesome.put("16x16/mimetypes/text-x-generic.png", ics(FAIcons.CODE, _10));
-        fontawesome.put("16x16/places/folder.png", ics(FAIcons.FOLDER, _16));
-        fontawesome.put("16x16/status/folder-open.png", ics(FAIcons.FOLDER_OPEN, _16));
-        fontawesome.put("16x16/actions/edit-select-all.png", ics(FAIcons.CHECK_SQUARE_O, _16));
-        fontawesome.put("16x16/actions/view-refresh.png", ics(FAIcons.REFRESH, _16));
-        fontawesome.put("16x16/devices/drive-harddisk.png", ics(FAIcons.HDD_O, _16));
-        fontawesome.put("22x22/actions/document-new.png", ics(FAIcons.STICKY_NOTE, _22));
-        fontawesome.put("16x16/actions/document-new.png", ics(FAIcons.STICKY_NOTE, _16));
-        fontawesome.put("22x22/actions/folder-new.png", ics(FAIcons.FOLDER_O, _22)); //TODO: Find icon
-        fontawesome.put("22x22/actions/view-refresh.png", ics(FAIcons.REFRESH, _22));
-        fontawesome.put("22x22/places/plugins.png", ics(FAIcons.PLUG, _22)); //TODO: Find icon
-        fontawesome.put("22x22/actions/document-save.png", ics(FAIcons.FLOPPY_O, _22));
-        fontawesome.put("16x16/actions/document-save.png", ics(FAIcons.FLOPPY_O, _16));
-        fontawesome.put("22x22/actions/document-save-as.png", ics(FAIcons.FLOPPY_O, _22));
-        fontawesome.put("16x16/actions/document-save-as.png", ics(FAIcons.FLOPPY_O, _16));
-        fontawesome.put("22x22/actions/document-save-all.png", ics(FAIcons.FLOPPY_O, _22));
-        fontawesome.put("16x16/actions/document-save-all.png", ics(FAIcons.FLOPPY_O, _16));
-        fontawesome.put("22x22/actions/document-open.png", ics(FAIcons.FILE, _22));
-        fontawesome.put("16x16/actions/document-open.png", ics(FAIcons.FILE, _16));
-        fontawesome.put("22x22/actions/document-print.png", ics(FAIcons.PRINT, _22));
-        fontawesome.put("16x16/actions/document-print.png", ics(FAIcons.PRINT, _16));
-        fontawesome.put("22x22/devices/drive-harddisk.png", ics(FAIcons.HDD_O, _22));
-        fontawesome.put("22x22/actions/edit-clear.png", ics(FAIcons.ERASER, _22));
-        fontawesome.put("22x22/actions/list-add.png", ics(FAIcons.PLUS, _22));
-        fontawesome.put("16x16/actions/list-add.png", ics(FAIcons.PLUS, _16));
-        fontawesome.put("22x22/actions/list-remove.png", ics(FAIcons.MINUS, _22));
-        fontawesome.put("16x16/actions/list-remove.png", ics(FAIcons.MINUS, _16));
-        fontawesome.put("22x22/actions/edit-find.png", ics(FAIcons.SEARCH, _22));
-        fontawesome.put("16x16/actions/edit-find.png", ics(FAIcons.SEARCH, _16));
-        fontawesome.put("22x22/actions/edit-find-next.png", ics(FAIcons.CHEVRON_CIRCLE_LEFT, _22));
-        fontawesome.put("16x16/actions/edit-find-next.png", ics(FAIcons.CHEVRON_CIRCLE_RIGHT, _16));
-        fontawesome.put("22x22/actions/edit-find-in-folder.png", ics(FAIcons.SEARCH, _22));
-        fontawesome.put("16x16/actions/edit-find-in-folder.png", ics(FAIcons.SEARCH, _16));
-        fontawesome.put("22x22/actions/document-reload2.png", ics(FAIcons.REFRESH, _22));
-        fontawesome.put("22x22/actions/document-reload.png", ics(FAIcons.REFRESH, _22));
-        fontawesome.put("16x16/actions/document-reload2.png", ics(FAIcons.REFRESH, _16));
-        fontawesome.put("22x22/actions/edit-delete.png", ics(FAIcons.TRASH, _22));
-        fontawesome.put("16x16/actions/edit-delete.png", ics(FAIcons.TRASH, _16));
-        fontawesome.put("22x22/actions/edit-paste.png", ics(FAIcons.PENCIL_SQUARE_O, _22));
-        fontawesome.put("16x16/actions/edit-paste.png", ics(FAIcons.PENCIL_SQUARE_O, _16));
-        fontawesome.put("22x22/actions/edit-cut.png", ics(FAIcons.SCISSORS, _22));
-        fontawesome.put("16x16/actions/edit-cut.png", ics(FAIcons.SCISSORS, _16));
-        fontawesome.put("22x22/actions/edit-copy.png", ics(FAIcons.CLONE, _22));
-        fontawesome.put("16x16/actions/edit-copy.png", ics(FAIcons.CLONE, _16));
-        fontawesome.put("22x22/actions/edit-undo.png", ics(FAIcons.UNDO, _22));
-        fontawesome.put("16x16/actions/edit-undo.png", ics(FAIcons.UNDO, _16));
-        fontawesome.put("22x22/actions/edit-redo.png", ics(FAIcons.SHARE, _22));
-        fontawesome.put("16x16/actions/edit-redo.png", ics(FAIcons.SHARE, _16));
-        fontawesome.put("22x22/status/folder-visiting.png", ics(FAIcons.FOLDER, _22));
-        fontawesome.put("16x16/status/folder-visiting.png", ics(FAIcons.FOLDER, _16));
-        fontawesome.put("22x22/actions/go-parent.png", ics(FAIcons.LONG_ARROW_UP, _22));
-        fontawesome.put("16x16/actions/go-parent.png", ics(FAIcons.LONG_ARROW_UP, _16));
-        fontawesome.put("16x16/actions/document-properties.png", ics(FAIcons.WRENCH, _16));
-        fontawesome.put("22x22/actions/document-properties.png", ics(FAIcons.WRENCH, _22));
-        fontawesome.put("16x16/actions/close.png", ics(FAIcons.TIMES, _16));
-        fontawesome.put("22x22/actions/edit-find-replace.png", ics(FAIcons.EXCHANGE, _22));
-        fontawesome.put("16x16/actions/media-record.png", ics(FAIcons.CIRCLE, _16));
-        fontawesome.put("16x16/actions/media-playback-stop.png", ics(FAIcons.STOP, _16));
-        fontawesome.put("22x22/actions/document-close.png", ics(FAIcons.TIMES, _22));
-        fontawesome.put("22x22/actions/bookmark-new.png", ics(FAIcons.BOOKMARK, _22));
-        fontawesome.put("22x22/actions/go-jump.png", ics(FAIcons.LEVEL_DOWN, _22));
-        fontawesome.put("16x16/actions/window-new.png", ics(FAIcons.WINDOW_MAXIMIZE, _16));
-        fontawesome.put("16x16/apps/system-file-manager.png", ics(FAIcons.ARCHIVE, _16));
-        fontawesome.put("22x22/actions/system-search.png", ics(FAIcons.SEARCH, _22));
-        fontawesome.put("arrow-asc.png", ics(FAIcons.CHEVRON_UP, _10));
-        fontawesome.put("arrow-desc.png", ics(FAIcons.CHEVRON_DOWN, _10));
-        fontawesome.put("16x16/status/image-loading.png", ics(FAIcons.CLOCK_O, _16));
     }
     //}}}
-
-    private static int faSize(final int initialSize) {
-        return initialSize - 2;
-    }
 }
