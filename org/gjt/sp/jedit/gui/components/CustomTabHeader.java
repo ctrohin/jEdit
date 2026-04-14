@@ -22,23 +22,21 @@
 package org.gjt.sp.jedit.gui.components;
 
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.gui.callbacks.IndexCallback;
 import org.gjt.sp.jedit.gui.layout.WrapLayout;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.function.Function;
 
 public class CustomTabHeader extends JPanel {
     private final SingleSelectionModel selectionModel;
     private final ArrayList<CustomTab> tabs = new ArrayList<>();
-    private final VoidCallback onParentSelect;
-    private final VoidCallback onTabClose;
-    private final Color selectedColor = new Color(180, 200, 255);
-    private final Color hoverColor = new Color(230, 230, 230);
+    private final IndexCallback onParentSelect;
+    private final IndexCallback onTabClose;
 
-    public CustomTabHeader(VoidCallback onSelect, VoidCallback onTabClose) {
+    public CustomTabHeader(IndexCallback onSelect, IndexCallback onTabClose) {
         this.selectionModel = new DefaultSingleSelectionModel();
         this.onParentSelect = onSelect;
         this.onTabClose = onTabClose;
@@ -98,11 +96,11 @@ public class CustomTabHeader extends JPanel {
     }
 
     public void selectParentIndex(final int index) {
-        onParentSelect.apply(index);
+        onParentSelect.call(index);
     }
 
     public void closeBuffer(final int index) {
-        onTabClose.apply(index);
+        onTabClose.call(index);
     }
 
     public void setSelectedIndex(int index) {
@@ -110,8 +108,5 @@ public class CustomTabHeader extends JPanel {
         for (int i = 0; i < tabs.size(); i++) {
             tabs.get(i).setSelected(i == index);
         }
-    }
-    public interface VoidCallback {
-        void apply(int index);
     }
 }

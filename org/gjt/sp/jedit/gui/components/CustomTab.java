@@ -87,6 +87,6 @@ public class CustomTab extends JPanel {
             return new FlatLineBorder(new Insets(2, 2, 2, 2), UIManager.getColor("TabbedPane.underlineColor"), 2, 10);
         }
 //        return new MatteBorder(0, 0, 3, 0, UIManager.getColor("TabbedPane.background"));
-        return new FlatLineBorder(new Insets(2, 2, 2, 2), getTextAreaDisabledBackground(), 1, 10);
+        return new FlatLineBorder(new Insets(2, 2, 2, 2), UIManager.getColor("TabbedPane.disabledUnderlineColor"), 1, 10);
     }
 }

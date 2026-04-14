@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
+import com.formdev.flatlaf.extras.components.FlatTabbedPane;
+import io.vavr.control.Try;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.bufferset.BufferSet;
@@ -62,19 +64,31 @@ public class BufferSwitcher extends JComboBox<Buffer>
 	// actual colors will be set in constructor, here are just fallback values
 	static Color defaultColor   = Color.BLACK;
 	static Color defaultBGColor = Color.LIGHT_GRAY;
-	private final CustomTabHeader tabs;
+//	private final CustomTabHeader tabs;
+	private final FlatTabbedPane tabs;
 	private JPanel fullPane;
 
 	public BufferSwitcher(final EditPane editPane)
 	{
 		this.editPane = editPane;
-		tabs = new CustomTabHeader(
-			(idx) -> editPane.setBuffer(getSortedBuffers()[idx]),
-			(idx) -> {
-				jEdit.getBufferSetManager().removeBuffer(getSortedBuffers()[idx]);
+		tabs = new FlatTabbedPane();
+		tabs.setHasFullBorder(true);
+		tabs.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
+		tabs.setShowTabSeparators(true);
+		tabs.setShowContentSeparators(true);
+		tabs.setTabsClosable(true);
+		tabs.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
+		tabs.setTabCloseCallback((pane, idx) -> {
+			jEdit.closeBuffer(editPane, getSortedBuffers()[idx]);
+		});
+		tabs.addChangeListener(e -> {
+			// Get the index of the newly selected tab
+			int selectedIndex = tabs.getSelectedIndex();
+			var sortedBuffers = getSortedBuffers();
+			if (selectedIndex != -1 && selectedIndex < sortedBuffers.length) {
+				editPane.setBuffer(sortedBuffers[selectedIndex]);
 			}
-		);
-		//setFont(new Font("Dialog",Font.BOLD,10));
+		});
 		setTransferHandler(new ComboBoxTransferHandler(this));
 		setRenderer(new BufferCellRenderer());
 		setMaximumRowCount(jEdit.getIntegerProperty("bufferSwitcher.maxRowCount", 10));
@@ -114,7 +128,9 @@ public class BufferSwitcher extends JComboBox<Buffer>
 				Buffer buffer = (Buffer) evt.getItem();
 				updateStyle(buffer);
 				var selectedIndex = getSelectedIndex();
-				tabs.setSelectedIndex(selectedIndex);
+				if (selectedIndex != -1 && selectedIndex < tabs.getTabCount()) {
+					tabs.setSelectedIndex(selectedIndex);
+				}
 			}
 		});
 		defaultColor   = getForeground();
@@ -202,7 +218,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			setMaximumRowCount(jEdit.getIntegerProperty("bufferSwitcher.maxRowCount",10));
 			Buffer[] buffers = getSortedBuffers();
 			setModel(new DefaultComboBoxModel<>(buffers));
-			tabs.setTabs(buffers, editPane.getBuffer());
+			buildTabs(buffers);
 			// FIXME: editPane.getBuffer() returns wrong buffer (old buffer) after last non-untitled buffer close.
 			// When the only non-untitled (last) buffer is closed a new untitled buffer is added to BufferSet
 			// directly from BufferSetManager (@see BufferSetManager.bufferRemoved() and BufferSetManager.addBuffer())
@@ -214,6 +230,21 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			updating = false;
 		};
 		ThreadUtilities.runInDispatchThread(runnable);
+	}
+
+
+	private void buildTabs(final Buffer[] buffers) {
+		//			tabs.setTabs(buffers, editPane.getBuffer());
+		tabs.removeAll();
+		Arrays.stream(buffers).forEach((buffer) -> tabs.addTab(buffer.getName(), null));
+		var idx = 0;
+		for (int i = 0; i < buffers.length; i++) {
+			if (buffers[i] == editPane.getBuffer()) {
+				idx = i;
+				break;
+			}
+		}
+		tabs.setSelectedIndex(idx);
 	}
 
 	private Buffer[] getSortedBuffers() {
@@ -245,20 +276,14 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			JList list, Object value, int index,
 			boolean isSelected, boolean cellHasFocus)
 		{
-			super.getListCellRendererComponent(list,value,index,
-				isSelected,cellHasFocus);
+			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			Buffer buffer = (Buffer)value;
+			var isBackup = buffer != null && buffer.isBackup();
+			var path = buffer == null ? null : buffer.getPath();
+			var icon = buffer == null ? null : buffer.getIcon();
 
-			if(buffer == null)
-			{
-				setIcon(null);
-				updateStyle(this, false, null);
-			}
-			else
-			{
-				setIcon(buffer.getIcon());
-				updateStyle(this, buffer.isBackup(), buffer.getPath());
-			}
+			setIcon(icon);
+			updateStyle(this, isBackup, path);
 			return this;
 		}
 	}
@@ -276,18 +301,6 @@ public class BufferSwitcher extends JComboBox<Buffer>
 				list.setDropMode(DropMode.INSERT);
 				list.setTransferHandler(new BufferSwitcherTransferHandler());
 			});
-//		ComboBoxUI ui = getUI();
-//		if (ui instanceof BasicComboBoxUI)
-//		{
-//			Accessible acc = ui.getAccessibleChild(null, 0);
-//			if (acc instanceof BasicComboPopup)
-//			{
-//				JList<Object> list = ((BasicComboPopup)acc).getList();
-//				list.setDragEnabled(true);
-//				list.setDropMode(DropMode.INSERT);
-//				list.setTransferHandler(new BufferSwitcherTransferHandler());
-//			}
-//		}
 	}
 
 	private static class ComboBoxTransferHandler extends TransferHandler
@@ -456,28 +469,17 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		{
 			if (action == MOVE)
 			{
-				BufferTransferableData data;
+				Try.of(() -> t.getTransferData(BufferSwitcher.BufferDataFlavor))
+					.map(BufferTransferableData.class::cast)
+					.map(BufferTransferableData::buffer)
+					.toJavaOptional()
+					.ifPresent(buffer -> {
+						EditPane editPane = (EditPane) GUIUtilities.getComponentParent(c,
+							EditPane.class);
+						BufferSetManager bufferSetManager = jEdit.getBufferSetManager();
+						bufferSetManager.removeBuffer(editPane, buffer);
+					});
 
-				try
-				{
-					data = (BufferTransferableData) t
-							.getTransferData(BufferSwitcher.BufferDataFlavor);
-				}
-				catch (UnsupportedFlavorException | IOException e)
-				{
-					return;
-				}
-
-				Buffer buffer = data.buffer();
-
-				EditPane editPane = (EditPane) GUIUtilities.getComponentParent(c,
-						EditPane.class);
-
-				BufferSetManager bufferSetManager = jEdit.getBufferSetManager();
-				if (buffer != null)
-				{
-					bufferSetManager.removeBuffer(editPane, buffer);
-				}
 			}
 		}
 

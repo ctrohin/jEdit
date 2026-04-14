@@ -3964,6 +3964,9 @@ public class jEdit
 		final Runnable setLaf = () -> {
             try {
                 UIManager.setLookAndFeel(sLf);
+				UIManager.getDefaults().entrySet().stream()
+					.filter(entry -> entry.getKey().toString().startsWith("TabbedPane"))
+					.forEach(entry -> System.err.println(entry.getKey() + " = " + entry.getValue()));
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                      UnsupportedLookAndFeelException e) {
             }
