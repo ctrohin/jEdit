@@ -106,18 +106,18 @@ public class BrowserCommandsMenu extends JPopupMenu
 				&& (browser.getMode() == VFSBrowser.BROWSER
 				|| browser.getMode() == VFSBrowser.BROWSER_DIALOG))
 			{
-				add(createMenuItem("open", "22x22/actions/document-open.png"));
+				add(createMenuItem("open", "MatIcons.FILE_OPEN:22"));
 				add(GUIUtilities.loadMenu(VFSBrowser.getActionContext(), "vfs.browser.open-in"));
 				if (browser.getSelectedFiles().length == 1) 
 				{
-					add(createMenuItem("open-desktop", "22x22/actions/document-open.png"));
+					add(createMenuItem("open-desktop", "MatIcons.FILE_OPEN:22"));
 					add(createMenuItem("insert"));
 				}
 				if(fileOpen)
 					add(createMenuItem("close"));
 			}
 			else if(type != -1)
-				add(createMenuItem("open", "22x22/actions/document-open.png"));
+				add(createMenuItem("open", "MatIcons.FILE_OPEN:22"));
 
 			if(rename)
 				add(createMenuItem("rename"));
@@ -144,9 +144,9 @@ public class BrowserCommandsMenu extends JPopupMenu
 		addSeparator();
 
 		if(browser.getMode() == VFSBrowser.BROWSER)
-			add(createMenuItem("new-file", "22x22/actions/document-new.png"));
+			add(createMenuItem("new-file", "MatIcons.NOTE_ADD:22"));
 
-		add(createMenuItem("new-directory", "22x22/actions/folder-new.png"));
+		add(createMenuItem("new-directory", "MatIcons.CREATE_NEW_FOLDER:22"));
 
 		if(browser.getMode() == VFSBrowser.BROWSER)
 		{

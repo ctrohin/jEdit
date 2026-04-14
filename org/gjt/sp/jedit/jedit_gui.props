@@ -8,11 +8,11 @@
 ###
 
 #{{{ Common icons
-common.add.icon=22x22/actions/list-add.png
-common.remove.icon=22x22/actions/list-remove.png
+common.add.icon=MatIcons.ADD:22
+common.remove.icon=MatIcons.REMOVE:22
 common.moveUp.icon=MatIcons.ARROW_UPWARD:22
 common.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
-common.clearAll.icon=22x22/actions/edit-clear.png
+common.clearAll.icon=MatIcons.CLEAR:22
 logo.icon.small=16x16/apps/jedit.png
 logo.icon.medium=32x32/apps/jedit.png
 
@@ -29,7 +29,7 @@ defer=false
 startup=true
 
 broken-image.icon=22x22/status/image-missing.png
-dropdown-arrow.icon=16x16/actions/group-collapse.png
+dropdown-arrow.icon=MatIcons.CHEVRON_DOWN:16
 #}}}
 
 #{{{ Tool bar
@@ -39,28 +39,28 @@ view.toolbar=new-file open-file save close-buffer - print - \
 	buffer-options combined-options - \
 	plugin-manager - help
 
-new-file.icon=22x22/actions/document-new.png
-open-file.icon=22x22/actions/document-open.png
-save.icon=22x22/actions/document-save.png
+new-file.icon=MatIcons.NOTE_ADD:22
+open-file.icon=MatIcons.FILE_OPEN:22
+save.icon=MatIcons.SAVE:22
 close-buffer.icon=22x22/actions/document-close.png
 global-close-buffer.icon=22x22/actions/document-close.png
-print.icon=22x22/actions/document-print.png
+print.icon=MatIcons.PRINT:22
 page-setup.icon=22x22/actions/printer-setup.png
 undo.icon=22x22/actions/edit-undo.png
 redo.icon=22x22/actions/edit-redo.png
 cut.icon=22x22/actions/edit-cut.png
 copy.icon=22x22/actions/edit-copy.png
 paste.icon=22x22/actions/edit-paste.png
-find.icon=22x22/actions/edit-find.png
-find-next.icon=22x22/actions/edit-find-next.png
-new-view.icon=22x22/actions/window-new.png
-unsplit.icon=22x22/actions/window-unsplit.png
-split-horizontal.icon=22x22/actions/window-split-horizontal.png
-split-vertical.icon=22x22/actions/window-split-vertical.png
+find.icon=MatIcons.SEARCH:22
+find-next.icon=MatIcons.NAVIGATE_NEXT:22
+new-view.icon=MatIcons.OPEN_IN_NEW:22
+unsplit.icon=MatIcons.SPLIT_MERGE:22
+split-horizontal.icon=MatIcons.SPLIT_HORIZONTAL:22
+split-vertical.icon=MatIcons.SPLIT_VERTICAL:22
 buffer-options.icon=22x22/actions/document-properties.png
 global-options.icon=MatIcons.SETTINGS:22
 combined-options.icon=MatIcons.SETTINGS:22
-plugin-manager.icon=22x22/places/plugins.png
+plugin-manager.icon=MatIcons.PLUGINS:22
 help.icon=MatIcons.HELP:22
 
 #{{{ Icon list for tool bar editor
@@ -79,34 +79,34 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	22x22/actions/edit-cut.png \
 	22x22/actions/edit-paste.png \
 	22x22/actions/edit-delete.png \
-	22x22/actions/edit-clear.png \
-	22x22/actions/edit-find-next.png \
-	22x22/actions/edit-find-in-folder.png \
-	22x22/actions/edit-find.png \
+	MatIcons.CLEAR:22 \
+	MatIcons.NAVIGATE_NEXT:22 \
+	MatIcons.SEARCH:22 \
+	MatIcons.SEARCH:22 \
 	22x22/actions/edit-copy.png \
 	22x22/actions/copy-to-buffer.png \
-	22x22/actions/list-remove.png \
-	22x22/actions/list-add.png \
-	22x22/actions/folder-new.png \
-	22x22/actions/window-new.png \
-	22x22/actions/document-new.png \
-	22x22/actions/document-open.png \
+	MatIcons.REMOVE:22 \
+	MatIcons.ADD:22 \
+	MatIcons.CREATE_NEW_FOLDER:22 \
+	MatIcons.OPEN_IN_NEW:22 \
+	MatIcons.NOTE_ADD:22 \
+	MatIcons.FILE_OPEN:22 \
 	22x22/actions/document-reload2.png \
 	22x22/actions/document-properties.png \
-	22x22/actions/document-save.png \
-	22x22/actions/document-save-all.png \
-	22x22/actions/document-save-as.png \
+	MatIcons.SAVE:22 \
+	MatIcons.SAVE:22 \
+	MatIcons.SAVE:22 \
 	22x22/actions/printer-setup.png \
 	MatIcons.STOP:22 \
 	22x22/actions/media-playback-pause.png \
 	22x22/actions/media-playback-start.png \
-	22x22/actions/view-refresh.png \
+	MatIcons.REFRESH:22 \
 	22x22/actions/application-run.png \
 	MatIcons.FIND_MULTIPLE:22 \
 	MatIcons.TARGET:22 \
-	22x22/actions/window-split-horizontal.png \
-	22x22/actions/window-split-vertical.png \
-	22x22/actions/window-unsplit.png \
+	MatIcons.SPLIT_HORIZONTAL:22 \
+	MatIcons.SPLIT_VERTICAL:22 \
+	MatIcons.SPLIT_MERGE:22 \
 	MatIcons.ZOOM_IN:22 \
 	MatIcons.ZOOM_OUT:22 \
 	22x22/apps/utilities-terminal.png \
@@ -116,10 +116,10 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	22x22/apps/system-installer.png \
 	22x22/status/image-missing.png \
 	22x22/status/folder-visiting.png \
-	22x22/devices/drive-harddisk.png \
+	MatIcons.HARD_DISK:22 \
 	22x22/devices/media-floppy.png \
 	22x22/devices/printer.png \
-	22x22/places/plugins.png \
+	MatIcons.PLUGINS:22 \
 	MatIcons.SETTINGS:22 \
 	Blank24.gif
 #}}}
@@ -163,21 +163,21 @@ file=new-file \
 	 print \
 	 - \
 	 exit
-new-file.icon.small=22x22/actions/document-new.png
-new-file-in-mode.icon.small=22x22/actions/document-new.png
-open-file.icon.small=22x22/actions/document-open.png
-reload.icon.small=22x22/actions/view-refresh.png
-reload-all.icon.small=22x22/actions/view-refresh.png
+new-file.icon.small=MatIcons.NOTE_ADD:22
+new-file-in-mode.icon.small=MatIcons.NOTE_ADD:22
+open-file.icon.small=MatIcons.FILE_OPEN:22
+reload.icon.small=MatIcons.REFRESH:22
+reload-all.icon.small=MatIcons.REFRESH:22
 close-buffer.icon.small=22x22/actions/document-close.png
 closeall-bufferset.icon.small=22x22/actions/document-close.png
 closeall-except-active.icon.small=22x22/actions/document-close.png
 global-close-buffer.icon.small=22x22/actions/document-close.png
 close-all.icon.small=22x22/actions/document-close.png
-save.icon.small=22x22/actions/document-save.png
-save-as.icon.small=22x22/actions/document-save-as.png
-save-a-copy-as.icon.small=22x22/actions/document-save-as.png
-save-all.icon.small=22x22/actions/document-save-all.png
-print.icon.small=22x22/actions/document-print.png
+save.icon.small=MatIcons.SAVE:22
+save-as.icon.small=MatIcons.SAVE:22
+save-a-copy-as.icon.small=MatIcons.SAVE:22
+save-all.icon.small=MatIcons.SAVE:22
+print.icon.small=MatIcons.PRINT:22
 page-setup.icon.small=22x22/actions/document-properties.png
 exit.icon.small=MatIcons.STOP:22
 exit.icon.medium=MatIcons.STOP:22
@@ -187,7 +187,7 @@ recent-files.code=new RecentFilesProvider();
 #}}}
 
 reload-encoding.code=new ReloadWithEncodingProvider();
-reload-encoding.icon.small=22x22/actions/view-refresh.png
+reload-encoding.icon.small=MatIcons.REFRESH:22
 #}}}
 
 #{{{ Edit menu
@@ -216,7 +216,7 @@ redo.icon.small=22x22/actions/edit-redo.png
 cut.icon.small=22x22/actions/edit-cut.png
 copy.icon.small=22x22/actions/edit-copy.png
 paste.icon.small=22x22/actions/edit-paste.png
-select-all.icon.small=22x22/actions/edit-select-all.png
+select-all.icon.small=MatIcons.SELECT_ALL:22
 
 #{{{ More Clipboard menu
 clipboard=cut-append \
@@ -308,16 +308,16 @@ search=find \
 	   regexp \
 	   - \
 	   hypersearch-results
-find.icon.small=22x22/actions/edit-find.png
-find-next.icon.small=22x22/actions/edit-find-next.png
-search-in-directory.icon.small=22x22/actions/edit-find-in-folder.png
+find.icon.small=MatIcons.SEARCH:22
+find-next.icon.small=MatIcons.NAVIGATE_NEXT:22
+search-in-directory.icon.small=MatIcons.SEARCH:22
 replace-in-selection.icon.small=22x22/actions/edit-find-replace.png
 replace-and-find-next.icon.small=22x22/actions/edit-find-replace.png
 replace-all.icon.small=22x22/actions/edit-find-replace.png
-quick-search.icon.small=22x22/actions/edit-find.png
+quick-search.icon.small=MatIcons.SEARCH:22
 hypersearch.icon.small=MatIcons.FIND_MULTIPLE:22
-quick-search-word.icon.small=22x22/actions/edit-find.png
-hypersearch-word.icon.small=22x22/actions/edit-find.png
+quick-search-word.icon.small=MatIcons.SEARCH:22
+hypersearch-word.icon.small=MatIcons.SEARCH:22
 #}}}
 
 #{{{ Markers menu
@@ -338,7 +338,7 @@ markers=add-marker \
 markers.code=new MarkersProvider();
 add-marker.icon.small=22x22/actions/bookmark-new.png
 add-marker-shortcut.icon.small=22x22/actions/bookmark-new.png
-remove-all-markers.icon.small=22x22/actions/edit-clear.png
+remove-all-markers.icon.small=MatIcons.CLEAR:22
 goto-marker.icon.small=22x22/actions/go-jump.png
 prev-marker.icon.small=MatIcons.ARROW_BACK:22
 next-marker.icon.small=MatIcons.ARROW_FORWARD:22
@@ -388,8 +388,8 @@ view=new-view \
 	 - \
 	 set-view-title \
 	 toggle-full-screen
-new-view.icon.small=22x22/actions/window-new.png
-new-plain-view.icon.small=22x22/actions/window-new.png
+new-view.icon.small=MatIcons.OPEN_IN_NEW:22
+new-plain-view.icon.small=MatIcons.OPEN_IN_NEW:22
 close-view.icon.small=22x22/actions/document-close.png
 
 #{{{ Scrolling menu
@@ -518,7 +518,7 @@ macros=new-macro \
 	   rescan-macros \
 	   -
 macros.code=new MacrosProvider();
-new-macro.icon.small=22x22/actions/document-new.png
+new-macro.icon.small=MatIcons.NOTE_ADD:22
 record-macro.icon.small=22x22/actions/media-record.png
 stop-recording.icon.small=22x22/actions/media-playback-stop.png
 #}}}
@@ -770,7 +770,7 @@ search.beepOnSearchAutoWrap=false
 #}}}
 
 #{{{ HyperSearch results dialog
-hypersearch-results.clear.icon=22x22/actions/edit-clear.png
+hypersearch-results.clear.icon=MatIcons.CLEAR:22
 hypersearch-results.stop.icon=MatIcons.STOP:22
 hypersearch-results.multi.multiple.icon=MatIcons.FIND_MULTIPLE:22
 hypersearch-results.multi.single.icon=MatIcons.TARGET:22
@@ -809,9 +809,9 @@ options.general.code=new GeneralOptionPane();
 
 #{{{ Abbreviations pane
 options.abbrevs.code=new AbbrevsOptionPane();
-options.abbrevs.add.icon=22x22/actions/list-add.png
+options.abbrevs.add.icon=MatIcons.ADD:22
 options.abbrevs.edit.icon=22x22/actions/document-properties.png
-options.abbrevs.remove.icon=22x22/actions/list-remove.png
+options.abbrevs.remove.icon=MatIcons.REMOVE:22
 #}}}
 
 #{{{ Appearance pane
@@ -840,11 +840,11 @@ options.appearance.lang.zh-tw=台灣中文
 
 #{{{ Context Menu pane
 options.context.code=new ContextOptionPane();
-options.context.add.icon=22x22/actions/list-add.png
-options.context.remove.icon=22x22/actions/list-remove.png
+options.context.add.icon=MatIcons.ADD:22
+options.context.remove.icon=MatIcons.REMOVE:22
 options.context.moveUp.icon=MatIcons.ARROW_UPWARD:22
 options.context.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
-options.context.reset.icon=22x22/actions/edit-clear.png
+options.context.reset.icon=MatIcons.CLEAR:22
 options.context.includeOptionsLink=true
 #}}}
 
@@ -906,11 +906,11 @@ options.textarea.code=new TextAreaOptionPane();
 
 #{{{ Tool Bar pane
 options.toolbar.code=new ToolBarOptionPane();
-options.toolbar.add.icon=22x22/actions/list-add.png
-options.toolbar.remove.icon=22x22/actions/list-remove.png
+options.toolbar.add.icon=MatIcons.ADD:22
+options.toolbar.remove.icon=MatIcons.REMOVE:22
 options.toolbar.moveUp.icon=MatIcons.ARROW_UPWARD:22
 options.toolbar.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
-options.toolbar.reset.icon=22x22/actions/edit-clear.png
+options.toolbar.reset.icon=MatIcons.CLEAR:22
 options.toolbar.edit.icon=22x22/actions/document-properties.png
 #}}}
 
@@ -945,24 +945,24 @@ tip.show=true
 #{{{ VFS browser
 vfs.browser.default-filter=*[^~#]
 vfs.browser.filter-enabled=true
-vfs.browser.file.icon=16x16/mimetypes/text-x-generic.png
+vfs.browser.file.icon=MatIcons.INSERT_DRIVE_FILE:10
 vfs.browser.icon.small=22x22/apps/system-file-manager.png
-vfs.browser.open-file.icon=12x12/actions/opened-file.png
-vfs.browser.dir.icon=12x12/places/folder.png
-vfs.browser.open-dir.icon=12x12/status/folder-open.png
-vfs.browser.filesystem.icon=12x12/devices/drive-harddisk.png
+vfs.browser.open-file.icon=MatIcons.PLAY_ARROW:10
+vfs.browser.dir.icon=MatIcons.F0LDER:10
+vfs.browser.open-dir.icon=MatIcons.F0LDER_OPEN:10
+vfs.browser.filesystem.icon=MatIcons.HARD_DISK:10
 vfs.browser.loading.icon=16x16/status/image-loading.png
-vfs.browser.expand.icon=12x12/actions/group-expand.png
-vfs.browser.collapse.icon=12x12/actions/group-collapse.png
+vfs.browser.expand.icon=MatIcons.CHEVRON_RIGHT:10
+vfs.browser.collapse.icon=MatIcons.CHEVRON_DOWN:10
 vfs.browser.dock-position=left
 
 #{{{ Actions
 vfs.browser.home.icon=MatIcons.HOME:22
-vfs.browser.new-directory.icon=22x22/actions/folder-new.png
-vfs.browser.new-file.icon=22x22/actions/document-new.png
-vfs.browser.reload.icon=22x22/actions/view-refresh.png
-vfs.browser.roots.icon=22x22/devices/drive-harddisk.png
-vfs.browser.search-directory.icon=22x22/actions/edit-find-in-folder.png
+vfs.browser.new-directory.icon=MatIcons.CREATE_NEW_FOLDER:22
+vfs.browser.new-file.icon=MatIcons.NOTE_ADD:22
+vfs.browser.reload.icon=MatIcons.REFRESH:22
+vfs.browser.roots.icon=MatIcons.HARD_DISK:22
+vfs.browser.search-directory.icon=MatIcons.SEARCH:22
 vfs.browser.synchronize.icon=22x22/status/folder-visiting.png
 vfs.browser.up.icon=22x22/actions/go-parent.png
 vfs.browser.next.icon=MatIcons.ARROW_FORWARD:22
@@ -1004,13 +1004,13 @@ plugin-manager.export-url=https://plugins.jedit.org/export/gzip_plugin_manager.p
 plugin-manager.mirror-url=https://plugins.jedit.org/export/mirror_list.php
 
 #{{{ Plugin management
-manage-plugins.restore.icon=22x22/actions/document-open.png
-manage-plugins.save.icon=22x22/actions/document-save.png
+manage-plugins.restore.icon=MatIcons.FILE_OPEN:22
+manage-plugins.save.icon=MatIcons.SAVE:22
 #}}}
 
 #{{{ Plugin installation
-install-plugins.choose-plugin-set.icon=22x22/actions/document-open.png
-install-plugins.clear-plugin-set.icon=22x22/actions/edit-clear.png
+install-plugins.choose-plugin-set.icon=MatIcons.FILE_OPEN:22
+install-plugins.clear-plugin-set.icon=MatIcons.CLEAR:22
 #}}}
 
 #}}}

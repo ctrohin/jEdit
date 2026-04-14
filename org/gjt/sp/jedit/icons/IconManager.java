@@ -185,32 +185,32 @@ public class IconManager {
      */
     private static void initializeDeprecatedIcons()
     {
-        deprecatedIcons.put("File.png",       "16x16/mimetypes/text-x-generic.png");
-        deprecatedIcons.put("Folder.png",     "16x16/places/folder.png");
-        deprecatedIcons.put("OpenFolder.png", "16x16/status/folder-open.png");
-        deprecatedIcons.put("OpenFile.png",   "16x16/actions/edit-select-all.png");
-        deprecatedIcons.put("ReloadSmall.png","16x16/actions/view-refresh.png");
-        deprecatedIcons.put("DriveSmall.png", "16x16/devices/drive-harddisk.png");
-        deprecatedIcons.put("New.png",        "22x22/actions/document-new.png");
-        deprecatedIcons.put("NewDir.png",     "22x22/actions/folder-new.png");
-        deprecatedIcons.put("Reload.png",     "22x22/actions/view-refresh.png");
-        deprecatedIcons.put("Load.png",       "22x22/places/plugins.png");
-        deprecatedIcons.put("Save.png",       "22x22/actions/document-save.png");
-        deprecatedIcons.put("SaveAs.png",     "22x22/actions/document-save-as.png");
-        deprecatedIcons.put("SaveAll.png",    "22x22/actions/document-save-all.png");
-        deprecatedIcons.put("Open.png",       "22x22/actions/document-open.png");
-        deprecatedIcons.put("Print.png",      "22x22/actions/document-print.png");
-        deprecatedIcons.put("Drive.png",      "22x22/devices/drive-harddisk.png");
-        deprecatedIcons.put("Clear.png",      "22x22/actions/edit-clear.png");
+        deprecatedIcons.put("File.png",       "MatIcons.INSERT_DRIVE_FILE:10");
+        deprecatedIcons.put("Folder.png",     "MatIcons.FOLDER:16");
+        deprecatedIcons.put("OpenFolder.png", "MatIcons.FOLDER_OPEN:16");
+        deprecatedIcons.put("OpenFile.png",   "MatIcons.SELECT_ALL:16");
+        deprecatedIcons.put("ReloadSmall.png","MatIcons.REFRESH:16");
+        deprecatedIcons.put("DriveSmall.png", "MatIcons.HARD_DISK:16");
+        deprecatedIcons.put("New.png",        "MatIcons.NOTE_ADD:22");
+        deprecatedIcons.put("NewDir.png",     "MatIcons.CREATE_NEW_FOLDER:22");
+        deprecatedIcons.put("Reload.png",     "MatIcons.REFRESH:22");
+        deprecatedIcons.put("Load.png",       "MatIcons.PLUGINS:22");
+        deprecatedIcons.put("Save.png",       "MatIcons.SAVE:22");
+        deprecatedIcons.put("SaveAs.png",     "MatIcons.SAVE:22");
+        deprecatedIcons.put("SaveAll.png",    "MatIcons.SAVE:22");
+        deprecatedIcons.put("Open.png",       "MatIcons.FILE_OPEN:22");
+        deprecatedIcons.put("Print.png",      "MatIcons.PRINT:22");
+        deprecatedIcons.put("Drive.png",      "MatIcons.HARD_DISK:22");
+        deprecatedIcons.put("Clear.png",      "MatIcons.CLEAR:22");
         deprecatedIcons.put("Run.png",        "22x22/actions/application-run.png");
         deprecatedIcons.put("RunAgain.png",   "22x22/actions/application-run-again.png");
         deprecatedIcons.put("RunToBuffer.png",  "22x22/actions/run-to-buffer.png");
         deprecatedIcons.put("CopyToBuffer.png", "22x22/actions/copy-to-buffer.png");
-        deprecatedIcons.put("Plus.png",       "22x22/actions/list-add.png");
-        deprecatedIcons.put("Minus.png",      "22x22/actions/list-remove.png");
-        deprecatedIcons.put("Find.png",       "22x22/actions/edit-find.png");
-        deprecatedIcons.put("FindAgain.png",  "22x22/actions/edit-find-next.png");
-        deprecatedIcons.put("FindInDir.png",  "22x22/actions/edit-find-in-folder.png");
+        deprecatedIcons.put("Plus.png",       "MatIcons.ADD:22");
+        deprecatedIcons.put("Minus.png",      "MatIcons.REMOVE:22");
+        deprecatedIcons.put("Find.png",       "MatIcons.SEARCH:22");
+        deprecatedIcons.put("FindAgain.png",  "MatIcons.NAVIGATE_NEXT:22");
+        deprecatedIcons.put("FindInDir.png",  "MatIcons.SEARCH:22");
         deprecatedIcons.put("Parse.png",      "22x22/actions/document-reload2.png");
         deprecatedIcons.put("Delete.png",     "22x22/actions/edit-delete.png");
         deprecatedIcons.put("Paste.png",      "22x22/actions/edit-paste.png");
@@ -249,12 +249,12 @@ public class IconManager {
         deprecatedIcons.put("ArrowR.png", "MatIcons.ARROW_FORWARD:22");
         deprecatedIcons.put("ArrowD.png", "MatIcons.ARROW_DOWNWARD:22");
         deprecatedIcons.put("ArrowL.png", "MatIcons.ARROW_BACK:22");
-        deprecatedIcons.put("arrow1.png", "16x16/actions/group-expand.png");
-        deprecatedIcons.put("arrow2.png", "16x16/actions/group-collapse.png");
-        deprecatedIcons.put("NewView.png", "22x22/actions/window-new.png");
-        deprecatedIcons.put("UnSplit.png", "22x22/actions/window-unsplit.png");
-        deprecatedIcons.put("SplitVertical.png", "22x22/actions/window-split-vertical.png");
-        deprecatedIcons.put("SplitHorizontal.png", "22x22/actions/window-split-horizontal.png");
+        deprecatedIcons.put("arrow1.png", "MatIcons.CHEVRON_RIGHT:16");
+        deprecatedIcons.put("arrow2.png", "MatIcons.CHEVRON_DOWN:16");
+        deprecatedIcons.put("NewView.png", "MatIcons.OPEN_IN_NEW:22");
+        deprecatedIcons.put("UnSplit.png", "MatIcons.SPLIT_MERGE:22");
+        deprecatedIcons.put("SplitVertical.png", "MatIcons.SPLIT_VERTICAL:22");
+        deprecatedIcons.put("SplitHorizontal.png", "MatIcons.SPLIT_HORIZONTAL:22");
         deprecatedIcons.put("ButtonProperties.png", "22x22/actions/document-properties.png");
 
 
@@ -282,63 +282,57 @@ public class IconManager {
         material.put("MatIcons.ARROW_FORWARD:22", ics(MatIcons.ARROW_FORWARD, 22));
         material.put("MatIcons.ARROW_DOWNWARD:22", ics(MatIcons.ARROW_DOWNWARD, 22));
         material.put("MatIcons.ARROW_BACK:22", ics(MatIcons.ARROW_BACK, 22));
-        material.put("16x16/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 16));
-        material.put("16x16/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 16));
+        material.put("MatIcons.CHEVRON_RIGHT:16", ics(MatIcons.CHEVRON_RIGHT, 16));
+        material.put("MatIcons.CHEVRON_DOWN:16", ics(MatIcons.CHEVRON_DOWN, 16));
 
-        material.put("12x12/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 10));
-        material.put("12x12/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 10));
+        material.put("MatIcons.CHEVRON_RIGHT:10", ics(MatIcons.CHEVRON_RIGHT, 10));
+        material.put("MatIcons.CHEVRON_DOWN:10", ics(MatIcons.CHEVRON_DOWN, 10));
 
-        material.put("12x12/actions/opened-file.png", ics(MatIcons.PLAY_ARROW, 10));
+        material.put("MatIcons.PLAY_ARROW:10", ics(MatIcons.PLAY_ARROW, 10));
 
-        material.put("22x22/actions/window-new.png", ics(MatIcons.OPEN_IN_NEW, 22));
-        material.put("22x22/actions/window-unsplit.png", ics(MatIcons.SPLIT_MERGE, 22));
-        material.put("22x22/actions/window-split-vertical.png", ics(MatIcons.SPLIT_VERTICAL, 22));
-        material.put("22x22/actions/window-split-horizontal.png", ics(MatIcons.SPLIT_HORIZONTAL, 22));
+        material.put("MatIcons.OPEN_IN_NEW:22", ics(MatIcons.OPEN_IN_NEW, 22));
+        material.put("MatIcons.SPLIT_MERGE:22", ics(MatIcons.SPLIT_MERGE, 22));
+        material.put("MatIcons.SPLIT_VERTICAL:22", ics(MatIcons.SPLIT_VERTICAL, 22));
+        material.put("MatIcons.SPLIT_HORIZONTAL:22", ics(MatIcons.SPLIT_HORIZONTAL, 22));
 
-        material.put("16x16/mimetypes/text-x-generic.png", ics(MatIcons.INSERT_DRIVE_FILE, 10));
-        material.put("16x16/places/folder.png", ics(MatIcons.FOLDER, 16));
-        material.put("16x16/status/folder-open.png", ics(MatIcons.FOLDER_OPEN, 16));
-        material.put("16x16/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 16));
-        material.put("22x22/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 22));
-        material.put("16x16/actions/view-refresh.png", ics(MatIcons.REFRESH, 16));
-        material.put("16x16/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 16));
-        material.put("16x16/actions/document-new.png", ics(MatIcons.NOTE_ADD, 16));
+        material.put("MatIcons.INSERT_DRIVE_FILE:10", ics(MatIcons.INSERT_DRIVE_FILE, 10));
+        material.put("MatIcons.FOLDER:16", ics(MatIcons.FOLDER, 16));
+        material.put("MatIcons.FOLDER_OPEN:16", ics(MatIcons.FOLDER_OPEN, 16));
+        material.put("MatIcons.SELECT_ALL:16", ics(MatIcons.SELECT_ALL, 16));
+        material.put("MatIcons.SELECT_ALL:22", ics(MatIcons.SELECT_ALL, 22));
+        material.put("MatIcons.REFRESH:16", ics(MatIcons.REFRESH, 16));
+        material.put("MatIcons.HARD_DISK:16", ics(MatIcons.HARD_DISK, 16));
+        material.put("MatIcons.NOTE_ADD:16", ics(MatIcons.NOTE_ADD, 16));
 
-        material.put("12x12/places/folder.png", ics(MatIcons.FOLDER, 10));
-        material.put("12x12/status/folder-open.png", ics(MatIcons.FOLDER_OPEN, 10));
-        material.put("12x12/actions/edit-select-all.png", ics(MatIcons.SELECT_ALL, 10));
-        material.put("12x12/actions/view-refresh.png", ics(MatIcons.REFRESH, 10));
-        material.put("12x12/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 10));
-        material.put("12x12/actions/document-new.png", ics(MatIcons.NOTE_ADD, 10));
-
-
-        material.put("22x22/actions/document-new.png", ics(MatIcons.NOTE_ADD, 22));
-        material.put("22x22/actions/folder-new.png", ics(MatIcons.CREATE_NEW_FOLDER, 22));
-        material.put("22x22/actions/view-refresh.png", ics(MatIcons.REFRESH, 22));
-        material.put("22x22/places/plugins.png", ics(MatIcons.PLUGINS, 22));
-        material.put("22x22/actions/document-save.png", ics(MatIcons.SAVE, 22));
-        material.put("16x16/actions/document-save.png", ics(MatIcons.SAVE, 16));
-        material.put("22x22/actions/document-save-as.png", ics(MatIcons.SAVE, 22));
-        material.put("16x16/actions/document-save-as.png", ics(MatIcons.SAVE, 16));
-        material.put("22x22/actions/document-save-all.png", ics(MatIcons.SAVE, 22));
-        material.put("16x16/actions/document-save-all.png", ics(MatIcons.SAVE, 16));
-        material.put("22x22/actions/document-open.png", ics(MatIcons.FILE_OPEN, 22));
-        material.put("16x16/actions/document-open.png", ics(MatIcons.FILE_OPEN, 16));
-        material.put("12x12/actions/document-open.png", ics(MatIcons.FILE_OPEN, 12));
-        material.put("22x22/actions/document-print.png", ics(MatIcons.PRINT, 22));
-        material.put("16x16/actions/document-print.png", ics(MatIcons.PRINT, 16));
-        material.put("12x12/actions/document-print.png", ics(MatIcons.PRINT, 12));
-        material.put("22x22/devices/drive-harddisk.png", ics(MatIcons.HARD_DISK, 22));
-        material.put("22x22/actions/edit-clear.png", ics(MatIcons.CLEAR, 22));
-        material.put("22x22/actions/list-add.png", ics(MatIcons.ADD, 22));
-        material.put("16x16/actions/list-add.png", ics(MatIcons.ADD, 16));
-        material.put("22x22/actions/list-remove.png", ics(MatIcons.REMOVE, 22));
-        material.put("16x16/actions/list-remove.png", ics(MatIcons.REMOVE, 16));
-        material.put("22x22/actions/edit-find.png", ics(MatIcons.SEARCH, 22));
-        material.put("16x16/actions/edit-find.png", ics(MatIcons.SEARCH, 16));
-        material.put("22x22/actions/edit-find-next.png", ics(MatIcons.NAVIGATE_NEXT, 22));
-        material.put("16x16/actions/edit-find-next.png", ics(MatIcons.NAVIGATE_NEXT, 16));
-        material.put("22x22/actions/edit-find-in-folder.png", ics(MatIcons.SEARCH, 22));
+        material.put("MatIcons.F0LDER:10", ics(MatIcons.FOLDER, 10));
+        material.put("MatIcons.F0LDER_OPEN:10", ics(MatIcons.FOLDER_OPEN, 10));
+        material.put("MatIcons.SELECT_ALL:10", ics(MatIcons.SELECT_ALL, 10));
+        material.put("MatIcons.REFRESH:10", ics(MatIcons.REFRESH, 10));
+        material.put("MatIcons.HARD_DISK:10", ics(MatIcons.HARD_DISK, 10));
+        material.put("MatIcons.NOTE_ADD:10", ics(MatIcons.NOTE_ADD, 10));
+        
+        material.put("MatIcons.NOTE_ADD:22", ics(MatIcons.NOTE_ADD, 22));
+        material.put("MatIcons.CREATE_NEW_FOLDER:22", ics(MatIcons.CREATE_NEW_FOLDER, 22));
+        material.put("MatIcons.REFRESH:22", ics(MatIcons.REFRESH, 22));
+        material.put("MatIcons.PLUGINS:22", ics(MatIcons.PLUGINS, 22));
+        material.put("MatIcons.SAVE:22", ics(MatIcons.SAVE, 22));
+        material.put("MatIcons.SAVE:16", ics(MatIcons.SAVE, 16));
+        material.put("MatIcons.FILE_OPEN:22", ics(MatIcons.FILE_OPEN, 22));
+        material.put("MatIcons.FILE_OPEN:16", ics(MatIcons.FILE_OPEN, 16));
+        material.put("MatIcons.FILE_OPEN:12", ics(MatIcons.FILE_OPEN, 12));
+        material.put("MatIcons.PRINT:22", ics(MatIcons.PRINT, 22));
+        material.put("MatIcons.PRINT:16", ics(MatIcons.PRINT, 16));
+        material.put("MatIcons.PRINT:12", ics(MatIcons.PRINT, 12));
+        material.put("MatIcons.HARD_DISK:22", ics(MatIcons.HARD_DISK, 22));
+        material.put("MatIcons.CLEAR:22", ics(MatIcons.CLEAR, 22));
+        material.put("MatIcons.ADD:22", ics(MatIcons.ADD, 22));
+        material.put("MatIcons.ADD:16", ics(MatIcons.ADD, 16));
+        material.put("MatIcons.REMOVE:22", ics(MatIcons.REMOVE, 22));
+        material.put("MatIcons.REMOVE:16", ics(MatIcons.REMOVE, 16));
+        material.put("MatIcons.SEARCH:22", ics(MatIcons.SEARCH, 22));
+        material.put("MatIcons.SEARCH:16", ics(MatIcons.SEARCH, 16));
+        material.put("MatIcons.NAVIGATE_NEXT:22", ics(MatIcons.NAVIGATE_NEXT, 22));
+        material.put("MatIcons.NAVIGATE_NEXT:16", ics(MatIcons.NAVIGATE_NEXT, 16));
         material.put("16x16/actions/edit-find-in-folder.png", ics(MatIcons.SEARCH, 16));
         material.put("22x22/actions/document-reload2.png", ics(MatIcons.REFRESH, 22));
         material.put("22x22/actions/document-reload.png", ics(MatIcons.REFRESH, 22));
@@ -391,10 +385,10 @@ public class IconManager {
         material.put("22x22/actions/application-run.png", ics(MatIcons.NEXT_WEEK, 22));
         material.put("22x22/actions/printer-setup.png", ics(MatIcons.PRINT, 22));
         material.put("22x22/actions/copy-to-buffer.png", ics(MatIcons.CONTENT_COPY, 22));
-        material.put("loader.gif", ics(MatIcons.BLUR_ON, 22));
+        material.put("MatIcons.BLUR_ON:22", ics(MatIcons.BLUR_ON, 22));
         /*
-reload.icon.small=12x12/actions/view-refresh.png
-reload-all.icon.small=12x12/actions/view-refresh.png
+reload.icon.small=MatIcons.REFRESH:10
+reload-all.icon.small=MatIcons.REFRESH:10
 close-buffer.icon.small=12x12/actions/document-close.png
 closeall-bufferset.icon.small=12x12/actions/document-close.png
 closeall-except-active.icon.small=12x12/actions/document-close.png
@@ -404,7 +398,7 @@ save.icon.small=12x12/actions/document-save.png
 save-as.icon.small=12x12/actions/document-save-as.png
 save-a-copy-as.icon.small=12x12/actions/document-save-as.png
 save-all.icon.small=12x12/actions/document-save-all.png
-print.icon.small=12x12/actions/document-print.png
+print.icon.small=MatIcons.PRINT:12
 page-setup.icon.small=12x12/actions/document-properties.png
 exit.icon.small=12x12/actions/process-stop.png
          */
