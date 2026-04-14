@@ -48,9 +48,9 @@ print.icon=MatIcons.PRINT:22
 page-setup.icon=22x22/actions/printer-setup.png
 undo.icon=22x22/actions/edit-undo.png
 redo.icon=22x22/actions/edit-redo.png
-cut.icon=22x22/actions/edit-cut.png
-copy.icon=22x22/actions/edit-copy.png
-paste.icon=22x22/actions/edit-paste.png
+cut.icon=MatIcons.CONTENT_CUT:22
+copy.icon=MatIcons.CONTENT_COPY:22
+paste.icon=MatIcons.CONTENT_PASTE:22
 find.icon=MatIcons.SEARCH:22
 find-next.icon=MatIcons.NAVIGATE_NEXT:22
 new-view.icon=MatIcons.OPEN_IN_NEW:22
@@ -76,14 +76,14 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	22x22/actions/document-close.png \
 	22x22/actions/edit-undo.png \
 	22x22/actions/edit-redo.png \
-	22x22/actions/edit-cut.png \
-	22x22/actions/edit-paste.png \
-	22x22/actions/edit-delete.png \
+	MatIcons.CONTENT_CUT:22 \
+	MatIcons.CONTENT_PASTE:22 \
+	MatIcons.DELETE:22 \
 	MatIcons.CLEAR:22 \
 	MatIcons.NAVIGATE_NEXT:22 \
 	MatIcons.SEARCH:22 \
 	MatIcons.SEARCH:22 \
-	22x22/actions/edit-copy.png \
+	MatIcons.CONTENT_COPY:22 \
 	22x22/actions/copy-to-buffer.png \
 	MatIcons.REMOVE:22 \
 	MatIcons.ADD:22 \
@@ -91,7 +91,7 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	MatIcons.OPEN_IN_NEW:22 \
 	MatIcons.NOTE_ADD:22 \
 	MatIcons.FILE_OPEN:22 \
-	22x22/actions/document-reload2.png \
+	MatIcons.REFRESH:22 \
 	22x22/actions/document-properties.png \
 	MatIcons.SAVE:22 \
 	MatIcons.SAVE:22 \
@@ -213,9 +213,9 @@ edit=undo \
 	 %source
 undo.icon.small=22x22/actions/edit-undo.png
 redo.icon.small=22x22/actions/edit-redo.png
-cut.icon.small=22x22/actions/edit-cut.png
-copy.icon.small=22x22/actions/edit-copy.png
-paste.icon.small=22x22/actions/edit-paste.png
+cut.icon.small=MatIcons.CONTENT_CUT:22
+copy.icon.small=MatIcons.CONTENT_COPY:22
+paste.icon.small=MatIcons.CONTENT_PASTE:22
 select-all.icon.small=MatIcons.SELECT_ALL:22
 
 #{{{ More Clipboard menu

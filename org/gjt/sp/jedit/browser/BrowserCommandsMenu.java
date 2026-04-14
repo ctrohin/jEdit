@@ -123,7 +123,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 				add(createMenuItem("rename"));
 
 			if(delete)
-				add(createMenuItem("delete", "22x22/actions/edit-delete.png"));
+				add(createMenuItem("delete", "MatIcons.DELETE:22"));
 
 			add(createMenuItem("copy-path", "svg/actions/copy-icon.svg:22"));
 			add(createMenuItem("paste", "svg/actions/paste-icon.svg:22"));
@@ -137,7 +137,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		add(createMenuItem("up", "22x22/actions/go-parent.png"));
 		add(createMenuItem("previous", "MatIcons.ARROW_BACK:22"));
 		add(createMenuItem("next", "MatIcons.ARROW_FORWARD:22"));
-		add(createMenuItem("reload", "22x22/actions/document-reload.png"));
+		add(createMenuItem("reload", "MatIcons.REFRESH:22"));
 		add(createMenuItem("roots"));
 		add(createMenuItem("home", "MatIcons.HOME:22"));
 		add(createMenuItem("synchronize"));
