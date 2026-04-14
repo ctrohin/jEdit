@@ -69,7 +69,7 @@ public class IconManager {
         // TODO: Check if it is possible to render a multiresolution image properly
         final IconAndSize fontIcon = material.get(iconString);
         if (fontIcon == null) {
-            Log.log(Log.ERROR, null, "Icon material mapping found: " + iconString);
+            Log.log(Log.ERROR, null, "Icon material mapping NOT found: " + iconString);
         }
 
         // check if there is a cached version first
@@ -223,32 +223,32 @@ public class IconManager {
         deprecatedIcons.put("PageSetup.png",  "22x22/actions/printer-setup.png");
         deprecatedIcons.put("Plugins.png",    "22x22/apps/system-installer.png");
         deprecatedIcons.put("Floppy.png",     "22x22/devices/media-floppy.png");
-        deprecatedIcons.put("Stop.png",       "22x22/actions/process-stop.png");
-        deprecatedIcons.put("Cancel.png",     "22x22/actions/process-stop.png");
-        deprecatedIcons.put("Home.png",       "22x22/actions/go-home.png");
-        deprecatedIcons.put("Help.png",       "22x22/apps/help-browser.png");
+        deprecatedIcons.put("Stop.png",       "MatIcons.STOP:22");
+        deprecatedIcons.put("Cancel.png",     "MatIcons.STOP:22");
+        deprecatedIcons.put("Home.png",       "MatIcons.HOME:22");
+        deprecatedIcons.put("Help.png",       "MatIcons.HELP:22");
         deprecatedIcons.put("Properties.png", "22x22/actions/document-properties.png");
-        deprecatedIcons.put("Preferences.png","22x22/categories/preferences-system.png");
-        deprecatedIcons.put("ZoomIn.png",     "22x22/actions/zoom-in.png");
-        deprecatedIcons.put("ZoomOut.png",    "22x22/actions/zoom-out.png");
+        deprecatedIcons.put("Preferences.png","MatIcons.SETTINGS:22");
+        deprecatedIcons.put("ZoomIn.png",     "MatIcons.ZOOM_IN:22");
+        deprecatedIcons.put("ZoomOut.png",    "MatIcons.ZOOM_OUT:22");
         deprecatedIcons.put("BrokenImage.png","22x22/status/image-missing.png");
-        deprecatedIcons.put("AdjustWidth.png","22x22/actions/resize-horisontal.png");
+        deprecatedIcons.put("AdjustWidth.png","MatIcons.RESIZE_HORIZONTAL:22");
         deprecatedIcons.put("ToolbarMenu.gif","ToolbarMenu.gif");
         deprecatedIcons.put("Play.png","22x22/actions/media-playback-start.png");
         deprecatedIcons.put("Pause.png","22x22/actions/media-playback-pause.png");
-        deprecatedIcons.put("MultipleResults.png", "22x22/actions/edit-find-multiple.png");
-        deprecatedIcons.put("SingleResult.png",    "22x22/actions/edit-find-single.png");
-        deprecatedIcons.put("NextFile.png",    "22x22/go-last.png");
-        deprecatedIcons.put("PreviousFile.png","22x22/go-first.png");
-        deprecatedIcons.put("closebox.gif",   "10x10/actions/close.png");
+        deprecatedIcons.put("MultipleResults.png", "MatIcons.FIND_MULTIPLE:22");
+        deprecatedIcons.put("SingleResult.png",    "MatIcons.TARGET:22");
+        deprecatedIcons.put("NextFile.png",    "MatIcons.LAST:22");
+        deprecatedIcons.put("PreviousFile.png","MatIcons.FIRST:22");
+        deprecatedIcons.put("closebox.gif",   "MatIcons.CLOSE:16");
         deprecatedIcons.put("normal.gif",   "10x10/status/document-unmodified.png");
         deprecatedIcons.put("readonly.gif",   "10x10/emblem/emblem-readonly.png");
         deprecatedIcons.put("dirty.gif",    "10x10/status/document-modified.png");
         deprecatedIcons.put("new.gif",    "10x10/status/document-new.png");
-        deprecatedIcons.put("ArrowU.png", "22x22/actions/go-up.png");
-        deprecatedIcons.put("ArrowR.png", "22x22/actions/go-next.png");
-        deprecatedIcons.put("ArrowD.png", "22x22/actions/go-down.png");
-        deprecatedIcons.put("ArrowL.png", "22x22/actions/go-previous.png");
+        deprecatedIcons.put("ArrowU.png", "MatIcons.ARROW_UPWARD:22");
+        deprecatedIcons.put("ArrowR.png", "MatIcons.ARROW_FORWARD:22");
+        deprecatedIcons.put("ArrowD.png", "MatIcons.ARROW_DOWNWARD:22");
+        deprecatedIcons.put("ArrowL.png", "MatIcons.ARROW_BACK:22");
         deprecatedIcons.put("arrow1.png", "16x16/actions/group-expand.png");
         deprecatedIcons.put("arrow2.png", "16x16/actions/group-collapse.png");
         deprecatedIcons.put("NewView.png", "22x22/actions/window-new.png");
@@ -263,28 +263,25 @@ public class IconManager {
 
     private static void initializeMaterialIcons() {
         IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
-        material.put("22x22/actions/process-stop.png", ics(MatIcons.STOP, 22));
-        material.put("16x16/actions/process-stop.png", ics(MatIcons.STOP, 16));
-        material.put("22x22/actions/go-home.png", ics(MatIcons.HOME, 22));
-        material.put("16x16/actions/go-home.png", ics(MatIcons.HOME, 16));
-        material.put("22x22/apps/help-browser.png", ics(MatIcons.HELP, 22));
-        material.put("22x22/categories/preferences-system.png", ics(MatIcons.SETTINGS, 22));
-        material.put("16x16/categories/preferences-system.png", ics(MatIcons.SETTINGS, 16));
-        material.put("22x22/actions/zoom-in.png", ics(MatIcons.ZOOM_IN, 22));
-        material.put("22x22/actions/zoom-out.png", ics(MatIcons.ZOOM_OUT, 22));
-        material.put("22x22/actions/edit-find-single.png", ics(MatIcons.TARGET, 22));
-        material.put("22x22/actions/edit-find-multiple.png", ics(MatIcons.FIND_MULTIPLE, 22));
-        material.put("22x22/actions/resize-horisontal.png", ics(MatIcons.RESIZE_HORIZONTAL, 22));
-        material.put("22x22/go-first.png", ics(MatIcons.FIRST, 22));
-        material.put("22x22/go-last.png", ics(MatIcons.LAST, 22));
-        material.put("22x22/actions/go-first.png", ics(MatIcons.FIRST, 22));
-        material.put("22x22/actions/go-last.png", ics(MatIcons.LAST, 22));
-        material.put("10x10/actions/close.png", ics(MatIcons.CLOSE, 16));
-        material.put("16x16/actions/document-close.png", ics(MatIcons.CLOSE, 16));
-        material.put("22x22/actions/go-up.png", ics(MatIcons.ARROW_UPWARD, 22));
-        material.put("22x22/actions/go-next.png", ics(MatIcons.ARROW_FORWARD, 22));
-        material.put("22x22/actions/go-down.png", ics(MatIcons.ARROW_DOWNWARD, 22));
-        material.put("22x22/actions/go-previous.png", ics(MatIcons.ARROW_BACK, 22));
+        material.put("MatIcons.STOP:22", ics(MatIcons.STOP, 22));
+        material.put("MatIcons.STOP:16", ics(MatIcons.STOP, 16));
+        material.put("MatIcons.HOME:22", ics(MatIcons.HOME, 22));
+        material.put("MatIcons.HOME:16", ics(MatIcons.HOME, 16));
+        material.put("MatIcons.HELP:22", ics(MatIcons.HELP, 22));
+        material.put("MatIcons.SETTINGS:22", ics(MatIcons.SETTINGS, 22));
+        material.put("MatIcons.SETTINGS:16", ics(MatIcons.SETTINGS, 16));
+        material.put("MatIcons.ZOOM_IN:22", ics(MatIcons.ZOOM_IN, 22));
+        material.put("MatIcons.ZOOM_OUT:22", ics(MatIcons.ZOOM_OUT, 22));
+        material.put("MatIcons.TARGET:22", ics(MatIcons.TARGET, 22));
+        material.put("MatIcons.FIND_MULTIPLE:22", ics(MatIcons.FIND_MULTIPLE, 22));
+        material.put("MatIcons.RESIZE_HORIZONTAL:22", ics(MatIcons.RESIZE_HORIZONTAL, 22));
+        material.put("MatIcons.FIRST:22", ics(MatIcons.FIRST, 22));
+        material.put("MatIcons.LAST:22", ics(MatIcons.LAST, 22));
+        material.put("MatIcons.CLOSE:16", ics(MatIcons.CLOSE, 16));
+        material.put("MatIcons.ARROW_UPWARD:22", ics(MatIcons.ARROW_UPWARD, 22));
+        material.put("MatIcons.ARROW_FORWARD:22", ics(MatIcons.ARROW_FORWARD, 22));
+        material.put("MatIcons.ARROW_DOWNWARD:22", ics(MatIcons.ARROW_DOWNWARD, 22));
+        material.put("MatIcons.ARROW_BACK:22", ics(MatIcons.ARROW_BACK, 22));
         material.put("16x16/actions/group-expand.png", ics(MatIcons.CHEVRON_RIGHT, 16));
         material.put("16x16/actions/group-collapse.png", ics(MatIcons.CHEVRON_DOWN, 16));
 
@@ -382,7 +379,19 @@ public class IconManager {
         material.put("10x10/status/document-unmodified.png", ics(MatIcons.WEB_ASSET, 10));
         material.put("10x10/status/document-modified.png", ics(MatIcons.CREATE, 10));
         material.put("10x10/status/document-new.png", ics(MatIcons.NEW_RELEASES, 10));
-
+        material.put("22x22/actions/media-playback-pause.png", ics(MatIcons.PAUSE, 22));
+        material.put("22x22/actions/media-playback-start.png", ics(MatIcons.PLAY_ARROW, 22));
+        material.put("22x22/devices/media-floppy.png", ics(MatIcons.SAVE, 22));
+        material.put("Blank24.gif", ics(MatIcons.BLANK, 24));
+        material.put("22x22/apps/system-installer.png", ics(MatIcons.PLUGINS, 22));
+        material.put("22x22/apps/internet-web-browser.png", ics(MatIcons.LANGUAGE, 22));
+        material.put("22x22/apps/system-file-manager.png", ics(MatIcons.FILE_MANAGER, 22));
+        material.put("22x22/apps/utilities-terminal.png", ics(MatIcons.DESKTOP_MAC, 22));
+        material.put("22x22/devices/printer.png", ics(MatIcons.PRINT, 22));
+        material.put("22x22/actions/application-run.png", ics(MatIcons.NEXT_WEEK, 22));
+        material.put("22x22/actions/printer-setup.png", ics(MatIcons.PRINT, 22));
+        material.put("22x22/actions/copy-to-buffer.png", ics(MatIcons.CONTENT_COPY, 22));
+        material.put("loader.gif", ics(MatIcons.BLUR_ON, 22));
         /*
 reload.icon.small=12x12/actions/view-refresh.png
 reload-all.icon.small=12x12/actions/view-refresh.png

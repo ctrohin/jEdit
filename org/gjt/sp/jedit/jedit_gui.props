@@ -10,8 +10,8 @@
 #{{{ Common icons
 common.add.icon=22x22/actions/list-add.png
 common.remove.icon=22x22/actions/list-remove.png
-common.moveUp.icon=22x22/actions/go-up.png
-common.moveDown.icon=22x22/actions/go-down.png
+common.moveUp.icon=MatIcons.ARROW_UPWARD:22
+common.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
 common.clearAll.icon=22x22/actions/edit-clear.png
 logo.icon.small=16x16/apps/jedit.png
 logo.icon.medium=32x32/apps/jedit.png
@@ -58,20 +58,20 @@ unsplit.icon=22x22/actions/window-unsplit.png
 split-horizontal.icon=22x22/actions/window-split-horizontal.png
 split-vertical.icon=22x22/actions/window-split-vertical.png
 buffer-options.icon=22x22/actions/document-properties.png
-global-options.icon=22x22/categories/preferences-system.png
-combined-options.icon=22x22/categories/preferences-system.png
+global-options.icon=MatIcons.SETTINGS:22
+combined-options.icon=MatIcons.SETTINGS:22
 plugin-manager.icon=22x22/places/plugins.png
-help.icon=22x22/apps/help-browser.png
+help.icon=MatIcons.HELP:22
 
 #{{{ Icon list for tool bar editor
-icons=22x22/actions/resize-horisontal.png \
-	22x22/actions/go-down.png \
-	22x22/actions/go-previous.png \
-	22x22/actions/go-next.png \
-	22x22/actions/go-home.png \
-	22x22/actions/go-up.png \
-	22x22/actions/go-first.png \
-	22x22/actions/go-last.png \
+icons=MatIcons.RESIZE_HORIZONTAL:22 \
+	MatIcons.ARROW_DOWNWARD:22 \
+	MatIcons.ARROW_BACK:22 \
+	MatIcons.ARROW_FORWARD:22 \
+	MatIcons.HOME:22 \
+	MatIcons.ARROW_UPWARD:22 \
+	MatIcons.FIRST:22 \
+	MatIcons.LAST:22 \
 	22x22/actions/go-parent.png \
 	22x22/actions/document-close.png \
 	22x22/actions/edit-undo.png \
@@ -97,22 +97,22 @@ icons=22x22/actions/resize-horisontal.png \
 	22x22/actions/document-save-all.png \
 	22x22/actions/document-save-as.png \
 	22x22/actions/printer-setup.png \
-	22x22/actions/process-stop.png \
+	MatIcons.STOP:22 \
 	22x22/actions/media-playback-pause.png \
 	22x22/actions/media-playback-start.png \
 	22x22/actions/view-refresh.png \
 	22x22/actions/application-run.png \
-	22x22/actions/edit-find-multiple.png \
-	22x22/actions/edit-find-single.png \
+	MatIcons.FIND_MULTIPLE:22 \
+	MatIcons.TARGET:22 \
 	22x22/actions/window-split-horizontal.png \
 	22x22/actions/window-split-vertical.png \
 	22x22/actions/window-unsplit.png \
-	22x22/actions/zoom-in.png \
-	22x22/actions/zoom-out.png \
+	MatIcons.ZOOM_IN:22 \
+	MatIcons.ZOOM_OUT:22 \
 	22x22/apps/utilities-terminal.png \
 	22x22/apps/system-file-manager.png \
 	22x22/apps/internet-web-browser.png \
-	22x22/apps/help-browser.png \
+	MatIcons.HELP:22 \
 	22x22/apps/system-installer.png \
 	22x22/status/image-missing.png \
 	22x22/status/folder-visiting.png \
@@ -120,7 +120,7 @@ icons=22x22/actions/resize-horisontal.png \
 	22x22/devices/media-floppy.png \
 	22x22/devices/printer.png \
 	22x22/places/plugins.png \
-	22x22/categories/preferences-system.png \
+	MatIcons.SETTINGS:22 \
 	Blank24.gif
 #}}}
 
@@ -179,15 +179,15 @@ save-a-copy-as.icon.small=22x22/actions/document-save-as.png
 save-all.icon.small=22x22/actions/document-save-all.png
 print.icon.small=22x22/actions/document-print.png
 page-setup.icon.small=22x22/actions/document-properties.png
-exit.icon.small=22x22/actions/process-stop.png
-exit.icon.medium=22x22/actions/process-stop.png
+exit.icon.small=MatIcons.STOP:22
+exit.icon.medium=MatIcons.STOP:22
 
 #{{{ Recent Files menu
 recent-files.code=new RecentFilesProvider();
 #}}}
 
 reload-encoding.code=new ReloadWithEncodingProvider();
-reload-encoding.icon.small=16x16/actions/view-refresh.png
+reload-encoding.icon.small=22x22/actions/view-refresh.png
 #}}}
 
 #{{{ Edit menu
@@ -315,7 +315,7 @@ replace-in-selection.icon.small=22x22/actions/edit-find-replace.png
 replace-and-find-next.icon.small=22x22/actions/edit-find-replace.png
 replace-all.icon.small=22x22/actions/edit-find-replace.png
 quick-search.icon.small=22x22/actions/edit-find.png
-hypersearch.icon.small=22x22/actions/edit-find-multiple.png
+hypersearch.icon.small=MatIcons.FIND_MULTIPLE:22
 quick-search-word.icon.small=22x22/actions/edit-find.png
 hypersearch-word.icon.small=22x22/actions/edit-find.png
 #}}}
@@ -340,8 +340,8 @@ add-marker.icon.small=22x22/actions/bookmark-new.png
 add-marker-shortcut.icon.small=22x22/actions/bookmark-new.png
 remove-all-markers.icon.small=22x22/actions/edit-clear.png
 goto-marker.icon.small=22x22/actions/go-jump.png
-prev-marker.icon.small=22x22/actions/go-previous.png
-next-marker.icon.small=22x22/actions/go-next.png
+prev-marker.icon.small=MatIcons.ARROW_BACK:22
+next-marker.icon.small=MatIcons.ARROW_FORWARD:22
 #}}}
 
 #{{{ Folding menu
@@ -455,8 +455,8 @@ utils=vfs.browser \
 	  %quick-options
 
 buffer-options.icon.small=22x22/actions/document-properties.png
-global-options.icon.small=22x22/categories/preferences-system.png
-combined-options.icon.small=22x22/categories/preferences-system.png
+global-options.icon.small=MatIcons.SETTINGS:22
+combined-options.icon.small=MatIcons.SETTINGS:22
 
 #{{{ Recent Directories menu
 recent-directories.code=new RecentDirectoriesProvider();
@@ -771,9 +771,9 @@ search.beepOnSearchAutoWrap=false
 
 #{{{ HyperSearch results dialog
 hypersearch-results.clear.icon=22x22/actions/edit-clear.png
-hypersearch-results.stop.icon=22x22/actions/process-stop.png
-hypersearch-results.multi.multiple.icon=22x22/actions/edit-find-multiple.png
-hypersearch-results.multi.single.icon=22x22/actions/edit-find-single.png
+hypersearch-results.stop.icon=MatIcons.STOP:22
+hypersearch-results.multi.multiple.icon=MatIcons.FIND_MULTIPLE:22
+hypersearch-results.multi.single.icon=MatIcons.TARGET:22
 hypersearch-results.match.highlight.icon=22x22/actions/edit-find-highlight-match.png
 hypersearch-results.match.normal.icon=22x22/actions/edit-find-normal-match.png
 #}}}
@@ -784,8 +784,8 @@ paste-from-list.max-preview-length=100000
 #}}}
 
 #{{{ Help Viewer
-helpviewer.back.icon=22x22/actions/go-previous.png
-helpviewer.forward.icon=22x22/actions/go-next.png
+helpviewer.back.icon=MatIcons.ARROW_BACK:22
+helpviewer.forward.icon=MatIcons.ARROW_FORWARD:22
 #}}}
 
 #}}}
@@ -842,8 +842,8 @@ options.appearance.lang.zh-tw=台灣中文
 options.context.code=new ContextOptionPane();
 options.context.add.icon=22x22/actions/list-add.png
 options.context.remove.icon=22x22/actions/list-remove.png
-options.context.moveUp.icon=22x22/actions/go-up.png
-options.context.moveDown.icon=22x22/actions/go-down.png
+options.context.moveUp.icon=MatIcons.ARROW_UPWARD:22
+options.context.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
 options.context.reset.icon=22x22/actions/edit-clear.png
 options.context.includeOptionsLink=true
 #}}}
@@ -908,8 +908,8 @@ options.textarea.code=new TextAreaOptionPane();
 options.toolbar.code=new ToolBarOptionPane();
 options.toolbar.add.icon=22x22/actions/list-add.png
 options.toolbar.remove.icon=22x22/actions/list-remove.png
-options.toolbar.moveUp.icon=22x22/actions/go-up.png
-options.toolbar.moveDown.icon=22x22/actions/go-down.png
+options.toolbar.moveUp.icon=MatIcons.ARROW_UPWARD:22
+options.toolbar.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
 options.toolbar.reset.icon=22x22/actions/edit-clear.png
 options.toolbar.edit.icon=22x22/actions/document-properties.png
 #}}}
@@ -946,7 +946,7 @@ tip.show=true
 vfs.browser.default-filter=*[^~#]
 vfs.browser.filter-enabled=true
 vfs.browser.file.icon=16x16/mimetypes/text-x-generic.png
-vfs.browser.icon.small=16x16/apps/system-file-manager.png
+vfs.browser.icon.small=22x22/apps/system-file-manager.png
 vfs.browser.open-file.icon=12x12/actions/opened-file.png
 vfs.browser.dir.icon=12x12/places/folder.png
 vfs.browser.open-dir.icon=12x12/status/folder-open.png
@@ -957,7 +957,7 @@ vfs.browser.collapse.icon=12x12/actions/group-collapse.png
 vfs.browser.dock-position=left
 
 #{{{ Actions
-vfs.browser.home.icon=22x22/actions/go-home.png
+vfs.browser.home.icon=MatIcons.HOME:22
 vfs.browser.new-directory.icon=22x22/actions/folder-new.png
 vfs.browser.new-file.icon=22x22/actions/document-new.png
 vfs.browser.reload.icon=22x22/actions/view-refresh.png
@@ -965,8 +965,8 @@ vfs.browser.roots.icon=22x22/devices/drive-harddisk.png
 vfs.browser.search-directory.icon=22x22/actions/edit-find-in-folder.png
 vfs.browser.synchronize.icon=22x22/status/folder-visiting.png
 vfs.browser.up.icon=22x22/actions/go-parent.png
-vfs.browser.next.icon=22x22/actions/go-next.png
-vfs.browser.previous.icon=22x22/actions/go-previous.png
+vfs.browser.next.icon=MatIcons.ARROW_FORWARD:22
+vfs.browser.previous.icon=MatIcons.ARROW_BACK:22
 #}}}
 
 #{{{ Tool bar

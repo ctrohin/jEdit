@@ -135,11 +135,11 @@ public class BrowserCommandsMenu extends JPopupMenu
 		}
 
 		add(createMenuItem("up", "22x22/actions/go-parent.png"));
-		add(createMenuItem("previous", "22x22/actions/go-previous.png"));
-		add(createMenuItem("next", "22x22/actions/go-next.png"));
+		add(createMenuItem("previous", "MatIcons.ARROW_BACK:22"));
+		add(createMenuItem("next", "MatIcons.ARROW_FORWARD:22"));
 		add(createMenuItem("reload", "22x22/actions/document-reload.png"));
 		add(createMenuItem("roots"));
-		add(createMenuItem("home", "22x22/actions/go-home.png"));
+		add(createMenuItem("home", "MatIcons.HOME:22"));
 		add(createMenuItem("synchronize"));
 		addSeparator();
 

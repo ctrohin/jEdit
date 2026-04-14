@@ -197,6 +197,9 @@ public class GUIUtilities
 	 */
 	public static JMenu loadMenu(ActionContext context, String name)
 	{
+		if (name.equals("utils")) {
+			System.out.println("Hello!");
+		}
 		return new EnhancedMenu(name,
 			jEdit.getProperty(name.concat(".label")),
 			context);

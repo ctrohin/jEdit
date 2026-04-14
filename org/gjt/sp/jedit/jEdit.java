@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatInspector;
 import org.gjt.sp.jedit.datatransfer.JEditTransferableService;
 import org.gjt.sp.jedit.gui.tray.JTrayIconManager;
 import org.gjt.sp.jedit.icons.IconManager;
@@ -3961,6 +3962,7 @@ public class jEdit
 		// LookAndFeel plugin on initial start up because the plugins haven't
 		// been loaded yet.
 //		FlatLightLaf.setup();
+//		FlatInspector.install( "ctrl shift alt X" );
 		final Runnable setLaf = () -> {
             try {
                 UIManager.setLookAndFeel(sLf);

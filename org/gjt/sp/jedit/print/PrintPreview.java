@@ -89,20 +89,20 @@ public class PrintPreview extends EnhancedDialog
 		// toolbar components
 		pages = new JComboBox<Integer>();
 
-		nextPage = new JButton( IconManager.loadIcon( "22x22/actions/go-next.png" ) );
+		nextPage = new JButton( IconManager.loadIcon( "MatIcons.ARROW_FORWARD:22" ) );
 		nextPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.nextPage", "Next Page" ) );
 
-		prevPage = new JButton( IconManager.loadIcon( "22x22/actions/go-previous.png" ) );
+		prevPage = new JButton( IconManager.loadIcon( "MatIcons.ARROW_BACK:22" ) );
 		prevPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.prevPage", "Previous Page" ) );
 
-		zoomIn = new JButton( IconManager.loadIcon( "22x22/actions/zoom-in.png" ) );
+		zoomIn = new JButton( IconManager.loadIcon( "MatIcons.ZOOM_IN:22" ) );
 		zoomIn.setToolTipText( jEdit.getProperty( "printpreview.dialog.zoomin", "Zoom In" ) );
 
-		zoomOut = new JButton( IconManager.loadIcon( "22x22/actions/zoom-out.png" ) );
+		zoomOut = new JButton( IconManager.loadIcon( "MatIcons.ZOOM_OUT:22" ) );
 		zoomOut.setToolTipText( jEdit.getProperty( "printpreview.dialog.zoomout", "Zoom Out" ) );
 
 		// horisontal! yes, that's right
-		fullWidth = new JButton( IconManager.loadIcon( "22x22/actions/resize-horisontal.png" ) );
+		fullWidth = new JButton( IconManager.loadIcon( "MatIcons.RESIZE_HORIZONTAL:22" ) );
 		fullWidth.setToolTipText( jEdit.getProperty( "printpreview.dialog.pageWidth", "Show page full width" ) );
 
 		fullPage = new JButton( IconManager.loadIcon( "22x22/actions/resize-vertical.png" ) );

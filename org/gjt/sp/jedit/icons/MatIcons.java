@@ -976,7 +976,8 @@ public enum MatIcons implements IconCode {
     RESIZE_HORIZONTAL('\ue86f'),
     RESIZE_VERTICAL('\ue5d7'),
     TARGET('\ue1b3'),
-    CLOCK('\ue8ae');
+    CLOCK('\ue8ae'),
+    BLANK('5');
 
     private final char character;
 
