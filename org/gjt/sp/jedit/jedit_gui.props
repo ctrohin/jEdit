@@ -13,8 +13,8 @@ common.remove.icon=MatIcons.REMOVE:22
 common.moveUp.icon=MatIcons.ARROW_UPWARD:22
 common.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
 common.clearAll.icon=MatIcons.CLEAR:22
-logo.icon.small=16x16/apps/jedit.png
-logo.icon.medium=32x32/apps/jedit.png
+logo.icon.small=MatIcons.CREATE:16
+logo.icon.medium=MatIcons.CREATE:32
 
 #}}}
 

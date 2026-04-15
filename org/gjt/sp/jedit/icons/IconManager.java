@@ -178,7 +178,7 @@ public class IconManager {
         // Load the icon theme but fallback on the old icons
         String theme = IconTheme.get();
         Log.log(Log.DEBUG, GUIUtilities.class, "Icon theme set to: "+theme);
-        setIconPath("jeditresource:/org/gjt/sp/jedit/icons/themes/" + theme + '/');
+        setIconPath("jeditresource:/org/gjt/sp/jedit/icons/themes/tango/");
         Log.log(Log.DEBUG, GUIUtilities.class, "Loading icon theme from: "+iconPath);
     } //}}}
 

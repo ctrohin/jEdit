@@ -160,7 +160,9 @@ public class AboutDialog extends JDialog
 				tell("AboutPanel: " + exc);
 			}
 
-			Dimension d = new Dimension(image.getIconWidth(), image.getIconHeight());
+			final var wi = image.getIconWidth() > 0 ? image.getIconWidth() : 64;
+			final var he = image.getIconHeight() > 0 ? image.getIconHeight() : 64;
+			Dimension d = new Dimension(wi, he);
 			setSize(d);
 			setPreferredSize(d);
 			w = d.width;
