@@ -64,6 +64,9 @@ public class IconManager {
             return null;
 
         // * Enable old icon naming scheme support
+        if (deprecatedIcons.containsKey(iconName)) {
+            Log.log(Log.ERROR, null, "Deprecated icon found: " + iconName);
+        }
         final var iconString = deprecatedIcons.getOrDefault(iconName, iconName);
         // TODO: Check if it is possible to render a multiresolution image properly
         final IconAndSize fontIcon = parseMaterialIcon(iconString); // material.get(iconString);
