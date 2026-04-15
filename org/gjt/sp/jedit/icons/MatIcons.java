@@ -22,6 +22,11 @@
 package org.gjt.sp.jedit.icons;
 
 import jiconfont.IconCode;
+import jiconfont.IconFont;
+import jiconfont.icons.GoogleMaterialDesignIcons;
+
+import java.io.InputStream;
+import java.net.URL;
 
 public enum MatIcons implements IconCode {
     ACCESSIBILITY('\ue84e'),
@@ -977,7 +982,15 @@ public enum MatIcons implements IconCode {
     RESIZE_VERTICAL('\ue5d7'),
     TARGET('\ue1b3'),
     CLOCK('\ue8ae'),
-    BLANK('5');
+    BLANK('5'),
+    EXIT('\uea77'),
+    SEARCH_MULTIPLE('\uf02f'),
+    FILE_ERROR('\uf057'),
+    SEARCH_GLOBAL('\ue2db'),
+    HIGHLIGHT_MATCH('\ue9bd'),
+    HIGHLIGHT_ONE('\ue26c'),
+    ONE('\ue3d0'),
+    NINE_PLUS('\ue3da');
 
     private final char character;
 
@@ -990,6 +1003,27 @@ public enum MatIcons implements IconCode {
     }
 
     public String getFontFamily() {
-        return "Material Icons";
+        return "Material Symbols";
     }
+
+    public static IconFont getIconFont() {
+        return new IconFont() {
+            public String getFontFamily() {
+                return "Material Symbols";
+            }
+
+            public InputStream getFontInputStream() {
+                try {
+//                var is = MatIcons.class.getResourceAsStream("jeditresource:/org/gjt/sp/jedit/icons/MaterialIcons-Regular.ttf");
+                    final var url = new URL("jeditresource:/org/gjt/sp/jedit/icons/MaterialIcons-Regular.ttf");
+                    final var is = url.openStream();
+                    return is;
+                }
+                catch (Exception _) {
+                    return null;
+                }
+            }
+        };
+    }
+
 }

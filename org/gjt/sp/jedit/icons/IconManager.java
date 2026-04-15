@@ -282,7 +282,7 @@ public class IconManager {
     }
 
     private static void initializeMaterialIcons() {
-        IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
+        IconFontSwing.register(MatIcons.getIconFont());
     }
     //}}}
 }

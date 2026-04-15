@@ -310,12 +310,12 @@ search=find \
 	   hypersearch-results
 find.icon.small=MatIcons.SEARCH:22
 find-next.icon.small=MatIcons.NAVIGATE_NEXT:22
-search-in-directory.icon.small=MatIcons.SEARCH:22
+search-in-directory.icon.small=MatIcons.SEARCH_MULTIPLE:22
 replace-in-selection.icon.small=MatIcons.FIND_REPLACE:22
 replace-and-find-next.icon.small=MatIcons.FIND_REPLACE:22
 replace-all.icon.small=MatIcons.FIND_REPLACE:22
 quick-search.icon.small=MatIcons.SEARCH:22
-hypersearch.icon.small=MatIcons.FIND_MULTIPLE:22
+hypersearch.icon.small=MatIcons.SEARCH_GLOBAL:22
 quick-search-word.icon.small=MatIcons.SEARCH:22
 hypersearch-word.icon.small=MatIcons.SEARCH:22
 #}}}
@@ -772,10 +772,10 @@ search.beepOnSearchAutoWrap=false
 #{{{ HyperSearch results dialog
 hypersearch-results.clear.icon=MatIcons.CLEAR:22
 hypersearch-results.stop.icon=MatIcons.STOP:22
-hypersearch-results.multi.multiple.icon=MatIcons.FIND_MULTIPLE:22
-hypersearch-results.multi.single.icon=MatIcons.TARGET:22
-hypersearch-results.match.highlight.icon=22x22/actions/edit-find-highlight-match.png
-hypersearch-results.match.normal.icon=22x22/actions/edit-find-normal-match.png
+hypersearch-results.multi.multiple.icon=MatIcons.NINE_PLUS:22
+hypersearch-results.multi.single.icon=MatIcons.ONE:22
+hypersearch-results.match.highlight.icon=MatIcons.HIGHLIGHT_MATCH:22
+hypersearch-results.match.normal.icon=MatIcons.HIGHLIGHT_ONE:22
 #}}}
 
 #{{{ Paste previous and paste deleted dialogs
