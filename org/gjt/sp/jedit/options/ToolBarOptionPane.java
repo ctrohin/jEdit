@@ -483,7 +483,7 @@ class ToolBarEditDialog extends EnhancedDialog
 
 		fileButton = new JButton(jEdit.getProperty("options.toolbar.edit.no-icon"));
 		fileButton.setMargin(new Insets(1,1,1,1));
-		fileButton.setIcon(GUIUtilities.loadIcon("Blank24.gif"));
+		fileButton.setIcon(GUIUtilities.loadIcon("MatIcons.BLANK:24"));
 		fileButton.setHorizontalAlignment(SwingConstants.LEFT);
 		fileButton.addActionListener(e -> browseIcon());
 		compPanel.add(fileButton);
@@ -611,7 +611,7 @@ class ToolBarEditDialog extends EnhancedDialog
 				icon = fileButton.getIcon();
 				iconName = fileIcon;
 				if(iconName == null)
-					iconName = "Blank24.gif";
+					iconName = "MatIcons.BLANK:24";
 			}
 
 			String label;

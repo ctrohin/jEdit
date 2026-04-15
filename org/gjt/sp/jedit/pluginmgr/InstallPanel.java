@@ -1426,6 +1426,6 @@ class InstallPanel extends JPanel implements EBComponent
 
 	//}}}
 
-	static final Icon ASC_ICON  = GUIUtilities.loadIcon("arrow-asc.png");
-	static final Icon DESC_ICON = GUIUtilities.loadIcon("arrow-desc.png");
+	static final Icon ASC_ICON  = GUIUtilities.loadIcon("MatIcons.CHEVRON_UP:10");
+	static final Icon DESC_ICON = GUIUtilities.loadIcon("MatIcons.CHEVRON_DOWN:10");
 }

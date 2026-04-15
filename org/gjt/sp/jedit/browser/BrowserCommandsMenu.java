@@ -129,12 +129,12 @@ public class BrowserCommandsMenu extends JPopupMenu
 			add(createMenuItem("paste", "svg/actions/paste-icon.svg:22"));
 
 			if((files.length == 1) || (browser.getSelectedFiles().length != 0))
-		   		add(createMenuItem("properties", "22x22/actions/document-properties.png"));
+		   		add(createMenuItem("properties", "MatIcons.WRENCH:22"));
 
 			addSeparator();
 		}
 
-		add(createMenuItem("up", "22x22/actions/go-parent.png"));
+		add(createMenuItem("up", "MatIcons.ARROW_UPWARD:22"));
 		add(createMenuItem("previous", "MatIcons.ARROW_BACK:22"));
 		add(createMenuItem("next", "MatIcons.ARROW_FORWARD:22"));
 		add(createMenuItem("reload", "MatIcons.REFRESH:22"));
@@ -151,7 +151,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		if(browser.getMode() == VFSBrowser.BROWSER)
 		{
 			addSeparator();
-			add(createMenuItem("search-directory", "22x22/actions/system-search.png"));
+			add(createMenuItem("search-directory", "MatIcons.SEARCH:22"));
 		}
 
 		addSeparator();

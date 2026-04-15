@@ -42,12 +42,12 @@ view.toolbar=new-file open-file save close-buffer - print - \
 new-file.icon=MatIcons.NOTE_ADD:22
 open-file.icon=MatIcons.FILE_OPEN:22
 save.icon=MatIcons.SAVE:22
-close-buffer.icon=22x22/actions/document-close.png
-global-close-buffer.icon=22x22/actions/document-close.png
+close-buffer.icon=MatIcons.CLOSE:22
+global-close-buffer.icon=MatIcons.CLOSE:22
 print.icon=MatIcons.PRINT:22
-page-setup.icon=22x22/actions/printer-setup.png
-undo.icon=22x22/actions/edit-undo.png
-redo.icon=22x22/actions/edit-redo.png
+page-setup.icon=MatIcons.PRINT:22
+undo.icon=MatIcons.UNDO:22
+redo.icon=MatIcons.REDO:22
 cut.icon=MatIcons.CONTENT_CUT:22
 copy.icon=MatIcons.CONTENT_COPY:22
 paste.icon=MatIcons.CONTENT_PASTE:22
@@ -57,7 +57,7 @@ new-view.icon=MatIcons.OPEN_IN_NEW:22
 unsplit.icon=MatIcons.SPLIT_MERGE:22
 split-horizontal.icon=MatIcons.SPLIT_HORIZONTAL:22
 split-vertical.icon=MatIcons.SPLIT_VERTICAL:22
-buffer-options.icon=22x22/actions/document-properties.png
+buffer-options.icon=MatIcons.WRENCH:22
 global-options.icon=MatIcons.SETTINGS:22
 combined-options.icon=MatIcons.SETTINGS:22
 plugin-manager.icon=MatIcons.PLUGINS:22
@@ -72,10 +72,10 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	MatIcons.ARROW_UPWARD:22 \
 	MatIcons.FIRST:22 \
 	MatIcons.LAST:22 \
-	22x22/actions/go-parent.png \
-	22x22/actions/document-close.png \
-	22x22/actions/edit-undo.png \
-	22x22/actions/edit-redo.png \
+	MatIcons.ARROW_UPWARD:22 \
+	MatIcons.CLOSE:22 \
+	MatIcons.UNDO:22 \
+	MatIcons.REDO:22 \
 	MatIcons.CONTENT_CUT:22 \
 	MatIcons.CONTENT_PASTE:22 \
 	MatIcons.DELETE:22 \
@@ -84,7 +84,7 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	MatIcons.SEARCH:22 \
 	MatIcons.SEARCH:22 \
 	MatIcons.CONTENT_COPY:22 \
-	22x22/actions/copy-to-buffer.png \
+	MatIcons.CONTENT_COPY:22 \
 	MatIcons.REMOVE:22 \
 	MatIcons.ADD:22 \
 	MatIcons.CREATE_NEW_FOLDER:22 \
@@ -92,16 +92,16 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	MatIcons.NOTE_ADD:22 \
 	MatIcons.FILE_OPEN:22 \
 	MatIcons.REFRESH:22 \
-	22x22/actions/document-properties.png \
+	MatIcons.WRENCH:22 \
 	MatIcons.SAVE:22 \
 	MatIcons.SAVE:22 \
 	MatIcons.SAVE:22 \
-	22x22/actions/printer-setup.png \
+	MatIcons.PRINT:22 \
 	MatIcons.STOP:22 \
-	22x22/actions/media-playback-pause.png \
-	22x22/actions/media-playback-start.png \
+	MatIcons.PAUSE:22 \
+	MatIcons.PLAY_ARROW:22 \
 	MatIcons.REFRESH:22 \
-	22x22/actions/application-run.png \
+	MatIcons.NEXT_WEEK:22 \
 	MatIcons.FIND_MULTIPLE:22 \
 	MatIcons.TARGET:22 \
 	MatIcons.SPLIT_HORIZONTAL:22 \
@@ -109,19 +109,19 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 	MatIcons.SPLIT_MERGE:22 \
 	MatIcons.ZOOM_IN:22 \
 	MatIcons.ZOOM_OUT:22 \
-	22x22/apps/utilities-terminal.png \
-	22x22/apps/system-file-manager.png \
-	22x22/apps/internet-web-browser.png \
+	MatIcons.DESKTOP_MAC:22 \
+	MatIcons.FILE_MANAGER:22 \
+	MatIcons.LANGUAGE:22 \
 	MatIcons.HELP:22 \
-	22x22/apps/system-installer.png \
+	MatIcons.PLUGINS:22 \
 	22x22/status/image-missing.png \
-	22x22/status/folder-visiting.png \
+	MatIcons.FOLDER:22 \
 	MatIcons.HARD_DISK:22 \
-	22x22/devices/media-floppy.png \
-	22x22/devices/printer.png \
+	MatIcons.SAVE:22 \
+	MatIcons.PRINT:22 \
 	MatIcons.PLUGINS:22 \
 	MatIcons.SETTINGS:22 \
-	Blank24.gif
+	MatIcons.BLANK:24
 #}}}
 
 #}}}
@@ -168,17 +168,17 @@ new-file-in-mode.icon.small=MatIcons.NOTE_ADD:22
 open-file.icon.small=MatIcons.FILE_OPEN:22
 reload.icon.small=MatIcons.REFRESH:22
 reload-all.icon.small=MatIcons.REFRESH:22
-close-buffer.icon.small=22x22/actions/document-close.png
-closeall-bufferset.icon.small=22x22/actions/document-close.png
-closeall-except-active.icon.small=22x22/actions/document-close.png
-global-close-buffer.icon.small=22x22/actions/document-close.png
-close-all.icon.small=22x22/actions/document-close.png
+close-buffer.icon.small=MatIcons.CLOSE:22
+closeall-bufferset.icon.small=MatIcons.CLOSE:22
+closeall-except-active.icon.small=MatIcons.CLOSE:22
+global-close-buffer.icon.small=MatIcons.CLOSE:22
+close-all.icon.small=MatIcons.CLOSE:22
 save.icon.small=MatIcons.SAVE:22
 save-as.icon.small=MatIcons.SAVE:22
 save-a-copy-as.icon.small=MatIcons.SAVE:22
 save-all.icon.small=MatIcons.SAVE:22
 print.icon.small=MatIcons.PRINT:22
-page-setup.icon.small=22x22/actions/document-properties.png
+page-setup.icon.small=MatIcons.WRENCH:22
 exit.icon.small=MatIcons.STOP:22
 exit.icon.medium=MatIcons.STOP:22
 
@@ -211,8 +211,8 @@ edit=undo \
 	 %text \
 	 %indent \
 	 %source
-undo.icon.small=22x22/actions/edit-undo.png
-redo.icon.small=22x22/actions/edit-redo.png
+undo.icon.small=MatIcons.UNDO:22
+redo.icon.small=MatIcons.REDO:22
 cut.icon.small=MatIcons.CONTENT_CUT:22
 copy.icon.small=MatIcons.CONTENT_COPY:22
 paste.icon.small=MatIcons.CONTENT_PASTE:22
@@ -311,9 +311,9 @@ search=find \
 find.icon.small=MatIcons.SEARCH:22
 find-next.icon.small=MatIcons.NAVIGATE_NEXT:22
 search-in-directory.icon.small=MatIcons.SEARCH:22
-replace-in-selection.icon.small=22x22/actions/edit-find-replace.png
-replace-and-find-next.icon.small=22x22/actions/edit-find-replace.png
-replace-all.icon.small=22x22/actions/edit-find-replace.png
+replace-in-selection.icon.small=MatIcons.FIND_REPLACE:22
+replace-and-find-next.icon.small=MatIcons.FIND_REPLACE:22
+replace-all.icon.small=MatIcons.FIND_REPLACE:22
 quick-search.icon.small=MatIcons.SEARCH:22
 hypersearch.icon.small=MatIcons.FIND_MULTIPLE:22
 quick-search-word.icon.small=MatIcons.SEARCH:22
@@ -336,10 +336,10 @@ markers=add-marker \
 	  view-markers \
 	  -
 markers.code=new MarkersProvider();
-add-marker.icon.small=22x22/actions/bookmark-new.png
-add-marker-shortcut.icon.small=22x22/actions/bookmark-new.png
+add-marker.icon.small=MatIcons.BOOKMARK:22
+add-marker-shortcut.icon.small=MatIcons.BOOKMARK:22
 remove-all-markers.icon.small=MatIcons.CLEAR:22
-goto-marker.icon.small=22x22/actions/go-jump.png
+goto-marker.icon.small=MatIcons.JUMP:22
 prev-marker.icon.small=MatIcons.ARROW_BACK:22
 next-marker.icon.small=MatIcons.ARROW_FORWARD:22
 #}}}
@@ -390,7 +390,7 @@ view=new-view \
 	 toggle-full-screen
 new-view.icon.small=MatIcons.OPEN_IN_NEW:22
 new-plain-view.icon.small=MatIcons.OPEN_IN_NEW:22
-close-view.icon.small=22x22/actions/document-close.png
+close-view.icon.small=MatIcons.CLOSE:22
 
 #{{{ Scrolling menu
 scrolling=scroll-to-current-line \
@@ -454,7 +454,7 @@ utils=vfs.browser \
 	  - \
 	  %quick-options
 
-buffer-options.icon.small=22x22/actions/document-properties.png
+buffer-options.icon.small=MatIcons.WRENCH:22
 global-options.icon.small=MatIcons.SETTINGS:22
 combined-options.icon.small=MatIcons.SETTINGS:22
 
@@ -519,8 +519,8 @@ macros=new-macro \
 	   -
 macros.code=new MacrosProvider();
 new-macro.icon.small=MatIcons.NOTE_ADD:22
-record-macro.icon.small=22x22/actions/media-record.png
-stop-recording.icon.small=22x22/actions/media-playback-stop.png
+record-macro.icon.small=MatIcons.RECORD:22
+stop-recording.icon.small=MatIcons.STOP:22
 #}}}
 
 #{{{ Plugins menu
@@ -810,7 +810,7 @@ options.general.code=new GeneralOptionPane();
 #{{{ Abbreviations pane
 options.abbrevs.code=new AbbrevsOptionPane();
 options.abbrevs.add.icon=MatIcons.ADD:22
-options.abbrevs.edit.icon=22x22/actions/document-properties.png
+options.abbrevs.edit.icon=MatIcons.WRENCH:22
 options.abbrevs.remove.icon=MatIcons.REMOVE:22
 #}}}
 
@@ -911,7 +911,7 @@ options.toolbar.remove.icon=MatIcons.REMOVE:22
 options.toolbar.moveUp.icon=MatIcons.ARROW_UPWARD:22
 options.toolbar.moveDown.icon=MatIcons.ARROW_DOWNWARD:22
 options.toolbar.reset.icon=MatIcons.CLEAR:22
-options.toolbar.edit.icon=22x22/actions/document-properties.png
+options.toolbar.edit.icon=MatIcons.WRENCH:22
 #}}}
 
 #{{{ View pane
@@ -946,12 +946,12 @@ tip.show=true
 vfs.browser.default-filter=*[^~#]
 vfs.browser.filter-enabled=true
 vfs.browser.file.icon=MatIcons.INSERT_DRIVE_FILE:10
-vfs.browser.icon.small=22x22/apps/system-file-manager.png
+vfs.browser.icon.small=MatIcons.FILE_MANAGER:22
 vfs.browser.open-file.icon=MatIcons.PLAY_ARROW:10
 vfs.browser.dir.icon=MatIcons.F0LDER:10
 vfs.browser.open-dir.icon=MatIcons.F0LDER_OPEN:10
 vfs.browser.filesystem.icon=MatIcons.HARD_DISK:10
-vfs.browser.loading.icon=16x16/status/image-loading.png
+vfs.browser.loading.icon=MatIcons.CLOCK:16
 vfs.browser.expand.icon=MatIcons.CHEVRON_RIGHT:10
 vfs.browser.collapse.icon=MatIcons.CHEVRON_DOWN:10
 vfs.browser.dock-position=left
@@ -963,8 +963,8 @@ vfs.browser.new-file.icon=MatIcons.NOTE_ADD:22
 vfs.browser.reload.icon=MatIcons.REFRESH:22
 vfs.browser.roots.icon=MatIcons.HARD_DISK:22
 vfs.browser.search-directory.icon=MatIcons.SEARCH:22
-vfs.browser.synchronize.icon=22x22/status/folder-visiting.png
-vfs.browser.up.icon=22x22/actions/go-parent.png
+vfs.browser.synchronize.icon=MatIcons.FOLDER:22
+vfs.browser.up.icon=MatIcons.ARROW_UPWARD:22
 vfs.browser.next.icon=MatIcons.ARROW_FORWARD:22
 vfs.browser.previous.icon=MatIcons.ARROW_BACK:22
 #}}}
