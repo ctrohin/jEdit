@@ -1077,13 +1077,13 @@ public class Buffer extends JEditBuffer
 	public Icon getIcon()
 	{
 		if(isDirty())
-			return IconManager.loadIcon("dirty.gif");
+			return IconManager.loadIcon("MatIcons.MORE_HORIZ:10");
 		else if(isReadOnly() || isLocked())
-			return IconManager.loadIcon("readonly.gif");
+			return IconManager.loadIcon("MatIcons.BLOCK:10");
 		else if(getFlag(NEW_FILE))
-			return IconManager.loadIcon("new.gif");
+			return IconManager.loadIcon("MatIcons.WIZZARD_WAND:10");
 		else
-			return IconManager.loadIcon("normal.gif");
+			return IconManager.loadIcon("MatIcons.WEB_ASSET:10");
 	} //}}}
 
 	//}}}
