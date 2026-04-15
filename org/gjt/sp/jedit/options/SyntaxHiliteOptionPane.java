@@ -81,14 +81,12 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 	private StyleTableModel styleModel;
 	private JTable styleTable;
 
-	private static final String[] THEMES = {"lite1", "lite2", "dark1", "dark2", "dark3", "DEFAULT"};
-	private static final String[] THEME_NAMES = {"Classic Light", "Light", "Islands Dark", "Dark", "Dracula", "jEdit default"};
 	private JPanel createThemePanel() {
-		final JButton themes = new JButton("Copy from theme");
+		final JButton themes = new JButton("Set from theme");
 		final JPopupMenu popupMenu = new JPopupMenu();
-		for (int i = 0; i < THEMES.length; i++) {
-			final String theme = THEMES[i];
-			final String themeName = THEME_NAMES[i];
+		for (int i = 0; i < ThemeConstants.THEMES.length; i++) {
+			final String theme = ThemeConstants.THEMES[i];
+			final String themeName = ThemeConstants.THEME_NAMES[i];
 			final JMenuItem mi = new JMenuItem(themeName);
 			mi.addActionListener(e -> {
 				final StyleTableModel model = (StyleTableModel) styleTable.getModel();

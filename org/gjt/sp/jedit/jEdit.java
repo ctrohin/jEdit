@@ -975,6 +975,21 @@ public class jEdit
 			return SyntaxUtilities.parseColor(value, def);
 	} //}}}
 
+	public static Color getDefaultColorProperty(String name)
+	{
+		return getDefaultColorProperty(name,Color.black);
+	}
+
+	public static Color getDefaultColorProperty(String name, Color def)
+	{
+		String value = getDefaultProperty(name);
+		if(value == null)
+			return def;
+		else
+			return SyntaxUtilities.parseColor(value, def);
+	} //}}}
+
+
 	//{{{ setColorProperty() method
 	/**
 	 * Sets the value of a color property.

@@ -124,6 +124,8 @@ public class TextAreaOptionPane extends AbstractOptionPane
 
 		addSeparator();
 
+		addComponent(createThemePanel());
+
 		/* Text color */
 		addComponent(jEdit.getProperty("options.textarea.foreground"),
 			foregroundColor = new ColorWellButton(
@@ -299,6 +301,49 @@ public class TextAreaOptionPane extends AbstractOptionPane
 		jEdit.setIntegerProperty("options.textarea.lineSpacing", Integer.parseInt(lineSpacing.getText()));
 	} //}}}
 
+	private void setFromTheme(String theme) {
+		final var themePrefix = theme.equals("DEFAULT") ? "" : (theme + ".");
+		backgroundColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.bgColor"));
+		foregroundColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.fgColor"));
+		lineHighlightColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.lineHighlightColor"));
+		caretColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.caretColor"));
+		selectionColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.selectionColor"));
+		selectionFgColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.selectionFgColor"));
+		multipleSelectionColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.multipleSelectionColor"));
+		pageBreaksColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.pageBreaksColor"));
+		wrapGuideColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.wrapGuideColor"));
+		eolMarkerColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.eolMarkerColor"));
+		structureHighlightColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.structureHighlightColor"));
+
+//		foregroundColor
+//		lineHighlightColor
+//		caretColor
+//		selectionColor
+//		selectionFgColor
+//		multipleSelectionColor
+//		pageBreaksColor
+//		wrapGuideColor
+//		eolMarkerColor
+//		structureHighlightColor
+	}
+
+	private JPanel createThemePanel() {
+		final JButton themes = new JButton("Set from theme");
+		final JPopupMenu popupMenu = new JPopupMenu();
+		for (int i = 0; i < ThemeConstants.THEMES.length; i++) {
+			final String theme = ThemeConstants.THEMES[i];
+			final String themeName = ThemeConstants.THEME_NAMES[i];
+			final JMenuItem mi = new JMenuItem(themeName);
+			mi.addActionListener(e -> {
+				setFromTheme(theme);
+			});
+			popupMenu.add(mi);
+		}
+		themes.addActionListener(e -> popupMenu.show(themes, 0, themes.getHeight()));
+		final JPanel p = new JPanel(new BorderLayout());
+		p.add(BorderLayout.WEST, themes);
+		return p;
+	}
 	//{{{ Private members
 	private FontSelector font;
 	private JCheckBox fontSubst;

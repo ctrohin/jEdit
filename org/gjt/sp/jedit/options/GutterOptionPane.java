@@ -98,6 +98,8 @@ public class GutterOptionPane extends AbstractOptionPane
 		setGutterComponentsEnabledState();
 		gutterEnabled.addChangeListener(e -> setGutterComponentsEnabledState());
 
+		addComponent(createThemePanel());
+
 		/* Selection area background color */
 		addComponent(jEdit.getProperty("options.gutter.selectionAreaBgColor"),
 			selectionAreaBgColor = new ColorWellButton(
@@ -219,6 +221,38 @@ public class GutterOptionPane extends AbstractOptionPane
 
 		addFoldStyleChooser();
 	} //}}}
+
+	private JPanel createThemePanel() {
+		final JButton themes = new JButton("Set from theme");
+		final JPopupMenu popupMenu = new JPopupMenu();
+		for (int i = 0; i < ThemeConstants.THEMES.length; i++) {
+			final String theme = ThemeConstants.THEMES[i];
+			final String themeName = ThemeConstants.THEME_NAMES[i];
+			final JMenuItem mi = new JMenuItem(themeName);
+			mi.addActionListener(e -> {
+				setFromTheme(theme);
+			});
+			popupMenu.add(mi);
+		}
+		themes.addActionListener(e -> popupMenu.show(themes, 0, themes.getHeight()));
+		final JPanel p = new JPanel(new BorderLayout());
+		p.add(BorderLayout.WEST, themes);
+		return p;
+	}
+
+	private void setFromTheme(final String theme) {
+		final var themePrefix = theme.equals("DEFAULT") ? "" : (theme + ".");
+		gutterBackground.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.bgColor"));
+		gutterForeground.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.fgColor"));
+		gutterHighlightColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.highlightColor"));
+		gutterFoldMarkers.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.foldColor"));
+		gutterFocusBorder.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.focusBorderColor"));
+		gutterNoFocusBorder.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.noFocusBorderColor"));
+		gutterCurrentLineHighlight.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.currentLineColor"));
+		gutterStructureHighlight.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.structureHighlightColor"));
+		gutterMarkerHighlight.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.markerColor"));
+		selectionAreaBgColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.selectionAreaBgColor"));
+	}
 
 	//{{{ _save() method
 	@Override
