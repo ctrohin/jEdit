@@ -28,6 +28,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.jedit.msg.BufferUpdate;
@@ -49,29 +50,28 @@ public class MarkerViewer extends JPanel implements ActionListener
 
 		toolBar.add(Box.createGlue());
 
-		RolloverButton addMarker = new RolloverButton(
-			GUIUtilities.loadIcon("Plus.png"));
+		RolloverButton addMarker = new RolloverButton(IconManager.loadIcon("MatIcons.ADD:22"));
 		addMarker.setToolTipText(GenericGUIUtilities.prettifyMenuLabel(
 			jEdit.getProperty("add-marker.label")));
 		addMarker.addActionListener(this);
 		addMarker.setActionCommand("add-marker");
 		toolBar.add(addMarker);
 
-		previous = new RolloverButton(GUIUtilities.loadIcon("ArrowL.png"));
+		previous = new RolloverButton(IconManager.loadIcon("MatIcons.ARROW_BACK:22"));
 		previous.setToolTipText(GenericGUIUtilities.prettifyMenuLabel(
 			jEdit.getProperty("prev-marker.label")));
 		previous.addActionListener(this);
 		previous.setActionCommand("prev-marker");
 		toolBar.add(previous);
 
-		next = new RolloverButton(GUIUtilities.loadIcon("ArrowR.png"));
+		next = new RolloverButton(IconManager.loadIcon("MatIcons.ARROW_FORWARD:22"));
 		next.setToolTipText(GenericGUIUtilities.prettifyMenuLabel(
 			jEdit.getProperty("next-marker.label")));
 		next.addActionListener(this);
 		next.setActionCommand("next-marker");
 		toolBar.add(next);
 
-		clear = new RolloverButton(GUIUtilities.loadIcon("Clear.png"));
+		clear = new RolloverButton(IconManager.loadIcon("MatIcons.CLEAR:22"));
 		clear.setToolTipText(GenericGUIUtilities.prettifyMenuLabel(
 			jEdit.getProperty("remove-all-markers.label")));
 		clear.addActionListener(this);

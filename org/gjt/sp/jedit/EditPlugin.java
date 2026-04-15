@@ -23,6 +23,7 @@
 package org.gjt.sp.jedit;
 
 import org.gjt.sp.jedit.browser.VFSBrowser;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.menu.EnhancedMenu;
 import org.gjt.sp.util.Log;
 
@@ -241,7 +242,7 @@ options.quicknotepad.label=QuickNotepad
  * @see org.gjt.sp.jedit.jEdit#addPluginJAR(String)
  * @see org.gjt.sp.jedit.jEdit#removePluginJAR(PluginJAR,boolean)
  * @see org.gjt.sp.jedit.ActionSet
- * @see org.gjt.sp.jedit.gui.DockableWindowManager
+ * @see DockableWindowManager
  * @see org.gjt.sp.jedit.OptionPane
  * @see org.gjt.sp.jedit.PluginJAR
  * @see org.gjt.sp.jedit.ServiceManager

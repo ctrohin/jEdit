@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.manager.BufferManager;
@@ -213,7 +214,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 	{
 		JMenuItem jMenuItem =
 			GUIUtilities.loadMenuItem(VFSBrowser.getActionContext(), "vfs.browser." + name, false);
-		jMenuItem.setIcon(GUIUtilities.loadIcon(iconName));
+		jMenuItem.setIcon(IconManager.loadIcon(iconName));
 		return jMenuItem;
 	}
 

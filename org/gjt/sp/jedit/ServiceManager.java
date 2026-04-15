@@ -27,6 +27,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import org.gjt.sp.jedit.gui.DockingFrameworkProvider;
 import org.gjt.sp.jedit.textarea.fold.FoldPainter;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
@@ -81,7 +82,7 @@ import org.gjt.sp.jedit.buffer.FoldHandler;
  * <li>{@link org.gjt.sp.jedit.io.Encoding}</li>
  * <li>{@link org.gjt.sp.jedit.io.EncodingDetector}</li>
  * <li>{@link org.gjt.sp.jedit.gui.statusbar.StatusWidgetFactory}</li>
- * <li>{@link org.gjt.sp.jedit.gui.DockingFrameworkProvider}</li>
+ * <li>{@link DockingFrameworkProvider}</li>
  * <li>{@link org.gjt.sp.jedit.gui.tray.JEditTrayIcon}</li>
  * </ul>
  *

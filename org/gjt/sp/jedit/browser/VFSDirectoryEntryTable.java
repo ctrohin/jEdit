@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.gjt.sp.jedit.browser.VFSDirectoryEntryTableModel.Entry;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSFile;
 import org.gjt.sp.jedit.io.VFSManager;
@@ -682,8 +683,8 @@ public class VFSDirectoryEntryTable extends JTable
 
 	//{{{ SortOrder Icons
 
-	static final Icon ASC_ICON  = GUIUtilities.loadIcon("MatIcons.CHEVRON_UP:10");
-	static final Icon DESC_ICON = GUIUtilities.loadIcon("MatIcons.CHEVRON_DOWN:10");
+	static final Icon ASC_ICON  = IconManager.loadIcon("MatIcons.CHEVRON_UP:10");
+	static final Icon DESC_ICON = IconManager.loadIcon("MatIcons.CHEVRON_DOWN:10");
 
 	//}}}
 

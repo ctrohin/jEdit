@@ -117,7 +117,7 @@ import org.gjt.sp.util.StandardUtilities;
  * <b>Plugins</b> menu using the properties as specified in the
  * {@link EditPlugin} class.</li>
  * <li>The view also creates and initializes a
- * {@link org.gjt.sp.jedit.gui.DockableWindowManager}
+ * {@link DockableWindowManager}
  * object.  This object is
  * responsible for creating, closing and managing dockable windows.</li>
  * </ul>

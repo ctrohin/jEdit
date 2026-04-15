@@ -29,7 +29,7 @@ defer=false
 startup=true
 
 broken-image.icon=22x22/status/image-missing.png
-dropdown-arrow.icon=MatIcons.CHEVRON_DOWN:16
+dropdown-arrow.icon=MatIcons.CHEVRON_DOWN:10
 #}}}
 
 #{{{ Tool bar

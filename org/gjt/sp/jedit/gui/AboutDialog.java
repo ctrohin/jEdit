@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.List;
 
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 
@@ -146,7 +147,7 @@ public class AboutDialog extends JDialog
 			fm = getFontMetrics(defaultFont);
 			FontMetrics fmBottom = getFontMetrics(bottomLineFont);
 			iLineHeight = fm.getHeight();
-			image = (ImageIcon)GUIUtilities.loadIcon("about.png");
+			image = (ImageIcon) IconManager.loadIcon("about.png");
 			MediaTracker tracker = new MediaTracker(this);
 			tracker.addImage(image.getImage(), 0);
 

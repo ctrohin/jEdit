@@ -25,9 +25,10 @@ package org.gjt.sp.jedit;
 import java.io.Closeable;
 import java.io.IOException;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.extras.FlatInspector;
 import org.gjt.sp.jedit.datatransfer.JEditTransferableService;
+import org.gjt.sp.jedit.gui.DockableWindowFactory;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
+import org.gjt.sp.jedit.gui.DockingLayoutManager;
 import org.gjt.sp.jedit.gui.tray.JTrayIconManager;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.manager.*;

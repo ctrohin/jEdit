@@ -33,6 +33,7 @@ import org.gjt.sp.jedit.bsh.Interpreter;
 import org.gjt.sp.jedit.bsh.NameSpace;
 import org.gjt.sp.jedit.bsh.UtilEvalError;
 import org.gjt.sp.jedit.gui.BeanShellErrorDialog;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.io.VFSManager;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.Selection;
@@ -52,7 +53,7 @@ import org.gjt.sp.util.TaskManager;
  * <li><code>textArea</code> - the edit pane's {@link JEditTextArea}.</li>
  * <li><code>buffer</code> - the edit pane's {@link Buffer}.</li>
  * <li><code>wm</code> - the view's {@link
- * org.gjt.sp.jedit.gui.DockableWindowManager}.</li>
+ * DockableWindowManager}.</li>
  * <li><code>scriptPath</code> - the path name of the currently executing
  * BeanShell script.</li>
  * </ul>

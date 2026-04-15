@@ -31,6 +31,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.io.FavoritesVFS;
 import org.gjt.sp.jedit.io.VFSFile;
 import org.gjt.sp.jedit.*;
@@ -43,12 +44,12 @@ import org.gjt.sp.jedit.manager.BufferManagerImpl;
  */
 public class FileCellRenderer extends DefaultTableCellRenderer
 {
-	public static Icon fileIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.file.icon"));
-	public static Icon openFileIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.open-file.icon"));
-	public static Icon dirIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.dir.icon"));
-	public static Icon openDirIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.open-dir.icon"));
-	public static Icon filesystemIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.filesystem.icon"));
-	public static Icon loadingIcon = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.loading.icon"));
+	public static Icon fileIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.file.icon"));
+	public static Icon openFileIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.open-file.icon"));
+	public static Icon dirIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.dir.icon"));
+	public static Icon openDirIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.open-dir.icon"));
+	public static Icon filesystemIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.filesystem.icon"));
+	public static Icon loadingIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.loading.icon"));
 
 	//{{{ FileCellRenderer constructor
 	public FileCellRenderer()
@@ -304,8 +305,8 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 
 		static
 		{
-			COLLAPSE_ICON = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.collapse.icon"));
-			EXPAND_ICON = GUIUtilities.loadIcon(jEdit.getProperty("vfs.browser.expand.icon"));
+			COLLAPSE_ICON = IconManager.loadIcon(jEdit.getProperty("vfs.browser.collapse.icon"));
+			EXPAND_ICON = IconManager.loadIcon(jEdit.getProperty("vfs.browser.expand.icon"));
 			ICON_WIDTH = Math.max(COLLAPSE_ICON.getIconWidth(), EXPAND_ICON.getIconWidth());
 		} //}}}
 	} //}}}

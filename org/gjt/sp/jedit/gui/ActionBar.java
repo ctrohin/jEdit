@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import javax.swing.event.*;
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
 //}}}
@@ -61,7 +62,7 @@ public class ActionBar extends JToolBar
 
 		if(temp)
 		{
-			RolloverButton close = new RolloverButton(GUIUtilities.loadIcon("closebox.gif"));
+			RolloverButton close = new RolloverButton(IconManager.loadIcon("closebox.gif"));
 			close.addActionListener(e -> view.removeToolBar(this));
 			close.setToolTipText(jEdit.getProperty(
 				"view.action.close-tooltip"));

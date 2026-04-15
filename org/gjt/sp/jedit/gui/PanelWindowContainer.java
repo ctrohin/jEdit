@@ -1,15 +1,14 @@
 /*
- * PanelWindowContainer.java - holds dockable windows
- * :tabSize=4:indentSize=4:noTabs=false:
+ * jEdit - Programmer's Text Editor
+ * :tabSize=8:indentSize=8:noTabs=false:
  * :folding=explicit:collapseFolds=1:
  *
- * Copyright (C) 2000, 2004 Slava Pestov
+ * Copyright © 2026 jEdit contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -40,10 +39,9 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 import javax.swing.AbstractButton;
@@ -62,6 +60,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.OperatingSystem;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.gui.DockableWindowManager.DockingArea;
 import org.gjt.sp.jedit.msg.DockableWindowUpdate;
@@ -79,7 +78,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 {
 	//{{{ PanelWindowContainer constructor
 	public PanelWindowContainer(DockableWindowManagerImpl wm, String position,
-		int dimension)
+	                            int dimension)
 	{
 		this.wm = wm;
 		this.position = position;
@@ -88,7 +87,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		buttonPanel = new JPanel(new ButtonLayout());
 		buttonPanel.setBorder(new EmptyBorder(1,1,1,1));
 
-		closeBox = new JButton(GUIUtilities.loadIcon("closebox.gif"));
+		closeBox = new JButton(GUIUtilities.loadIcon("MatIcons.CLOSE:10"));
 		closeBox.setRequestFocusEnabled(false);
 		closeBox.setToolTipText(jEdit.getProperty("view.docking.close-tooltip"));
 		if(OperatingSystem.isMacOSLF())
@@ -99,7 +98,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 
 		closeBox.addActionListener(e -> show((DockableWindowManagerImpl.Entry)null));
 
-		menuBtn = new JButton(GUIUtilities.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
+		menuBtn = new JButton(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
 		menuBtn.setRequestFocusEnabled(false);
 		menuBtn.setToolTipText(jEdit.getProperty("view.docking.menu-tooltip"));
 		if(OperatingSystem.isMacOSLF())
@@ -154,16 +153,15 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			default:
 				throw new InternalError("Invalid position: " + position);
 		}
-
 		JToggleButton button;
-		if (jEdit.getBooleanProperty("use.rolloverToggleButtons"))
+		if (jEdit.getBooleanProperty("use.rolloverToggleButtons", false))
 		{
 			button = new RolloverToggleButton();
 		}
 		else 
 		{
 			button = new JToggleButton();	
-			button.setMargin(new Insets(1,1,1,1));
+			button.setMargin(new Insets(4,4,4,4));
 		}
 		GenericGUIUtilities.setButtonContentMargin(button, new Insets(6,6,6,6));
 		button.setRequestFocusEnabled(false);
@@ -175,7 +173,17 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		if(OperatingSystem.isMacOSLF())
 			button.putClientProperty("JButton.buttonType","toolbar");
 		//}}}
-
+		button.addChangeListener(e -> {
+			JToggleButton btn = (JToggleButton) e.getSource();
+			if(btn.isSelected()) {
+				btn.setBackground(UIManager.getColor("MenuItem.selectionBackground"));
+				btn.setForeground(UIManager.getColor("MenuItem.selectionForeground"));
+			} else {
+				btn.setBackground(UIManager.getColor("MenuItem.background"));
+				btn.setForeground(UIManager.getColor("MenuItem.foreground"));
+			}
+			btn.repaint();
+		});
 		buttonGroup.add(button);
 		buttons.add(button);
 		entry.btn = button;
@@ -672,7 +680,12 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 
 			FontRenderContext fontRenderContext
 				= new FontRenderContext(null,true,false);
-			glyphs = font.createGlyphVector(fontRenderContext,text);
+			Map<TextAttribute, Object> attributes = new HashMap<>();
+			attributes.put(TextAttribute.TRACKING, 0.05); // Adjust this value (0.01 to 0.1)
+			Font spacedFont = font.deriveFont(attributes);
+
+			// Use spacedFont to create your GlyphVector
+			glyphs = spacedFont.createGlyphVector(fontRenderContext, text);
 			width = (int)glyphs.getLogicalBounds().getWidth() + 4;
 			//height = (int)glyphs.getLogicalBounds().getHeight();
 

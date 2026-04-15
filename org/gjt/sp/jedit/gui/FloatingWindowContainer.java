@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.*;
 
 import org.gjt.sp.jedit.GUIUtilities;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
 //}}}
@@ -61,8 +62,7 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		Box caption = new Box(BoxLayout.X_AXIS);
-		caption.add(menu = new RolloverButton(GUIUtilities
-			.loadIcon(jEdit.getProperty("dropdown-arrow.icon"))));
+		caption.add(menu = new RolloverButton(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon"))));
 		menu.addMouseListener(new MouseHandler());
 		menu.setToolTipText(jEdit.getProperty("docking.menu.label"));
 		Box separatorBox = new Box(BoxLayout.Y_AXIS);

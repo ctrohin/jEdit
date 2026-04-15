@@ -99,7 +99,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  * @author Slava Pestov
  * @version $Id$
  */
-public class GUIUtilities
+public class GUIUtilities extends GenericGUIUtilities
 {
 	//{{{ Icon methods
 
@@ -1773,4 +1773,5 @@ public class GUIUtilities
 	public static Icon loadIcon(final String iconName) {
 		return IconManager.loadIcon(iconName);
 	}
+
 }

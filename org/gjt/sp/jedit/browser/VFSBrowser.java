@@ -42,6 +42,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.gjt.sp.jedit.datatransfer.ListVFSFileTransferable;
+import org.gjt.sp.jedit.gui.DockableWindow;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.manager.BufferManager;
@@ -1761,7 +1764,7 @@ check_selected:
 		//{{{ MenuButton constructor
 		MenuButton()
 		{
-			setIcon(GUIUtilities.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
+			setIcon(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
 			setHorizontalTextPosition(SwingConstants.LEADING);
 
 	//		setRequestFocusEnabled(false);
