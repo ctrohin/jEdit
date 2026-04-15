@@ -221,7 +221,7 @@ class PropertyManager
 	private final Properties user = new Properties();
 
 	//{{{ getDefaultProperty() method
-	private String getDefaultProperty(String name)
+	public String getDefaultProperty(String name)
 	{
 		String value = site.getProperty(name);
 		if(value != null)

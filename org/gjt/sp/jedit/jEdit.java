@@ -752,6 +752,10 @@ public class jEdit
 		return propMgr.getProperty(name);
 	} //}}}
 
+	public static String getDefaultProperty(String name) {
+		return propMgr.getDefaultProperty(name);
+	}
+
 	//{{{ getProperty() method
 	/**
 	 * Fetches a property, returning the default value if it's not

@@ -64,7 +64,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 	protected void _init()
 	{
 		setLayout(new BorderLayout(6,6));
-
+		add(BorderLayout.NORTH, createThemePanel());
 		add(BorderLayout.CENTER,createStyleTableScroller());
 	} //}}}
 
@@ -80,6 +80,27 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 	//{{{ Private members
 	private StyleTableModel styleModel;
 	private JTable styleTable;
+
+	private static final String[] THEMES = {"lite1", "lite2", "dark1", "dark2", "dark3", "DEFAULT"};
+	private static final String[] THEME_NAMES = {"Classic Light", "Light", "Islands Dark", "Dark", "Dracula", "jEdit default"};
+	private JPanel createThemePanel() {
+		final JButton themes = new JButton("Copy from theme");
+		final JPopupMenu popupMenu = new JPopupMenu();
+		for (int i = 0; i < THEMES.length; i++) {
+			final String theme = THEMES[i];
+			final String themeName = THEME_NAMES[i];
+			final JMenuItem mi = new JMenuItem(themeName);
+			mi.addActionListener(e -> {
+				final StyleTableModel model = (StyleTableModel) styleTable.getModel();
+				model.setFromTheme(theme);
+			});
+			popupMenu.add(mi);
+		}
+		themes.addActionListener(e -> popupMenu.show(themes, 0, themes.getHeight()));
+		final JPanel p = new JPanel(new BorderLayout());
+		p.add(BorderLayout.WEST, themes);
+		return p;
+	}
 
 	//{{{ createStyleTableScroller() method
 	private JScrollPane createStyleTableScroller()
@@ -227,6 +248,17 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
+		public void setFromTheme(final String style) {
+			Font font = new JLabel().getFont();
+			final String prefix = style.equals("DEFAULT") ? "" : style + ".";
+			for (StyleChoice ch : styleChoices) {
+				var themeProp = jEdit.getDefaultProperty(prefix + ch.property);
+//				jEdit.setProperty(ch.property, themeProp);
+				ch.style = SyntaxUtilities.parseStyle(themeProp,font.getFamily(), font.getSize(), true);
+			}
+			this.fireTableDataChanged();
+		}
+
 		//{{{ addStyleChoice() method
 		private void addStyleChoice(String label, String property)
 		{
@@ -303,5 +335,8 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 		} //}}}
 	} //}}}
 
+	private void prefillFromTheme() {
+
+	}
 } //}}}
 
