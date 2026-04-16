@@ -1876,6 +1876,104 @@ dark22.view.gutter.structureHighlightColor=#9fb6ff
 dark22.view.gutter.highlightColor=#121922
 dark22.view.gutter.currentLineColor=#121922
 
+# ==============================================================================
+# LITE THEME STATUS BARS (lite1 - lite22)
+# ==============================================================================
+lite1.view.status.background=#e0e0e0
+lite1.view.status.foreground=#000000
+lite2.view.status.background=#eee8d5
+lite2.view.status.foreground=#586e75
+lite3.view.status.background=#e5e9f0
+lite3.view.status.foreground=#2e3440
+lite4.view.status.background=#ebdbb2
+lite4.view.status.foreground=#3c3836
+lite5.view.status.background=#f0f0f0
+lite5.view.status.foreground=#383a42
+lite6.view.status.background=#dddddd
+lite6.view.status.foreground=#272822
+lite7.view.status.background=#f2f2f2
+lite7.view.status.foreground=#000000
+lite8.view.status.background=#fafafa
+lite8.view.status.foreground=#90a4ae
+lite9.view.status.background=#f2f2f2
+lite9.view.status.foreground=#000000
+lite10.view.status.background=#f6f8fa
+lite10.view.status.foreground=#24292e
+lite11.view.status.background=#e8e8e8
+lite11.view.status.foreground=#282a36
+lite12.view.status.background=#f0f0f0
+lite12.view.status.foreground=#5c6166
+lite13.view.status.background=#f6f6f6
+lite13.view.status.foreground=#000000
+lite14.view.status.background=#e6e9ef
+lite14.view.status.foreground=#4c4f69
+lite15.view.status.background=#f2e9e1
+lite15.view.status.foreground=#575279
+lite16.view.status.background=#f0eff5
+lite16.view.status.foreground=#6e4db3
+lite17.view.status.background=#ffffff
+lite17.view.status.foreground=#000000
+lite18.view.status.background=#cfd0d7
+lite18.view.status.foreground=#3760bf
+lite19.view.status.background=#edf2ed
+lite19.view.status.foreground=#1b5e20
+lite20.view.status.background=#f2f2f2
+lite20.view.status.foreground=#5c6166
+lite21.view.status.background=#f5f1f0
+lite21.view.status.foreground=#3e2723
+lite22.view.status.background=#f9f9f9
+lite22.view.status.foreground=#24292e
+
+# ==============================================================================
+# DARK THEME STATUS BARS (dark1 - dark23)
+# ==============================================================================
+dark1.view.status.background=#3c3f41
+dark1.view.status.foreground=#bbbbbb
+dark2.view.status.background=#073642
+dark2.view.status.foreground=#93a1a1
+dark3.view.status.background=#2e3440
+dark3.view.status.foreground=#d8dee9
+dark4.view.status.background=#3c3836
+dark4.view.status.foreground=#ebdbb2
+dark5.view.status.background=#21252b
+dark5.view.status.foreground=#abb2bf
+dark6.view.status.background=#3e3d32
+dark6.view.status.foreground=#f8f8f2
+dark7.view.status.background=#3c3f41
+dark7.view.status.foreground=#bbbbbb
+dark8.view.status.background=#263238
+dark8.view.status.foreground=#eeffff
+dark9.view.status.background=#3c3f41
+dark9.view.status.foreground=#bbbbbb
+dark10.view.status.background=#24292e
+dark10.view.status.foreground=#d1d5da
+dark11.view.status.background=#44475a
+dark11.view.status.foreground=#f8f8f2
+dark12.view.status.background=#191e2a
+dark12.view.status.foreground=#cbccc6
+dark13.view.status.background=#282a2e
+dark13.view.status.foreground=#c5c8c6
+dark14.view.status.background=#2b2d30
+dark14.view.status.foreground=#bcbec4
+dark15.view.status.background=#181825
+dark15.view.status.foreground=#cdd6f4
+dark16.view.status.background=#1f2335
+dark16.view.status.foreground=#a9b1d6
+dark17.view.status.background=#1f1d2e
+dark17.view.status.foreground=#e0def4
+dark18.view.status.background=#1b3e4a
+dark18.view.status.foreground=#bcbec4
+dark19.view.status.background=#35313a
+dark19.view.status.foreground=#cccccc
+dark20.view.status.background=#1c1c27
+dark20.view.status.foreground=#d1d1d1
+dark21.view.status.background=#262d26
+dark21.view.status.foreground=#bcbec4
+dark22.view.status.background=#232834
+dark22.view.status.foreground=#cbccc6
+dark23.view.status.background=#121922
+dark23.view.status.foreground=#b3b1ad
+
 # Electric borders
 view.electricBorders=3
 

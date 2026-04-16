@@ -147,9 +147,6 @@ public class IconManager {
             .toArray();
     }
 
-    private static IconAndSize ics(IconCode icon, int size) {
-        return new IconAndSize(icon, size);
-    }
     //{{{ setIconPath() method
     /**
      * Sets the path where jEdit looks for icons.
@@ -258,8 +255,127 @@ public class IconManager {
         deprecatedIcons.put("SplitVertical.png", "MatIcons.SPLIT_VERTICAL:22");
         deprecatedIcons.put("SplitHorizontal.png", "MatIcons.SPLIT_HORIZONTAL:22");
         deprecatedIcons.put("ButtonProperties.png", "MatIcons.WRENCH:22");
+        deprecatedIcons.put("22x22/actions/edit-clear.png", "MatIcons.CLEAR:22");
+
+        deprecatedIcons.put("22x22/actions/process-stop.png", "MatIcons.STOP:22");
+        deprecatedIcons.put("16x16/actions/process-stop.png", "MatIcons.STOP:16");
+        deprecatedIcons.put("22x22/actions/go-home.png", "MatIcons.HOME:22");
+        deprecatedIcons.put("16x16/actions/go-home.png", "MatIcons.HOME:16");
+        deprecatedIcons.put("22x22/apps/help-browser.png", "MatIcons.HELP:22");
+        deprecatedIcons.put("22x22/categories/preferences-system.png", "MatIcons.SETTINGS:22");
+        deprecatedIcons.put("16x16/categories/preferences-system.png", "MatIcons.SETTINGS:16");
+        deprecatedIcons.put("22x22/actions/zoom-in.png", "MatIcons.ZOOM_IN:22");
+        deprecatedIcons.put("22x22/actions/zoom-out.png", "MatIcons.ZOOM_OUT:22");
+        deprecatedIcons.put("22x22/actions/edit-find-single.png", "MatIcons.TARGET:22");
+        deprecatedIcons.put("22x22/actions/edit-find-multiple.png", "MatIcons.FIND_MULTIPLE:22");
+        deprecatedIcons.put("22x22/actions/resize-horisontal.png", "MatIcons.RESIZE_HORIZONTAL:22");
+        deprecatedIcons.put("22x22/go-first.png", "MatIcons.FIRST:22");
+        deprecatedIcons.put("22x22/go-last.png", "MatIcons.LAST:22");
+        deprecatedIcons.put("22x22/actions/go-first.png", "MatIcons.FIRST:22");
+        deprecatedIcons.put("22x22/actions/go-last.png", "MatIcons.LAST:22");
+        deprecatedIcons.put("10x10/actions/close.png", "MatIcons.CLOSE:16");
+        deprecatedIcons.put("16x16/actions/document-close.png", "MatIcons.CLOSE:16");
+        deprecatedIcons.put("22x22/actions/go-up.png", "MatIcons.ARROW_UPWARD:22");
+        deprecatedIcons.put("22x22/actions/go-next.png", "MatIcons.ARROW_FORWARD:22");
+        deprecatedIcons.put("22x22/actions/go-down.png", "MatIcons.ARROW_DOWNWARD:22");
+        deprecatedIcons.put("22x22/actions/go-previous.png", "MatIcons.ARROW_BACK:22");
+        deprecatedIcons.put("16x16/actions/group-expand.png", "MatIcons.CHEVRON_RIGHT:16");
+        deprecatedIcons.put("16x16/actions/group-collapse.png", "MatIcons.CHEVRON_DOWN:16");
+
+        deprecatedIcons.put("12x12/actions/group-expand.png", "MatIcons.CHEVRON_RIGHT:10");
+        deprecatedIcons.put("12x12/actions/group-collapse.png", "MatIcons.CHEVRON_DOWN:10");
+
+        deprecatedIcons.put("12x12/actions/opened-file.png", "MatIcons.PLAY_ARROW:10");
+
+        deprecatedIcons.put("22x22/actions/window-new.png", "MatIcons.OPEN_IN_NEW:22");
+        deprecatedIcons.put("22x22/actions/window-unsplit.png", "MatIcons.SPLIT_MERGE:22");
+        deprecatedIcons.put("22x22/actions/window-split-vertical.png", "MatIcons.SPLIT_VERTICAL:22");
+        deprecatedIcons.put("22x22/actions/window-split-horizontal.png", "MatIcons.SPLIT_HORIZONTAL:22");
+
+        deprecatedIcons.put("16x16/mimetypes/text-x-generic.png", "MatIcons.INSERT_DRIVE_FILE:10");
+        deprecatedIcons.put("16x16/places/folder.png", "MatIcons.FOLDER:16");
+        deprecatedIcons.put("16x16/status/folder-open.png", "MatIcons.FOLDER_OPEN:16");
+        deprecatedIcons.put("16x16/actions/edit-select-all.png", "MatIcons.SELECT_ALL:16");
+        deprecatedIcons.put("22x22/actions/edit-select-all.png", "MatIcons.SELECT_ALL:22");
+        deprecatedIcons.put("16x16/actions/view-refresh.png", "MatIcons.REFRESH:16");
+        deprecatedIcons.put("16x16/devices/drive-harddisk.png", "MatIcons.HARD_DISK:16");
+        deprecatedIcons.put("22x22/actions/document-new.png", "MatIcons.NOTE_ADD:22");
+        deprecatedIcons.put("16x16/actions/document-new.png", "MatIcons.NOTE_ADD:16");
+
+        deprecatedIcons.put("12x12/places/folder.png", "MatIcons.FOLDER:10");
+        deprecatedIcons.put("12x12/status/folder-open.png", "MatIcons.FOLDER_OPEN:10");
+        deprecatedIcons.put("12x12/actions/edit-select-all.png", "MatIcons.SELECT_ALL:10");
+        deprecatedIcons.put("12x12/actions/view-refresh.png", "MatIcons.REFRESH:10");
+        deprecatedIcons.put("12x12/devices/drive-harddisk.png", "MatIcons.HARD_DISK:10");
+        deprecatedIcons.put("12x12/actions/document-new.png", "MatIcons.NOTE_ADD:10");
 
 
+        deprecatedIcons.put("22x22/actions/folder-new.png", "MatIcons.CREATE_NEW_FOLDER:22");
+        deprecatedIcons.put("22x22/actions/view-refresh.png", "MatIcons.REFRESH:22");
+        deprecatedIcons.put("22x22/places/plugins.png", "MatIcons.PLUGINS:22");
+        deprecatedIcons.put("22x22/actions/document-save.png", "MatIcons.SAVE:22");
+        deprecatedIcons.put("16x16/actions/document-save.png", "MatIcons.SAVE:16");
+        deprecatedIcons.put("22x22/actions/document-save-as.png", "MatIcons.SAVE:22");
+        deprecatedIcons.put("16x16/actions/document-save-as.png", "MatIcons.SAVE:16");
+        deprecatedIcons.put("22x22/actions/document-save-all.png", "MatIcons.SAVE:22");
+        deprecatedIcons.put("16x16/actions/document-save-all.png", "MatIcons.SAVE:16");
+        deprecatedIcons.put("22x22/actions/document-open.png", "MatIcons.FILE_OPEN:22");
+        deprecatedIcons.put("16x16/actions/document-open.png", "MatIcons.FILE_OPEN:16");
+        deprecatedIcons.put("12x12/actions/document-open.png", "MatIcons.FILE_OPEN:12");
+        deprecatedIcons.put("22x22/actions/document-print.png", "MatIcons.PRINT:22");
+        deprecatedIcons.put("16x16/actions/document-print.png", "MatIcons.PRINT:16");
+        deprecatedIcons.put("12x12/actions/document-print.png", "MatIcons.PRINT:12");
+        deprecatedIcons.put("22x22/devices/drive-harddisk.png", "MatIcons.HARD_DISK:22");
+        deprecatedIcons.put("22x22/actions/list-add.png", "MatIcons.ADD:22");
+        deprecatedIcons.put("16x16/actions/list-add.png", "MatIcons.ADD:16");
+        deprecatedIcons.put("22x22/actions/list-remove.png", "MatIcons.REMOVE:22");
+        deprecatedIcons.put("16x16/actions/list-remove.png", "MatIcons.REMOVE:16");
+        deprecatedIcons.put("22x22/actions/edit-find.png", "MatIcons.SEARCH:22");
+        deprecatedIcons.put("16x16/actions/edit-find.png", "MatIcons.SEARCH:16");
+        deprecatedIcons.put("22x22/actions/edit-find-next.png", "MatIcons.NAVIGATE_NEXT:22");
+        deprecatedIcons.put("16x16/actions/edit-find-next.png", "MatIcons.NAVIGATE_NEXT:16");
+        deprecatedIcons.put("22x22/actions/edit-find-in-folder.png", "MatIcons.SEARCH:22");
+        deprecatedIcons.put("16x16/actions/edit-find-in-folder.png", "MatIcons.SEARCH:16");
+        deprecatedIcons.put("22x22/actions/document-reload2.png", "MatIcons.REFRESH:22");
+        deprecatedIcons.put("22x22/actions/document-reload.png", "MatIcons.REFRESH:22");
+        deprecatedIcons.put("16x16/actions/document-reload2.png", "MatIcons.REFRESH:16");
+        deprecatedIcons.put("22x22/actions/edit-delete.png", "MatIcons.DELETE:22");
+        deprecatedIcons.put("16x16/actions/edit-delete.png", "MatIcons.DELETE:16");
+        deprecatedIcons.put("22x22/actions/edit-paste.png", "MatIcons.CONTENT_PASTE:22");
+        deprecatedIcons.put("16x16/actions/edit-paste.png", "MatIcons.CONTENT_PASTE:16");
+        deprecatedIcons.put("22x22/actions/edit-cut.png", "MatIcons.CONTENT_CUT:22");
+        deprecatedIcons.put("16x16/actions/edit-cut.png", "MatIcons.CONTENT_CUT:16");
+        deprecatedIcons.put("22x22/actions/edit-copy.png", "MatIcons.CONTENT_COPY:22");
+        deprecatedIcons.put("16x16/actions/edit-copy.png", "MatIcons.CONTENT_COPY:16");
+        deprecatedIcons.put("22x22/actions/edit-undo.png", "MatIcons.UNDO:22");
+        deprecatedIcons.put("16x16/actions/edit-undo.png", "MatIcons.UNDO:16");
+        deprecatedIcons.put("22x22/actions/edit-redo.png", "MatIcons.REDO:22");
+        deprecatedIcons.put("16x16/actions/edit-redo.png", "MatIcons.REDO:16");
+        deprecatedIcons.put("22x22/status/folder-visiting.png", "MatIcons.FOLDER:22");
+        deprecatedIcons.put("16x16/status/folder-visiting.png", "MatIcons.FOLDER:16");
+        deprecatedIcons.put("22x22/actions/go-parent.png", "MatIcons.ARROW_UPWARD:22");
+        deprecatedIcons.put("16x16/actions/go-parent.png", "MatIcons.ARROW_UPWARD:16");
+        deprecatedIcons.put("16x16/actions/document-properties.png", "MatIcons.WRENCH:16");
+        deprecatedIcons.put("22x22/actions/document-properties.png", "MatIcons.WRENCH:22");
+        deprecatedIcons.put("16x16/actions/close.png", "MatIcons.CLOSE:16");
+        deprecatedIcons.put("22x22/actions/edit-find-replace.png", "MatIcons.FIND_REPLACE:22");
+        deprecatedIcons.put("16x16/actions/media-record.png", "MatIcons.RECORD:16");
+        deprecatedIcons.put("22x22/actions/media-record.png", "MatIcons.RECORD:22");
+        deprecatedIcons.put("16x16/actions/media-playback-stop.png", "MatIcons.STOP:16");
+        deprecatedIcons.put("22x22/actions/media-playback-stop.png", "MatIcons.STOP:22");
+        deprecatedIcons.put("22x22/actions/document-close.png", "MatIcons.CLOSE:22");
+        deprecatedIcons.put("22x22/actions/bookmark-new.png", "MatIcons.BOOKMARK:22");
+        deprecatedIcons.put("22x22/actions/go-jump.png", "MatIcons.JUMP:22");
+        deprecatedIcons.put("16x16/actions/window-new.png", "MatIcons.WINDOW:16");
+        deprecatedIcons.put("16x16/apps/system-file-manager.png", "MatIcons.FILE_MANAGER:16");
+        deprecatedIcons.put("22x22/actions/system-search.png", "MatIcons.SEARCH:22");
+        deprecatedIcons.put("arrow-asc.png", "MatIcons.CHEVRON_UP:10");
+        deprecatedIcons.put("arrow-desc.png", "MatIcons.CHEVRON_DOWN:10");
+        deprecatedIcons.put("16x16/status/image-loading.png", "MatIcons.CLOCK:16");
+        deprecatedIcons.put("10x10/status/document-unmodified.png", "MatIcons.WEB_ASSET:10");
+        deprecatedIcons.put("10x10/status/document-modified.png", "MatIcons.CREATE:10");
+        deprecatedIcons.put("10x10/status/document-new.png", "MatIcons.NEW_RELEASES:10");
+        
         //
     }
 

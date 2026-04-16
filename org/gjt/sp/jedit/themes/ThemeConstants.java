@@ -19,9 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.gjt.sp.jedit.options;
-
-import java.util.Map;
+package org.gjt.sp.jedit.themes;
 
 public class ThemeConstants {
     public static final String[] THEMES = {

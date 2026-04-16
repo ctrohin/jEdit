@@ -67,6 +67,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 //	private final CustomTabHeader tabs;
 	private final FlatTabbedPane tabs;
 	private JPanel fullPane;
+	private boolean tabsListenerEnabled = true;
 
 	public BufferSwitcher(final EditPane editPane)
 	{
@@ -82,6 +83,9 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			jEdit.closeBuffer(editPane, getSortedBuffers()[idx]);
 		});
 		tabs.addChangeListener(e -> {
+			if (!tabsListenerEnabled) {
+				return;
+			}
 			// Get the index of the newly selected tab
 			int selectedIndex = tabs.getSelectedIndex();
 			var sortedBuffers = getSortedBuffers();

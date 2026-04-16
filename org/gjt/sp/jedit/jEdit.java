@@ -4104,13 +4104,9 @@ public class jEdit
 		{
 			return lf;
 		}
-		else if(OperatingSystem.isMacOS())
-		{
-			return UIManager.getSystemLookAndFeelClassName();
-		}
 		else
 		{
-			return UIManager.getCrossPlatformLookAndFeelClassName();
+			return "com.formdev.flatlaf.FlatLightLaf";
 		}
 	}
 

@@ -25,9 +25,7 @@ package org.gjt.sp.jedit.options;
 //{{{ Imports
 import javax.swing.*;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.SystemTray;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -42,6 +40,8 @@ import org.gjt.sp.jedit.gui.NumericTextField;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.ScreenRectangleSelectionButton;
 import org.gjt.sp.jedit.gui.tray.JTrayIconManager;
+import org.gjt.sp.jedit.themes.ThemeConstants;
+import org.gjt.sp.jedit.themes.ThemeUtils;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.IOUtilities;
 
@@ -91,9 +91,14 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 				index = i;
 		}
 
+		addComponent(createThemePanel());
+
 		lookAndFeel = new JComboBox<String>(names);
 		lookAndFeel.setSelectedIndex(index);
 		lookAndFeel.addItemListener(this);
+
+		addSeparator("options.appearance.label");
+
 
 		addComponent(jEdit.getProperty("options.appearance.lf"),
 			lookAndFeel);
@@ -332,6 +337,41 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 
 		lnfChanged = false;
 	} //}}}
+
+	private JPanel createThemePanel() {
+		final JButton themes = new JButton("Apply theme");
+		final JPopupMenu popupMenu = new JPopupMenu();
+		for (int i = 0; i < ThemeConstants.THEMES.length; i++) {
+			final String theme = ThemeConstants.THEMES[i];
+			final String themeName = ThemeConstants.THEME_NAMES[i];
+			final JMenuItem mi = new JMenuItem(themeName);
+			mi.addActionListener(e -> {
+				setFromTheme(theme);
+			});
+			popupMenu.add(mi);
+		}
+		themes.addActionListener(e -> popupMenu.show(themes, 0, themes.getHeight()));
+		final JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.add(BorderLayout.WEST, themes);
+
+		final JPanel themePanel = new JPanel(new BorderLayout());
+		themePanel.add(BorderLayout.NORTH, northPanel);
+		final String[] themeMessages = {
+			"Choose from one of the predefined themes.",
+			"Applying a theme will apply syntax highlight colors, text area colors gutter colors as well as status bar colors from the same theme.",
+			"If you want to set a theme to only one of these elements, you can do so in the dedication options section"
+		};
+		final JPanel labelPanel = new JPanel(new GridLayout(themeMessages.length, 1));
+		for (final var message : themeMessages) {
+			labelPanel.add(new JLabel(message));
+		}
+		themePanel.add(labelPanel, BorderLayout.CENTER);
+		return themePanel;
+	}
+
+	private void setFromTheme(final String theme) {
+		ThemeUtils.applyTheme(theme);
+	}
 
 	//{{{ _save() method
 	@Override

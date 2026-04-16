@@ -35,6 +35,7 @@ import java.util.Collections;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.gui.StyleEditor;
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.themes.ThemeConstants;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.SyntaxUtilities;
