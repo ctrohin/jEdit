@@ -44,6 +44,7 @@ import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.bufferset.BufferSetManager;
 import org.gjt.sp.jedit.gui.components.CustomTabHeader;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
+import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
@@ -239,6 +240,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 
 	private void buildTabs(final Buffer[] buffers) {
 		//			tabs.setTabs(buffers, editPane.getBuffer());
+		tabsListenerEnabled = false;
 		tabs.removeAll();
 		Arrays.stream(buffers).forEach((buffer) -> tabs.addTab(buffer.getName(), null));
 		var idx = 0;
@@ -248,6 +250,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 				break;
 			}
 		}
+		tabsListenerEnabled = true;
 		tabs.setSelectedIndex(idx);
 	}
 
