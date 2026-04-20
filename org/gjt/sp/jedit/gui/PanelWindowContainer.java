@@ -89,7 +89,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		buttonPanel.setBorder(new EmptyBorder(1,1,1,1));
 
 		closeBox = new FlatButton();
-		closeBox.setIcon(GUIUtilities.loadIcon("MatIcons.CLOSE:10"));
+		closeBox.setIcon(IconManager.loadIcon("MatIcons.CLOSE:10"));
 		closeBox.setButtonType(FlatButton.ButtonType.toolBarButton);
 		closeBox.setRequestFocusEnabled(false);
 		closeBox.setToolTipText(jEdit.getProperty("view.docking.close-tooltip"));
@@ -818,13 +818,11 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			if(position.equals(DockableWindowManager.TOP) || position.equals(DockableWindowManager.BOTTOM))
 			{
 				int width = parent.getWidth() - insets.right;
-				Dimension returnValue = preferredLayoutSizeLR(insets, comp, dim, width);
-				return returnValue;
+                return preferredLayoutSizeLR(insets, comp, dim, width);
 			}
 			else
 			{
-				Dimension returnValue = preferredLayoutSizeTB(parent.getHeight(), insets, comp, dim);
-				return returnValue;
+                return preferredLayoutSizeTB(parent.getHeight(), insets, comp, dim);
 			}
 		} //}}}
 

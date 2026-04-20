@@ -528,42 +528,32 @@ public class ClassGeneratorUtil implements Constants
 		cv.visitVarInsn( ALOAD, 0 ); // push this before args
 
 		// Unload the arguments from the ConstructorArgs object
-		for (int i=0; i<paramTypes.length; i++)
-		{
-			String type = paramTypes[i];
-			String method = null;
-			if      ( type.equals("Z") )
-				method = "getBoolean";
-			else if ( type.equals("B") )
-				method = "getByte";
-			else if ( type.equals("C") )
-				method = "getChar";
-			else if ( type.equals("S") )
-				method = "getShort";
-			else if ( type.equals("I") )
-				method = "getInt";
-			else if ( type.equals("J") )
-				method = "getLong";
-			else if ( type.equals("D") )
-				method = "getDouble";
-			else if ( type.equals("F") )
-				method = "getFloat";
-			else 
-				method = "getObject";
+        for (String type : paramTypes) {
+            String method = switch (type) {
+                case "Z" -> "getBoolean";
+                case "B" -> "getByte";
+                case "C" -> "getChar";
+                case "S" -> "getShort";
+                case "I" -> "getInt";
+                case "J" -> "getLong";
+                case "D" -> "getDouble";
+                case "F" -> "getFloat";
+                default -> "getObject";
+            };
 
-			// invoke the iterator method on the ConstructorArgs
-			cv.visitVarInsn( ALOAD, consArgsVar ); // push the ConstructorArgs
-			String className = "org/gjt/sp/jedit/bsh/ClassGeneratorUtil$ConstructorArgs";
-			String retType;
-			if ( method.equals("getObject") )
-				retType = OBJECT;
-			else
-				retType = type; 
-			cv.visitMethodInsn(INVOKEVIRTUAL, className, method, "()"+retType);
-			// if it's an object type we must do a check cast
-			if ( method.equals("getObject") )
-				cv.visitTypeInsn( CHECKCAST, descriptorToClassName(type) ); 
-		}
+            // invoke the iterator method on the ConstructorArgs
+            cv.visitVarInsn(ALOAD, consArgsVar); // push the ConstructorArgs
+            String className = "org/gjt/sp/jedit/bsh/ClassGeneratorUtil$ConstructorArgs";
+            String retType;
+            if (method.equals("getObject"))
+                retType = OBJECT;
+            else
+                retType = type;
+            cv.visitMethodInsn(INVOKEVIRTUAL, className, method, "()" + retType);
+            // if it's an object type we must do a check cast
+            if (method.equals("getObject"))
+                cv.visitTypeInsn(CHECKCAST, descriptorToClassName(type));
+        }
 
 		// invoke the constructor for this branch
 		String descriptor = getMethodDescriptor( "V", paramTypes );
@@ -575,9 +565,10 @@ public class ClassGeneratorUtil implements Constants
 	static String getMethodDescriptor( String returnType, String [] paramTypes )
 	{
 		StringBuilder sb = new StringBuilder("(");
-		for(int i=0; i<paramTypes.length; i++)
-			sb.append(paramTypes[i]);
-		sb.append(")"+returnType);
+        for (String paramType : paramTypes)  {
+			sb.append(paramType);
+		}
+		sb.append(")").append(returnType);
 		return sb.toString();
 	}
 
@@ -605,16 +596,17 @@ public class ClassGeneratorUtil implements Constants
 		cv.visitVarInsn(ALOAD, 0);
 		// Push vars
 		int localVarIndex = 1;
-		for (int i = 0; i < paramTypes.length; ++i) 
-		{
-			if ( isPrimitive( paramTypes[i]) )
+        for (String paramType : paramTypes) {
+            if (isPrimitive(paramType)) {
 				cv.visitVarInsn(ILOAD, localVarIndex);
-			else
+			}
+            else {
 				cv.visitVarInsn(ALOAD, localVarIndex);
-			localVarIndex += 
-				( (paramTypes[i].equals("D") || paramTypes[i].equals("J")) 
-					? 2 : 1 );
-		}
+			}
+            localVarIndex +=
+                ((paramType.equals("D") || paramType.equals("J"))
+                    ? 2 : 1);
+        }
 
 		cv.visitMethodInsn( INVOKESPECIAL, 
 			superClassName, methodName, methodDescriptor );
@@ -631,24 +623,23 @@ public class ClassGeneratorUtil implements Constants
 		while( clas != null )
 		{
 			Method [] methods = clas.getDeclaredMethods();
-			for( int i =0; i<methods.length; i++ )
-			{
-				if ( methods[i].getName().equals(methodName) )
-				{
-					String [] methodParamTypes = 
-						getTypeDescriptors( methods[i].getParameterTypes() );
-					boolean found = true;
-					for( int j=0; j<methodParamTypes.length; j++)
-					{
-						if ( ! paramTypes[j].equals( methodParamTypes[j] ) ) {
-							found = false;
-							break;
-						}
-					}
-					if ( found )
-						return true;
+            for (Method method : methods) {
+				if (!method.getName().equals(methodName)) {
+					continue;
 				}
-			}
+                String[] methodParamTypes =
+                    getTypeDescriptors(method.getParameterTypes());
+                boolean found = true;
+                for (int j = 0; j < methodParamTypes.length; j++) {
+                    if (!paramTypes[j].equals(methodParamTypes[j])) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+					return true;
+				}
+            }
 
 			clas = clas.getSuperclass();
 		}
@@ -666,15 +657,14 @@ public class ClassGeneratorUtil implements Constants
 		else 
 		if ( isPrimitive( returnType ) )
 		{
-			int opcode = IRETURN;
-			if ( returnType.equals("D") )
-				opcode = DRETURN;
-			else if ( returnType.equals("F") )
-				opcode = FRETURN;
-			else if ( returnType.equals("J") )  //long
-				opcode = LRETURN;
+			int opcode = switch (returnType) {
+                case "D" -> DRETURN;
+                case "F" -> FRETURN;
+                case "J" -> LRETURN;
+                default -> IRETURN;
+            };
 
-			cv.visitInsn(opcode);
+            cv.visitInsn(opcode);
 		}
 		else {
 			cv.visitTypeInsn( CHECKCAST, descriptorToClassName(returnType) );
@@ -706,24 +696,19 @@ public class ClassGeneratorUtil implements Constants
 			cv.visitIntInsn(SIPUSH, i);
 			if ( isPrimitive( param ) ) 
 			{
-                int opcode;
-                if (param.equals("F")) {
-                    opcode = FLOAD;
-                } else if (param.equals("D")) {
-                    opcode = DLOAD;
-                } else if (param.equals("J")) {
-                    opcode = LLOAD;
-                } else {
-                    opcode = ILOAD;
-                }
+                int opcode = switch (param) {
+                    case "F" -> FLOAD;
+                    case "D" -> DLOAD;
+                    case "J" -> LLOAD;
+                    default -> ILOAD;
+                };
 
-				String type = "org/gjt/sp/jedit/bsh/Primitive";
+                String type = "org/gjt/sp/jedit/bsh/Primitive";
 				cv.visitTypeInsn( NEW, type );
 				cv.visitInsn(DUP);
 				cv.visitVarInsn(opcode, localVarIndex);
-				String desc = param; // ok?
-				cv.visitMethodInsn(
-					INVOKESPECIAL, type, "<init>", "(" + desc + ")V");
+                cv.visitMethodInsn(
+					INVOKESPECIAL, type, "<init>", "(" + param + ")V");
 			} else {
 				// Technically incorrect here - we need to wrap null values
 				// as bsh.Primitive.NULL.  However the This.invokeMethod()
@@ -760,38 +745,48 @@ public class ClassGeneratorUtil implements Constants
 			int opcode = IRETURN;
 			String type;
 			String meth;
-			if ( returnType.equals("B") ) {
-				type = "java/lang/Byte";
-				meth = "byteValue";
-		 	} else if (returnType.equals("I") ) {
-				type = "java/lang/Integer";
-				meth = "intValue";
-			} else if (returnType.equals("Z") ) {
-				type = "java/lang/Boolean";
-				meth = "booleanValue";
-			} else if (returnType.equals("D") ) {
-				opcode = DRETURN;
-				type = "java/lang/Double";
-				meth = "doubleValue";
-		 	} else if (returnType.equals("F") ) {
-				opcode = FRETURN;
-				type = "java/lang/Float";
-				meth = "floatValue";
-			} else if (returnType.equals("J") ) {
-				opcode = LRETURN;
-				type = "java/lang/Long";
-				meth = "longValue";
-			} else if (returnType.equals("C") ) {
-				type = "java/lang/Character";
-				meth = "charValue";
-			} else /*if (returnType.equals("S") )*/ {
-				type = "java/lang/Short";
-				meth = "shortValue";
-			}
+            switch (returnType) {
+                case "B" -> {
+                    type = "java/lang/Byte";
+                    meth = "byteValue";
+                }
+                case "I" -> {
+                    type = "java/lang/Integer";
+                    meth = "intValue";
+                }
+                case "Z" -> {
+                    type = "java/lang/Boolean";
+                    meth = "booleanValue";
+                }
+                case "D" -> {
+                    opcode = DRETURN;
+                    type = "java/lang/Double";
+                    meth = "doubleValue";
+                }
+                case "F" -> {
+                    opcode = FRETURN;
+                    type = "java/lang/Float";
+                    meth = "floatValue";
+                }
+                case "J" -> {
+                    opcode = LRETURN;
+                    type = "java/lang/Long";
+                    meth = "longValue";
+                }
+                case "C" -> {
+                    type = "java/lang/Character";
+                    meth = "charValue";
+                }
+                default -> {
+                    /*if (returnType.equals("S") )*/
 
-			String desc = returnType;
-			cv.visitTypeInsn( CHECKCAST, type ); // type is correct here
-			cv.visitMethodInsn( INVOKEVIRTUAL, type, meth, "()" + desc );
+                    type = "java/lang/Short";
+                    meth = "shortValue";
+                }
+            }
+
+            cv.visitTypeInsn( CHECKCAST, type ); // type is correct here
+			cv.visitMethodInsn( INVOKEVIRTUAL, type, meth, "()" + returnType);
 			cv.visitInsn(opcode);
 		} else 
 		{
