@@ -35,12 +35,17 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class WorkspaceTree extends JPanel implements DefaultFocusComponent, DockableWindow {
     public static final String NAME = "workspace";
@@ -48,6 +53,7 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
     private final View view;
     private JButton reload;
     private JButton openFolder;
+    private JButton locate;
     private FlatTree tree;
 
     private static String currentWorkspace;
@@ -79,21 +85,246 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
             @Override
             public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
                 FileNode node = (FileNode) event.getPath().getLastPathComponent();
-                if (node.isLoaded()) {
-                    return;
-                }
-
-                node.removeAllChildren();
-                addChildren(node, false);
-                node.setLoaded(true);
-                ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+                expandNode(node);
             }
 
             @Override
             public void treeWillCollapse(TreeExpansionEvent event) {}
         });
 
+        tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleMouse(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                handleMouse(e);
+            }
+
+            private void handleMouse(MouseEvent e) {
+                int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+                if (row == -1) return;
+                
+                if (e.isPopupTrigger()) {
+                    tree.setSelectionRow(row);
+                    FileNode node = (FileNode) tree.getPathForRow(row).getLastPathComponent();
+                    showPopupMenu(e, node);
+                } else if (e.getID() == MouseEvent.MOUSE_RELEASED && e.getClickCount() == 2) {
+                    FileNode node = (FileNode) tree.getPathForRow(row).getLastPathComponent();
+                    openFile((File) node.getUserObject());
+                }
+            }
+        });
+
         return new JScrollPane(tree);
+    }
+
+    private void expandNode(FileNode node) {
+        if (node.isLoaded()) {
+            return;
+        }
+
+        node.removeAllChildren();
+        addChildren(node, false);
+        node.setLoaded(true);
+        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+    }
+
+    private void openFile(final File file) {
+        if (file.isDirectory()) {
+            TreePath path = findPath(file);
+            if (path != null) {
+                if (tree.isExpanded(path)) {
+                    tree.collapsePath(path);
+                } else {
+                    tree.expandPath(path);
+                }
+            }
+        } else {
+            jEdit.openFile(view, file.getAbsolutePath());
+        }
+    }
+
+    public void locateFile() {
+        if (view.getBuffer() == null) return;
+        
+        String path = view.getBuffer().getPath();
+        if (path == null) return;
+
+        File target = new File(path);
+        if (!target.exists()) return;
+
+        // Verify if it's within current workspace
+        if (currentWorkspace == null || !target.getAbsolutePath().startsWith(new File(currentWorkspace).getAbsolutePath())) {
+            Toast.showToast("File is not within current workspace.", this, 3000);
+            return;
+        }
+
+        // Build list of files from root to target
+        ArrayList<File> breadcrumbs = new ArrayList<>();
+        File current = target;
+        while (current != null) {
+            breadcrumbs.add(current);
+            if (current.getAbsolutePath().equals(new File(currentWorkspace).getAbsolutePath())) {
+                break;
+            }
+            current = current.getParentFile();
+        }
+        Collections.reverse(breadcrumbs);
+
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        FileNode node = (FileNode) model.getRoot();
+        TreePath treePath = new TreePath(node);
+
+        for (int i = 1; i < breadcrumbs.size(); i++) {
+            File crumb = breadcrumbs.get(i);
+            expandNode(node);
+            
+            boolean found = false;
+            for (int j = 0; j < node.getChildCount(); j++) {
+                FileNode child = (FileNode) node.getChildAt(j);
+                if (child.getUserObject().equals(crumb)) {
+                    node = child;
+                    treePath = treePath.pathByAddingChild(node);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return;
+        }
+
+        tree.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
+    }
+
+    private TreePath findPath(File file) {
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        FileNode root = (FileNode) model.getRoot();
+        return findPath(new TreePath(root), file);
+    }
+
+    private TreePath findPath(TreePath parent, File file) {
+        FileNode node = (FileNode) parent.getLastPathComponent();
+        if (node.getUserObject().equals(file)) {
+            return parent;
+        }
+
+        for (int i = 0; i < node.getChildCount(); i++) {
+            Object childObj = node.getChildAt(i);
+            if (childObj instanceof FileNode child) {
+                TreePath path = parent.pathByAddingChild(child);
+                TreePath result = findPath(path, file);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void showPopupMenu(MouseEvent e, FileNode node) {
+        File file = (File) node.getUserObject();
+        JPopupMenu menu = new JPopupMenu();
+
+        JMenuItem open = new JMenuItem(file.isDirectory() ? "Expand/collapse" : "Open");
+        open.addActionListener(al -> openFile(file));
+        menu.add(open);
+
+        menu.addSeparator();
+
+        if (file.isDirectory()) {
+            JMenuItem newFolder = new JMenuItem("New folder");
+            newFolder.addActionListener(al -> createNewFolder(file));
+            menu.add(newFolder);
+
+            JMenuItem newFile = new JMenuItem("New file");
+            newFile.addActionListener(al -> createNewFile(file));
+            menu.add(newFile);
+
+            menu.addSeparator();
+        }
+
+        JMenuItem rename = new JMenuItem("Rename");
+        rename.addActionListener(al -> renameFile(file));
+        menu.add(rename);
+
+        JMenuItem move = new JMenuItem("Move");
+        move.addActionListener(al -> moveFile(file));
+        menu.add(move);
+
+        menu.addSeparator();
+
+        JMenuItem delete = new JMenuItem("Delete");
+        delete.addActionListener(al -> deleteFile(file));
+        menu.add(delete);
+
+        menu.show(tree, e.getX(), e.getY());
+    }
+
+    private void createNewFolder(File parent) {
+        String name = JOptionPane.showInputDialog(view, "Folder name:");
+        if (name != null && !name.isEmpty()) {
+            File newDir = new File(parent, name);
+            if (newDir.mkdir()) {
+                refreshNodeForFile(parent);
+            }
+        }
+    }
+
+    private void createNewFile(File parent) {
+        String name = JOptionPane.showInputDialog(view, "File name:");
+        if (name != null && !name.isEmpty()) {
+            File newFile = new File(parent, name);
+            try {
+                if (newFile.createNewFile()) {
+                    refreshNodeForFile(parent);
+                    jEdit.openFile(view, newFile.getAbsolutePath());
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(view, "Error creating file: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void renameFile(File file) {
+        String newName = JOptionPane.showInputDialog(view, "New name:", file.getName());
+        if (newName != null && !newName.isEmpty()) {
+            File newFile = new File(file.getParentFile(), newName);
+            if (file.renameTo(newFile)) {
+                refreshNodeForFile(file.getParentFile());
+            }
+        }
+    }
+
+    private void moveFile(File file) {
+        JFileChooser chooser = new JFileChooser(currentWorkspace);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showDialog(view, "Move Here") == JFileChooser.APPROVE_OPTION) {
+            File targetDir = chooser.getSelectedFile();
+            File newFile = new File(targetDir, file.getName());
+            if (file.renameTo(newFile)) {
+                refreshNodeForFile(file.getParentFile());
+                refreshNodeForFile(targetDir);
+            }
+        }
+    }
+
+    private void deleteFile(File file) {
+        int confirm = JOptionPane.showConfirmDialog(view, 
+            "Delete " + file.getName() + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            if (file.delete()) {
+                refreshNodeForFile(file.getParentFile());
+            } else {
+                JOptionPane.showMessageDialog(view, "Could not delete file. Is it a non-empty folder?");
+            }
+        }
+    }
+
+    private void refreshNodeForFile(File file) {
+        loadFolder(currentWorkspace);
     }
 
     private final Map<String, Icon> iconCache = new Hashtable<>();
@@ -130,6 +361,10 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
         openFolder = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_OPEN:22"));
         openFolder.addActionListener(e -> chooseWorkspace());
         panel.add(openFolder);
+
+        locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"));
+        locate.addActionListener(e -> locateFile());
+        panel.add(locate);
         return panel;
     }
 
