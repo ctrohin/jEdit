@@ -23,7 +23,6 @@ package org.gjt.sp.jedit.icons;
 
 import io.vavr.control.Try;
 import jiconfont.IconCode;
-import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.MiscUtilities;
@@ -69,7 +68,7 @@ public class IconManager {
         }
         final var iconString = deprecatedIcons.getOrDefault(iconName, iconName);
         // TODO: Check if it is possible to render a multiresolution image properly
-        final IconAndSize fontIcon = parseMaterialIcon(iconString); // material.get(iconString);
+        final IconAndSize fontIcon = parseIconCode(iconString); // material.get(iconString);
         if (fontIcon == null) {
             Log.log(Log.ERROR, null, "Icon material mapping NOT found: " + iconString);
         }
@@ -170,7 +169,7 @@ public class IconManager {
     public static void init()
     {
         initializeDeprecatedIcons();
-        initializeMaterialIcons();
+        initializeIconFonts();
 
         // Load the icon theme but fallback on the old icons
         String theme = IconTheme.get();
@@ -380,25 +379,29 @@ public class IconManager {
     }
 
     private static final String MAT_ICONS_PREFIX = "MatIcons.";
-    private static IconAndSize parseMaterialIcon(final String icon) {
-        if (!icon.startsWith(MAT_ICONS_PREFIX)) {
+    private static final String FILE_ICONS_PREFIX = "FileIcons.";
+    private static IconAndSize parseIconCode(final String icon) {
+        if (!icon.startsWith(MAT_ICONS_PREFIX) && !icon.startsWith(FILE_ICONS_PREFIX)) {
             return null;
         }
-        var iconAndSize = icon.substring(MAT_ICONS_PREFIX.length());
+        final var matIcon = icon.startsWith(MAT_ICONS_PREFIX);
+        final var prefix = matIcon ? MAT_ICONS_PREFIX : FILE_ICONS_PREFIX;
+        var iconAndSize = icon.substring(prefix.length());
         if (!iconAndSize.contains(":")) {
             return null;
         }
         var split = iconAndSize.split(":");
         try {
-            var ic = MatIcons.valueOf(split[0]);
+            var ic = matIcon ? MatIcons.valueOf(split[0]) : FileIcons.valueOf(split[0]);
             var sz = Integer.parseInt(split[1]);
             return new IconAndSize(ic, sz);
         } catch (Exception _) {}
         return null;
     }
 
-    private static void initializeMaterialIcons() {
+    private static void initializeIconFonts() {
         IconFontSwing.register(MatIcons.getIconFont());
+        IconFontSwing.register(FileIcons.getIconFont());
     }
     //}}}
 }

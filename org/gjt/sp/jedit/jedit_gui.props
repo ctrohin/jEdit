@@ -1021,6 +1021,6 @@ install-plugins.clear-plugin-set.icon=MatIcons.CLEAR:22
 errorwidget.popupmenu=logs-remove-all-errors
 
 # Workspace
-workspace.title=Workspace
-workspace.label=Workspace
+workspace.title=Project folder
+workspace.label=Project folder
 workspace.icon=MatIcons.FOLDER_OPEN:22

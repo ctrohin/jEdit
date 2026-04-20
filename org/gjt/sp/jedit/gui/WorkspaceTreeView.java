@@ -40,25 +40,17 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
-public class WorkspaceTree extends JPanel implements DefaultFocusComponent, DockableWindow {
+public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, DockableWindow {
     public static final String NAME = "workspace";
     public static final String FOLDER_KEY = "workspace.folder";
     private final View view;
-    private JButton reload;
-    private JButton openFolder;
-    private JButton locate;
     private FlatTree tree;
 
     private static String currentWorkspace;
 
-    public WorkspaceTree(View view) {
+    public WorkspaceTreeView(View view) {
         super(new BorderLayout());
         this.view = view;
         add(BorderLayout.NORTH, createToolbar());
@@ -243,22 +235,26 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
             newFile.addActionListener(al -> createNewFile(file));
             menu.add(newFile);
 
-            menu.addSeparator();
+            if (!node.isRoot()) {
+                menu.addSeparator();
+            }
         }
 
-        JMenuItem rename = new JMenuItem("Rename");
-        rename.addActionListener(al -> renameFile(file));
-        menu.add(rename);
+        if (!node.isRoot()) {
+            JMenuItem rename = new JMenuItem("Rename");
+            rename.addActionListener(al -> renameFile(file));
+            menu.add(rename);
 
-        JMenuItem move = new JMenuItem("Move");
-        move.addActionListener(al -> moveFile(file));
-        menu.add(move);
+            JMenuItem move = new JMenuItem("Move");
+            move.addActionListener(al -> moveFile(file));
+            menu.add(move);
 
-        menu.addSeparator();
+            menu.addSeparator();
 
-        JMenuItem delete = new JMenuItem("Delete");
-        delete.addActionListener(al -> deleteFile(file));
-        menu.add(delete);
+            JMenuItem delete = new JMenuItem("Delete");
+            delete.addActionListener(al -> deleteFile(file));
+            menu.add(delete);
+        }
 
         menu.show(tree, e.getX(), e.getY());
     }
@@ -313,7 +309,7 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
 
     private void deleteFile(File file) {
         int confirm = JOptionPane.showConfirmDialog(view, 
-            "Delete " + file.getName() + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            "Delete " + file.getName() + "? This operation cannot be undone!", "Confirm Delete", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             if (file.delete()) {
                 refreshNodeForFile(file.getParentFile());
@@ -334,6 +330,7 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
             return iconCache.get(ext);
         }
         final var icon = FileSystemView.getFileSystemView().getSystemIcon(file);
+//        final var icon = IconManager.loadIcon("FileIcons." + (file.isDirectory() ? "FOLDER"  : ext.toUpperCase()) + ":10");
         iconCache.put(ext, icon);
         return icon;
     }
@@ -354,15 +351,15 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
     private JComponent createToolbar() {
         JPanel panel = new JPanel(new WrapLayout(WrapLayout.LEFT, 2, 2));
 
-        reload = new RolloverButton(IconManager.loadIcon("MatIcons.REFRESH:22"));
+        JButton reload = new RolloverButton(IconManager.loadIcon("MatIcons.REFRESH:22"), "Reload");
         reload.addActionListener(e -> loadFolder(currentWorkspace));
         panel.add(reload);
 
-        openFolder = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_OPEN:22"));
+        JButton openFolder = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_OPEN:22"), "Open folder");
         openFolder.addActionListener(e -> chooseWorkspace());
         panel.add(openFolder);
 
-        locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"));
+        JButton locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"), "Locate current file");
         locate.addActionListener(e -> locateFile());
         panel.add(locate);
         return panel;

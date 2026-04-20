@@ -71,6 +71,11 @@ public class RolloverButton extends JButton
 		setIcon(icon);
 	} //}}}
 
+	public RolloverButton(final Icon icon, final String tooltip) {
+		this(icon);
+		setToolTipText(tooltip);
+	}
+
 	//{{{ updateUI() method
 	public void updateUI()
 	{
