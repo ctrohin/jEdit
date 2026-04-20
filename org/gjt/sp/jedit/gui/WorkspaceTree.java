@@ -22,17 +22,19 @@
 package org.gjt.sp.jedit.gui;
 
 import com.formdev.flatlaf.extras.components.FlatTree;
-import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.layout.WrapLayout;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 
 import javax.swing.*;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
@@ -46,20 +48,15 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
     private final View view;
     private JButton reload;
     private JButton openFolder;
-    private JButton newFile;
-    private JButton newFolder;
-    private JButton sortBy;
     private FlatTree tree;
-    private JPanel pleaseWait;
-    private JPanel noWorkpaceLoaded;
 
     private static String currentWorkspace;
 
     public WorkspaceTree(View view) {
         super(new BorderLayout());
+        this.view = view;
         add(BorderLayout.NORTH, createToolbar());
         add(BorderLayout.CENTER, createTree());
-        this.view = view;
         loadFolder(jEdit.getProperty(FOLDER_KEY));
     }
 
@@ -72,18 +69,36 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
                 super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus);
                 if (value instanceof FileNode) {
                     File f = (File) ((FileNode) value).getUserObject();
-                    // Use system icons
                     setIcon(getCachedIcon(f));
                 }
                 return this;
             }
         });
+
+        tree.addTreeWillExpandListener(new TreeWillExpandListener() {
+            @Override
+            public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+                FileNode node = (FileNode) event.getPath().getLastPathComponent();
+                if (node.isLoaded()) {
+                    return;
+                }
+
+                node.removeAllChildren();
+                addChildren(node, false);
+                node.setLoaded(true);
+                ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+            }
+
+            @Override
+            public void treeWillCollapse(TreeExpansionEvent event) {}
+        });
+
         return new JScrollPane(tree);
     }
 
     private final Map<String, Icon> iconCache = new Hashtable<>();
     private Icon getCachedIcon(final File file) {
-        String ext = getFileExtension(file);
+        String ext = file.isDirectory() ? "__DIRECTORY__" : getFileExtension(file);
         if (iconCache.containsKey(ext)) {
             return iconCache.get(ext);
         }
@@ -99,23 +114,14 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
 
         String fileName = file.getName();
         int dotIndex = fileName.lastIndexOf('.');
-
-        // Check if dot exists and is not the first character
         if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
             return fileName.substring(dotIndex + 1).toLowerCase();
         }
-
-        return ""; // No extension found
+        return "";
     }
 
     private JComponent createToolbar() {
         JPanel panel = new JPanel(new WrapLayout(WrapLayout.LEFT, 2, 2));
-
-        /*
-        		EnhancedButton b = new EnhancedButton(icon,toolTip,name,context);
-		b.setPreferredSize(new Dimension(32,32));
-
-        * */
 
         reload = new RolloverButton(IconManager.loadIcon("MatIcons.REFRESH:22"));
         reload.addActionListener(e -> loadFolder(currentWorkspace));
@@ -140,75 +146,75 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
         if (folder == null) {
             return;
         }
+        currentWorkspace = folder;
         jEdit.setProperty(FOLDER_KEY, folder);
-        tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("Please wait...")));
-        new Thread(() -> {
-            final var root = new FileNode(new File(folder));
-            addChildren(root);
-            SwingUtilities.invokeLater(() -> {
-                tree.setModel(new DefaultTreeModel(root));
-            });
-        }).start();
+        
+        File rootFile = new File(folder);
+        if (!rootFile.exists() || !rootFile.isDirectory()) {
+            return;
+        }
+
+        FileNode root = new FileNode(rootFile);
+        addChildren(root, false);
+        root.setLoaded(true);
+        tree.setModel(new DefaultTreeModel(root));
     }
 
 
     @Override
     public void focusOnDefaultComponent() {
-
+        tree.requestFocus();
     }
 
     @Override
-    public void move(String newPosition) {
-    }
+    public void move(String newPosition) {}
 
 
-    /**
-     * Custom Node class to handle File objects and display names correctly
-     */
     private static class FileNode extends DefaultMutableTreeNode {
+        private boolean loaded = false;
+
         public FileNode(File file) {
             super(file);
+        }
+
+        public boolean isLoaded() {
+            return loaded;
+        }
+
+        public void setLoaded(boolean loaded) {
+            this.loaded = loaded;
         }
 
         @Override
         public String toString() {
             File file = (File) getUserObject();
             String name = file.getName();
-            // Handle root directory cases where name might be empty
             return (name.isEmpty()) ? file.getPath() : name;
         }
 
-        public boolean isDirectory() {
-            return ((File) getUserObject()).isDirectory();
+        @Override
+        public boolean isLeaf() {
+            return !((File) getUserObject()).isDirectory();
         }
     }
 
     public File[] getSortedChildren(File directory) {
         File[] files = directory.listFiles();
-
         if (files == null) return new File[0];
 
-        Arrays.sort(files, new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                // 1. Sort by Directory vs File
-                if (f1.isDirectory() && !f2.isDirectory()) {
-                    return -1; // f1 comes first
-                } else if (!f1.isDirectory() && f2.isDirectory()) {
-                    return 1; // f2 comes first
-                }
-
-                // 2. If both are same type, sort alphabetically (case-insensitive)
-                return f1.getName().compareToIgnoreCase(f2.getName());
+        Arrays.sort(files, (f1, f2) -> {
+            if (f1.isDirectory() && !f2.isDirectory()) {
+                return -1;
+            } else if (!f1.isDirectory() && f2.isDirectory()) {
+                return 1;
             }
+            return f1.getName().compareToIgnoreCase(f2.getName());
         });
 
         return files;
     }
-    /**
-     * Populates a node with its file system children
-     */
-    private void addChildren(FileNode node) {
+
+    private void addChildren(FileNode node, boolean recursive) {
         File file = (File) node.getUserObject();
         File[] children = getSortedChildren(file);
 
@@ -216,10 +222,16 @@ public class WorkspaceTree extends JPanel implements DefaultFocusComponent, Dock
             for (File child : children) {
                 FileNode childNode = new FileNode(child);
                 node.add(childNode);
-                // If it's a directory, we could recurse here,
-                // but for large systems, use a TreeWillExpandListener instead.
+                
                 if (child.isDirectory()) {
-                    addChildren(childNode);
+                    if (recursive) {
+                        addChildren(childNode, true);
+                        childNode.setLoaded(true);
+                    } else {
+                        // Add a dummy node to make it expandable
+                        childNode.add(new DefaultMutableTreeNode("Loading..."));
+                        childNode.setLoaded(false);
+                    }
                 }
             }
         }
