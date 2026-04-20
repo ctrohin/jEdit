@@ -26,6 +26,9 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.layout.WrapLayout;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.search.DirectoryListSet;
+import org.gjt.sp.jedit.search.SearchAndReplace;
+import org.gjt.sp.jedit.search.SearchDialog;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -47,15 +50,52 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     public static final String FOLDER_KEY = "workspace.folder";
     private final View view;
     private FlatTree tree;
+    private final JComponent emptyViewComponent;
+    private final JComponent toolbar;
+    private final JComponent treeView;
 
     private static String currentWorkspace;
+    private boolean opened = false;
 
     public WorkspaceTreeView(View view) {
         super(new BorderLayout());
         this.view = view;
-        add(BorderLayout.NORTH, createToolbar());
-        add(BorderLayout.CENTER, createTree());
+        toolbar = createToolbar();
+        treeView = createTree();
+        emptyViewComponent = createNoFolderComponent();
         loadFolder(jEdit.getProperty(FOLDER_KEY));
+    }
+
+    private void loadLayout() {
+        removeAll();
+        if (currentWorkspace != null) {
+            opened = true;
+            add(BorderLayout.NORTH, toolbar);
+            add(BorderLayout.CENTER, treeView);
+        }
+        else {
+            opened = false;
+            add(BorderLayout.CENTER, emptyViewComponent);
+        }
+        repaint();
+        revalidate();
+    }
+
+    private void searchInFolder(final File file) {
+        SearchAndReplace.setSearchFileSet(new DirectoryListSet(
+            file.isDirectory() ? file.getAbsolutePath() : file.getParentFile().getAbsolutePath(), "*",true));
+        SearchDialog.showSearchDialog(view,null,SearchDialog.DIRECTORY);
+    }
+
+    private JComponent createNoFolderComponent() {
+        final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JPanel grid = new JPanel(new GridLayout(2, 1, 5, 5));
+        grid.add(new JLabel("No project folder selected."));
+        JButton btn = new JButton("Open project folder");
+        btn.addActionListener(e -> chooseWorkspace());
+        grid.add(btn);
+        panel.add(grid);
+        return panel;
     }
 
     private JComponent createTree() {
@@ -223,7 +263,11 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         JMenuItem open = new JMenuItem(file.isDirectory() ? "Expand/collapse" : "Open");
         open.addActionListener(al -> openFile(file));
         menu.add(open);
-
+        if (file.isDirectory()) {
+            JMenuItem search = new JMenuItem("Search in folder");
+            search.addActionListener(al -> searchInFolder(file));
+            menu.add(search);
+        }
         menu.addSeparator();
 
         if (file.isDirectory()) {
@@ -362,6 +406,12 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         JButton locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"), "Locate current file");
         locate.addActionListener(e -> locateFile());
         panel.add(locate);
+
+        JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
+        close.addActionListener(e -> {
+            loadFolder(currentWorkspace = null);
+        });
+        panel.add(close);
         return panel;
     }
 
@@ -375,10 +425,14 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void loadFolder(final String folder) {
+        final var willBeOpened = folder != null;
+        currentWorkspace = folder;
+        if (willBeOpened != opened) {
+            loadLayout();
+        }
         if (folder == null) {
             return;
         }
-        currentWorkspace = folder;
         jEdit.setProperty(FOLDER_KEY, folder);
         
         File rootFile = new File(folder);

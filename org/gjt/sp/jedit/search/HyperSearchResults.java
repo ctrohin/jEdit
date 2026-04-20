@@ -507,21 +507,13 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 	//}}}
 
 	//{{{ HighlightingTree class
-	class HighlightingTree extends JTree
+    static class HighlightingTree extends JTree
 	{
-		private String prop;
-		private String styleTag;
+		private static final String STYLE_TAG = "text-decoration: underline; font-style: italic; font-weight: bold";
 
 		HighlightingTree(DefaultTreeModel model)
 		{
 			super(model);
-			prop = jEdit.getProperty(HIGHLIGHT_PROP);
-			if (prop != null && !prop.isEmpty())
-			{
-				Font f = (resultTree != null) ? resultTree.getFont() :
-					UIManager.getFont("Tree.font");
-				styleTag = HtmlUtilities.style2html(prop, f);
-			}
 		}
 
 		@Override
@@ -540,13 +532,6 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 			}
 			if (node == null)
 				return s;
-			if (! newProp.equals(prop))
-			{
-				prop = newProp;
-				Font f = (resultTree != null) ? resultTree.getFont() :
-					UIManager.getFont("Tree.font");
-				styleTag = HtmlUtilities.style2html(prop, f);
-			}
 			SearchMatcher matcher =
 				((HyperSearchOperationNode) node.getUserObject()).getSearchMatcher();
 			int i = s.indexOf(": ");
@@ -580,7 +565,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 					m = null;
 				}
 			}
-			return HtmlUtilities.highlightString(s, styleTag, matches);
+			return HtmlUtilities.highlightString(s, STYLE_TAG, matches);
 		}
 	} //}}}
 
@@ -638,16 +623,14 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 			}
 		} //}}}
 
-		//{{{ Private members
-		private JPopupMenu popupMenu;
-
-		//{{{ showPopupMenu method
+        //{{{ showPopupMenu method
 		private void showPopupMenu(MouseEvent evt)
 		{
 			TreePath path = resultTree.getSelectionPath();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 
-			popupMenu = new JPopupMenu();
+            //{{{ Private members
+            JPopupMenu popupMenu = new JPopupMenu();
 			Object userObj = node.getUserObject();
 			if (userObj instanceof HyperSearchNode)
 			{

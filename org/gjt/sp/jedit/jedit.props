@@ -122,7 +122,7 @@ hypersearch.maxWarningResults=1000
 hypersearch.displayQueryLength=100
 
 # Style for highlighting matches in hypersearch results
-hypersearch.results.highlight=bgColor:#ccccff
+hypersearch.results.highlight=bgColor:#FFCC00
 
 # Confirm dialogs
 confirmSaveAll=true

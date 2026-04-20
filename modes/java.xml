@@ -170,6 +170,20 @@
 			<KEYWORD3>short</KEYWORD3>
 			<!-- added for Java 10. While 'var' is not technically a keyword, it is a type. -->
 			<KEYWORD3>var</KEYWORD3>
+			<KEYWORD3>String</KEYWORD3>
+			<KEYWORD3>Object</KEYWORD3>
+			<KEYWORD3>List</KEYWORD3>
+			<KEYWORD3>Map</KEYWORD3>
+			<KEYWORD3>Set</KEYWORD3>
+			<KEYWORD3>Boolean</KEYWORD3>
+			<KEYWORD3>Byte</KEYWORD3>
+			<KEYWORD3>Char</KEYWORD3>
+			<KEYWORD3>Double</KEYWORD3>
+			<KEYWORD3>Float</KEYWORD3>
+			<KEYWORD3>Integer</KEYWORD3>
+			<KEYWORD3>Long</KEYWORD3>
+			<KEYWORD3>Short</KEYWORD3>
+			<KEYWORD3>Number</KEYWORD3>
 			<!--}}}-->
 
 			<!--{{{ literals -->

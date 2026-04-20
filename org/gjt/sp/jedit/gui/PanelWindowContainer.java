@@ -47,7 +47,6 @@ import java.util.*;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -57,6 +56,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import com.formdev.flatlaf.extras.components.FlatButton;
+import com.formdev.flatlaf.extras.components.FlatToggleButton;
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.OperatingSystem;
@@ -87,22 +88,22 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		buttonPanel = new JPanel(new ButtonLayout());
 		buttonPanel.setBorder(new EmptyBorder(1,1,1,1));
 
-		closeBox = new JButton(GUIUtilities.loadIcon("MatIcons.CLOSE:10"));
+		closeBox = new FlatButton();
+		closeBox.setIcon(GUIUtilities.loadIcon("MatIcons.CLOSE:10"));
+		closeBox.setButtonType(FlatButton.ButtonType.toolBarButton);
 		closeBox.setRequestFocusEnabled(false);
 		closeBox.setToolTipText(jEdit.getProperty("view.docking.close-tooltip"));
-		if(OperatingSystem.isMacOSLF())
-			closeBox.putClientProperty("JButton.buttonType","toolbar");
 
 		closeBox.setMargin(new Insets(0,0,0,0));
 		GenericGUIUtilities.setButtonContentMargin(closeBox, closeBox.getMargin());
 
 		closeBox.addActionListener(e -> show((DockableWindowManagerImpl.Entry)null));
 
-		menuBtn = new JButton(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
+		menuBtn = new FlatButton();
+		menuBtn.setIcon(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
+		menuBtn.setButtonType(FlatButton.ButtonType.toolBarButton);
 		menuBtn.setRequestFocusEnabled(false);
 		menuBtn.setToolTipText(jEdit.getProperty("view.docking.menu-tooltip"));
-		if(OperatingSystem.isMacOSLF())
-			menuBtn.putClientProperty("JButton.buttonType","toolbar");
 
 		menuBtn.setMargin(new Insets(0,0,0,0));
 		GenericGUIUtilities.setButtonContentMargin(menuBtn, menuBtn.getMargin());
@@ -111,7 +112,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 
 		buttonGroup = new ButtonGroup();
 		// JDK 1.4 workaround
-		buttonGroup.add(nullButton = new JToggleButton());
+		buttonGroup.add(nullButton = new FlatToggleButton());
 		//}}}
 
 		dockables = new ArrayList<>();
@@ -153,16 +154,9 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			default:
 				throw new InternalError("Invalid position: " + position);
 		}
-		JToggleButton button;
-		if (jEdit.getBooleanProperty("use.rolloverToggleButtons", false))
-		{
-			button = new RolloverToggleButton();
-		}
-		else 
-		{
-			button = new JToggleButton();	
-			button.setMargin(new Insets(4,4,4,4));
-		}
+		FlatToggleButton button = new FlatToggleButton();
+		button.setButtonType(FlatButton.ButtonType.toolBarButton);
+		button.setMargin(new Insets(4,4,4,4));
 		GenericGUIUtilities.setButtonContentMargin(button, new Insets(6,6,6,6));
 		button.setRequestFocusEnabled(false);
 		button.setIcon(new RotatedTextIcon(rotation,button.getFont(),
@@ -170,20 +164,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		button.setActionCommand(entry.factory.name);
 		button.addActionListener(new ActionHandler());
 		button.addMouseListener(new MenuMouseHandler());
-		if(OperatingSystem.isMacOSLF())
-			button.putClientProperty("JButton.buttonType","toolbar");
 		//}}}
-		button.addChangeListener(e -> {
-			JToggleButton btn = (JToggleButton) e.getSource();
-			if(btn.isSelected()) {
-				btn.setBackground(UIManager.getColor("MenuItem.selectionBackground"));
-				btn.setForeground(UIManager.getColor("MenuItem.selectionForeground"));
-			} else {
-				btn.setBackground(UIManager.getColor("MenuItem.background"));
-				btn.setForeground(UIManager.getColor("MenuItem.foreground"));
-			}
-			btn.repaint();
-		});
 		buttonGroup.add(button);
 		buttons.add(button);
 		entry.btn = button;
@@ -439,8 +420,8 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 	//{{{ Private members
 	private final DockableWindowManagerImpl wm;
 	private final String position;
-	private final JButton closeBox;
-	private final JButton menuBtn;
+	private final FlatButton closeBox;
+	private final FlatButton menuBtn;
 	private final ButtonGroup buttonGroup;
 	private final JToggleButton nullButton;
 	private int dimension;
