@@ -59,8 +59,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import com.formdev.flatlaf.extras.components.FlatButton;
 import com.formdev.flatlaf.extras.components.FlatToggleButton;
 import org.gjt.sp.jedit.EditBus;
-import org.gjt.sp.jedit.GUIUtilities;
-import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.gui.DockableWindowManager.DockingArea;
@@ -138,23 +136,13 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		dockables.add(entry);
 
 		//{{{ Create button
-		int rotation;
-		switch (position)
-		{
-			case DockableWindowManager.TOP:
-			case DockableWindowManager.BOTTOM:
-				rotation = RotatedTextIcon.NONE;
-				break;
-			case DockableWindowManager.LEFT:
-				rotation = RotatedTextIcon.CCW;
-				break;
-			case DockableWindowManager.RIGHT:
-				rotation = RotatedTextIcon.CW;
-				break;
-			default:
-				throw new InternalError("Invalid position: " + position);
-		}
-		FlatToggleButton button = new FlatToggleButton();
+		int rotation = switch (position) {
+            case DockableWindowManager.TOP, DockableWindowManager.BOTTOM -> RotatedTextIcon.NONE;
+            case DockableWindowManager.LEFT -> RotatedTextIcon.CCW;
+            case DockableWindowManager.RIGHT -> RotatedTextIcon.CW;
+            default -> throw new InternalError("Invalid position: " + position);
+        };
+        FlatToggleButton button = new FlatToggleButton();
 		button.setButtonType(FlatButton.ButtonType.toolBarButton);
 		button.setMargin(new Insets(4,4,4,4));
 		GenericGUIUtilities.setButtonContentMargin(button, new Insets(6,6,6,6));
@@ -240,7 +228,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 
 		if(mostRecent == null)
 		{
-			mostRecent = dockables.get(0).factory.name;
+			mostRecent = dockables.getFirst().factory.name;
 		}
 
 		wm.showDockableWindow(mostRecent);
@@ -295,8 +283,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 			else
 			{
-				// TODO: requestDefaultFocus is deprecated, fix this
-				entry.win.requestDefaultFocus();
+				entry.win.requestFocusInWindow();
 			}
 		}
 		else
