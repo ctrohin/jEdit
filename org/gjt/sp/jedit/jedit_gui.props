@@ -426,6 +426,8 @@ docking=left-docking-area \
 	toggle-dock-areas \
 	close-docking-area \
 	- \
+	workspace \
+	- \
 	layout-load \
 	layout-save \
 	layout-load-current-mode \
@@ -436,6 +438,7 @@ docking=left-docking-area \
 
 #{{{ Utilities menu
 utils=vfs.browser \
+	  workspace \
 	  %recent-directories \
 	  - \
 	  %favorites \
@@ -1017,3 +1020,7 @@ install-plugins.clear-plugin-set.icon=MatIcons.CLEAR:22
 
 errorwidget.popupmenu=logs-remove-all-errors
 
+# Workspace
+workspace.title=Workspace
+workspace.label=Workspace
+workspace.icon=MatIcons.FOLDER_OPEN:22

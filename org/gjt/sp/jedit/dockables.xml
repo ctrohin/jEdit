@@ -9,6 +9,9 @@
 	<DOCKABLE NAME="vfs.browser" MOVABLE="TRUE">
 		new VFSBrowser(view,position);
 	</DOCKABLE>
+	<DOCKABLE NAME="workspace" MOVABLE="TRUE">
+		new WorkspaceTree(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="hypersearch-results" MOVABLE="TRUE">
 		new HyperSearchResults(view);
 	</DOCKABLE>
