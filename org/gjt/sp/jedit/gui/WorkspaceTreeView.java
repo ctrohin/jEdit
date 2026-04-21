@@ -22,13 +22,19 @@
 package org.gjt.sp.jedit.gui;
 
 import com.formdev.flatlaf.extras.components.FlatTree;
+import com.formdev.flatlaf.util.SystemFileChooser;
+import org.gjt.sp.jedit.EBMessage;
+import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.layout.WrapLayout;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.msg.ProjectFolderClosed;
+import org.gjt.sp.jedit.msg.ProjectFolderOpened;
 import org.gjt.sp.jedit.search.DirectoryListSet;
 import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.search.SearchDialog;
+import org.gjt.sp.util.Log;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -54,7 +60,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     private final JComponent toolbar;
     private final JComponent treeView;
 
-    private static String currentWorkspace;
+    private volatile String currentWorkspace;
     private boolean opened = false;
 
     public WorkspaceTreeView(View view) {
@@ -261,22 +267,22 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         JPopupMenu menu = new JPopupMenu();
 
         JMenuItem open = new JMenuItem(file.isDirectory() ? "Expand/collapse" : "Open");
-        open.addActionListener(al -> openFile(file));
+        open.addActionListener(_ -> openFile(file));
         menu.add(open);
         if (file.isDirectory()) {
             JMenuItem search = new JMenuItem("Search in folder");
-            search.addActionListener(al -> searchInFolder(file));
+            search.addActionListener(_ -> searchInFolder(file));
             menu.add(search);
         }
         menu.addSeparator();
 
         if (file.isDirectory()) {
             JMenuItem newFolder = new JMenuItem("New folder");
-            newFolder.addActionListener(al -> createNewFolder(file));
+            newFolder.addActionListener(_ -> createNewFolder(file));
             menu.add(newFolder);
 
             JMenuItem newFile = new JMenuItem("New file");
-            newFile.addActionListener(al -> createNewFile(file));
+            newFile.addActionListener(_ -> createNewFile(file));
             menu.add(newFile);
 
             if (!node.isRoot()) {
@@ -286,17 +292,17 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
         if (!node.isRoot()) {
             JMenuItem rename = new JMenuItem("Rename");
-            rename.addActionListener(al -> renameFile(file));
+            rename.addActionListener(_ -> renameFile(file));
             menu.add(rename);
 
             JMenuItem move = new JMenuItem("Move");
-            move.addActionListener(al -> moveFile(file));
+            move.addActionListener(_ -> moveFile(file));
             menu.add(move);
 
             menu.addSeparator();
 
             JMenuItem delete = new JMenuItem("Delete");
-            delete.addActionListener(al -> deleteFile(file));
+            delete.addActionListener(_ -> deleteFile(file));
             menu.add(delete);
         }
 
@@ -339,9 +345,9 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void moveFile(File file) {
-        JFileChooser chooser = new JFileChooser(currentWorkspace);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showDialog(view, "Move Here") == JFileChooser.APPROVE_OPTION) {
+        SystemFileChooser chooser = new SystemFileChooser(currentWorkspace);
+        chooser.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showDialog(view, "Move Here") == SystemFileChooser.APPROVE_OPTION) {
             File targetDir = chooser.getSelectedFile();
             File newFile = new File(targetDir, file.getName());
             if (file.renameTo(newFile)) {
@@ -409,24 +415,35 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
         JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
         close.addActionListener(e -> {
-            loadFolder(currentWorkspace = null);
+            loadFolder(null);
         });
         panel.add(close);
         return panel;
     }
 
     private void chooseWorkspace() {
-        final var chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        final var chooser = new SystemFileChooser(currentWorkspace);
+        chooser.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
         final var choice = chooser.showOpenDialog(this);
-        if (choice == JFileChooser.APPROVE_OPTION) {
+        if (choice == SystemFileChooser.APPROVE_OPTION) {
             loadFolder(chooser.getSelectedFile().getAbsolutePath());
         }
     }
 
     private void loadFolder(final String folder) {
-        final var willBeOpened = folder != null;
+        final var willBeOpened = Objects.nonNull(folder);
+        var emitEvent = !Objects.equals(folder, currentWorkspace);
         currentWorkspace = folder;
+        if (emitEvent) {
+            final var event = Optional.ofNullable(currentWorkspace)
+                .map(ws -> new ProjectFolderOpened(this, ws))
+                .map(EBMessage.class::cast)
+                .orElseGet(() -> new ProjectFolderClosed(this));
+            new Thread(() -> {
+                Log.log(Log.ERROR, this, "event emitted");
+                EditBus.send(event);
+            }).start();
+        }
         if (willBeOpened != opened) {
             loadLayout();
         }

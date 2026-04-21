@@ -105,7 +105,7 @@ public class PrintPreview extends EnhancedDialog
 		fullWidth = new JButton( IconManager.loadIcon( "MatIcons.RESIZE_HORIZONTAL:22" ) );
 		fullWidth.setToolTipText( jEdit.getProperty( "printpreview.dialog.pageWidth", "Show page full width" ) );
 
-		fullPage = new JButton( IconManager.loadIcon( "22x22/actions/resize-vertical.png" ) );
+		fullPage = new JButton( IconManager.loadIcon( "MatIcons.RESIZE_VERTICAL:22" ) );
 		fullPage.setToolTipText( jEdit.getProperty( "printpreview.dialog.fullPage", "Show full page" ) );
 
 		// create toolbar

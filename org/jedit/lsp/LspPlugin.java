@@ -21,29 +21,29 @@
 
 package org.jedit.lsp;
 
-import org.gjt.sp.jedit.Buffer;
-import org.gjt.sp.jedit.EditPlugin;
-import org.gjt.sp.jedit.EditBus;
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.buffer.BufferAdapter;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
+import org.gjt.sp.jedit.msg.ProjectFolderClosed;
+import org.gjt.sp.jedit.msg.ProjectFolderOpened;
 import org.gjt.sp.util.Log;
 
 import org.eclipse.lsp4j.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * Main entry point for the LSP integration in jEdit.
  * It listens for buffer events and manages LSP clients for different languages.
  */
-public class LspPlugin extends EditPlugin {
+public class LspPlugin extends EditPlugin implements EBComponent {
 
-    private final Map<String, GenericLspClient> clients = new HashMap<>();
+    private final Map<String, LspClientMeta> clients = new HashMap<>();
     private final Map<Buffer, BufferLspHandler> handlers = new HashMap<>();
     private final int DEFAULT_LEVEL = Log.ERROR;
+    private String currentProjectRoot;
 
     @Override
     public void start() {
@@ -53,10 +53,10 @@ public class LspPlugin extends EditPlugin {
     @Override
     public void stop() {
         // Shutdown all clients
-        for (GenericLspClient client : clients.values()) {
+        for (LspClientMeta meta : clients.values()) {
             try {
-                client.getServer().shutdown().get();
-                client.getServer().exit();
+                meta.getClient().getServer().shutdown().get();
+                meta.getClient().getServer().exit();
             } catch (Exception e) {
                 Log.log(Log.ERROR, this, "Error shutting down LSP client", e);
             }
@@ -82,24 +82,47 @@ public class LspPlugin extends EditPlugin {
             return;
         }
 
-        GenericLspClient client = clients.get(modeName);
-        if (client == null) {
-            client = new GenericLspClient();
-            try {
-                // For now, use the buffer's directory as project root if we can't find better
-                String projectRoot = buffer.getDirectory();
-                client.start(modeName, projectRoot);
-                clients.put(modeName, client);
-            } catch (Exception e) {
-                Log.log(Log.ERROR, this, "Failed to start LSP server for " + modeName, e);
-                return;
-            }
+        LspClientMeta meta = clients.get(modeName);
+        if (meta == null) {
+            meta = new LspClientMeta(new GenericLspClient(), modeName);
+            startMetaClient(meta);
+            clients.put(modeName, meta);
+        } else {
+            meta.incrementBufferCount();
         }
 
-        BufferLspHandler handler = new BufferLspHandler(buffer, client);
+        BufferLspHandler handler = new BufferLspHandler(buffer, meta.getClient());
         buffer.addBufferListener(handler);
         handlers.put(buffer, handler);
         handler.notifyOpen();
+    }
+
+    private void startMetaClient(LspClientMeta meta) {
+        if (meta.isServerStarted() || Objects.isNull(currentProjectRoot)) {
+            return;
+        }
+        try {
+            // Once the client is properly started
+            meta.getClient().start(meta.getMode(), currentProjectRoot);
+            // Set the status accordingly
+            meta.setServerStarted(true);
+        }
+        catch (Exception e) {
+            Log.log(Log.ERROR, this, "Failed to start LSP server for " + meta.getMode(), e);
+        }
+    }
+
+    private void stopMetaClient(LspClientMeta meta) {
+        if (!meta.isServerStarted()) {
+            return;
+        }
+        try {
+            meta.setServerStarted(false);
+            meta.getClient().getServer().shutdown().get();
+        }
+        catch (Exception e) {
+            Log.log(Log.ERROR, this, "Failed to stop LSP server for " + meta.getMode(), e);
+        }
     }
 
     private synchronized void stopLspForBuffer(Buffer buffer) {
@@ -107,6 +130,20 @@ public class LspPlugin extends EditPlugin {
         if (handler != null) {
             buffer.removeBufferListener(handler);
             handler.notifyClose();
+        }
+        String modeName = buffer.getMode().getName();
+        LspClientMeta meta = clients.get(modeName);
+        if (meta != null) {
+            meta.decrementBufferCount();
+            if (meta.getBufferCount() == 0) {
+                clients.remove(modeName);
+                try {
+                    meta.getClient().getServer().shutdown().get();
+                } catch (Exception e) {
+                    Log.log(Log.ERROR, this, "Error shutting down LSP client", e);
+                }
+                meta.getClient().getServer().exit();
+            }
         }
     }
 
@@ -121,11 +158,13 @@ public class LspPlugin extends EditPlugin {
         }
 
         void notifyOpen() {
-            if (client.getServer() == null) return;
+            if (client.getServer() == null) {
+                return;
+            }
             
             DidOpenTextDocumentParams params = new DidOpenTextDocumentParams();
             TextDocumentItem item = new TextDocumentItem();
-            item.setUri(new java.io.File(buffer.getPath()).toURI().toString());
+            item.setUri(new File(buffer.getPath()).toURI().toString());
             item.setLanguageId(buffer.getMode().getName());
             item.setVersion(version++);
             item.setText(buffer.getText(0, buffer.getLength()));
@@ -135,7 +174,9 @@ public class LspPlugin extends EditPlugin {
         }
 
         void notifyClose() {
-            if (client.getServer() == null) return;
+            if (client.getServer() == null) {
+                return;
+            }
 
             DidCloseTextDocumentParams params = new DidCloseTextDocumentParams();
             params.setTextDocument(new TextDocumentIdentifier(new java.io.File(buffer.getPath()).toURI().toString()));
@@ -167,6 +208,67 @@ public class LspPlugin extends EditPlugin {
             params.setContentChanges(Collections.singletonList(event));
 
             client.getServer().getTextDocumentService().didChange(params);
+        }
+    }
+
+    private static class LspClientMeta {
+        private final GenericLspClient client;
+        private volatile int bufferCount = 1;
+        private final String mode;
+        private boolean serverStarted = false;
+
+        LspClientMeta(GenericLspClient client, String mode) {
+            this.client = client;
+            this.mode = mode;
+        }
+
+        synchronized void incrementBufferCount() {
+            bufferCount++;
+        }
+
+        synchronized void decrementBufferCount() {
+            bufferCount--;
+        }
+
+        synchronized int getBufferCount() {
+            return bufferCount;
+        }
+
+        synchronized GenericLspClient getClient() {
+            return client;
+        }
+
+        String getMode() {
+            return mode;
+        }
+
+        boolean isServerStarted() {
+            return serverStarted;
+        }
+
+        void setServerStarted(final boolean serverStarted) {
+            this.serverStarted = serverStarted;
+        }
+    }
+
+    @Override
+    public void handleMessage(EBMessage message) {
+        if (message instanceof ProjectFolderOpened) {
+            Log.log(Log.ERROR, this, "Handle message called " + message);
+            final var openedFolder = ((ProjectFolderOpened) message).getFolder();
+            // If a different folder is opened, then restart the LSP clients
+            if (!Objects.equals(currentProjectRoot, openedFolder)) {
+                currentProjectRoot = openedFolder;
+                clients.values().forEach(meta -> {
+                    stopMetaClient(meta);
+                    startMetaClient(meta);
+                });
+            }
+        }
+        if (message instanceof ProjectFolderClosed) {
+            Log.log(Log.ERROR, this, "Handle message called " + message);
+            currentProjectRoot = null;
+            clients.values().forEach(this::stopMetaClient);
         }
     }
 }
