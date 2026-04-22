@@ -46,19 +46,24 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 
 public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, DockableWindow {
     public static final String NAME = "workspace";
     public static final String FOLDER_KEY = "workspace.folder";
+    public static final String RECENTS_KEY = "workspace.recents";
+    public static final int MAX_RECENTS = 20;
+
     private final View view;
     private FlatTree tree;
-    private final JComponent emptyViewComponent;
     private final JComponent toolbar;
     private final JComponent treeView;
+    private final ArrayList<String> recentFolders = new ArrayList<>();
 
     private volatile String currentWorkspace;
     private boolean opened = false;
@@ -68,10 +73,29 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         this.view = view;
         toolbar = createToolbar();
         treeView = createTree();
-        emptyViewComponent = createNoFolderComponent();
-        loadFolder(jEdit.getProperty(FOLDER_KEY));
+        loadFolder(jEdit.getProperty(FOLDER_KEY), false);
+        loadRecents();
     }
 
+    private void loadRecents() {
+        final var recentsStoredValue = jEdit.getProperty(RECENTS_KEY);
+        Optional.ofNullable(recentsStoredValue)
+            .map(r -> r.split(">"))
+            .ifPresent(recents -> recentFolders.addAll(Arrays.asList(recents)));
+    }
+
+    private void saveRecents(final String newAddition) {
+        if (newAddition == null) {
+            return;
+        }
+        while (recentFolders.remove(newAddition));
+        recentFolders.addFirst(newAddition);
+        if (recentFolders.size() > MAX_RECENTS) {
+            recentFolders.removeLast();
+        }
+        final var recentsStr = String.join(">", recentFolders);
+        jEdit.setProperty(RECENTS_KEY, String.join(">", recentFolders));
+    }
     private void loadLayout() {
         removeAll();
         if (currentWorkspace != null) {
@@ -81,7 +105,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         }
         else {
             opened = false;
-            add(BorderLayout.CENTER, emptyViewComponent);
+            add(BorderLayout.CENTER, createNoFolderComponent());
         }
         repaint();
         revalidate();
@@ -94,13 +118,31 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private JComponent createNoFolderComponent() {
-        final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        final JPanel grid = new JPanel(new GridLayout(2, 1, 5, 5));
-        grid.add(new JLabel("No project folder selected."));
-        JButton btn = new JButton("Open project folder");
-        btn.addActionListener(e -> chooseWorkspace());
-        grid.add(btn);
-        panel.add(grid);
+        final JPanel panel = new JPanel(new BorderLayout());
+        final ArrayList<FlutterUI> uiColumn = new ArrayList<>(List.of(
+            FlutterUI.Text("No project folder selected.").build(),
+            FlutterUI.Button("Open project folder").onPressed(this::chooseWorkspace).build()
+        ));
+
+        if (!recentFolders.isEmpty()) {
+            uiColumn.add(FlutterUI.Box().height(20).build());
+            uiColumn.add(FlutterUI.Text("Recents").style(new FlutterUI.TextStyle().bold()).build());
+            for (final var recentItem : recentFolders) {
+                uiColumn.add(
+                    FlutterUI.Text(recentItem)
+                        .style(new FlutterUI.TextStyle()
+                            .italic()
+                        )
+                        .onTap(() -> loadFolder(recentItem, true))
+                        .build()
+                );
+            }
+        }
+
+        final var comp = FlutterUI.Padding(10, 10, 10, 10,
+            FlutterUI.Column(uiColumn)
+        ).getComponent();
+        panel.add(comp, BorderLayout.NORTH);
         return panel;
     }
 
@@ -108,7 +150,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         tree = new FlatTree();
         tree.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
-            public java.awt.Component getTreeCellRendererComponent(JTree tree, Object value,
+            public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                                    boolean sel, boolean exp, boolean leaf, int row, boolean hasFocus) {
                 super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus);
                 if (value instanceof FileNode) {
@@ -370,7 +412,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void refreshNodeForFile(File file) {
-        loadFolder(currentWorkspace);
+        loadFolder(currentWorkspace, false);
     }
 
     private final Map<String, Icon> iconCache = new Hashtable<>();
@@ -402,7 +444,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         JPanel panel = new JPanel(new WrapLayout(WrapLayout.LEFT, 2, 2));
 
         JButton reload = new RolloverButton(IconManager.loadIcon("MatIcons.REFRESH:22"), "Reload");
-        reload.addActionListener(e -> loadFolder(currentWorkspace));
+        reload.addActionListener(e -> loadFolder(currentWorkspace, false));
         panel.add(reload);
 
         JButton openFolder = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_OPEN:22"), "Open folder");
@@ -413,12 +455,31 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         locate.addActionListener(e -> locateFile());
         panel.add(locate);
 
+        JButton recentsSelector = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_SPECIAL:22"), "Recent folders");
+        recentsSelector.addActionListener(this::showRecents);
+        panel.add(recentsSelector);
+
+        panel.add(Box.createHorizontalStrut(20));
         JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
         close.addActionListener(e -> {
-            loadFolder(null);
+            loadFolder(null, false);
         });
         panel.add(close);
         return panel;
+    }
+
+    private void showRecents(final ActionEvent e) {
+        Log.log(Log.ERROR, this, "Show recents called: " + recentFolders);
+        final var menu = new JPopupMenu("Switch to folder");
+        for (String recents : recentFolders) {
+            final var f = new File(recents);
+            if (f.exists() && f.isDirectory()) {
+                final var menuItem = new JMenuItem(f.getAbsolutePath());
+                menuItem.addActionListener(l -> loadFolder(f.getAbsolutePath(), true));
+                menu.add(menuItem);
+            }
+        }
+        menu.show((JComponent)e.getSource(), 0, 0);
     }
 
     private void chooseWorkspace() {
@@ -426,14 +487,17 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         chooser.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
         final var choice = chooser.showOpenDialog(this);
         if (choice == SystemFileChooser.APPROVE_OPTION) {
-            loadFolder(chooser.getSelectedFile().getAbsolutePath());
+            loadFolder(chooser.getSelectedFile().getAbsolutePath(), true);
         }
     }
 
-    private void loadFolder(final String folder) {
+    private void loadFolder(final String folder, final boolean saveToRecents) {
         final var willBeOpened = Objects.nonNull(folder);
         var emitEvent = !Objects.equals(folder, currentWorkspace);
         currentWorkspace = folder;
+        if (saveToRecents) {
+            saveRecents(currentWorkspace);
+        }
         if (emitEvent) {
             final var event = Optional.ofNullable(currentWorkspace)
                 .map(ws -> new ProjectFolderOpened(this, ws))
