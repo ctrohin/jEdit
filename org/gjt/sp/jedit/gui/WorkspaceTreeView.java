@@ -441,31 +441,36 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private JComponent createToolbar() {
-        JPanel panel = new JPanel(new WrapLayout(WrapLayout.LEFT, 2, 2));
+        JPanel panelWest = new JPanel(new WrapLayout(WrapLayout.LEFT, 2, 2));
 
         JButton reload = new RolloverButton(IconManager.loadIcon("MatIcons.REFRESH:22"), "Reload");
         reload.addActionListener(e -> loadFolder(currentWorkspace, false));
-        panel.add(reload);
+        panelWest.add(reload);
 
         JButton openFolder = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_OPEN:22"), "Open folder");
         openFolder.addActionListener(e -> chooseWorkspace());
-        panel.add(openFolder);
+        panelWest.add(openFolder);
 
         JButton locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"), "Locate current file");
         locate.addActionListener(e -> locateFile());
-        panel.add(locate);
+        panelWest.add(locate);
 
         JButton recentsSelector = new RolloverButton(IconManager.loadIcon("MatIcons.FOLDER_SPECIAL:22"), "Recent folders");
         recentsSelector.addActionListener(this::showRecents);
-        panel.add(recentsSelector);
+        panelWest.add(recentsSelector);
 
-        panel.add(Box.createHorizontalStrut(20));
+        panelWest.add(Box.createHorizontalStrut(20));
         JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
         close.addActionListener(e -> {
             loadFolder(null, false);
         });
-        panel.add(close);
-        return panel;
+        JPanel panelEast = new JPanel(new FlowLayout(FlowLayout.RIGHT, 2, 2));
+        panelEast.add(close);
+
+        JPanel rp = new JPanel(new BorderLayout());
+        rp.add(panelWest, BorderLayout.WEST);
+        rp.add(panelEast, BorderLayout.EAST);
+        return rp;
     }
 
     private void showRecents(final ActionEvent e) {
