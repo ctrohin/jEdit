@@ -21,6 +21,8 @@
 
 package org.jedit.lsp;
 
+import io.vavr.control.Try;
+import org.eclipse.lsp4j.services.LanguageServer;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.buffer.BufferAdapter;
@@ -33,6 +35,7 @@ import org.eclipse.lsp4j.*;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Main entry point for the LSP integration in jEdit.
@@ -53,16 +56,19 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     @Override
     public void stop() {
         // Shutdown all clients
-        for (LspClientMeta meta : clients.values()) {
-            try {
-                meta.getClient().getServer().shutdown().get();
-                meta.getClient().getServer().exit();
-            } catch (Exception e) {
-                Log.log(Log.ERROR, this, "Error shutting down LSP client", e);
-            }
-        }
+        clients.values()
+            .forEach(meta -> Optional.ofNullable(meta.getClient().getServer())
+            .ifPresent(this::closeLanguageServer));
         clients.clear();
         handlers.clear();
+    }
+
+    private void closeLanguageServer(LanguageServer ls) {
+        Try.of(() -> {
+            ls.shutdown().get();
+            ls.exit();
+            return 1;
+        }).onFailure(e -> Log.log(Log.ERROR, this, "Error shutting down LSP client", e)).get();
     }
 
     @EditBus.EBHandler
@@ -82,34 +88,33 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return;
         }
 
-        LspClientMeta meta = clients.get(modeName);
-        if (meta == null) {
-            meta = new LspClientMeta(new GenericLspClient(), modeName);
-            startMetaClient(meta);
-            clients.put(modeName, meta);
-        } else {
-            meta.incrementBufferCount();
-        }
+        Optional.ofNullable(clients.get(modeName))
+            .orElseGet(() -> createLspClient(modeName))
+            .incrementBufferCount();
 
-        BufferLspHandler handler = new BufferLspHandler(buffer, meta.getClient());
+        BufferLspHandler handler = new BufferLspHandler(buffer, clients.get(modeName).getClient());
         buffer.addBufferListener(handler);
         handlers.put(buffer, handler);
         handler.notifyOpen();
+    }
+
+    private LspClientMeta createLspClient(final String modeName) {
+        final var meta = new LspClientMeta(new GenericLspClient(), modeName);
+        startMetaClient(meta);
+        clients.put(modeName, meta);
+        return meta;
     }
 
     private void startMetaClient(LspClientMeta meta) {
         if (meta.isServerStarted() || Objects.isNull(currentProjectRoot)) {
             return;
         }
-        try {
-            // Once the client is properly started
+        Try.of(() -> {
             meta.getClient().start(meta.getMode(), currentProjectRoot);
-            // Set the status accordingly
-            meta.setServerStarted(true);
-        }
-        catch (Exception e) {
-            Log.log(Log.ERROR, this, "Failed to start LSP server for " + meta.getMode(), e);
-        }
+            return meta;
+        }).onSuccess(m -> m.setServerStarted(true))
+            .onFailure(e -> Log.log(Log.ERROR, this, "Failed to start LSP server for " + meta.getMode(), e))
+            .get();
     }
 
     private void stopMetaClient(LspClientMeta meta) {
@@ -132,19 +137,16 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             handler.notifyClose();
         }
         String modeName = buffer.getMode().getName();
-        LspClientMeta meta = clients.get(modeName);
-        if (meta != null) {
-            meta.decrementBufferCount();
-            if (meta.getBufferCount() == 0) {
+        Optional.ofNullable(clients.get(modeName))
+            .stream()
+            .peek(LspClientMeta::decrementBufferCount)
+            .filter(m -> m.getBufferCount() == 0)
+            .findFirst()
+            .map(m -> m.getClient().getServer())
+            .ifPresent(s -> {
                 clients.remove(modeName);
-                try {
-                    meta.getClient().getServer().shutdown().get();
-                } catch (Exception e) {
-                    Log.log(Log.ERROR, this, "Error shutting down LSP client", e);
-                }
-                meta.getClient().getServer().exit();
-            }
-        }
+                closeLanguageServer(s);
+            });
     }
 
     private static class BufferLspHandler extends BufferAdapter {
@@ -213,7 +215,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     private static class LspClientMeta {
         private final GenericLspClient client;
-        private volatile int bufferCount = 1;
+        private volatile int bufferCount = 0;
         private final String mode;
         private boolean serverStarted = false;
 
@@ -259,10 +261,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             // If a different folder is opened, then restart the LSP clients
             if (!Objects.equals(currentProjectRoot, openedFolder)) {
                 currentProjectRoot = openedFolder;
-                clients.values().forEach(meta -> {
-                    stopMetaClient(meta);
-                    startMetaClient(meta);
-                });
+                clients.values().forEach(this::restartLspClient);
             }
         }
         if (message instanceof ProjectFolderClosed) {
@@ -270,5 +269,10 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             currentProjectRoot = null;
             clients.values().forEach(this::stopMetaClient);
         }
+    }
+
+    private void restartLspClient(LspClientMeta meta) {
+        stopMetaClient(meta);
+        startMetaClient(meta);
     }
 }
