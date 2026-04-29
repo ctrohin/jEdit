@@ -240,6 +240,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
         private void notifyChange() {
             if (client.getServer() == null) return;
+            if (true) return;
 
             DidChangeTextDocumentParams params = new DidChangeTextDocumentParams();
             VersionedTextDocumentIdentifier id = new VersionedTextDocumentIdentifier();
@@ -251,7 +252,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             TextDocumentContentChangeEvent event = new TextDocumentContentChangeEvent();
             event.setText(this.buffer.getText(0, this.buffer.getLength()));
             params.setContentChanges(Collections.singletonList(event));
-
+            Log.log(Log.ERROR, BufferLspHandler.class, "Document version " + version);
             Try.of(() -> {
                 client.getServer().getTextDocumentService().didChange(params);
                 return true;
