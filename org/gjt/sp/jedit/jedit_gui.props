@@ -204,6 +204,7 @@ edit=undo \
 	 - \
 	 word-count \
 	 complete-word \
+	 complete-lsp \
 	 expand-abbrev \
 	 - \
 	 goto-line \

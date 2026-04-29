@@ -16,6 +16,7 @@ closeall-except-active.shortcut=CS+w
 collapse-all-folds.shortcut=AS+BACK_SPACE
 collapse-fold.shortcut=A+BACK_SPACE
 complete-word.shortcut=C+b
+complete-lsp.shortcut=C+\
 copy-append-string-register.shortcut=MC+c
 copy-append.shortcut=CS+c
 copy-string-register.shortcut=AC+c

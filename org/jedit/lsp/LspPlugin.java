@@ -35,7 +35,6 @@ import org.eclipse.lsp4j.*;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Main entry point for the LSP integration in jEdit.
@@ -43,11 +42,20 @@ import java.util.function.Predicate;
  */
 public class LspPlugin extends EditPlugin implements EBComponent {
 
-    private final Map<String, LspClientMeta> clients = new HashMap<>();
+    // Package-protected so sub-components can access clients
+    final Map<String, LspClientMeta> clients = new HashMap<>();
     private final Map<Buffer, BufferLspHandler> handlers = new HashMap<>();
     private final int DEFAULT_LEVEL = Log.ERROR;
     private String currentProjectRoot;
+    private static LspPlugin instance;
 
+    public LspPlugin() {
+        instance = this;
+    }
+
+    public static LspPlugin getInstance() {
+        return instance;
+    }
     @Override
     public void start() {
         Log.log(DEFAULT_LEVEL, this, "LSP Plugin starting...");
@@ -61,6 +69,28 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             .ifPresent(this::closeLanguageServer));
         clients.clear();
         handlers.clear();
+    }
+
+    /**
+     * Request LSP completions at the current caret position.
+     * This can be called from actions or other plugins to trigger completion.
+     */
+    public static void completeLsp(View view) {
+        if (view == null) {
+            return;
+        }
+
+        final String modeName = view.getBuffer().getMode().getName();
+
+        // Find the LSP client for this language mode
+        // We need access to the plugin instance to get the clients map
+        LspPlugin lspPlugin = getInstance();
+        LspClientMeta meta = lspPlugin.clients.get(modeName);
+        if (meta != null && meta.getClient().getServer() != null) {
+            LspCompletion.completeLsp(view, meta.getClient());
+        } else {
+            Log.log(Log.WARNING, LspPlugin.class, "LSP client not available for mode " + modeName);
+        }
     }
 
     private void closeLanguageServer(LanguageServer ls) {

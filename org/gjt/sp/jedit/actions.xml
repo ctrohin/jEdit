@@ -198,7 +198,14 @@
 	</CODE>
 </ACTION>
 
-<ACTION NAME="copy">
+<ACTION NAME="complete-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.completeLsp(view);
+	</CODE>
+</ACTION>
+
+
+	<ACTION NAME="copy">
 	<CODE>
 		Registers.copy(textArea,'$');
 	</CODE>

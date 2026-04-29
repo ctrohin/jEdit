@@ -6,6 +6,7 @@ show-context-menu.shortcut=CONTEXT_MENU
 #{{{ C+X
 select-all.shortcut=C+a
 complete-word.shortcut=C+b
+complete-lsp.shortcut=C+\
 copy.shortcut=C+c
 delete-line.shortcut=C+d
 # C+e is a prefix

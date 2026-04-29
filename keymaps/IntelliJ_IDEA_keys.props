@@ -19,6 +19,7 @@ close-docking-area.shortcut=S+ESCAPE
 collapse-all-folds.shortcut=CS+SUBTRACT
 collapse-fold.shortcut=C+SUBTRACT
 complete-word.shortcut=C+SPACE
+complete-lsp.shortcut=C+\
 copy-append-string-register.shortcut=C+r C+a
 copy-append.shortcut=C+e C+a
 copy-string-register.shortcut=C+r C+c

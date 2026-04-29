@@ -146,6 +146,7 @@ paste.label=$Paste
 select-all.label=Select $All
 word-count.label=$Word Count...
 complete-word.label=Co$mplete Word
+complete-lsp.label=Comp$lete from LSP
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 

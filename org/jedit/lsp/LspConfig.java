@@ -47,4 +47,8 @@ public class LspConfig {
         // Rust: Requires 'rust-analyzer'
         SERVER_COMMANDS.put("rust", new String[]{"rust-analyzer"});
     }
+
+    public static boolean isServerAvailable(final String modeName) {
+        return SERVER_COMMANDS.containsKey(modeName);
+    }
 }

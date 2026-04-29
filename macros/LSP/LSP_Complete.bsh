@@ -1,0 +1,10 @@
+/*
+ * LSP_Complete.bsh - Macro to trigger LSP-based completions
+ *
+ * Usage:
+ * - Bind this macro to a keyboard shortcut (e.g., Ctrl+Space)
+ * - When invoked, it will request completions from the LSP server
+ *   for the current language and display them in a popup
+ */
+
+org.jedit.lsp.LspPlugin.completeLsp(view);
