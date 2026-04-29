@@ -53,10 +53,8 @@ public class LspCompletion extends CompletionPopup {
 
     private final JEditTextArea textArea;
     private final Buffer buffer;
-    private final GenericLspClient lspClient;
-    private String word;
+    private final String word;
     private final String noWordSep;
-    private CompletableFuture<Void> requestFuture;
 
     /**
      * Trigger LSP completion at the current caret position.
@@ -111,7 +109,7 @@ public class LspCompletion extends CompletionPopup {
             params.setPosition(new Position(caretLine, character));
 
             CompletionContext context = new CompletionContext();
-            context.setTriggerKind(CompletionTriggerKind.forValue(1)); // Invoked
+            context.setTriggerKind(CompletionTriggerKind.Invoked); // Invoked
             params.setContext(context);
 
             // Request from server asynchronously
@@ -145,10 +143,17 @@ public class LspCompletion extends CompletionPopup {
                     SwingUtilities.convertPointToScreen(location,
                         textArea.getPainter());
 
-                    new LspCompletion(view, word, finalItems, location, noWordSep, lspClient);
+                    new LspCompletion(view, word, finalItems, location, noWordSep);
                 });
             }).exceptionally(ex -> {
                 Log.log(Log.ERROR, LspCompletion.class, "Error requesting LSP completions", ex);
+                // Check if this is a connection error that indicates server is dead
+                if (isConnectionError(ex)) {
+                    Log.log(Log.WARNING, LspCompletion.class, "LSP server connection error, server may have crashed");
+                }
+                SwingUtilities.invokeLater(() -> {
+                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                });
                 return null;
             });
 
@@ -162,12 +167,11 @@ public class LspCompletion extends CompletionPopup {
      * Create an LSP completion popup.
      */
     public LspCompletion(View view, String word, List<CompletionItem> items,
-                         Point location, String noWordSep, GenericLspClient lspClient) {
+                         Point location, String noWordSep) {
         super(view, location);
 
         this.textArea = view.getTextArea();
         this.buffer = view.getBuffer();
-        this.lspClient = lspClient;
         this.word = word;
         this.noWordSep = noWordSep;
 
@@ -207,8 +211,9 @@ public class LspCompletion extends CompletionPopup {
 
         int wordStart = TextUtilities.findWordStart(line, dot - 1, noWordSep);
         CharSequence wordChars = line.subSequence(wordStart, dot);
-        if (wordChars.length() == 0)
+        if (wordChars.isEmpty()) {
             return null;
+        }
 
         return wordChars.toString();
     }
@@ -264,7 +269,7 @@ public class LspCompletion extends CompletionPopup {
     /**
      * Reset candidates with a new word.
      */
-    private void resetWords(String newWord) {
+    private void resetWords(@SuppressWarnings("unused") String newWord) {
         // For simplicity, just dispose and let user request completion again
         // A more sophisticated implementation could filter the existing results
         dispose();
@@ -298,17 +303,135 @@ public class LspCompletion extends CompletionPopup {
                 return;
 
             CompletionItem item = items.get(index);
+
+            // Try to use textEdit if available (more accurate positioning)
+            Either<TextEdit, InsertReplaceEdit> textEditEither = item.getTextEdit();
+            if (textEditEither != null) {
+                if (textEditEither.isLeft()) {
+                    applyTextEdit(textEditEither.getLeft());
+                    return;
+                } else if (textEditEither.isRight()) {
+                    applyInsertReplaceEdit(textEditEither.getRight());
+                    return;
+                }
+            }
+
+            // Fallback: use insertText with simple word replacement
             String insertText = item.getInsertText();
             if (insertText == null || insertText.isEmpty()) {
                 insertText = item.getLabel();
             }
 
-            // Insert the completion text, removing the already-typed word
-            String insertion = insertText.substring(word.length());
-            textArea.replaceSelection(insertion);
+            int wordLen = word == null ? 0 : word.length();
+            if (wordLen <= insertText.length()) {
+                String insertion = insertText.substring(wordLen);
+                textArea.replaceSelection(insertion);
+            }
+        }
+
+        /**
+         * Apply a TextEdit from the LSP completion item.
+         * This uses the precise range provided by the language server.
+         */
+        private void applyTextEdit(TextEdit textEdit) {
+            Range range = textEdit.getRange();
+            String newText = textEdit.getNewText();
+
+            if (range == null || newText == null) {
+                return;
+            }
+
+            try {
+                int startOffset = convertLspPositionToOffset(range.getStart());
+                int endOffset = convertLspPositionToOffset(range.getEnd());
+
+                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
+                    Log.log(Log.WARNING, LspCompletion.class,
+                        "Invalid textEdit range: start=" + startOffset + ", end=" + endOffset);
+                    return;
+                }
+
+                // Replace the range with the new text
+                int lengthToDelete = endOffset - startOffset;
+                buffer.remove(startOffset, lengthToDelete);
+                buffer.insert(startOffset, newText);
+            } catch (Exception e) {
+                Log.log(Log.ERROR, LspCompletion.class, "Error applying textEdit", e);
+            }
+        }
+
+        /**
+         * Apply an InsertReplaceEdit from the LSP completion item.
+         * Chooses between insert or replace range based on context.
+         */
+        private void applyInsertReplaceEdit(InsertReplaceEdit insertReplaceEdit) {
+            Range insertRange = insertReplaceEdit.getInsert();
+            Range replaceRange = insertReplaceEdit.getReplace();
+            String newText = insertReplaceEdit.getNewText();
+
+            if (newText == null) {
+                return;
+            }
+
+            // Use replace range (more common for completions)
+            Range rangeToUse = replaceRange != null ? replaceRange : insertRange;
+            if (rangeToUse == null) {
+                return;
+            }
+
+            try {
+                int startOffset = convertLspPositionToOffset(rangeToUse.getStart());
+                int endOffset = convertLspPositionToOffset(rangeToUse.getEnd());
+
+                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
+                    Log.log(Log.WARNING, LspCompletion.class,
+                        "Invalid insertReplaceEdit range");
+                    return;
+                }
+
+                // Replace the range with the new text
+                int lengthToDelete = endOffset - startOffset;
+                buffer.remove(startOffset, lengthToDelete);
+                buffer.insert(startOffset, newText);
+            } catch (Exception e) {
+                Log.log(Log.ERROR, LspCompletion.class, "Error applying insertReplaceEdit", e);
+            }
+        }
+
+        /**
+         * Convert an LSP Position to a jEdit buffer offset.
+         * LSP uses 0-based line and character positions.
+         */
+        private int convertLspPositionToOffset(Position position) {
+            if (position == null) {
+                return -1;
+            }
+
+            int line = position.getLine();
+            int character = position.getCharacter();
+
+            // Validate line
+            if (line < 0 || line >= buffer.getLineCount()) {
+                Log.log(Log.WARNING, LspCompletion.class,
+                    "Invalid line number: " + line + " (total lines: " + buffer.getLineCount() + ")");
+                return -1;
+            }
+
+            // Get line content and validate character position
+            CharSequence lineContent = buffer.getLineSegment(line);
+            if (character < 0 || character > lineContent.length()) {
+                Log.log(Log.WARNING, LspCompletion.class,
+                    "Invalid character position: " + character + " (line length: " + lineContent.length() + ")");
+                return -1;
+            }
+
+            // Calculate the absolute offset in the buffer
+            int lineStartOffset = buffer.getLineStartOffset(line);
+            return lineStartOffset + character;
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         public Component getCellRenderer(JList list, int index,
                                         boolean isSelected, boolean cellHasFocus) {
             renderer.getListCellRendererComponent(list,
@@ -406,5 +529,39 @@ public class LspCompletion extends CompletionPopup {
             }
         }
     }
-}
 
+    /**
+     * Check if an exception indicates a connection error (server crashed).
+     */
+    private static boolean isConnectionError(Throwable ex) {
+        if (ex == null) {
+            return false;
+        }
+
+        // Check for common connection-related exceptions
+        String message = ex.getMessage();
+        if (message != null) {
+            String lowerMessage = message.toLowerCase();
+            if (lowerMessage.contains("connection") ||
+                lowerMessage.contains("broken pipe") ||
+                lowerMessage.contains("reset") ||
+                lowerMessage.contains("closed") ||
+                lowerMessage.contains("eof")) {
+                return true;
+            }
+        }
+
+        // Check exception types
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof java.io.IOException ||
+                cause instanceof java.net.SocketException ||
+                cause instanceof java.nio.channels.ClosedChannelException) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+
+        return false;
+    }
+}

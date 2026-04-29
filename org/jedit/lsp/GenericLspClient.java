@@ -34,6 +34,37 @@ public class GenericLspClient {
 
     private LanguageServer server;
     private MyLspClient clientImpl;
+    private volatile int bufferCount = 0;
+    private final String mode;
+    private boolean serverStarted = false;
+
+    public GenericLspClient(final String mode) {
+        this.mode = mode;
+    }
+
+    synchronized void incrementBufferCount() {
+        bufferCount++;
+    }
+
+    synchronized void decrementBufferCount() {
+        bufferCount--;
+    }
+
+    synchronized int getBufferCount() {
+        return bufferCount;
+    }
+
+    String getMode() {
+        return mode;
+    }
+
+    boolean isServerStarted() {
+        return serverStarted;
+    }
+
+    void setServerStarted(final boolean serverStarted) {
+        this.serverStarted = serverStarted;
+    }
 
     private String[] getOSSpecificCommand() {
         return new String[]{"cmd", "/c "};
