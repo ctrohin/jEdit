@@ -74,27 +74,40 @@ public class LspPlugin extends EditPlugin implements EBComponent {
      * This can be called from actions or other plugins to trigger completion.
      */
     public static void completeLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspCompletion.completeLsp(v, client));
+    }
+
+    /**
+     * Request LSP code actions (quick fixes, refactorings) at the caret or selection.
+     */
+    public static void codeActionsLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspCodeActions.codeActionsLsp(v, client));
+    }
+
+    @FunctionalInterface
+    private interface LspFeature {
+        void run(View view, GenericLspClient client);
+    }
+
+    private static void invokeLspFeature(View view, LspFeature feature) {
         if (view == null) {
             return;
         }
 
         final String modeName = view.getBuffer().getMode().getName();
-
-        // Find the LSP client for this language mode
-        // We need access to the plugin instance to get the clients map
         LspPlugin lspPlugin = getInstance();
         GenericLspClient client = lspPlugin.clients.get(modeName);
         if (client != null && client.getServer() != null) {
-            // Check if server is still alive before attempting completion
             if (client.isAlive()) {
-                LspCompletion.completeLsp(view, client);
+                feature.run(view, client);
             } else {
-                Log.log(Log.WARNING, LspPlugin.class, "LSP server for " + modeName + " is not responding, attempting restart");
-                // Try to restart the server
+                Log.log(Log.WARNING, LspPlugin.class,
+                    "LSP server for " + modeName + " is not responding, attempting restart");
                 if (lspPlugin.restartServer(client)) {
-                    LspCompletion.completeLsp(view, client);
+                    feature.run(view, client);
                 } else {
-                    Log.log(Log.ERROR, LspPlugin.class, "Failed to restart LSP server for " + modeName);
+                    Log.log(Log.ERROR, LspPlugin.class,
+                        "Failed to restart LSP server for " + modeName);
                     javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
                 }
             }

@@ -204,6 +204,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="code-actions-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.codeActionsLsp(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

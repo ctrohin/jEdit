@@ -40,5 +40,12 @@
             org.jedit.lsp.LspPlugin.completeLsp(view);
         </CODE>
     </ACTION>
+
+    <!-- LSP Code Actions -->
+    <ACTION NAME="code-actions-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.codeActionsLsp(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 

@@ -1,0 +1,333 @@
+/*
+ * jEdit - Programmer's Text Editor
+ * :tabSize=8:indentSize=8:noTabs=false:
+ * :folding=explicit:collapseFolds=1:
+ *
+ * Copyright © 2026 jEdit contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+package org.jedit.lsp;
+
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
+import org.eclipse.lsp4j.*;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
+import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.textarea.Selection;
+import org.gjt.sp.util.GenericGUIUtilities;
+import org.gjt.sp.util.Log;
+
+/**
+ * LSP code actions (quick fixes, refactorings) at the caret or selection.
+ */
+public final class LspCodeActions {
+
+    private LspCodeActions() {}
+
+    public static void codeActionsLsp(View view, GenericLspClient lspClient) {
+        JEditTextArea textArea = view.getTextArea();
+        Buffer buffer = view.getBuffer();
+
+        if (!buffer.isEditable()) {
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            return;
+        }
+
+        if (lspClient == null || lspClient.getServer() == null) {
+            Log.log(Log.WARNING, LspCodeActions.class, "LSP server not available for code actions");
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            return;
+        }
+
+        requestCodeActions(view, lspClient);
+    }
+
+    private static void requestCodeActions(View view, GenericLspClient lspClient) {
+        JEditTextArea textArea = view.getTextArea();
+        Buffer buffer = view.getBuffer();
+        String documentUri = new File(buffer.getPath()).toURI().toString();
+
+        try {
+            CodeActionParams params = new CodeActionParams();
+            params.setTextDocument(new TextDocumentIdentifier(documentUri));
+            params.setRange(buildRequestRange(buffer, textArea));
+
+            CodeActionContext context = new CodeActionContext();
+            context.setDiagnostics(Collections.emptyList());
+            params.setContext(context);
+
+            CompletableFuture<List<Either<Command, CodeAction>>> future =
+                lspClient.getServer().getTextDocumentService().codeAction(params);
+
+            future.thenAccept(result -> {
+                List<ActionItem> items = parseActions(result);
+                if (items.isEmpty()) {
+                    SwingUtilities.invokeLater(() ->
+                        javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
+                    return;
+                }
+                SwingUtilities.invokeLater(() ->
+                    showActionMenu(view, lspClient, documentUri, items));
+            }).exceptionally(ex -> {
+                Log.log(Log.ERROR, LspCodeActions.class, "Error requesting LSP code actions", ex);
+                SwingUtilities.invokeLater(() ->
+                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
+                return null;
+            });
+        } catch (Exception e) {
+            Log.log(Log.ERROR, LspCodeActions.class, "Error in LSP code action request", e);
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+        }
+    }
+
+    private static Range buildRequestRange(Buffer buffer, JEditTextArea textArea) {
+        int caret = textArea.getCaretPosition();
+        if (textArea.getSelectionCount() > 0) {
+            Selection sel = textArea.getSelectionAtOffset(caret);
+            if (sel == null) {
+                sel = textArea.getSelection(0);
+            }
+            int selStart = Math.min(sel.getStart(), sel.getEnd());
+            int selEnd = Math.max(sel.getStart(), sel.getEnd());
+            if (selStart != selEnd) {
+                return new Range(
+                    offsetToPosition(buffer, selStart),
+                    offsetToPosition(buffer, selEnd));
+            }
+        }
+
+        Position caretPos = offsetToPosition(buffer, caret);
+        return new Range(caretPos, caretPos);
+    }
+
+    private static Position offsetToPosition(Buffer buffer, int offset) {
+        int line = buffer.getLineOfOffset(offset);
+        int lineStart = buffer.getLineStartOffset(line);
+        return new Position(line, offset - lineStart);
+    }
+
+    private static List<ActionItem> parseActions(List<Either<Command, CodeAction>> result) {
+        List<ActionItem> items = new ArrayList<>();
+        if (result == null) {
+            return items;
+        }
+        for (Either<Command, CodeAction> either : result) {
+            if (either == null) {
+                continue;
+            }
+            if (either.isLeft()) {
+                Command command = either.getLeft();
+                if (command != null && command.getTitle() != null) {
+                    items.add(ActionItem.forCommand(command));
+                }
+            } else if (either.isRight()) {
+                CodeAction action = either.getRight();
+                if (action != null && action.getTitle() != null) {
+                    items.add(ActionItem.forCodeAction(action));
+                }
+            }
+        }
+        return items;
+    }
+
+    private static void showActionMenu(View view, GenericLspClient lspClient,
+                                       String documentUri, List<ActionItem> items) {
+        JEditTextArea textArea = view.getTextArea();
+        JPopupMenu popup = new JPopupMenu();
+
+        for (ActionItem item : items) {
+            JMenuItem menuItem = new JMenuItem(item.getTitle());
+            menuItem.addActionListener(e ->
+                applyAction(view, lspClient, documentUri, item));
+            popup.add(menuItem);
+        }
+
+        Point location = textArea.offsetToXY(textArea.getCaretPosition());
+        location.y += textArea.getPainter().getLineHeight();
+        SwingUtilities.convertPointToScreen(location, textArea.getPainter());
+        GenericGUIUtilities.showPopupMenu(popup, textArea.getPainter(), location.x, location.y, false);
+    }
+
+    private static void applyAction(View view, GenericLspClient lspClient,
+                                    String documentUri, ActionItem item) {
+        Buffer buffer = view.getBuffer();
+        try {
+            if (item.isCommand()) {
+                executeCommand(lspClient, item.getCommand());
+                return;
+            }
+
+            CodeAction action = item.getCodeAction();
+            if (needsResolve(action)) {
+                action = lspClient.getServer().getTextDocumentService()
+                    .resolveCodeAction(action)
+                    .get();
+            }
+
+            if (action.getEdit() != null) {
+                applyWorkspaceEdit(buffer, documentUri, action.getEdit());
+            } else if (action.getCommand() != null) {
+                executeCommand(lspClient, action.getCommand());
+            }
+        } catch (Exception e) {
+            Log.log(Log.ERROR, LspCodeActions.class, "Error applying LSP code action", e);
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+        }
+    }
+
+    private static boolean needsResolve(CodeAction action) {
+        return action.getEdit() == null
+            && action.getCommand() == null
+            && action.getData() != null;
+    }
+
+    private static void executeCommand(GenericLspClient lspClient, Command command)
+        throws Exception {
+        ExecuteCommandParams params = new ExecuteCommandParams();
+        params.setCommand(command.getCommand());
+        params.setArguments(command.getArguments());
+        lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+    }
+
+    private static void applyWorkspaceEdit(Buffer buffer, String documentUri,
+                                           WorkspaceEdit edit) {
+        if (edit.getDocumentChanges() != null && !edit.getDocumentChanges().isEmpty()) {
+            for (Either<TextDocumentEdit, ResourceOperation> change : edit.getDocumentChanges()) {
+                if (change.isLeft()) {
+                    TextDocumentEdit docEdit = change.getLeft();
+                    if (docEdit != null && documentUri.equals(docEdit.getTextDocument().getUri())) {
+                        applyTextEdits(buffer, docEdit.getEdits());
+                    }
+                }
+            }
+            return;
+        }
+
+        if (edit.getChanges() != null) {
+            List<TextEdit> textEdits = edit.getChanges().get(documentUri);
+            if (textEdits != null) {
+                applyTextEdits(buffer, textEdits);
+            }
+        }
+    }
+
+    private static void applyTextEdits(Buffer buffer, List<TextEdit> edits) {
+        if (edits == null || edits.isEmpty()) {
+            return;
+        }
+
+        List<TextEdit> sorted = new ArrayList<>(edits);
+        sorted.sort(Comparator
+            .comparing((TextEdit e) -> e.getRange().getStart().getLine())
+            .thenComparing(e -> e.getRange().getStart().getCharacter())
+            .reversed());
+
+        buffer.beginCompoundEdit();
+        try {
+            for (TextEdit edit : sorted) {
+                applyTextEdit(buffer, edit);
+            }
+        } finally {
+            buffer.endCompoundEdit();
+        }
+    }
+
+    private static void applyTextEdit(Buffer buffer, TextEdit textEdit) {
+        Range range = textEdit.getRange();
+        String newText = textEdit.getNewText();
+        if (range == null || newText == null) {
+            return;
+        }
+
+        int startOffset = positionToOffset(buffer, range.getStart());
+        int endOffset = positionToOffset(buffer, range.getEnd());
+        if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
+            Log.log(Log.WARNING, LspCodeActions.class,
+                "Invalid code action range: start=" + startOffset + ", end=" + endOffset);
+            return;
+        }
+
+        buffer.remove(startOffset, endOffset - startOffset);
+        buffer.insert(startOffset, newText);
+    }
+
+    private static int positionToOffset(Buffer buffer, Position position) {
+        if (position == null) {
+            return -1;
+        }
+
+        int line = position.getLine();
+        int character = position.getCharacter();
+        if (line < 0 || line >= buffer.getLineCount()) {
+            return -1;
+        }
+
+        CharSequence lineContent = buffer.getLineSegment(line);
+        if (character < 0 || character > lineContent.length()) {
+            return -1;
+        }
+
+        return buffer.getLineStartOffset(line) + character;
+    }
+
+    private static final class ActionItem {
+        private final String title;
+        private final Command command;
+        private final CodeAction codeAction;
+
+        private ActionItem(String title, Command command, CodeAction codeAction) {
+            this.title = title;
+            this.command = command;
+            this.codeAction = codeAction;
+        }
+
+        static ActionItem forCommand(Command command) {
+            return new ActionItem(command.getTitle(), command, null);
+        }
+
+        static ActionItem forCodeAction(CodeAction codeAction) {
+            return new ActionItem(codeAction.getTitle(), null, codeAction);
+        }
+
+        String getTitle() {
+            return title;
+        }
+
+        boolean isCommand() {
+            return command != null;
+        }
+
+        Command getCommand() {
+            return command;
+        }
+
+        CodeAction getCodeAction() {
+            return codeAction;
+        }
+    }
+}
