@@ -309,22 +309,22 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         JPopupMenu menu = new JPopupMenu();
 
         JMenuItem open = new JMenuItem(file.isDirectory() ? "Expand/collapse" : "Open");
-        open.addActionListener(_ -> openFile(file));
+        open.addActionListener(ev -> openFile(file));
         menu.add(open);
         if (file.isDirectory()) {
             JMenuItem search = new JMenuItem("Search in folder");
-            search.addActionListener(_ -> searchInFolder(file));
+            search.addActionListener(ev -> searchInFolder(file));
             menu.add(search);
         }
         menu.addSeparator();
 
         if (file.isDirectory()) {
             JMenuItem newFolder = new JMenuItem("New folder");
-            newFolder.addActionListener(_ -> createNewFolder(file));
+            newFolder.addActionListener(ev -> createNewFolder(file));
             menu.add(newFolder);
 
             JMenuItem newFile = new JMenuItem("New file");
-            newFile.addActionListener(_ -> createNewFile(file));
+            newFile.addActionListener(ev -> createNewFile(file));
             menu.add(newFile);
 
             if (!node.isRoot()) {
@@ -334,17 +334,17 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
         if (!node.isRoot()) {
             JMenuItem rename = new JMenuItem("Rename");
-            rename.addActionListener(_ -> renameFile(file));
+            rename.addActionListener(ev -> renameFile(file));
             menu.add(rename);
 
             JMenuItem move = new JMenuItem("Move");
-            move.addActionListener(_ -> moveFile(file));
+            move.addActionListener(ev -> moveFile(file));
             menu.add(move);
 
             menu.addSeparator();
 
             JMenuItem delete = new JMenuItem("Delete");
-            delete.addActionListener(_ -> deleteFile(file));
+            delete.addActionListener(ev -> deleteFile(file));
             menu.add(delete);
         }
 

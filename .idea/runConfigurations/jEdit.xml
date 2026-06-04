@@ -28,7 +28,7 @@
     <ConfigurationWrapper RunnerId="JProfiler" />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
-      <option name="AntTarget" enabled="false" antfile="file://$PROJECT_DIR$/build.xml" target="build" />
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="compile" />
       <option name="Run Ant target" value="true" />
     </method>
   </configuration>

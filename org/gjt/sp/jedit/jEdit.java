@@ -128,7 +128,7 @@ public class jEdit
 	{
 		// doing a copy to log it later as original args array is modified
 		String[] _args = args.clone();
-		//{{{ Check for Java 11 or later
+		//{{{ Check for Java 21 or later
 		String javaVersion = System.getProperty("java.version");
 		String majorVersion = javaVersion.split("\\.", 2)[0];
 		if (majorVersion.endsWith("-ea"))
@@ -136,11 +136,11 @@ public class jEdit
 			majorVersion = majorVersion.substring(0, majorVersion.length() - 3);
 		}
 		int javaMajorVersion = parseInt(majorVersion);
-		if(javaMajorVersion < 11)
+		if(javaMajorVersion < 21)
 		{
 			System.err.println("You are running Java version "
 				+ javaVersion + '.');
-			System.err.println("jEdit requires Java 11 or later.");
+			System.err.println("jEdit requires Java 21 or later.");
 			System.exit(1);
 		} //}}}
 

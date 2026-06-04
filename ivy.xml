@@ -93,6 +93,7 @@
 		<dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.62" conf="scripting"/>
 
 		<dependency org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
+		<dependency org="net.jcip" name="jcip-annotations" rev="1.0"/>
 
 		<dependency org="com.evolvedbinary.appbundler" name="appbundler" rev="1.3.1" conf="appbundler"/>
 
@@ -105,5 +106,7 @@
 		<dependency org="com.formdev" name="flatlaf-extras" rev="3.7.1"/>
 		<dependency org="org.eclipse.lsp4j" name="org.eclipse.lsp4j" rev="0.22.0"/>
 		<dependency org="org.eclipse.lsp4j" name="org.eclipse.lsp4j.jsonrpc" rev="0.22.0"/>
+		<!-- LSP4J uses Gson for Command arguments; compile conf is non-transitive -->
+		<dependency org="com.google.code.gson" name="gson" rev="2.10.1"/>
 	</dependencies>
 </ivy-module>

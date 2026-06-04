@@ -25,6 +25,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.TextDocumentEdit;
 import org.eclipse.lsp4j.TextEdit;
+import org.eclipse.lsp4j.VersionedTextDocumentIdentifier;
 import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.ResourceOperation;
@@ -45,6 +47,85 @@ import org.gjt.sp.util.Log;
 final class LspWorkspaceEdits {
 
     private LspWorkspaceEdits() {}
+
+    /**
+     * Builds a {@link WorkspaceEdit} from an {@code workspace/executeCommand} result
+     * (often a Gson {@code JsonObject} or {@code Map}, not a typed LSP4J object).
+     */
+    static WorkspaceEdit workspaceEditFromExecuteResult(Object result) {
+        if (result == null) {
+            return null;
+        }
+        if (result instanceof WorkspaceEdit) {
+            return (WorkspaceEdit) result;
+        }
+
+        Map<String, Object> root = LspGsonArgs.asStringObjectMap(result);
+        if (root == null) {
+            return null;
+        }
+
+        WorkspaceEdit edit = new WorkspaceEdit();
+
+        Object changes = root.get("changes");
+        if (changes instanceof Map) {
+            Map<String, List<TextEdit>> changeMap = new HashMap<>();
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) changes).entrySet()) {
+                if (entry.getKey() instanceof String) {
+                    List<TextEdit> textEdits = textEditsFromObject(entry.getValue());
+                    if (!textEdits.isEmpty()) {
+                        changeMap.put((String) entry.getKey(), textEdits);
+                    }
+                }
+            }
+            if (!changeMap.isEmpty()) {
+                edit.setChanges(changeMap);
+            }
+        }
+
+        Object documentChanges = root.get("documentChanges");
+        if (documentChanges instanceof List) {
+            List<Either<TextDocumentEdit, ResourceOperation>> docChanges = new ArrayList<>();
+            for (Object item : (List<?>) documentChanges) {
+                Map<String, Object> changeMap = LspGsonArgs.asStringObjectMap(item);
+                if (changeMap == null) {
+                    continue;
+                }
+                Object textDocument = changeMap.get("textDocument");
+                Object edits = changeMap.get("edits");
+                Map<String, Object> textDocumentMap = LspGsonArgs.asStringObjectMap(textDocument);
+                if (textDocumentMap == null) {
+                    continue;
+                }
+                String uri = LspGsonArgs.asString(textDocumentMap.get("uri"));
+                if (uri == null || uri.isEmpty()) {
+                    continue;
+                }
+                List<TextEdit> textEdits = textEditsFromObject(edits);
+                if (textEdits.isEmpty()) {
+                    continue;
+                }
+                VersionedTextDocumentIdentifier identifier = new VersionedTextDocumentIdentifier();
+                identifier.setUri(uri);
+                Integer version = LspGsonArgs.asInteger(textDocumentMap.get("version"));
+                if (version != null) {
+                    identifier.setVersion(version);
+                }
+                TextDocumentEdit documentEdit = new TextDocumentEdit();
+                documentEdit.setTextDocument(identifier);
+                documentEdit.setEdits(textEdits);
+                docChanges.add(Either.forLeft(documentEdit));
+            }
+            if (!docChanges.isEmpty()) {
+                edit.setDocumentChanges(docChanges);
+            }
+        }
+
+        if (edit.getChanges() == null && edit.getDocumentChanges() == null) {
+            return null;
+        }
+        return edit;
+    }
 
     /**
      * Applies all text edits in the workspace edit to matching open buffers.
@@ -176,6 +257,59 @@ final class LspWorkspaceEdits {
 
         buffer.remove(startOffset, endOffset - startOffset);
         buffer.insert(startOffset, newText);
+    }
+
+    private static List<TextEdit> textEditsFromObject(Object value) {
+        List<TextEdit> edits = new ArrayList<>();
+        if (!(value instanceof List)) {
+            return edits;
+        }
+        for (Object item : (List<?>) value) {
+            Map<String, Object> editMap = LspGsonArgs.asStringObjectMap(item);
+            if (editMap == null) {
+                continue;
+            }
+            Range range = rangeFromMap(LspGsonArgs.asStringObjectMap(editMap.get("range")));
+            if (range == null) {
+                continue;
+            }
+            TextEdit textEdit = new TextEdit();
+            textEdit.setRange(range);
+            String newText = LspGsonArgs.asString(editMap.get("newText"));
+            textEdit.setNewText(newText != null ? newText : "");
+            edits.add(textEdit);
+        }
+        return edits;
+    }
+
+    private static Range rangeFromMap(Map<String, Object> rangeMap) {
+        if (rangeMap == null) {
+            return null;
+        }
+        Position start = positionFromMap(LspGsonArgs.asStringObjectMap(rangeMap.get("start")));
+        Position end = positionFromMap(LspGsonArgs.asStringObjectMap(rangeMap.get("end")));
+        if (start == null || end == null) {
+            return null;
+        }
+        Range range = new Range();
+        range.setStart(start);
+        range.setEnd(end);
+        return range;
+    }
+
+    private static Position positionFromMap(Map<String, Object> positionMap) {
+        if (positionMap == null) {
+            return null;
+        }
+        Integer line = LspGsonArgs.asInteger(positionMap.get("line"));
+        Integer character = LspGsonArgs.asInteger(positionMap.get("character"));
+        if (line == null || character == null) {
+            return null;
+        }
+        Position position = new Position();
+        position.setLine(line);
+        position.setCharacter(character);
+        return position;
     }
 
     private static int positionToOffset(Buffer buffer, Position position) {

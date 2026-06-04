@@ -395,7 +395,7 @@ public class IconManager {
             var ic = matIcon ? MatIcons.valueOf(split[0]) : FileIcons.valueOf(split[0]);
             var sz = Integer.parseInt(split[1]);
             return new IconAndSize(ic, sz);
-        } catch (Exception _) {}
+        } catch (Exception e) {}
         return null;
     }
 

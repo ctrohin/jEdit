@@ -23,11 +23,7 @@ package org.jedit.lsp;
 
 import java.awt.Point;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JMenuItem;
@@ -202,8 +198,7 @@ public final class LspCodeActions {
 
             Command command = item.isCommand() ? item.getCommand() : action.getCommand();
             if (command != null) {
-                String kind = action != null ? action.getKind() : null;
-                executeWorkspaceCommand(lspClient, command, documentUri, requestRange, kind);
+                executeWorkspaceCommand(lspClient, command, buffer);
             }
         } catch (Exception e) {
             Log.log(Log.ERROR, LspCodeActions.class, "Error applying LSP code action", e);
@@ -214,160 +209,270 @@ public final class LspCodeActions {
     /**
      * Runs {@code workspace/executeCommand}, building Dart-compatible arguments when needed.
      * Dart returns many code actions as plain {@link Command} (Either left), not {@link CodeAction}.
+     * Uri, range, kind, and version are taken from {@link Command#getArguments()}, not the
+     * code-action request context (they can differ).
      */
     private static void executeWorkspaceCommand(GenericLspClient lspClient,
                                                 Command command,
-                                                String documentUri,
-                                                Range range,
-                                                String kind) throws Exception {
+                                                Buffer buffer) throws Exception {
         ExecuteCommandParams params = new ExecuteCommandParams();
         final String commandId = command.getCommand();
         params.setCommand(commandId);
 
         if ("dart.edit.codeAction.apply".equals(commandId)) {
-            executeDartApplyCodeActionCommand(lspClient, params, command, documentUri, range, kind);
+            executeDartApplyCodeActionCommand(lspClient, params, command, buffer);
             return;
         }
 
         if (isCodeActionCommand(commandId)) {
-            List<Object> originalArgs = command.getArguments();
-            List<Object> threeArgs = buildThreeArgumentCommandArguments(documentUri, range, kind);
-            List<Object> oneMapArg = buildSingleMapCommandArguments(command, documentUri, range, kind);
+            List<Object> originalArgs = LspGsonArgs.toExecuteArguments(command.getArguments());
+            List<Object> threeArgs = buildThreeArgumentCommandArguments(command, buffer);
+            List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
 
-            // Try server-provided arguments first, then fall back based on runtime errors.
+            // Try Gson-converted server args first, then fall back based on runtime errors.
             try {
                 params.setArguments(originalArgs);
-                lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+                applyExecuteCommandResult(
+                    lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                    command, buffer);
                 return;
             } catch (Exception firstError) {
                 String message = getRootMessage(firstError);
                 if (message != null && message.contains("requires a single Map argument")) {
                     params.setArguments(oneMapArg);
-                    lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+                    applyExecuteCommandResult(
+                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                        command, buffer);
                     return;
                 }
                 if (message != null && message.contains("requires 3 parameters")) {
                     params.setArguments(threeArgs);
-                    lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+                    applyExecuteCommandResult(
+                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                        command, buffer);
                     return;
                 }
 
                 // Unknown mismatch: try both known Dart shapes before surfacing error.
                 try {
                     params.setArguments(threeArgs);
-                    lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+                    applyExecuteCommandResult(
+                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                        command, buffer);
                     return;
                 } catch (Exception ignored) {
                     params.setArguments(oneMapArg);
-                    lspClient.getServer().getWorkspaceService().executeCommand(params).get();
-                    return;
+                    applyExecuteCommandResult(
+                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                        command, buffer);
                 }
             }
         } else {
-            params.setArguments(command.getArguments());
-            lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+            params.setArguments(LspGsonArgs.toExecuteArguments(command.getArguments()));
+            applyExecuteCommandResult(
+                lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
+                command, buffer);
         }
     }
 
+    /**
+     * Dart {@code dart.edit.codeAction.apply} never uses {@link Command#getArguments()} as-is.
+     * The server often embeds {@code textDocument.version = null}, which Dart rejects.
+     * We build fresh argument lists (copies) with a real version from {@link LspPlugin#getDocumentVersion}.
+     */
     private static void executeDartApplyCodeActionCommand(GenericLspClient lspClient,
                                                           ExecuteCommandParams params,
                                                           Command command,
-                                                          String documentUri,
-                                                          Range range,
-                                                          String kind) throws Exception {
-        List<Object> originalArgs = command.getArguments();
-        if (originalArgs != null) {
-            try {
-                params.setArguments(originalArgs);
-                lspClient.getServer().getWorkspaceService().executeCommand(params).get();
-                return;
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-                // Fall through to synthesized arguments.
-            }
-        }
+                                                          Buffer buffer) {
+        List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
+        params.setArguments(oneMapArg);
+        lspClient.getServer().getWorkspaceService().executeCommand(params)
+            .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
+            .exceptionally(ex -> {
+                Exception error = toException(ex);
+                String message = getRootMessage(error);
+                if (message != null && message.contains("requires 3 parameters")) {
+                    params.setArguments(buildThreeArgumentCommandArguments(command, buffer));
+                    lspClient.getServer().getWorkspaceService().executeCommand(params)
+                        .thenAccept(retryResult ->
+                            applyExecuteCommandResult(retryResult, command, buffer))
+                        .exceptionally(retryEx -> {
+                            reportApplyError(toException(retryEx));
+                            return null;
+                        });
+                } else {
+                    reportApplyError(error);
+                }
+                return null;
+            });
+    }
 
-        List<Object> oneMapArg = buildSingleMapCommandArguments(command, documentUri, range, kind);
-        try {
-            params.setArguments(oneMapArg);
-            lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+    /**
+     * Applies a {@link WorkspaceEdit} returned by {@code workspace/executeCommand}.
+     * Servers may also send {@code workspace/applyEdit} separately; this handles the
+     * direct return value when present.
+     */
+    private static void applyExecuteCommandResult(Object result, Command command,
+                                                  Buffer buffer) {
+        WorkspaceEdit edit = LspWorkspaceEdits.workspaceEditFromExecuteResult(result);
+        if (edit == null) {
             return;
-        } catch (Exception oneMapError) {
-            String message = getRootMessage(oneMapError);
-            if (message != null && message.contains("requires 3 parameters")) {
-                List<Object> threeArgs = buildThreeArgumentCommandArguments(documentUri, range, kind);
-                params.setArguments(threeArgs);
-                lspClient.getServer().getWorkspaceService().executeCommand(params).get();
+        }
+
+        String documentUri = parseCommandContext(command, buffer).documentUri;
+
+        Runnable apply = () -> {
+            if (!buffer.isEditable()) {
+                Log.log(Log.WARNING, LspCodeActions.class,
+                    "Buffer is not editable, cannot apply code action edit");
                 return;
             }
+            boolean applied = LspWorkspaceEdits.applyToBuffer(buffer, documentUri, edit);
+            if (!applied) {
+                applied = LspWorkspaceEdits.apply(edit);
+            }
+            if (!applied) {
+                Log.log(Log.WARNING, LspCodeActions.class,
+                    "executeCommand returned a WorkspaceEdit but no edits were applied");
+            }
+        };
 
-            // If single-map still fails for any other reason, preserve that exact error.
-            throw oneMapError;
+        if (SwingUtilities.isEventDispatchThread()) {
+            apply.run();
+        } else {
+            SwingUtilities.invokeLater(apply);
         }
+    }
+
+    private static Exception toException(Throwable throwable) {
+        Throwable current = throwable;
+        if (current.getCause() != null) {
+            current = current.getCause();
+        }
+        if (current instanceof Exception) {
+            return (Exception) current;
+        }
+        return new Exception(current);
+    }
+
+    private static void reportApplyError(Exception e) {
+        Log.log(Log.ERROR, LspCodeActions.class, "Error applying LSP code action", e);
+        SwingUtilities.invokeLater(() ->
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
     }
 
     private static boolean isCodeActionCommand(String commandId) {
         return commandId != null && commandId.contains("codeAction");
     }
 
-    private static List<Object> buildSingleMapCommandArguments(Command command,
-                                                               String documentUri,
-                                                               Range range,
-                                                               String kind) {
-        Map<String, Object> arg = copyFirstArgumentMap(command.getArguments());
+    private static List<Object> buildSingleMapCommandArguments(Command command, Buffer buffer) {
+        CommandContext ctx = parseCommandContext(command, buffer);
+        Map<String, Object> arg = LspGsonArgs.copyFirstArgumentMap(command.getArguments());
         if (arg == null) {
             arg = new LinkedHashMap<>();
         }
 
-        if (!(arg.get("textDocument") instanceof Map)) {
-            arg.put("textDocument", buildTextDocumentMap(documentUri));
-        }
-        if (!(arg.get("range") instanceof Map)) {
-            arg.put("range", rangeToMap(range));
-        }
+        arg.put("textDocument", normalizeTextDocumentMap(arg.get("textDocument"), ctx));
 
-        String resolvedKind = kind;
-        if (resolvedKind == null || resolvedKind.isEmpty()) {
-            Object existingKind = arg.get("kind");
-            if (existingKind instanceof String) {
-                resolvedKind = (String) existingKind;
-            }
-        }
-        if (resolvedKind == null || resolvedKind.isEmpty()) {
-            resolvedKind = CodeActionKind.QuickFix;
-        }
-        if (!(arg.get("kind") instanceof String)) {
-            arg.put("kind", resolvedKind);
+        Map<String, Object> rangeMap = LspGsonArgs.asStringObjectMap(arg.get("range"));
+        arg.put("range", rangeMap != null ? rangeMap : ctx.rangeMap);
+
+        String kind = LspGsonArgs.asString(arg.get("kind"));
+        if (kind == null || kind.isEmpty()) {
+            arg.put("kind", ctx.kind);
         }
 
         return List.of(arg);
     }
 
-    private static List<Object> buildThreeArgumentCommandArguments(String documentUri,
-                                                                   Range range,
-                                                                   String kind) {
-        String resolvedKind = kind;
-        if (resolvedKind == null || resolvedKind.isEmpty()) {
-            resolvedKind = CodeActionKind.QuickFix;
-        }
-        return List.of(buildTextDocumentMap(documentUri), rangeToMap(range), resolvedKind);
+    private static List<Object> buildThreeArgumentCommandArguments(Command command,
+                                                                   Buffer buffer) {
+        CommandContext ctx = parseCommandContext(command, buffer);
+        return List.of(
+            buildTextDocumentMap(ctx),
+            ctx.rangeMap,
+            ctx.kind);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map<String, Object> copyFirstArgumentMap(List<Object> arguments) {
-        if (arguments == null || arguments.isEmpty()) {
-            return null;
+    /** Fields parsed from {@link Command#getArguments()}. */
+    private static final class CommandContext {
+        final String documentUri;
+        final Map<String, Object> rangeMap;
+        final String kind;
+        final int documentVersion;
+
+        CommandContext(String documentUri, Map<String, Object> rangeMap, String kind,
+                       int documentVersion) {
+            this.documentUri = documentUri;
+            this.rangeMap = rangeMap;
+            this.kind = kind;
+            this.documentVersion = documentVersion;
         }
-        Object first = arguments.get(0);
-        if (first instanceof Map) {
-            return new LinkedHashMap<>((Map<String, Object>) first);
-        }
-        return null;
     }
 
-    private static Map<String, Object> buildTextDocumentMap(String documentUri) {
+    private static CommandContext parseCommandContext(Command command, Buffer buffer) {
+        List<Object> arguments = command.getArguments();
+        Map<String, Object> textDocument = null;
+        Map<String, Object> rangeMap = null;
+        String kind = null;
+
+        Map<String, Object> argMap = LspGsonArgs.copyFirstArgumentMap(arguments);
+        if (argMap != null) {
+            textDocument = LspGsonArgs.asStringObjectMap(argMap.get("textDocument"));
+            rangeMap = LspGsonArgs.asStringObjectMap(argMap.get("range"));
+            kind = LspGsonArgs.asString(argMap.get("kind"));
+        } else if (arguments != null && arguments.size() >= 3) {
+            textDocument = LspGsonArgs.asStringObjectMap(arguments.get(0));
+            rangeMap = LspGsonArgs.asStringObjectMap(arguments.get(1));
+            kind = LspGsonArgs.asString(arguments.get(2));
+        }
+
+        String documentUri = null;
+        Integer version = null;
+        if (textDocument != null) {
+            documentUri = LspGsonArgs.asString(textDocument.get("uri"));
+            if (documentUri != null && documentUri.isEmpty()) {
+                documentUri = null;
+            }
+            version = LspGsonArgs.asInteger(textDocument.get("version"));
+        }
+        if (documentUri == null) {
+            documentUri = new File(buffer.getPath()).toURI().toString();
+        }
+        int documentVersion = version != null ? version : LspPlugin.getDocumentVersion(buffer);
+
+        if (rangeMap == null) {
+            rangeMap = rangeToMap(new Range(new Position(0, 0), new Position(0, 0)));
+        }
+        if (kind == null || kind.isEmpty()) {
+            kind = CodeActionKind.QuickFix;
+        }
+
+        return new CommandContext(documentUri, rangeMap, kind, documentVersion);
+    }
+
+    private static Map<String, Object> buildTextDocumentMap(CommandContext ctx) {
         Map<String, Object> textDocument = new LinkedHashMap<>();
-        textDocument.put("uri", documentUri);
+        textDocument.put("uri", ctx.documentUri);
+        textDocument.put("version", ctx.documentVersion);
+        return textDocument;
+    }
+
+    private static Map<String, Object> normalizeTextDocumentMap(Object value, CommandContext ctx) {
+        Map<String, Object> textDocument = LspGsonArgs.asStringObjectMap(value);
+        if (textDocument == null) {
+            textDocument = new LinkedHashMap<>();
+        }
+
+        String uri = LspGsonArgs.asString(textDocument.get("uri"));
+        if (uri == null || uri.isEmpty()) {
+            textDocument.put("uri", ctx.documentUri);
+        }
+
+        if (LspGsonArgs.asInteger(textDocument.get("version")) == null) {
+            textDocument.put("version", ctx.documentVersion);
+        }
+
         return textDocument;
     }
 

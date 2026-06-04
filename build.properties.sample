@@ -1,6 +1,8 @@
 ###
 ### Build property file for jEdit
 ###
+### Requires JDK 21 or newer to build and run.
+###
 
 ### The directory where to download dependencies to
 ### Use a directory exclusive used for that,

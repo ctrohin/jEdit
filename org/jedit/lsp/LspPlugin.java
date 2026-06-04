@@ -89,6 +89,18 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         void run(View view, GenericLspClient client);
     }
 
+    /**
+     * LSP document version last sent on {@code textDocument/didOpen} for this buffer
+     * (incremented on each {@code didOpen}; {@code didChange} is not active yet).
+     */
+    static int getDocumentVersion(Buffer buffer) {
+        BufferLspHandler handler = getInstance().handlers.get(buffer);
+        if (handler == null) {
+            return 0;
+        }
+        return handler.getLastOpenedVersion();
+    }
+
     private static void invokeLspFeature(View view, LspFeature feature) {
         if (view == null) {
             return;
@@ -196,6 +208,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         BufferLspHandler(Buffer buffer, GenericLspClient client) {
             this.buffer = buffer;
             this.client = client;
+        }
+
+        /** Version sent in the last {@code didOpen} for this buffer. */
+        int getLastOpenedVersion() {
+            return Math.max(0, version - 1);
         }
 
         void notifyOpen() {

@@ -1020,7 +1020,7 @@ public enum MatIcons implements IconCode {
                     final var is = url.openStream();
                     return is;
                 }
-                catch (Exception _) {
+                catch (Exception e) {
                     return null;
                 }
             }

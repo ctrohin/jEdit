@@ -13,9 +13,9 @@
 	<property file="build.properties"
 		  prefix="config"/>
 
-	<!-- Target Java Versions -->
+	<!-- Target Java Versions (JDK 21+ required; sources use Java 21 language + preview) -->
 	<property name="target.java.version"
-		  value="11"/>
+		  value="21"/>
 
 	<!-- Various Paths -->
 	<property name="config.lib.dir"
@@ -57,7 +57,21 @@
 	<property name="config.build.deprecation"
 		  value="true"/>
 	<property name="config.build.compilerarg"
-		  value="-Xlint:unchecked -Xlint:finally -Xlint:fallthrough -Xmaxwarns 1000"/>
+		  value="--enable-preview -Xlint:unchecked -Xlint:finally -Xlint:fallthrough -Xmaxwarns 1000"/>
+
+	<!-- Non-Java files required on the classpath (IDE runs use ${classes.dir}/core). -->
+	<patternset id="core.resources">
+		<include name="org/gjt/sp/jedit/bsh/commands/*.bsh"/>
+		<include name="org/gjt/sp/jedit/**/*.dtd"/>
+		<include name="org/gjt/sp/jedit/default.abbrevs"/>
+		<include name="org/gjt/sp/jedit/*.props"/>
+		<include name="org/gjt/sp/jedit/*.xml"/>
+		<include name="org/gjt/sp/jedit/textarea/*.xml"/>
+		<include name="org/gjt/sp/jedit/icons/**/*.gif"/>
+		<include name="org/gjt/sp/jedit/icons/**/*.jpg"/>
+		<include name="org/gjt/sp/jedit/icons/**/*.png"/>
+		<include name="org/jedit/localization/*.props"/>
+	</patternset>
 
 	<target name="init"
 		unless="init.done">
@@ -70,10 +84,10 @@
 				</not>
 			</condition>
 		</fail>
-		<fail message="Java 11 or newer is needed for jEdit to build, please install it and rerun (found Java version: '${ant.java.version}')">
+		<fail message="Java 21 or newer is needed for jEdit to build, please install it and rerun (found Java version: '${ant.java.version}')">
 			<condition>
 				<not>
-					<javaversion atleast="11"/>
+					<javaversion atleast="21"/>
 				</not>
 			</condition>
 		</fail>
@@ -220,7 +234,7 @@
 		</delete>
 	</target>
 
-	<target name="compile"
+	<target name="compile-classes"
 		depends="init,retrieve">
 		<mkdir dir="${classes.dir}/core"/>
 		<depend srcDir="${basedir}"
@@ -248,6 +262,21 @@
 			<compilerarg line="${config.build.compilerarg}"/>
 		</javac>
 	</target>
+
+	<target name="copy-core-resources"
+		depends="init,retrieve"
+		description="copy props, xml, icons, etc. into classes/core">
+		<mkdir dir="${classes.dir}/core"/>
+		<copy todir="${classes.dir}/core">
+			<fileset dir="${basedir}">
+				<patternset refid="core.resources"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile"
+		depends="compile-classes,copy-core-resources"
+		description="compile sources and copy classpath resources"/>
 
 	<target name="compile-test"
 		depends="init,retrieve,compile">
@@ -450,6 +479,7 @@
 		       includeantruntime="false"
 		       showoutput="true"
 		       enabletestlistenerevents="true">
+			<jvmarg value="--enable-preview"/>
 			<classpath refid="classpath.test"/>
 			<classpath location="${classes.dir}/test"/>
 			<classpath location="${ant.library.dir}/ant.jar"/>
@@ -469,9 +499,9 @@
 		      if="tests.failed"/>
 	</target>
 
-	<target name="build"
-		depends="init,retrieve,setup,compile,test"
-		description="build the jEdit JAR-file with full debug-information">
+	<target name="jar-core"
+		depends="compile"
+		description="package classes/core into jedit.jar and copy runtime trees">
 		<mkdir dir="${jar.location}"/>
 		<jar destfile="${jar.location}/${jar.filename}"
 		     basedir="${classes.dir}/core"
@@ -480,16 +510,7 @@
 		     duplicate="fail"
 		     index="true">
 			<fileset dir="${basedir}">
-				<include name="org/gjt/sp/jedit/bsh/commands/*.bsh"/>
-				<include name="org/gjt/sp/jedit/**/*.dtd"/>
-				<include name="org/gjt/sp/jedit/default.abbrevs"/>
-				<include name="org/gjt/sp/jedit/*.props"/>
-				<include name="org/gjt/sp/jedit/*.xml"/>
-				<include name="org/gjt/sp/jedit/textarea/*.xml"/>
-				<include name="org/gjt/sp/jedit/icons/**/*.gif"/>
-				<include name="org/gjt/sp/jedit/icons/**/*.jpg"/>
-				<include name="org/gjt/sp/jedit/icons/**/*.png"/>
-				<include name="org/jedit/localization/*.props"/>
+				<patternset refid="core.resources"/>
 			</fileset>
 		</jar>
 		<loadfile srcfile="keymaps/jEdit_keys.props"
@@ -526,6 +547,14 @@
 			</contrib:then>
 		</contrib:if>
 	</target>
+
+	<target name="build-no-test"
+		depends="init,retrieve,setup,jar-core"
+		description="build jEdit JAR and runtime files without running unit tests"/>
+
+	<target name="build"
+		depends="init,retrieve,setup,test,jar-core"
+		description="build the jEdit JAR-file with full debug-information"/>
 
 	<target name="build-exe-launcher"
 		depends="init,retrieve,setup,filter-package-files"

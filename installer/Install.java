@@ -63,12 +63,12 @@ public class Install
 
 		String javaVersion = System.getProperty("java.version");
 		int javaMajorVersion = parseInt(javaVersion.split("\\.", 2)[0]);
-		if(javaMajorVersion < 11)
+		if(javaMajorVersion < 21)
 		{
 			errorAndExit(isGUI,
 					  "You are running Java version "
 					+ javaVersion + " from "+System.getProperty("java.vendor")+".\n"
-					+"This installer requires Java 11 or later.");
+					+"This installer requires Java 21 or later.");
 		}
 
 		if(isRunningFromExclam())
