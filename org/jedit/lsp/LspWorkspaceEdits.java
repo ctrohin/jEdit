@@ -38,7 +38,9 @@ import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.ResourceOperation;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.util.Log;
 
 /**
@@ -223,6 +225,16 @@ final class LspWorkspaceEdits {
             return false;
         }
 
+        TextEdit primaryEdit = edits.stream()
+            .min(Comparator
+                .comparing((TextEdit e) -> e.getRange().getStart().getLine())
+                .thenComparing(e -> e.getRange().getStart().getCharacter()))
+            .orElse(edits.get(0));
+        int caretTarget = positionToOffset(buffer, primaryEdit.getRange().getStart());
+        if (caretTarget < 0) {
+            caretTarget = 0;
+        }
+
         List<TextEdit> sorted = new ArrayList<>(edits);
         sorted.sort(Comparator
             .comparing((TextEdit e) -> e.getRange().getStart().getLine())
@@ -232,12 +244,45 @@ final class LspWorkspaceEdits {
         buffer.beginCompoundEdit();
         try {
             for (TextEdit edit : sorted) {
+                Range range = edit.getRange();
+                String newText = edit.getNewText();
+                if (range == null || newText == null) {
+                    continue;
+                }
+                int startOffset = positionToOffset(buffer, range.getStart());
+                int endOffset = positionToOffset(buffer, range.getEnd());
+                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
+                    applyTextEdit(buffer, edit);
+                    continue;
+                }
+                if (endOffset <= caretTarget) {
+                    caretTarget += newText.length() - (endOffset - startOffset);
+                } else if (startOffset < caretTarget) {
+                    caretTarget = startOffset;
+                }
                 applyTextEdit(buffer, edit);
             }
         } finally {
             buffer.endCompoundEdit();
         }
+
+        setBufferCaret(buffer, caretTarget);
         return true;
+    }
+
+    private static void setBufferCaret(Buffer buffer, int caret) {
+        int length = buffer.getLength();
+        caret = Math.max(0, Math.min(caret, length));
+        buffer.setIntegerProperty(Buffer.CARET, caret);
+        buffer.setBooleanProperty(Buffer.CARET_POSITIONED, true);
+        for (View view : jEdit.getViews()) {
+            if (view.getBuffer() == buffer) {
+                JEditTextArea textArea = view.getTextArea();
+                if (textArea != null) {
+                    textArea.setCaretPosition(caret);
+                }
+            }
+        }
     }
 
     private static void applyTextEdit(Buffer buffer, TextEdit textEdit) {
