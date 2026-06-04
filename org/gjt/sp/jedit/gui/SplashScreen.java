@@ -23,6 +23,9 @@ package org.gjt.sp.jedit.gui;
 //{{{ Imports
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
@@ -42,11 +45,20 @@ public class SplashScreen extends JComponent
 		fm = getFontMetrics(labelFont);
 		if(realSplash == null)
 		{
+			URL splashUrl = locateSplashImageUrl();
+			if (splashUrl == null)
+			{
+				Log.log(Log.WARNING, SplashScreen.class,
+					"splash.png not found on classpath or under jedit.home; skipping splash screen");
+				win = null;
+				image = null;
+				return;
+			}
+
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			setBackground(Color.white);
 
-			image = getToolkit().getImage(
-				getClass().getResource("/org/gjt/sp/jedit/icons/splash.png"));
+			image = getToolkit().getImage(splashUrl);
 			MediaTracker tracker = new MediaTracker(this);
 			tracker.addImage(image,0);
 
@@ -57,6 +69,14 @@ public class SplashScreen extends JComponent
 			catch(Exception e)
 			{
 				Log.log(Log.ERROR,this,e);
+			}
+			if (tracker.isErrorAny() || image.getWidth(this) <= 0 || image.getHeight(this) <= 0)
+			{
+				Log.log(Log.WARNING, SplashScreen.class,
+					"failed to load splash.png from " + splashUrl);
+				win = null;
+				image = null;
+				return;
 			}
 			Dimension screen = getToolkit().getScreenSize(); // sane default
 			win = new JWindow();
@@ -88,12 +108,49 @@ public class SplashScreen extends JComponent
 		}
 	} //}}}
 
+	//{{{ locateSplashImageUrl() method
+	/**
+	 * Classpath first; when running from the IDE, {@code jedit.home} often points
+	 * at the project root where the PNG lives in source but is not yet copied to
+	 * the output directory.
+	 */
+	private static URL locateSplashImageUrl()
+	{
+		String resource = "/org/gjt/sp/jedit/icons/splash.png";
+		URL url = SplashScreen.class.getResource(resource);
+		if (url != null)
+		{
+			return url;
+		}
+		String home = System.getProperty("jedit.home");
+		if (home != null)
+		{
+			File file = new File(home, "org/gjt/sp/jedit/icons/splash.png");
+			if (file.isFile())
+			{
+				try
+				{
+					return file.toURI().toURL();
+				}
+				catch (MalformedURLException e)
+				{
+					Log.log(Log.ERROR, SplashScreen.class,
+						"Invalid splash image path: " + file, e);
+				}
+			}
+		}
+		return null;
+	} //}}}
+
 	//{{{ dispose() method
 	public void dispose()
 	{
 		if(realSplash==null)
 		{
-			win.dispose();
+			if (win != null)
+			{
+				win.dispose();
+			}
 		}
 		else
 		{
@@ -111,19 +168,7 @@ public class SplashScreen extends JComponent
 		progress++;
 		repaint();
 
-		if(realSplash == null)
-		{
-			// wait for it to be painted to ensure progress is updated
-			// continuously
-			try
-			{
-				wait();
-			}
-			catch(InterruptedException ie)
-			{
-				Log.log(Log.ERROR,this,ie);
-			}
-		}
+		waitForSwingSplashPaint();
 	}
 
 	public synchronized void advance(String label)
@@ -133,7 +178,13 @@ public class SplashScreen extends JComponent
 		this.label = label;
 		repaint();
 
-		if(realSplash == null)
+		waitForSwingSplashPaint();
+	} //}}}
+
+	//{{{ waitForSwingSplashPaint() method
+	private void waitForSwingSplashPaint()
+	{
+		if (realSplash == null && win != null)
 		{
 			// wait for it to be painted to ensure progress is updated
 			// continuously
@@ -203,7 +254,10 @@ public class SplashScreen extends JComponent
 	{
 		Dimension size = getSize();
 
-		g.drawImage(image,1,1,this);
+		if (image != null)
+		{
+			g.drawImage(image,1,1,this);
+		}
 
 		doPaintContents(g, size);
 
@@ -260,7 +314,7 @@ public class SplashScreen extends JComponent
 	//{{{ private members
 	private final FontMetrics fm;
 	private final JWindow win;
-	private final Image image;
+	private Image image;
 	private int progress;
 	private static final int PROGRESS_HEIGHT = 20;
 	private static final int PROGRESS_COUNT = 23;

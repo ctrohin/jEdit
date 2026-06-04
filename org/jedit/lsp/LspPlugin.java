@@ -64,9 +64,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     @Override
     public void stop() {
         // Shutdown all clients
-        clients.values()
-            .forEach(client -> Optional.ofNullable(client.getServer())
-            .ifPresent(this::closeLanguageServer));
+        clients.values().forEach(GenericLspClient::shutdown);
         clients.clear();
         handlers.clear();
     }
@@ -88,7 +86,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         GenericLspClient client = lspPlugin.clients.get(modeName);
         if (client != null && client.getServer() != null) {
             // Check if server is still alive before attempting completion
-            if (client.isServerStarted()) {
+            if (client.isAlive()) {
                 LspCompletion.completeLsp(view, client);
             } else {
                 Log.log(Log.WARNING, LspPlugin.class, "LSP server for " + modeName + " is not responding, attempting restart");
@@ -104,14 +102,6 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             Log.log(Log.WARNING, LspPlugin.class, "LSP client not available for mode " + modeName);
             javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
         }
-    }
-
-    private void closeLanguageServer(LanguageServer ls) {
-        Try.of(() -> {
-            ls.shutdown().get();
-            ls.exit();
-            return 1;
-        }).onFailure(e -> Log.log(Log.ERROR, this, "Error shutting down LSP client", e)).get();
     }
 
     @EditBus.EBHandler
@@ -164,13 +154,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         if (!client.isServerStarted()) {
             return;
         }
-        try {
-            client.setServerStarted(false);
-            client.getServer().shutdown().get();
-        }
-        catch (Exception e) {
-            Log.log(Log.ERROR, this, "Failed to stop LSP server for " + client.getMode(), e);
-        }
+        client.shutdown();
     }
 
     private synchronized void stopLspForBuffer(Buffer buffer) {
@@ -185,10 +169,9 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             .peek(GenericLspClient::decrementBufferCount)
             .filter(m -> m.getBufferCount() == 0)
             .findFirst()
-            .map(GenericLspClient::getServer)
-            .ifPresent(s -> {
+            .ifPresent(c -> {
                 clients.remove(modeName);
-                closeLanguageServer(s);
+                c.shutdown();
             });
     }
 
@@ -287,9 +270,9 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     boolean restartServer(GenericLspClient client) {
         try {
-            closeLanguageServer(client.getServer());
+            client.shutdown();
             startMetaClient(client);
-            return true;
+            return client.isServerStarted();
         } catch (Exception e) {
             Log.log(Log.ERROR, this, "Error restarting server for " + client.getMode(), e);
             return false;

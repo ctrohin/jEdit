@@ -25,6 +25,7 @@ import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageServer;
+import org.gjt.sp.util.Log;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -34,6 +35,8 @@ public class GenericLspClient {
 
     private LanguageServer server;
     private MyLspClient clientImpl;
+    private Process process;
+    private Launcher<LanguageServer> launcher;
     private volatile int bufferCount = 0;
     private final String mode;
     private boolean serverStarted = false;
@@ -67,7 +70,7 @@ public class GenericLspClient {
     }
 
     private String[] getOSSpecificCommand() {
-        return new String[]{"cmd", "/c "};
+        return new String[]{"cmd", "/c"};
     }
 
     public void start(String languageId, String projectRoot) throws Exception {
@@ -81,13 +84,12 @@ public class GenericLspClient {
         final var osPrefix = getOSSpecificCommand();
         final var executeCommand = Stream.concat(Stream.of(osPrefix), Stream.of(command)).toArray(String[]::new);
         final var builder = new ProcessBuilder(executeCommand);
-//        builder.environment();
-//        builder.inheritIO();
-        Process process = builder.start();
+        builder.redirectError(ProcessBuilder.Redirect.INHERIT);
+        this.process = builder.start();
 
         // 2. Setup LSP4J Bridge
         this.clientImpl = new MyLspClient();
-        Launcher<LanguageServer> launcher = LSPLauncher.createClientLauncher(
+        this.launcher = LSPLauncher.createClientLauncher(
             clientImpl,
             process.getInputStream(),
             process.getOutputStream()
@@ -112,7 +114,34 @@ public class GenericLspClient {
         initResult.thenAccept(res -> {
             server.initialized(new InitializedParams());
             System.out.println(languageId + " server is ready!");
+        }).exceptionally(ex -> {
+            setServerStarted(false);
+            Log.log(Log.ERROR, this, "Failed to initialize LSP server for " + languageId, ex);
+            return null;
         });
+    }
+
+    boolean isAlive() {
+        return serverStarted && process != null && process.isAlive() && server != null;
+    }
+
+    void shutdown() {
+        setServerStarted(false);
+        try {
+            if (server != null) {
+                server.shutdown().get();
+                server.exit();
+            }
+        } catch (Exception e) {
+            Log.log(Log.WARNING, this, "Error while shutting down LSP server for " + mode, e);
+        } finally {
+            if (process != null && process.isAlive()) {
+                process.destroy();
+            }
+            server = null;
+            launcher = null;
+            process = null;
+        }
     }
 
     public LanguageServer getServer() {
