@@ -168,10 +168,12 @@ public final class LspCodeActions {
             popup.add(menuItem);
         }
 
-        Point location = textArea.offsetToXY(textArea.getCaretPosition());
-        location.y += textArea.getPainter().getLineHeight();
-        SwingUtilities.convertPointToScreen(location, textArea.getPainter());
-        GenericGUIUtilities.showPopupMenu(popup, textArea.getPainter(), location.x, location.y, false);
+        Point caretPos = textArea.offsetToXY(textArea.getCaretPosition());
+        if (caretPos != null) {
+            int lineHeight = textArea.getPainter().getLineHeight();
+            GenericGUIUtilities.showPopupMenu(popup, textArea.getPainter(),
+                caretPos.x, caretPos.y + lineHeight, true);
+        }
     }
 
     private static void applyAction(View view, GenericLspClient lspClient,
