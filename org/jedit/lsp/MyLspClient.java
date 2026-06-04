@@ -25,6 +25,10 @@ import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.LanguageClient;
 import java.util.concurrent.CompletableFuture;
 
+import javax.swing.SwingUtilities;
+
+import org.gjt.sp.util.Log;
+
 public class MyLspClient implements LanguageClient {
 
     // The interface uses MessageParams here, not LogMessageParams
@@ -51,5 +55,31 @@ public class MyLspClient implements LanguageClient {
     @Override
     public CompletableFuture<MessageActionItem> showMessageRequest(ShowMessageRequestParams requestParams) {
         return CompletableFuture.completedFuture(null);
+    }
+
+    /**
+     * Server applies a workspace edit through the client (e.g. after
+     * {@code workspace/executeCommand} for a code action).
+     */
+    @Override
+    public CompletableFuture<ApplyWorkspaceEditResponse> applyEdit(ApplyWorkspaceEditParams params) {
+        CompletableFuture<ApplyWorkspaceEditResponse> result = new CompletableFuture<>();
+        Runnable task = () -> {
+            try {
+                WorkspaceEdit edit = params != null ? params.getEdit() : null;
+                boolean applied = LspWorkspaceEdits.apply(edit);
+                ApplyWorkspaceEditResponse response = new ApplyWorkspaceEditResponse(applied);
+                result.complete(response);
+            } catch (Exception e) {
+                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit failed", e);
+                result.complete(new ApplyWorkspaceEditResponse(false));
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
+        }
+        return result;
     }
 }

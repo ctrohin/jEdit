@@ -108,6 +108,11 @@ public class GenericLspClient {
         TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
         textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
         capabilities.setTextDocument(textDocCaps);
+
+        WorkspaceClientCapabilities workspaceCaps = new WorkspaceClientCapabilities();
+        workspaceCaps.setApplyEdit(true);
+        capabilities.setWorkspace(workspaceCaps);
+
         params.setCapabilities(capabilities);
 
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
