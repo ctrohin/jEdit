@@ -86,6 +86,13 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         invokeLspFeature(view, (v, client) -> LspCodeActions.codeActionsLsp(v, client));
     }
 
+    /**
+     * Request LSP refactorings at the caret or selection.
+     */
+    public static void refactorLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspCodeActions.refactorLsp(v, client));
+    }
+
     @FunctionalInterface
     private interface LspFeature {
         void run(View view, GenericLspClient client);

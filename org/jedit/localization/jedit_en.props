@@ -148,6 +148,7 @@ word-count.label=$Word Count...
 complete-word.label=Co$mplete Word
 complete-lsp.label=Comp$lete from LSP
 code-actions-lsp.label=LSP Code $Actions
+refactor-lsp.label=LSP $Refactor
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 

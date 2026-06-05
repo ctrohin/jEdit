@@ -210,6 +210,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="refactor-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.refactorLsp(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

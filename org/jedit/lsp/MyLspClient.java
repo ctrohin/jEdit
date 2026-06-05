@@ -23,6 +23,7 @@ package org.jedit.lsp;
 
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.LanguageClient;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 
 import javax.swing.SwingUtilities;
@@ -81,7 +82,16 @@ public class MyLspClient implements LanguageClient {
         if (SwingUtilities.isEventDispatchThread()) {
             task.run();
         } else {
-            SwingUtilities.invokeLater(task);
+            try {
+                SwingUtilities.invokeAndWait(task);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit interrupted", e);
+                result.complete(new ApplyWorkspaceEditResponse(false));
+            } catch (InvocationTargetException e) {
+                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit failed", e.getCause());
+                result.complete(new ApplyWorkspaceEditResponse(false));
+            }
         }
         return result;
     }

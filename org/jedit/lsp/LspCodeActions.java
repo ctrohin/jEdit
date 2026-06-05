@@ -63,7 +63,24 @@ public final class LspCodeActions {
             return;
         }
 
-        requestCodeActions(view, lspClient);
+        requestCodeActionsAtCaret(view, lspClient, null);
+    }
+
+    public static void refactorLsp(View view, GenericLspClient lspClient) {
+        Buffer buffer = view.getBuffer();
+
+        if (!buffer.isEditable()) {
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            return;
+        }
+
+        if (lspClient == null || lspClient.getServer() == null) {
+            Log.log(Log.WARNING, LspCodeActions.class, "LSP server not available for refactorings");
+            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            return;
+        }
+
+        requestCodeActionsAtCaret(view, lspClient, List.of(CodeActionKind.Refactor));
     }
 
     /**
@@ -111,10 +128,11 @@ public final class LspCodeActions {
         applyAction(view, lspClient, documentUri, problem.toRange(), item);
     }
 
-    private static void requestCodeActions(View view, GenericLspClient lspClient) {
+    private static void requestCodeActionsAtCaret(View view, GenericLspClient lspClient,
+                                                  List<String> onlyKinds) {
         JEditTextArea textArea = view.getTextArea();
         Buffer buffer = view.getBuffer();
-        String documentUri = new File(buffer.getPath()).toURI().toString();
+        String documentUri = LspDocumentUri.pathToUri(buffer.getPath());
 
         try {
             Range requestRange = buildRequestRange(buffer, textArea);
@@ -125,13 +143,16 @@ public final class LspCodeActions {
 
             CodeActionContext context = new CodeActionContext();
             context.setDiagnostics(Collections.emptyList());
+            if (onlyKinds != null && !onlyKinds.isEmpty()) {
+                context.setOnly(onlyKinds);
+            }
             params.setContext(context);
 
             CompletableFuture<List<Either<Command, CodeAction>>> future =
                 lspClient.getServer().getTextDocumentService().codeAction(params);
 
             future.thenAccept(result -> {
-                List<LspCodeActionItem> items = parseActions(result);
+                List<LspCodeActionItem> items = parseActions(result, onlyKinds);
                 if (items.isEmpty()) {
                     SwingUtilities.invokeLater(() ->
                         javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
@@ -140,7 +161,10 @@ public final class LspCodeActions {
                 SwingUtilities.invokeLater(() ->
                     showActionMenu(view, lspClient, documentUri, requestRange, items));
             }).exceptionally(ex -> {
-                Log.log(Log.ERROR, LspCodeActions.class, "Error requesting LSP code actions", ex);
+                String logLabel = onlyKinds != null && !onlyKinds.isEmpty()
+                    ? "refactorings" : "code actions";
+                Log.log(Log.ERROR, LspCodeActions.class,
+                    "Error requesting LSP " + logLabel, ex);
                 SwingUtilities.invokeLater(() ->
                     javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
                 return null;
@@ -178,6 +202,11 @@ public final class LspCodeActions {
     }
 
     private static List<LspCodeActionItem> parseActions(List<Either<Command, CodeAction>> result) {
+        return parseActions(result, null);
+    }
+
+    private static List<LspCodeActionItem> parseActions(List<Either<Command, CodeAction>> result,
+                                                        List<String> onlyKinds) {
         List<LspCodeActionItem> items = new ArrayList<>();
         if (result == null) {
             return items;
@@ -193,12 +222,28 @@ public final class LspCodeActions {
                 }
             } else if (either.isRight()) {
                 CodeAction action = either.getRight();
-                if (action != null && action.getTitle() != null) {
+                if (action != null && action.getTitle() != null
+                    && matchesKindFilter(action.getKind(), onlyKinds)) {
                     items.add(LspCodeActionItem.forCodeAction(action));
                 }
             }
         }
         return items;
+    }
+
+    private static boolean matchesKindFilter(String actionKind, List<String> onlyKinds) {
+        if (onlyKinds == null || onlyKinds.isEmpty()) {
+            return true;
+        }
+        if (actionKind == null) {
+            return false;
+        }
+        for (String only : onlyKinds) {
+            if (actionKind.equals(only) || actionKind.startsWith(only + ".")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void showActionMenu(View view, GenericLspClient lspClient,
@@ -226,43 +271,56 @@ public final class LspCodeActions {
                                     String documentUri, Range requestRange,
                                     LspCodeActionItem item) {
         Buffer buffer = view.getBuffer();
-        try {
-            CodeAction action = item.getCodeAction();
-            if (action != null) {
-                if (action.getEdit() == null) {
-                    CodeAction resolved = lspClient.getServer().getTextDocumentService()
-                        .resolveCodeAction(action)
-                        .get();
-                    if (resolved != null) {
-                        action = resolved;
-                    }
-                }
-
-                if (action.getEdit() != null) {
+        CodeAction action = item.getCodeAction();
+        if (action != null && action.getEdit() != null) {
+            runOnEdt(() -> {
+                if (buffer.isEditable()) {
                     LspWorkspaceEdits.applyToBuffer(buffer, documentUri, action.getEdit());
-                    return;
                 }
-            }
+            });
+            return;
+        }
 
-            Command command = item.isCommand() ? item.getCommand() : action.getCommand();
-            if (command != null) {
-                executeWorkspaceCommand(lspClient, command, buffer);
+        if (action != null && action.getEdit() == null) {
+            lspClient.getServer().getTextDocumentService().resolveCodeAction(action)
+                .thenAccept(resolved -> runOnEdt(() ->
+                    finishResolvedCodeAction(lspClient, documentUri, buffer,
+                        resolved != null ? resolved : action)))
+                .exceptionally(ex -> {
+                    reportApplyError(toException(ex));
+                    return null;
+                });
+            return;
+        }
+
+        Command command = item.getCommand();
+        if (command != null) {
+            executeWorkspaceCommandAsync(lspClient, command, buffer);
+        }
+    }
+
+    private static void finishResolvedCodeAction(GenericLspClient lspClient,
+                                                 String documentUri, Buffer buffer,
+                                                 CodeAction action) {
+        if (action.getEdit() != null) {
+            if (buffer.isEditable()) {
+                LspWorkspaceEdits.applyToBuffer(buffer, documentUri, action.getEdit());
             }
-        } catch (Exception e) {
-            Log.log(Log.ERROR, LspCodeActions.class, "Error applying LSP code action", e);
-            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            return;
+        }
+        Command command = action.getCommand();
+        if (command != null) {
+            executeWorkspaceCommandAsync(lspClient, command, buffer);
         }
     }
 
     /**
-     * Runs {@code workspace/executeCommand}, building Dart-compatible arguments when needed.
-     * Dart returns many code actions as plain {@link Command} (Either left), not {@link CodeAction}.
-     * Uri, range, kind, and version are taken from {@link Command#getArguments()}, not the
-     * code-action request context (they can differ).
+     * Runs {@code workspace/executeCommand} asynchronously so the EDT is never blocked
+     * while waiting for the server (which may call {@code workspace/applyEdit} back).
      */
-    private static void executeWorkspaceCommand(GenericLspClient lspClient,
-                                                Command command,
-                                                Buffer buffer) throws Exception {
+    private static void executeWorkspaceCommandAsync(GenericLspClient lspClient,
+                                                     Command command,
+                                                     Buffer buffer) {
         ExecuteCommandParams params = new ExecuteCommandParams();
         final String commandId = command.getCommand();
         params.setCommand(commandId);
@@ -272,55 +330,58 @@ public final class LspCodeActions {
             return;
         }
 
-        if (isCodeActionCommand(commandId)) {
-            List<Object> originalArgs = LspGsonArgs.toExecuteArguments(command.getArguments());
-            List<Object> threeArgs = buildThreeArgumentCommandArguments(command, buffer);
-            List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
+        if (!isCodeActionCommand(commandId)) {
+            params.setArguments(LspGsonArgs.toExecuteArguments(command.getArguments()));
+            executeCommandAsync(lspClient, params, command, buffer, null);
+            return;
+        }
 
-            // Try Gson-converted server args first, then fall back based on runtime errors.
-            try {
-                params.setArguments(originalArgs);
-                applyExecuteCommandResult(
-                    lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                    command, buffer);
-                return;
-            } catch (Exception firstError) {
+        List<Object> originalArgs = LspGsonArgs.toExecuteArguments(command.getArguments());
+        List<Object> threeArgs = buildThreeArgumentCommandArguments(command, buffer);
+        List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
+
+        executeCommandAsync(lspClient, copyExecuteParams(commandId, originalArgs),
+            command, buffer, firstError -> {
                 String message = getRootMessage(firstError);
                 if (message != null && message.contains("requires a single Map argument")) {
-                    params.setArguments(oneMapArg);
-                    applyExecuteCommandResult(
-                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                        command, buffer);
-                    return;
+                    executeCommandAsync(lspClient, copyExecuteParams(commandId, oneMapArg),
+                        command, buffer, null);
+                } else if (message != null && message.contains("requires 3 parameters")) {
+                    executeCommandAsync(lspClient, copyExecuteParams(commandId, threeArgs),
+                        command, buffer, null);
+                } else {
+                    executeCommandAsync(lspClient, copyExecuteParams(commandId, threeArgs),
+                        command, buffer, secondError ->
+                            executeCommandAsync(lspClient, copyExecuteParams(commandId, oneMapArg),
+                                command, buffer, null));
                 }
-                if (message != null && message.contains("requires 3 parameters")) {
-                    params.setArguments(threeArgs);
-                    applyExecuteCommandResult(
-                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                        command, buffer);
-                    return;
-                }
+            });
+    }
 
-                // Unknown mismatch: try both known Dart shapes before surfacing error.
-                try {
-                    params.setArguments(threeArgs);
-                    applyExecuteCommandResult(
-                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                        command, buffer);
-                    return;
-                } catch (Exception ignored) {
-                    params.setArguments(oneMapArg);
-                    applyExecuteCommandResult(
-                        lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                        command, buffer);
+    private static ExecuteCommandParams copyExecuteParams(String commandId,
+                                                          List<Object> arguments) {
+        ExecuteCommandParams params = new ExecuteCommandParams();
+        params.setCommand(commandId);
+        params.setArguments(arguments);
+        return params;
+    }
+
+    private static void executeCommandAsync(GenericLspClient lspClient,
+                                            ExecuteCommandParams params,
+                                            Command command,
+                                            Buffer buffer,
+                                            Consumer<Exception> onFailure) {
+        lspClient.getServer().getWorkspaceService().executeCommand(params)
+            .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
+            .exceptionally(ex -> {
+                Exception error = toException(ex);
+                if (onFailure != null) {
+                    onFailure.accept(error);
+                } else {
+                    reportApplyError(error);
                 }
-            }
-        } else {
-            params.setArguments(LspGsonArgs.toExecuteArguments(command.getArguments()));
-            applyExecuteCommandResult(
-                lspClient.getServer().getWorkspaceService().executeCommand(params).get(),
-                command, buffer);
-        }
+                return null;
+            });
     }
 
     /**
@@ -405,8 +466,16 @@ public final class LspCodeActions {
 
     private static void reportApplyError(Exception e) {
         Log.log(Log.ERROR, LspCodeActions.class, "Error applying LSP code action", e);
-        SwingUtilities.invokeLater(() ->
+        runOnEdt(() ->
             javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
+    }
+
+    private static void runOnEdt(Runnable task) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
+        }
     }
 
     private static boolean isCodeActionCommand(String commandId) {

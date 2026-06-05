@@ -47,5 +47,12 @@
             org.jedit.lsp.LspPlugin.codeActionsLsp(view);
         </CODE>
     </ACTION>
+
+    <!-- LSP Refactorings -->
+    <ACTION NAME="refactor-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.refactorLsp(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 
