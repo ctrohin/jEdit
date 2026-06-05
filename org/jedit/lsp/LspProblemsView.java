@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URI;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ import javax.swing.tree.TreePath;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
+import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 
@@ -162,20 +164,52 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
         if (path == null) {
             return;
         }
-        Buffer buffer = jEdit.openFile(view, path);
+
+        // Reserve caret via buffer props so EditPane.loadCaretInfo() uses the
+        // problem location instead of buffer history when the file is first opened.
+        Hashtable<String, Object> props = new Hashtable<>();
+        props.put(Buffer.CARET, Integer.valueOf(0));
+        props.put(Buffer.CARET_POSITIONED, Boolean.TRUE);
+
+        Buffer buffer = jEdit.openFile(view, null, path, false, props);
         if (buffer == null) {
             return;
         }
-        int line = problem.getLine();
-        if (line < 0 || line >= buffer.getLineCount()) {
-            return;
+
+        int offset = offsetForProblem(buffer, problem);
+        buffer.setIntegerProperty(Buffer.CARET, offset);
+        buffer.setBooleanProperty(Buffer.CARET_POSITIONED, true);
+        buffer.unsetProperty(Buffer.SCROLL_VERT);
+
+        if (view.getBuffer() == buffer) {
+            view.getEditPane().loadCaretInfo();
+            view.getTextArea().requestFocus();
         }
-        int offset = buffer.getLineStartOffset(line) + problem.getCharacter();
-        offset = Math.max(0, Math.min(offset, buffer.getLength()));
-        view.getTextArea().setCaretPosition(offset);
+
         view.toFront();
         view.requestFocus();
-        view.getTextArea().requestFocus();
+    }
+
+    private static int offsetForProblem(Buffer buffer, LspDiagnosticProblem problem) {
+        int line = problem.getLine();
+        if (buffer.getLineCount() == 0) {
+            return 0;
+        }
+        if (line < 0) {
+            line = 0;
+        } else if (line >= buffer.getLineCount()) {
+            line = buffer.getLineCount() - 1;
+        }
+
+        int lineStart = buffer.getLineStartOffset(line);
+        int character = problem.getCharacter();
+        int lineLength = buffer.getLineLength(line);
+        if (character < 0) {
+            character = 0;
+        } else if (character > lineLength) {
+            character = lineLength;
+        }
+        return Math.min(lineStart + character, buffer.getLength());
     }
 
     private static String uriToPath(String uri) {
@@ -184,7 +218,7 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
             if (!"file".equalsIgnoreCase(parsed.getScheme())) {
                 return null;
             }
-            return new File(parsed).getPath();
+            return MiscUtilities.resolveSymlinks(new File(parsed).getPath());
         } catch (IllegalArgumentException e) {
             return null;
         }
