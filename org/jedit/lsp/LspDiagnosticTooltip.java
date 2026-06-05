@@ -44,6 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
@@ -105,17 +107,15 @@ final class LspDiagnosticTooltip {
         statusLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
         panel = new JPanel(new BorderLayout(0, 4));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(0xB0B0B0)),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)));
-        panel.setBackground(new Color(0xFFFFE0));
         panel.add(problemLabel, BorderLayout.NORTH);
         panel.add(actionsPanel, BorderLayout.CENTER);
         panel.add(statusLabel, BorderLayout.SOUTH);
+        applyLookAndFeelColors();
 
         window = new JWindow(view);
         window.getContentPane().add(panel);
         window.setFocusableWindowState(false);
+        applyLookAndFeelColors();
 
         showTimer = new Timer(SHOW_DELAY_MS, e -> showPendingTooltip());
         showTimer.setRepeats(false);
@@ -180,6 +180,7 @@ final class LspDiagnosticTooltip {
         anchorScreenX = pointer.x;
         anchorScreenY = pointer.y;
 
+        applyLookAndFeelColors();
         setProblemContent(shownProblem);
         window.pack();
         positionWindow();
@@ -191,7 +192,9 @@ final class LspDiagnosticTooltip {
     }
 
     private void setProblemContent(LspDiagnosticProblem problem) {
-        String html = "<html><body style='width: " + TOOLTIP_MAX_WIDTH + "px'>"
+        Color foreground = labelForeground();
+        String html = "<html><body style='width: " + TOOLTIP_MAX_WIDTH + "px; color: "
+            + colorHex(foreground) + ";'>"
             + "<b><font color='" + colorHex(problem.getSeverity().getColor()) + "'>"
             + escapeHtml(problem.getSeverity().getLabel()) + ":</font></b> "
             + escapeHtml(problem.getMessage())
@@ -267,7 +270,8 @@ final class LspDiagnosticTooltip {
         button.setFocusPainted(false);
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setForeground(new Color(0x1565C0));
+        button.setForeground(linkForeground());
+        button.setBackground(panelBackground());
         button.setAlignmentX(JButton.LEFT_ALIGNMENT);
         button.setMaximumSize(new Dimension(TOOLTIP_MAX_WIDTH, 28));
         button.addActionListener(e -> {
@@ -368,5 +372,82 @@ final class LspDiagnosticTooltip {
 
     private static String colorHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    private void applyLookAndFeelColors() {
+        Color background = panelBackground();
+        Color foreground = labelForeground();
+        Color borderColor = tooltipBorderColor(background, foreground);
+
+        Border border = BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(1, 1, 2, 1, borderColor),
+            BorderFactory.createEmptyBorder(8, 10, 8, 10));
+
+        panel.setOpaque(true);
+        panel.setBackground(background);
+        panel.setBorder(border);
+        problemLabel.setOpaque(true);
+        problemLabel.setBackground(background);
+        problemLabel.setForeground(foreground);
+        statusLabel.setOpaque(true);
+        statusLabel.setBackground(background);
+        statusLabel.setForeground(foreground);
+        actionsPanel.setOpaque(true);
+        actionsPanel.setBackground(background);
+
+        if (window != null) {
+            var content = (JPanel) window.getContentPane();
+            content.setOpaque(true);
+            content.setBackground(background);
+            content.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+        }
+    }
+
+    private static Color tooltipBorderColor(Color background, Color foreground) {
+        Color border = UIManager.getColor("Component.borderColor");
+        if (border == null) {
+            border = UIManager.getColor("controlShadow");
+        }
+        if (border == null || isLowContrast(border, background)) {
+            border = foreground;
+        }
+        return border;
+    }
+
+    private static boolean isLowContrast(Color a, Color b) {
+        if (a == null || b == null) {
+            return false;
+        }
+        int delta = Math.abs(a.getRed() - b.getRed())
+            + Math.abs(a.getGreen() - b.getGreen())
+            + Math.abs(a.getBlue() - b.getBlue());
+        return delta < 40;
+    }
+
+    private static Color panelBackground() {
+        Color background = UIManager.getColor("ToolTip.background");
+        if (background == null) {
+            background = UIManager.getColor("Panel.background");
+        }
+        return background;
+    }
+
+    private static Color labelForeground() {
+        Color foreground = UIManager.getColor("ToolTip.foreground");
+        if (foreground == null) {
+            foreground = UIManager.getColor("Label.foreground");
+        }
+        return foreground;
+    }
+
+    private static Color linkForeground() {
+        Color linkColor = UIManager.getColor("Component.linkColor");
+        if (linkColor == null) {
+            linkColor = UIManager.getColor("MenuItem.selectionForeground");
+        }
+        if (linkColor == null) {
+            linkColor = labelForeground();
+        }
+        return linkColor;
     }
 }
