@@ -103,6 +103,14 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         return handler.getLastOpenedVersion();
     }
 
+    static GenericLspClient getClientForBuffer(Buffer buffer) {
+        LspPlugin plugin = getInstance();
+        if (plugin == null || buffer == null) {
+            return null;
+        }
+        return plugin.clients.get(buffer.getMode().getName());
+    }
+
     private static void invokeLspFeature(View view, LspFeature feature) {
         if (view == null) {
             return;

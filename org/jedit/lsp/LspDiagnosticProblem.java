@@ -26,6 +26,8 @@ import java.util.Objects;
 
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
+import org.eclipse.lsp4j.Position;
+import org.eclipse.lsp4j.Range;
 import org.gjt.sp.jedit.Buffer;
 
 /**
@@ -62,6 +64,14 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
                 case Warning -> WARNING;
                 case Information, Hint -> INFO;
                 default -> ERROR;
+            };
+        }
+
+        DiagnosticSeverity toLsp() {
+            return switch (this) {
+                case ERROR -> DiagnosticSeverity.Error;
+                case WARNING -> DiagnosticSeverity.Warning;
+                case INFO -> DiagnosticSeverity.Information;
             };
         }
     }
@@ -154,6 +164,23 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
 
     public Severity getSeverity() {
         return severity;
+    }
+
+    /** LSP range for this diagnostic. */
+    public Range toRange() {
+        Range range = new Range();
+        range.setStart(new Position(line, character));
+        range.setEnd(new Position(endLine, endCharacter));
+        return range;
+    }
+
+    /** LSP diagnostic for code-action requests. */
+    public Diagnostic toDiagnostic() {
+        Diagnostic diagnostic = new Diagnostic();
+        diagnostic.setRange(toRange());
+        diagnostic.setMessage(message);
+        diagnostic.setSeverity(severity.toLsp());
+        return diagnostic;
     }
 
     /**

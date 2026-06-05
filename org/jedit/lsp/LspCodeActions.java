@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -65,6 +66,51 @@ public final class LspCodeActions {
         requestCodeActions(view, lspClient);
     }
 
+    /**
+     * Requests code actions for a specific diagnostic (e.g. diagnostic hover tooltip).
+     */
+    static void requestCodeActionsForProblem(View view, GenericLspClient lspClient,
+                                             Buffer buffer,
+                                             LspDiagnosticProblem problem,
+                                             Consumer<List<LspCodeActionItem>> onResult) {
+        if (lspClient == null || lspClient.getServer() == null || problem == null) {
+            onResult.accept(List.of());
+            return;
+        }
+
+        String documentUri = LspDocumentUri.pathToUri(buffer.getPath());
+        Range requestRange = problem.toRange();
+
+        CodeActionParams params = new CodeActionParams();
+        params.setTextDocument(new TextDocumentIdentifier(documentUri));
+        params.setRange(requestRange);
+
+        CodeActionContext context = new CodeActionContext();
+        context.setDiagnostics(List.of(problem.toDiagnostic()));
+        params.setContext(context);
+
+        lspClient.getServer().getTextDocumentService().codeAction(params)
+            .thenAccept(result -> {
+                List<LspCodeActionItem> items = parseActions(result);
+                SwingUtilities.invokeLater(() -> onResult.accept(items));
+            })
+            .exceptionally(ex -> {
+                Log.log(Log.ERROR, LspCodeActions.class,
+                    "Error requesting LSP code actions for diagnostic", ex);
+                SwingUtilities.invokeLater(() -> onResult.accept(List.of()));
+                return null;
+            });
+    }
+
+    static void applyCodeAction(View view, GenericLspClient lspClient, Buffer buffer,
+                                LspDiagnosticProblem problem, LspCodeActionItem item) {
+        if (item == null || problem == null || !buffer.isEditable()) {
+            return;
+        }
+        String documentUri = LspDocumentUri.pathToUri(buffer.getPath());
+        applyAction(view, lspClient, documentUri, problem.toRange(), item);
+    }
+
     private static void requestCodeActions(View view, GenericLspClient lspClient) {
         JEditTextArea textArea = view.getTextArea();
         Buffer buffer = view.getBuffer();
@@ -85,7 +131,7 @@ public final class LspCodeActions {
                 lspClient.getServer().getTextDocumentService().codeAction(params);
 
             future.thenAccept(result -> {
-                List<ActionItem> items = parseActions(result);
+                List<LspCodeActionItem> items = parseActions(result);
                 if (items.isEmpty()) {
                     SwingUtilities.invokeLater(() ->
                         javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
@@ -131,8 +177,8 @@ public final class LspCodeActions {
         return new Position(line, offset - lineStart);
     }
 
-    private static List<ActionItem> parseActions(List<Either<Command, CodeAction>> result) {
-        List<ActionItem> items = new ArrayList<>();
+    private static List<LspCodeActionItem> parseActions(List<Either<Command, CodeAction>> result) {
+        List<LspCodeActionItem> items = new ArrayList<>();
         if (result == null) {
             return items;
         }
@@ -143,12 +189,12 @@ public final class LspCodeActions {
             if (either.isLeft()) {
                 Command command = either.getLeft();
                 if (command != null && command.getTitle() != null) {
-                    items.add(ActionItem.forCommand(command));
+                    items.add(LspCodeActionItem.forCommand(command));
                 }
             } else if (either.isRight()) {
                 CodeAction action = either.getRight();
                 if (action != null && action.getTitle() != null) {
-                    items.add(ActionItem.forCodeAction(action));
+                    items.add(LspCodeActionItem.forCodeAction(action));
                 }
             }
         }
@@ -157,11 +203,11 @@ public final class LspCodeActions {
 
     private static void showActionMenu(View view, GenericLspClient lspClient,
                                        String documentUri, Range requestRange,
-                                       List<ActionItem> items) {
+                                       List<LspCodeActionItem> items) {
         JEditTextArea textArea = view.getTextArea();
         JPopupMenu popup = new JPopupMenu();
 
-        for (ActionItem item : items) {
+        for (LspCodeActionItem item : items) {
             JMenuItem menuItem = new JMenuItem(item.getTitle());
             menuItem.addActionListener(e ->
                 applyAction(view, lspClient, documentUri, requestRange, item));
@@ -178,7 +224,7 @@ public final class LspCodeActions {
 
     private static void applyAction(View view, GenericLspClient lspClient,
                                     String documentUri, Range requestRange,
-                                    ActionItem item) {
+                                    LspCodeActionItem item) {
         Buffer buffer = view.getBuffer();
         try {
             CodeAction action = item.getCodeAction();
@@ -501,41 +547,5 @@ public final class LspCodeActions {
             return current.getMessage();
         }
         return current.getMessage();
-    }
-
-    private static final class ActionItem {
-        private final String title;
-        private final Command command;
-        private final CodeAction codeAction;
-
-        private ActionItem(String title, Command command, CodeAction codeAction) {
-            this.title = title;
-            this.command = command;
-            this.codeAction = codeAction;
-        }
-
-        static ActionItem forCommand(Command command) {
-            return new ActionItem(command.getTitle(), command, null);
-        }
-
-        static ActionItem forCodeAction(CodeAction codeAction) {
-            return new ActionItem(codeAction.getTitle(), null, codeAction);
-        }
-
-        String getTitle() {
-            return title;
-        }
-
-        boolean isCommand() {
-            return command != null;
-        }
-
-        Command getCommand() {
-            return command;
-        }
-
-        CodeAction getCodeAction() {
-            return codeAction;
-        }
     }
 }
