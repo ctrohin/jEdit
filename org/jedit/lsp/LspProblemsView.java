@@ -137,8 +137,8 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
             caption.setText(jEdit.getProperty("lsp-problems.empty"));
             return;
         }
-        String[] args = { String.valueOf(problemCount), String.valueOf(fileCount) };
-        caption.setText(jEdit.getProperty("lsp-problems.caption", args));
+        caption.setText(jEdit.getProperty("lsp-problems.caption",
+            new Object[] { Integer.valueOf(problemCount), Integer.valueOf(fileCount) }));
     }
 
     private void goToSelectedProblem() {
