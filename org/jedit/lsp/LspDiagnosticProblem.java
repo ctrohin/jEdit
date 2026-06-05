@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
+import org.gjt.sp.jedit.Buffer;
 
 /**
  * A single LSP diagnostic shown in the Problems view.
@@ -68,14 +69,19 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
     private final String uri;
     private final int line;
     private final int character;
+    private final int endLine;
+    private final int endCharacter;
     private final String message;
     private final Severity severity;
 
     public LspDiagnosticProblem(String uri, int line, int character,
+                                int endLine, int endCharacter,
                                 String message, Severity severity) {
         this.uri = uri;
         this.line = line;
         this.character = character;
+        this.endLine = endLine;
+        this.endCharacter = endCharacter;
         this.message = message != null ? message : "";
         this.severity = severity != null ? severity : Severity.ERROR;
     }
@@ -83,14 +89,27 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
     public static LspDiagnosticProblem fromLsp(String uri, Diagnostic diagnostic) {
         int line = 0;
         int character = 0;
-        if (diagnostic.getRange() != null && diagnostic.getRange().getStart() != null) {
-            line = diagnostic.getRange().getStart().getLine();
-            character = diagnostic.getRange().getStart().getCharacter();
+        int endLine = 0;
+        int endCharacter = 0;
+        if (diagnostic.getRange() != null) {
+            if (diagnostic.getRange().getStart() != null) {
+                line = diagnostic.getRange().getStart().getLine();
+                character = diagnostic.getRange().getStart().getCharacter();
+            }
+            if (diagnostic.getRange().getEnd() != null) {
+                endLine = diagnostic.getRange().getEnd().getLine();
+                endCharacter = diagnostic.getRange().getEnd().getCharacter();
+            } else {
+                endLine = line;
+                endCharacter = character;
+            }
         }
         return new LspDiagnosticProblem(
             uri,
             line,
             character,
+            endLine,
+            endCharacter,
             diagnostic.getMessage(),
             Severity.fromLsp(diagnostic.getSeverity()));
     }
@@ -109,6 +128,26 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
         return character;
     }
 
+    /** LSP end line (0-based), exclusive range end. */
+    public int getEndLine() {
+        return endLine;
+    }
+
+    /** LSP end character (0-based), exclusive range end. */
+    public int getEndCharacter() {
+        return endCharacter;
+    }
+
+    /** Start offset in the buffer for this diagnostic range. */
+    public int getStartOffset(Buffer buffer) {
+        return offsetAt(buffer, line, character);
+    }
+
+    /** End offset in the buffer (exclusive). */
+    public int getEndOffset(Buffer buffer) {
+        return offsetAt(buffer, endLine, endCharacter);
+    }
+
     public String getMessage() {
         return message;
     }
@@ -124,6 +163,26 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
         return severity.getLabel()
             + " (" + (line + 1) + ":" + (character + 1) + ") "
             + message;
+    }
+
+    private static int offsetAt(Buffer buffer, int line, int character) {
+        if (buffer.getLineCount() == 0) {
+            return 0;
+        }
+        if (line < 0) {
+            line = 0;
+        } else if (line >= buffer.getLineCount()) {
+            line = buffer.getLineCount() - 1;
+        }
+
+        int lineStart = buffer.getLineStartOffset(line);
+        int lineLength = buffer.getLineLength(line);
+        if (character < 0) {
+            character = 0;
+        } else if (character > lineLength) {
+            character = lineLength;
+        }
+        return Math.min(lineStart + character, buffer.getLength());
     }
 
     @Override
@@ -150,6 +209,8 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
         LspDiagnosticProblem other = (LspDiagnosticProblem) obj;
         return line == other.line
             && character == other.character
+            && endLine == other.endLine
+            && endCharacter == other.endCharacter
             && severity == other.severity
             && Objects.equals(uri, other.uri)
             && Objects.equals(message, other.message);
@@ -157,6 +218,6 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri, line, character, message, severity);
+        return Objects.hash(uri, line, character, endLine, endCharacter, message, severity);
     }
 }

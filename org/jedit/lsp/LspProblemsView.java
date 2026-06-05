@@ -29,7 +29,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.net.URI;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -44,7 +43,6 @@ import javax.swing.tree.TreePath;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
-import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 
@@ -160,7 +158,7 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
     }
 
     private void openProblem(LspDiagnosticProblem problem) {
-        String path = uriToPath(problem.getUri());
+        String path = LspDocumentUri.uriToPath(problem.getUri());
         if (path == null) {
             return;
         }
@@ -176,7 +174,7 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
             return;
         }
 
-        int offset = offsetForProblem(buffer, problem);
+        int offset = problem.getStartOffset(buffer);
         buffer.setIntegerProperty(Buffer.CARET, offset);
         buffer.setBooleanProperty(Buffer.CARET_POSITIONED, true);
         buffer.unsetProperty(Buffer.SCROLL_VERT);
@@ -190,47 +188,13 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
         view.requestFocus();
     }
 
-    private static int offsetForProblem(Buffer buffer, LspDiagnosticProblem problem) {
-        int line = problem.getLine();
-        if (buffer.getLineCount() == 0) {
-            return 0;
-        }
-        if (line < 0) {
-            line = 0;
-        } else if (line >= buffer.getLineCount()) {
-            line = buffer.getLineCount() - 1;
-        }
-
-        int lineStart = buffer.getLineStartOffset(line);
-        int character = problem.getCharacter();
-        int lineLength = buffer.getLineLength(line);
-        if (character < 0) {
-            character = 0;
-        } else if (character > lineLength) {
-            character = lineLength;
-        }
-        return Math.min(lineStart + character, buffer.getLength());
-    }
-
-    private static String uriToPath(String uri) {
-        try {
-            URI parsed = URI.create(uri);
-            if (!"file".equalsIgnoreCase(parsed.getScheme())) {
-                return null;
-            }
-            return MiscUtilities.resolveSymlinks(new File(parsed).getPath());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
     private static final class FileNode {
         private final String uri;
         private final String displayName;
 
         FileNode(String uri) {
             this.uri = uri;
-            String path = uriToPath(uri);
+            String path = LspDocumentUri.uriToPath(uri);
             this.displayName = new File(path != null ? path : uri).getName();
         }
 

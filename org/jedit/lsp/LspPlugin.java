@@ -59,10 +59,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     @Override
     public void start() {
         Log.log(DEFAULT_LEVEL, this, "LSP Plugin starting...");
+        LspDiagnosticHighlights.install();
     }
 
     @Override
     public void stop() {
+        LspDiagnosticHighlights.uninstall();
         // Shutdown all clients
         clients.values().forEach(GenericLspClient::shutdown);
         clients.clear();

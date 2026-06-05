@@ -31,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.SwingUtilities;
 
 import org.eclipse.lsp4j.Diagnostic;
+import org.gjt.sp.jedit.Buffer;
 
 /**
  * Stores LSP diagnostics keyed by document URI and notifies Problems views.
@@ -81,6 +82,35 @@ public final class LspDiagnosticsHub {
             count += problems.size();
         }
         return count;
+    }
+
+    public synchronized List<LspDiagnosticProblem> getProblemsForBuffer(Buffer buffer) {
+        if (buffer == null) {
+            return List.of();
+        }
+        return getProblemsForPath(buffer.getPath());
+    }
+
+    public synchronized List<LspDiagnosticProblem> getProblemsForPath(String path) {
+        if (path == null) {
+            return List.of();
+        }
+        String uri = LspDocumentUri.pathToUri(path);
+        List<LspDiagnosticProblem> direct = byUri.get(uri);
+        if (direct != null) {
+            return direct;
+        }
+        String resolved = LspDocumentUri.uriToPath(uri);
+        if (resolved == null) {
+            return List.of();
+        }
+        for (Map.Entry<String, List<LspDiagnosticProblem>> entry : byUri.entrySet()) {
+            String entryPath = LspDocumentUri.uriToPath(entry.getKey());
+            if (resolved.equals(entryPath)) {
+                return entry.getValue();
+            }
+        }
+        return List.of();
     }
 
     public void addListener(Runnable listener) {
