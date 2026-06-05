@@ -33,8 +33,8 @@ import org.gjt.sp.util.Log;
 
 import org.eclipse.lsp4j.*;
 
-import java.io.File;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Main entry point for the LSP integration in jEdit.
@@ -93,22 +93,55 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         invokeLspFeature(view, (v, client) -> LspCodeActions.refactorLsp(v, client));
     }
 
+    /**
+     * Rename the LSP symbol at the caret.
+     */
+    public static void renameLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspRename.renameLsp(v, client));
+    }
+
     @FunctionalInterface
     private interface LspFeature {
         void run(View view, GenericLspClient client);
     }
 
     /**
-     * LSP document version last sent on {@code textDocument/didOpen} for this buffer
-     * (incremented on each {@code didOpen}; {@code didChange} is not active yet).
+     * LSP document version last sent to the server for this buffer
+     * ({@code didOpen} or {@code didClose}/{@code didOpen} republish).
      */
     static int getDocumentVersion(Buffer buffer) {
         BufferLspHandler handler = getInstance().handlers.get(buffer);
         if (handler == null) {
             return 0;
         }
-        return handler.getLastOpenedVersion();
+        return handler.getLastSyncedVersion();
     }
+
+    /**
+     * Re-sends {@code didClose} + {@code didOpen} so the server overlay matches
+     * the current buffer (used after applying edits and before rename).
+     */
+    static void republishBufferToServer(Buffer buffer) {
+        republishBufferToServerAsync(buffer);
+    }
+
+    static CompletableFuture<Void> republishBufferToServerAsync(Buffer buffer) {
+        BufferLspHandler handler = getInstance().handlers.get(buffer);
+        if (handler == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return handler.republishDocumentToServerAsync();
+    }
+
+    static void beginApplyingLspEdits() {
+        applyingLspEdits = true;
+    }
+
+    static void endApplyingLspEdits() {
+        applyingLspEdits = false;
+    }
+
+    private static volatile boolean applyingLspEdits;
 
     static GenericLspClient getClientForBuffer(Buffer buffer) {
         LspPlugin plugin = getInstance();
@@ -221,14 +254,15 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         private final Buffer buffer;
         private final GenericLspClient client;
         private int version = 0;
+        private boolean needsSync;
 
         BufferLspHandler(Buffer buffer, GenericLspClient client) {
             this.buffer = buffer;
             this.client = client;
         }
 
-        /** Version sent in the last {@code didOpen} for this buffer. */
-        int getLastOpenedVersion() {
+        /** Version sent in the last {@code didOpen} or {@code didChange} for this buffer. */
+        int getLastSyncedVersion() {
             return Math.max(0, version - 1);
         }
 
@@ -236,16 +270,43 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (client.getServer() == null) {
                 return;
             }
-            
+            client.whenReady().thenRun(this::sendDidOpen).exceptionally(ex -> {
+                Log.log(Log.ERROR, this,
+                    "Failed waiting for LSP server before didOpen: " + buffer.getPath(), ex);
+                return null;
+            });
+        }
+
+        void resetVersionForServerRestart() {
+            version = 0;
+            needsSync = false;
+        }
+
+        CompletableFuture<Void> republishDocumentToServerAsync() {
+            if (client.getServer() == null) {
+                return CompletableFuture.completedFuture(null);
+            }
+            return client.whenReady().thenRun(() -> {
+                notifyClose();
+                sendDidOpen();
+            });
+        }
+
+        private void sendDidOpen() {
+            if (client.getServer() == null) {
+                return;
+            }
+
             DidOpenTextDocumentParams params = new DidOpenTextDocumentParams();
             TextDocumentItem item = new TextDocumentItem();
-            item.setUri(new File(buffer.getPath()).toURI().toString());
+            item.setUri(LspDocumentUri.pathToUri(buffer.getPath()));
             item.setLanguageId(buffer.getMode().getName());
             item.setVersion(version++);
             item.setText(buffer.getText(0, buffer.getLength()));
             params.setTextDocument(item);
-            
+
             client.getServer().getTextDocumentService().didOpen(params);
+            needsSync = false;
         }
 
         void notifyClose() {
@@ -254,18 +315,28 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             }
 
             DidCloseTextDocumentParams params = new DidCloseTextDocumentParams();
-            params.setTextDocument(new TextDocumentIdentifier(new java.io.File(buffer.getPath()).toURI().toString()));
+            params.setTextDocument(new TextDocumentIdentifier(
+                LspDocumentUri.pathToUri(buffer.getPath())));
             client.getServer().getTextDocumentService().didClose(params);
         }
 
         @Override
         public void contentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {
+            markDirty();
             notifyChange();
         }
 
         @Override
         public void contentRemoved(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {
+            markDirty();
             notifyChange();
+        }
+
+        private void markDirty() {
+            if (applyingLspEdits) {
+                return;
+            }
+            needsSync = true;
         }
 
         private void notifyChange() {
@@ -313,12 +384,23 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     private void restartLspClient(GenericLspClient client) {
         stopMetaClient(client);
         startMetaClient(client);
+        reopenBuffersForClient(client);
+    }
+
+    private synchronized void reopenBuffersForClient(GenericLspClient client) {
+        for (BufferLspHandler handler : handlers.values()) {
+            if (handler.client == client) {
+                handler.resetVersionForServerRestart();
+                handler.notifyOpen();
+            }
+        }
     }
 
     boolean restartServer(GenericLspClient client) {
         try {
             client.shutdown();
             startMetaClient(client);
+            reopenBuffersForClient(client);
             return client.isServerStarted();
         } catch (Exception e) {
             Log.log(Log.ERROR, this, "Error restarting server for " + client.getMode(), e);

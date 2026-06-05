@@ -54,4 +54,16 @@ final class LspDocumentUri {
             return null;
         }
     }
+
+    static boolean urisReferToSameFile(String uri1, String uri2) {
+        if (uri1 == null || uri2 == null) {
+            return false;
+        }
+        if (uri1.equals(uri2)) {
+            return true;
+        }
+        String path1 = uriToPath(uri1);
+        String path2 = uriToPath(uri2);
+        return path1 != null && path2 != null && MiscUtilities.pathsEqual(path1, path2);
+    }
 }

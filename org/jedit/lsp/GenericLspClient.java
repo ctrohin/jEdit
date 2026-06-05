@@ -26,8 +26,9 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.gjt.sp.util.Log;
-import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -40,6 +41,7 @@ public class GenericLspClient {
     private volatile int bufferCount = 0;
     private final String mode;
     private boolean serverStarted = false;
+    private volatile CompletableFuture<Void> initializationComplete;
 
     public GenericLspClient(final String mode) {
         this.mode = mode;
@@ -100,30 +102,32 @@ public class GenericLspClient {
 
         // 3. Handshake
         InitializeParams params = new InitializeParams();
-        WorkspaceFolder rootFolder = new WorkspaceFolder(new File(projectRoot).toURI().toString(), "root");
+        WorkspaceFolder rootFolder = new WorkspaceFolder(
+            LspDocumentUri.pathToUri(projectRoot), "root");
         params.setWorkspaceFolders(List.of(rootFolder));
 
-        // Tell the server we support specific features
-        ClientCapabilities capabilities = new ClientCapabilities();
-        TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
-        textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
-        capabilities.setTextDocument(textDocCaps);
+        params.setCapabilities(buildClientCapabilities());
 
-        WorkspaceClientCapabilities workspaceCaps = new WorkspaceClientCapabilities();
-        workspaceCaps.setApplyEdit(true);
-        capabilities.setWorkspace(workspaceCaps);
-
-        params.setCapabilities(capabilities);
-
+        initializationComplete = new CompletableFuture<>();
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
             server.initialized(new InitializedParams());
+            initializationComplete.complete(null);
             System.out.println(languageId + " server is ready!");
         }).exceptionally(ex -> {
             setServerStarted(false);
+            initializationComplete.completeExceptionally(ex);
             Log.log(Log.ERROR, this, "Failed to initialize LSP server for " + languageId, ex);
             return null;
         });
+    }
+
+    CompletableFuture<Void> whenReady() {
+        CompletableFuture<Void> ready = initializationComplete;
+        if (ready == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return ready;
     }
 
     boolean isAlive() {
@@ -132,6 +136,7 @@ public class GenericLspClient {
 
     void shutdown() {
         setServerStarted(false);
+        initializationComplete = null;
         try {
             if (server != null) {
                 server.shutdown().get();
@@ -151,5 +156,86 @@ public class GenericLspClient {
 
     public LanguageServer getServer() {
         return server;
+    }
+
+    private static ClientCapabilities buildClientCapabilities() {
+        ClientCapabilities capabilities = new ClientCapabilities();
+
+        TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
+        textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
+        textDocCaps.setCodeAction(buildCodeActionCapabilities());
+        textDocCaps.setRename(new RenameCapabilities(false, true));
+        capabilities.setTextDocument(textDocCaps);
+
+        WorkspaceClientCapabilities workspaceCaps = new WorkspaceClientCapabilities();
+        workspaceCaps.setApplyEdit(true);
+        WorkspaceEditCapabilities workspaceEditCaps = new WorkspaceEditCapabilities(true);
+        workspaceEditCaps.setDocumentChanges(true);
+        workspaceEditCaps.setResourceOperations(List.of(
+            ResourceOperationKind.Create,
+            ResourceOperationKind.Rename,
+            ResourceOperationKind.Delete));
+        workspaceCaps.setWorkspaceEdit(workspaceEditCaps);
+        capabilities.setWorkspace(workspaceCaps);
+
+        WindowClientCapabilities windowCaps = new WindowClientCapabilities();
+        windowCaps.setWorkDoneProgress(true);
+        WindowShowMessageRequestCapabilities showMessageCaps =
+            new WindowShowMessageRequestCapabilities();
+        showMessageCaps.setMessageActionItem(
+            new WindowShowMessageRequestActionItemCapabilities());
+        windowCaps.setShowMessage(showMessageCaps);
+        capabilities.setWindow(windowCaps);
+
+        capabilities.setExperimental(buildExperimentalCapabilities());
+        return capabilities;
+    }
+
+    private static CodeActionCapabilities buildCodeActionCapabilities() {
+        CodeActionKindCapabilities kindCaps = new CodeActionKindCapabilities();
+        kindCaps.setValueSet(List.of(
+            CodeActionKind.Empty,
+            CodeActionKind.QuickFix,
+            CodeActionKind.Refactor,
+            CodeActionKind.RefactorExtract,
+            CodeActionKind.RefactorInline,
+            CodeActionKind.RefactorRewrite,
+            CodeActionKind.Source,
+            CodeActionKind.SourceOrganizeImports));
+
+        CodeActionLiteralSupportCapabilities literalSupport =
+            new CodeActionLiteralSupportCapabilities();
+        literalSupport.setCodeActionKind(kindCaps);
+
+        CodeActionResolveSupportCapabilities resolveSupport =
+            new CodeActionResolveSupportCapabilities();
+        resolveSupport.setProperties(List.of("edit", "command"));
+
+        CodeActionCapabilities codeActionCaps = new CodeActionCapabilities();
+        codeActionCaps.setCodeActionLiteralSupport(literalSupport);
+        codeActionCaps.setDataSupport(true);
+        codeActionCaps.setIsPreferredSupport(true);
+        codeActionCaps.setDisabledSupport(true);
+        codeActionCaps.setResolveSupport(resolveSupport);
+        return codeActionCaps;
+    }
+
+    private static Map<String, Object> buildExperimentalCapabilities() {
+        Map<String, Object> commandParameterSupport = new LinkedHashMap<>();
+        commandParameterSupport.put("supportedKinds", List.of(
+            "saveUri", "openUri", "string", "text", "boolean", "pick", "selection"));
+
+        Map<String, Object> dartCodeAction = new LinkedHashMap<>();
+        dartCodeAction.put("commandParameterSupport", commandParameterSupport);
+
+        Map<String, Object> interactiveResolve = new LinkedHashMap<>();
+        interactiveResolve.put("inputTypes", List.of(
+            "string", "text", "boolean", "number", "pick", "multiPick", "file", "directory"));
+
+        Map<String, Object> experimental = new LinkedHashMap<>();
+        experimental.put("dartCodeAction", dartCodeAction);
+        experimental.put("supportsWindowShowMessageRequest", true);
+        experimental.put("interactiveResolve", interactiveResolve);
+        return experimental;
     }
 }

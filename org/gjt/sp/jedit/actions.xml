@@ -216,6 +216,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="rename-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.renameLsp(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

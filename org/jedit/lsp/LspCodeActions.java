@@ -284,7 +284,7 @@ public final class LspCodeActions {
         if (action != null && action.getEdit() == null) {
             lspClient.getServer().getTextDocumentService().resolveCodeAction(action)
                 .thenAccept(resolved -> runOnEdt(() ->
-                    finishResolvedCodeAction(lspClient, documentUri, buffer,
+                    finishResolvedCodeAction(view, lspClient, documentUri, buffer,
                         resolved != null ? resolved : action)))
                 .exceptionally(ex -> {
                     reportApplyError(toException(ex));
@@ -295,11 +295,11 @@ public final class LspCodeActions {
 
         Command command = item.getCommand();
         if (command != null) {
-            executeWorkspaceCommandAsync(lspClient, command, buffer);
+            executeWorkspaceCommandAsync(view, lspClient, action, command, buffer);
         }
     }
 
-    private static void finishResolvedCodeAction(GenericLspClient lspClient,
+    private static void finishResolvedCodeAction(View view, GenericLspClient lspClient,
                                                  String documentUri, Buffer buffer,
                                                  CodeAction action) {
         if (action.getEdit() != null) {
@@ -310,7 +310,7 @@ public final class LspCodeActions {
         }
         Command command = action.getCommand();
         if (command != null) {
-            executeWorkspaceCommandAsync(lspClient, command, buffer);
+            executeWorkspaceCommandAsync(view, lspClient, action, command, buffer);
         }
     }
 
@@ -318,42 +318,51 @@ public final class LspCodeActions {
      * Runs {@code workspace/executeCommand} asynchronously so the EDT is never blocked
      * while waiting for the server (which may call {@code workspace/applyEdit} back).
      */
-    private static void executeWorkspaceCommandAsync(GenericLspClient lspClient,
+    private static void executeWorkspaceCommandAsync(View view,
+                                                     GenericLspClient lspClient,
+                                                     CodeAction sourceAction,
                                                      Command command,
                                                      Buffer buffer) {
+        Command prepared = LspInteractiveRefactor.applyInteractiveParameters(
+            view, sourceAction, command);
+        if (prepared == null) {
+            return;
+        }
+        final Command commandToRun = prepared;
+
         ExecuteCommandParams params = new ExecuteCommandParams();
-        final String commandId = command.getCommand();
+        final String commandId = commandToRun.getCommand();
         params.setCommand(commandId);
 
         if ("dart.edit.codeAction.apply".equals(commandId)) {
-            executeDartApplyCodeActionCommand(lspClient, params, command, buffer);
+            executeDartApplyCodeActionCommand(lspClient, params, commandToRun, buffer);
             return;
         }
 
         if (!isCodeActionCommand(commandId)) {
-            params.setArguments(LspGsonArgs.toExecuteArguments(command.getArguments()));
-            executeCommandAsync(lspClient, params, command, buffer, null);
+            params.setArguments(LspGsonArgs.toExecuteArguments(commandToRun.getArguments()));
+            executeCommandAsync(lspClient, params, commandToRun, buffer, null);
             return;
         }
 
-        List<Object> originalArgs = LspGsonArgs.toExecuteArguments(command.getArguments());
-        List<Object> threeArgs = buildThreeArgumentCommandArguments(command, buffer);
-        List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
+        List<Object> originalArgs = LspGsonArgs.toExecuteArguments(commandToRun.getArguments());
+        List<Object> threeArgs = buildThreeArgumentCommandArguments(commandToRun, buffer);
+        List<Object> oneMapArg = buildSingleMapCommandArguments(commandToRun, buffer);
 
         executeCommandAsync(lspClient, copyExecuteParams(commandId, originalArgs),
-            command, buffer, firstError -> {
+            commandToRun, buffer, firstError -> {
                 String message = getRootMessage(firstError);
                 if (message != null && message.contains("requires a single Map argument")) {
                     executeCommandAsync(lspClient, copyExecuteParams(commandId, oneMapArg),
-                        command, buffer, null);
+                        commandToRun, buffer, null);
                 } else if (message != null && message.contains("requires 3 parameters")) {
                     executeCommandAsync(lspClient, copyExecuteParams(commandId, threeArgs),
-                        command, buffer, null);
+                        commandToRun, buffer, null);
                 } else {
                     executeCommandAsync(lspClient, copyExecuteParams(commandId, threeArgs),
-                        command, buffer, secondError ->
+                        commandToRun, buffer, secondError ->
                             executeCommandAsync(lspClient, copyExecuteParams(commandId, oneMapArg),
-                                command, buffer, null));
+                                commandToRun, buffer, null));
                 }
             });
     }
@@ -436,10 +445,7 @@ public final class LspCodeActions {
                     "Buffer is not editable, cannot apply code action edit");
                 return;
             }
-            boolean applied = LspWorkspaceEdits.applyToBuffer(buffer, documentUri, edit);
-            if (!applied) {
-                applied = LspWorkspaceEdits.apply(edit);
-            }
+            boolean applied = LspWorkspaceEdits.apply(edit);
             if (!applied) {
                 Log.log(Log.WARNING, LspCodeActions.class,
                     "executeCommand returned a WorkspaceEdit but no edits were applied");

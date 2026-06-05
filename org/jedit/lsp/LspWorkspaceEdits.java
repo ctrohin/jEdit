@@ -21,13 +21,14 @@
 
 package org.jedit.lsp;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
@@ -38,6 +39,7 @@ import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.ResourceOperation;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -140,13 +142,56 @@ final class LspWorkspaceEdits {
         }
 
         boolean applied = false;
+        Set<Buffer> modifiedBuffers = new HashSet<>();
+        for (Map.Entry<String, List<TextEdit>> entry : collectEditsByCanonicalUri(edit).entrySet()) {
+            if (applyToUri(entry.getKey(), entry.getValue())) {
+                applied = true;
+                Buffer buffer = bufferForUri(entry.getKey());
+                if (buffer != null) {
+                    modifiedBuffers.add(buffer);
+                }
+            }
+        }
+        for (Buffer buffer : modifiedBuffers) {
+            LspPlugin.republishBufferToServer(buffer);
+        }
+        return applied;
+    }
+
+    static boolean applyToBuffer(Buffer buffer, String documentUri, WorkspaceEdit edit) {
+        if (edit == null || buffer == null) {
+            return false;
+        }
+
+        List<TextEdit> merged = new ArrayList<>();
+        for (Map.Entry<String, List<TextEdit>> entry : collectEditsByCanonicalUri(edit).entrySet()) {
+            if (LspDocumentUri.urisReferToSameFile(documentUri, entry.getKey())) {
+                merged.addAll(entry.getValue());
+            }
+        }
+        if (merged.isEmpty()) {
+            return false;
+        }
+        return applyTextEdits(buffer, merged);
+    }
+
+    /**
+     * Merges all text edits per file. LSP ranges are relative to the document
+     * snapshot before any edit, so each file must be updated in a single pass.
+     * When {@code documentChanges} is present it takes precedence over {@code changes}.
+     */
+    private static Map<String, List<TextEdit>> collectEditsByCanonicalUri(WorkspaceEdit edit) {
+        Map<String, List<TextEdit>> byUri = new LinkedHashMap<>();
 
         if (edit.getDocumentChanges() != null) {
             for (Either<TextDocumentEdit, ResourceOperation> change : edit.getDocumentChanges()) {
                 if (change.isLeft()) {
                     TextDocumentEdit docEdit = change.getLeft();
-                    if (docEdit != null && docEdit.getTextDocument() != null) {
-                        applied |= applyToUri(
+                    if (docEdit != null
+                        && docEdit.getTextDocument() != null
+                        && docEdit.getEdits() != null
+                        && !docEdit.getEdits().isEmpty()) {
+                        mergeEdits(byUri,
                             docEdit.getTextDocument().getUri(),
                             docEdit.getEdits());
                     }
@@ -156,67 +201,87 @@ final class LspWorkspaceEdits {
 
         if (edit.getChanges() != null) {
             for (Map.Entry<String, List<TextEdit>> entry : edit.getChanges().entrySet()) {
-                applied |= applyToUri(entry.getKey(), entry.getValue());
+                mergeEdits(byUri, entry.getKey(), entry.getValue());
             }
         }
-
-        return applied;
+        return byUri;
     }
 
-    static boolean applyToBuffer(Buffer buffer, String documentUri, WorkspaceEdit edit) {
-        if (edit == null || buffer == null) {
-            return false;
+    static int countTextEdits(WorkspaceEdit edit) {
+        int count = 0;
+        for (List<TextEdit> edits : collectEditsByCanonicalUri(edit).values()) {
+            count += edits.size();
         }
+        return count;
+    }
 
-        boolean applied = false;
-
-        if (edit.getDocumentChanges() != null) {
-            for (Either<TextDocumentEdit, ResourceOperation> change : edit.getDocumentChanges()) {
-                if (change.isLeft()) {
-                    TextDocumentEdit docEdit = change.getLeft();
-                    if (docEdit != null
-                        && docEdit.getTextDocument() != null
-                        && documentUri.equals(docEdit.getTextDocument().getUri())) {
-                        applied |= applyTextEdits(buffer, docEdit.getEdits());
-                    }
-                }
-            }
+    private static void mergeEdits(Map<String, List<TextEdit>> byUri,
+                                   String uri, List<TextEdit> edits) {
+        if (uri == null || edits == null || edits.isEmpty()) {
+            return;
         }
+        byUri.computeIfAbsent(canonicalUriKey(uri), k -> new ArrayList<>()).addAll(edits);
+    }
 
-        if (edit.getChanges() != null) {
-            List<TextEdit> textEdits = edit.getChanges().get(documentUri);
-            if (textEdits != null) {
-                applied |= applyTextEdits(buffer, textEdits);
-            }
+    private static String canonicalUriKey(String uri) {
+        String path = LspDocumentUri.uriToPath(uri);
+        if (path != null) {
+            return LspDocumentUri.pathToUri(path);
         }
-
-        return applied;
+        return uri;
     }
 
     private static boolean applyToUri(String documentUri, List<TextEdit> edits) {
         Buffer buffer = bufferForUri(documentUri);
-        if (buffer == null || !buffer.isEditable()) {
+        if (buffer != null && buffer.isEditable()) {
+            return applyTextEdits(buffer, edits);
+        }
+
+        String path = LspDocumentUri.uriToPath(documentUri);
+        if (path == null) {
             Log.log(Log.WARNING, LspWorkspaceEdits.class,
-                "No editable buffer open for URI: " + documentUri);
+                "Cannot resolve local path for URI: " + documentUri);
             return false;
         }
-        return applyTextEdits(buffer, edits);
+
+        buffer = jEdit.openFile((View) null, path);
+        if (buffer != null && buffer.isEditable()) {
+            return applyTextEdits(buffer, edits);
+        }
+
+        Log.log(Log.WARNING, LspWorkspaceEdits.class,
+            "Could not open editable buffer for URI: " + documentUri);
+        return false;
     }
 
     static Buffer bufferForUri(String documentUri) {
-        if (documentUri == null) {
+        String path = LspDocumentUri.uriToPath(documentUri);
+        if (path == null) {
             return null;
         }
-        try {
-            URI uri = URI.create(documentUri);
-            if (!"file".equalsIgnoreCase(uri.getScheme())) {
-                return null;
+
+        Buffer buffer = jEdit.getBuffer(path);
+        if (buffer != null) {
+            return buffer;
+        }
+
+        for (Buffer openBuffer : jEdit.getBufferManager().getBuffers()) {
+            if (MiscUtilities.pathsEqual(openBuffer.getPath(), path)) {
+                return openBuffer;
             }
-            return jEdit.getBuffer(new File(uri).getPath());
-        } catch (IllegalArgumentException e) {
-            Log.log(Log.WARNING, LspWorkspaceEdits.class,
-                "Invalid document URI: " + documentUri, e);
-            return null;
+        }
+        return null;
+    }
+
+    private static final class ResolvedEdit {
+        final int start;
+        final int end;
+        final String newText;
+
+        ResolvedEdit(int start, int end, String newText) {
+            this.start = start;
+            this.end = end;
+            this.newText = newText;
         }
     }
 
@@ -225,47 +290,60 @@ final class LspWorkspaceEdits {
             return false;
         }
 
-        TextEdit primaryEdit = edits.stream()
-            .min(Comparator
-                .comparing((TextEdit e) -> e.getRange().getStart().getLine())
-                .thenComparing(e -> e.getRange().getStart().getCharacter()))
-            .orElse(edits.get(0));
-        int caretTarget = positionToOffset(buffer, primaryEdit.getRange().getStart());
-        if (caretTarget < 0) {
-            caretTarget = 0;
+        List<ResolvedEdit> resolved = new ArrayList<>();
+        for (TextEdit edit : edits) {
+            Range range = edit.getRange();
+            if (range == null || range.getStart() == null || range.getEnd() == null) {
+                continue;
+            }
+            String newText = edit.getNewText() != null ? edit.getNewText() : "";
+            int start = positionToOffset(buffer, range.getStart());
+            int end = positionToOffset(buffer, range.getEnd());
+            if (start < 0 || end < 0 || start > end) {
+                Log.log(Log.WARNING, LspWorkspaceEdits.class,
+                    "Invalid text edit range in " + buffer.getPath()
+                        + ": start=" + start + ", end=" + end);
+                continue;
+            }
+            resolved.add(new ResolvedEdit(start, end, newText));
         }
 
-        List<TextEdit> sorted = new ArrayList<>(edits);
-        sorted.sort(Comparator
-            .comparing((TextEdit e) -> e.getRange().getStart().getLine())
-            .thenComparing(e -> e.getRange().getStart().getCharacter())
-            .reversed());
+        if (resolved.isEmpty()) {
+            return false;
+        }
 
+        if (resolved.size() < edits.size()) {
+            Log.log(Log.WARNING, LspWorkspaceEdits.class,
+                "Skipped " + (edits.size() - resolved.size())
+                    + " invalid text edit(s) in " + buffer.getPath()
+                    + " (buffer text may be out of sync with the language server)");
+        }
+
+        resolved.sort(Comparator.comparingInt((ResolvedEdit e) -> e.start).reversed());
+
+        int caretTarget = resolved.stream().mapToInt(e -> e.start).min().orElse(0);
+        for (ResolvedEdit edit : resolved) {
+            if (edit.end <= caretTarget) {
+                caretTarget += edit.newText.length() - (edit.end - edit.start);
+            } else if (edit.start < caretTarget) {
+                caretTarget = edit.start;
+            }
+        }
+
+        LspPlugin.beginApplyingLspEdits();
         buffer.beginCompoundEdit();
         try {
-            for (TextEdit edit : sorted) {
-                Range range = edit.getRange();
-                String newText = edit.getNewText();
-                if (range == null || newText == null) {
-                    continue;
-                }
-                int startOffset = positionToOffset(buffer, range.getStart());
-                int endOffset = positionToOffset(buffer, range.getEnd());
-                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
-                    applyTextEdit(buffer, edit);
-                    continue;
-                }
-                if (endOffset <= caretTarget) {
-                    caretTarget += newText.length() - (endOffset - startOffset);
-                } else if (startOffset < caretTarget) {
-                    caretTarget = startOffset;
-                }
-                applyTextEdit(buffer, edit);
+            for (ResolvedEdit edit : resolved) {
+                buffer.remove(edit.start, edit.end - edit.start);
+                buffer.insert(edit.start, edit.newText);
             }
         } finally {
             buffer.endCompoundEdit();
+            LspPlugin.endApplyingLspEdits();
         }
 
+        Log.log(Log.DEBUG, LspWorkspaceEdits.class,
+            "Applied " + resolved.size() + " text edit(s) to " + buffer.getPath());
         setBufferCaret(buffer, caretTarget);
         return true;
     }
@@ -283,25 +361,6 @@ final class LspWorkspaceEdits {
                 }
             }
         }
-    }
-
-    private static void applyTextEdit(Buffer buffer, TextEdit textEdit) {
-        Range range = textEdit.getRange();
-        String newText = textEdit.getNewText();
-        if (range == null || newText == null) {
-            return;
-        }
-
-        int startOffset = positionToOffset(buffer, range.getStart());
-        int endOffset = positionToOffset(buffer, range.getEnd());
-        if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
-            Log.log(Log.WARNING, LspWorkspaceEdits.class,
-                "Invalid text edit range: start=" + startOffset + ", end=" + endOffset);
-            return;
-        }
-
-        buffer.remove(startOffset, endOffset - startOffset);
-        buffer.insert(startOffset, newText);
     }
 
     private static List<TextEdit> textEditsFromObject(Object value) {

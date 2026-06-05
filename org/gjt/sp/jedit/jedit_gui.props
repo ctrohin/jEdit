@@ -207,6 +207,7 @@ edit=undo \
 	 complete-lsp \
 	 code-actions-lsp \
 	 refactor-lsp \
+	 rename-lsp \
 	 expand-abbrev \
 	 - \
 	 goto-line \
