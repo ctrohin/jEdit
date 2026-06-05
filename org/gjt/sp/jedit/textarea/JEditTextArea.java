@@ -73,6 +73,7 @@ public class JEditTextArea extends TextArea
 		setRightClickPopupEnabled(true);
 		painter.setLineExtraSpacing(jEdit.getIntegerProperty("options.textarea.lineSpacing", 0));
 		new PageBreakExtension(this);
+		selectionMatchHighlight = new SelectionMatchHighlight(this);
 		EditBus.addToBus(this);
 	} //}}}
 
@@ -80,6 +81,11 @@ public class JEditTextArea extends TextArea
 	@Override
 	public void dispose()
 	{
+		if (selectionMatchHighlight != null)
+		{
+			selectionMatchHighlight.dispose();
+			selectionMatchHighlight = null;
+		}
 		EditBus.removeFromBus(this);
 		super.dispose();
 	} //}}}
@@ -430,6 +436,7 @@ public class JEditTextArea extends TextArea
 
 	//{{{ Instance variables
 	private final View view;
+	private SelectionMatchHighlight selectionMatchHighlight;
 	//}}}
 	//}}}
 
