@@ -2040,6 +2040,11 @@ log-viewer.tail.label=Tail
 #{{{ Marker Viewer
 view-markers.label=Vie$w Markers
 view-markers.title=Markers
+
+lsp-problems.label=$Problems
+lsp-problems.title=Problems
+lsp-problems.empty=No problems reported
+lsp-problems.caption={0,choice,0#No problems|1#1 problem in {1,number,integer} file|1<{0,number,integer} problems in {1,number,integer} files}
 #}}}
 
 #{{{ I/O progress monitor

@@ -441,6 +441,7 @@ docking=left-docking-area \
 #{{{ Utilities menu
 utils=vfs.browser \
 	  workspace \
+	  lsp-problems \
 	  %recent-directories \
 	  - \
 	  %favorites \
@@ -1026,3 +1027,8 @@ errorwidget.popupmenu=logs-remove-all-errors
 workspace.title=Project Folder
 workspace.label=Project Folder
 workspace.icon=MatIcons.FOLDER:22
+
+lsp-problems.title=Problems
+lsp-problems.label=Problems
+lsp-problems.dock-position=bottom
+lsp-problems.icon=MatIcons.ERROR_OUTLINE:22

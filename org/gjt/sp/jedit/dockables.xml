@@ -24,4 +24,7 @@
 	<DOCKABLE NAME="task-monitor" MOVABLE="TRUE">
 		new TaskMonitor();
 	</DOCKABLE>
+	<DOCKABLE NAME="lsp-problems" MOVABLE="TRUE">
+		new org.jedit.lsp.LspProblemsView(view);
+	</DOCKABLE>
 </DOCKABLES>

@@ -44,9 +44,12 @@ public class MyLspClient implements LanguageClient {
 
     @Override
     public void publishDiagnostics(PublishDiagnosticsParams diagnostics) {
-        diagnostics.getDiagnostics().forEach(d ->
-            System.out.println("[DIAGNOSTIC] " + d.getMessage())
-        );
+        if (diagnostics == null) {
+            return;
+        }
+        LspDiagnosticsHub.getInstance().setDiagnostics(
+            diagnostics.getUri(),
+            diagnostics.getDiagnostics());
     }
 
     @Override
