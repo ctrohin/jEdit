@@ -41,6 +41,7 @@ import javax.swing.border.Border;
 import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.Position;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.TextUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.syntax.KeywordMap;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -52,7 +53,7 @@ import org.gjt.sp.jedit.textarea.TextAreaPainter;
 final class LspSymbolHoverTooltip {
 
     private static final int SHOW_DELAY_MS = 600;
-    private static final int HIDE_DELAY_MS = 250;
+    private static final int HIDE_DELAY_MS = 400;
     private static final int HOVER_CHECK_MS = 100;
     private static final int CURSOR_OFFSET_X = 12;
     private static final int CURSOR_OFFSET_Y = 16;
@@ -147,23 +148,28 @@ final class LspSymbolHoverTooltip {
             return;
         }
 
-        if (window.isVisible()) {
-            return;
-        }
-
         if (!(textArea.getBuffer() instanceof Buffer buffer) || buffer.isLoading()) {
+            if (window.isVisible()) {
+                hideTooltip();
+            }
             clearPending();
             return;
         }
 
         GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
         if (client == null || client.getServer() == null || !client.isAlive()) {
+            if (window.isVisible()) {
+                hideTooltip();
+            }
             clearPending();
             return;
         }
 
-        Position position = positionAt(x, y);
-        if (position == null || !isSymbolAt(x, y)) {
+        SymbolAtPointer symbol = symbolAt(x, y);
+        if (symbol == null) {
+            if (window.isVisible()) {
+                hideTooltip();
+            }
             clearPending();
             return;
         }
@@ -172,13 +178,20 @@ final class LspSymbolHoverTooltip {
         anchorScreenX = screen.x + x;
         anchorScreenY = screen.y + y;
 
-        String hoverKey = hoverKey(buffer, position);
-        if (hoverKey.equals(pendingHoverKey)) {
+        if (window.isVisible()) {
+            if (symbol.key().equals(shownHoverKey)) {
+                hideTimer.stop();
+                return;
+            }
+            hideTooltip();
+        }
+
+        if (symbol.key().equals(pendingHoverKey)) {
             return;
         }
 
-        pendingHoverKey = hoverKey;
-        pendingPosition = position;
+        pendingHoverKey = symbol.key();
+        pendingPosition = symbol.position();
         showTimer.restart();
     }
 
@@ -270,7 +283,7 @@ final class LspSymbolHoverTooltip {
         if (!window.isVisible()) {
             return;
         }
-        if (isPointerOverPopup()) {
+        if (isPointerOverPopup() || isPointerOverShownSymbol()) {
             hideTimer.stop();
         } else if (!hideTimer.isRunning()) {
             hideTimer.start();
@@ -280,6 +293,23 @@ final class LspSymbolHoverTooltip {
     private boolean isPointerOverPopup() {
         Point pointer = MouseInfo.getPointerInfo().getLocation();
         return window.getBounds().contains(pointer);
+    }
+
+    private boolean isPointerOverShownSymbol() {
+        if (shownHoverKey == null) {
+            return false;
+        }
+
+        Point pointer = MouseInfo.getPointerInfo().getLocation();
+        Point painterLoc = painter.getLocationOnScreen();
+        int x = pointer.x - painterLoc.x;
+        int y = pointer.y - painterLoc.y;
+        if (x < 0 || y < 0 || x >= painter.getWidth() || y >= painter.getHeight()) {
+            return false;
+        }
+
+        SymbolAtPointer symbol = symbolAt(x, y);
+        return symbol != null && shownHoverKey.equals(symbol.key());
     }
 
     private void hideTooltip() {
@@ -293,7 +323,9 @@ final class LspSymbolHoverTooltip {
         LspHover.cancelPendingRequests();
     }
 
-    private Position positionAt(int x, int y) {
+    private record SymbolAtPointer(String key, Position position) {}
+
+    private SymbolAtPointer symbolAt(int x, int y) {
         if (!(textArea.getBuffer() instanceof Buffer buffer)) {
             return null;
         }
@@ -302,27 +334,6 @@ final class LspSymbolHoverTooltip {
             !(painter.isBlockCaretEnabled() || textArea.isOverwriteEnabled()));
         if (offset < 0) {
             return null;
-        }
-
-        int line = buffer.getLineOfOffset(offset);
-        int lineStart = buffer.getLineStartOffset(line);
-        return new Position(line, offset - lineStart);
-    }
-
-    private static String hoverKey(Buffer buffer, Position position) {
-        return LspDocumentUri.pathToUri(buffer.getPath()) + ':' + position.getLine()
-            + ':' + position.getCharacter();
-    }
-
-    private boolean isSymbolAt(int x, int y) {
-        if (!(textArea.getBuffer() instanceof Buffer buffer)) {
-            return false;
-        }
-
-        int offset = textArea.xyToOffset(x, y,
-            !(painter.isBlockCaretEnabled() || textArea.isOverwriteEnabled()));
-        if (offset < 0) {
-            return false;
         }
 
         int line = buffer.getLineOfOffset(offset);
@@ -330,7 +341,7 @@ final class LspSymbolHoverTooltip {
         int dot = offset - lineStart;
         CharSequence lineText = buffer.getLineSegment(line);
         if (lineText.isEmpty()) {
-            return false;
+            return null;
         }
 
         KeywordMap keywordMap = buffer.getKeywordMapAtOffset(offset);
@@ -340,17 +351,34 @@ final class LspSymbolHoverTooltip {
         if (index >= lineText.length()) {
             index = lineText.length() - 1;
         }
+        if (index < 0) {
+            return null;
+        }
+
         char ch = lineText.charAt(index);
         if (!isWordChar(ch, noWordSep)) {
             if (index == 0) {
-                return false;
+                return null;
             }
-            ch = lineText.charAt(index - 1);
-            if (!isWordChar(ch, noWordSep)) {
-                return false;
+            index--;
+            if (!isWordChar(lineText.charAt(index), noWordSep)) {
+                return null;
             }
         }
-        return true;
+
+        boolean joinNonWordChars = textArea.getJoinNonWordChars();
+        int wordStart = TextUtilities.findWordStart(lineText, index, noWordSep,
+            joinNonWordChars, false, false);
+        int wordEnd = TextUtilities.findWordEnd(lineText, index + 1, noWordSep,
+            joinNonWordChars, false, false);
+        if (wordEnd <= wordStart) {
+            return null;
+        }
+
+        String key = LspDocumentUri.pathToUri(buffer.getPath()) + ':' + line
+            + ':' + wordStart + ':' + wordEnd;
+        Position position = new Position(line, dot);
+        return new SymbolAtPointer(key, position);
     }
 
     private static boolean isWordChar(char ch, String noWordSep) {
