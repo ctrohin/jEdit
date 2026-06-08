@@ -36,6 +36,8 @@ import org.eclipse.lsp4j.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import javax.swing.Timer;
+
 /**
  * Main entry point for the LSP integration in jEdit.
  * It listens for buffer events and manages LSP clients for different languages.
@@ -186,6 +188,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             startLspForBuffer(buffer);
         } else if (message.getWhat() == BufferUpdate.CLOSED) {
             stopLspForBuffer(buffer);
+        } else if (message.getWhat() == BufferUpdate.SAVED) {
+            BufferLspHandler handler = handlers.get(buffer);
+            if (handler != null) {
+                handler.syncOnSave();
+            }
         }
     }
 
@@ -251,14 +258,22 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private static class BufferLspHandler extends BufferAdapter {
+        private static final int CHANGE_SYNC_DELAY_MS = 400;
+
         private final Buffer buffer;
         private final GenericLspClient client;
+        private final Timer changeSyncTimer;
+        private final List<TextDocumentContentChangeEvent> pendingChanges =
+            new ArrayList<>();
         private int version = 0;
-        private boolean needsSync;
+        private volatile boolean needsSync;
+        private volatile boolean documentOpenOnServer;
 
         BufferLspHandler(Buffer buffer, GenericLspClient client) {
             this.buffer = buffer;
             this.client = client;
+            changeSyncTimer = new Timer(CHANGE_SYNC_DELAY_MS, e -> flushChangeToServer());
+            changeSyncTimer.setRepeats(false);
         }
 
         /** Version sent in the last {@code didOpen} or {@code didChange} for this buffer. */
@@ -278,8 +293,23 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         void resetVersionForServerRestart() {
+            changeSyncTimer.stop();
+            pendingChanges.clear();
             version = 0;
             needsSync = false;
+            documentOpenOnServer = false;
+        }
+
+        void flushPendingChange() {
+            changeSyncTimer.stop();
+            flushChangeToServer();
+        }
+
+        void syncOnSave() {
+            changeSyncTimer.stop();
+            pendingChanges.clear();
+            needsSync = false;
+            republishDocumentToServerAsync();
         }
 
         CompletableFuture<Void> republishDocumentToServerAsync() {
@@ -306,10 +336,18 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             params.setTextDocument(item);
 
             client.getServer().getTextDocumentService().didOpen(params);
+            documentOpenOnServer = true;
+            pendingChanges.clear();
             needsSync = false;
         }
 
         void notifyClose() {
+            changeSyncTimer.stop();
+            documentOpenOnServer = false;
+            pendingChanges.clear();
+            LspDiagnosticsHub.getInstance().setDiagnostics(
+                LspDocumentUri.pathToUri(buffer.getPath()), List.of());
+
             if (client.getServer() == null) {
                 return;
             }
@@ -321,44 +359,96 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         @Override
-        public void contentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {
-            markDirty();
+        public void preContentRemoved(JEditBuffer buffer, int startLine, int offset,
+            int numLines, int length)
+        {
+            if (shouldIgnoreBufferChange()) {
+                return;
+            }
+
+            Position start = offsetToPosition(offset);
+            Position end = offsetToPosition(offset + length);
+            TextDocumentContentChangeEvent event = new TextDocumentContentChangeEvent();
+            event.setRange(new Range(start, end));
+            event.setRangeLength(length);
+            event.setText("");
+            pendingChanges.add(event);
+            needsSync = true;
+        }
+
+        @Override
+        public void contentInserted(JEditBuffer buffer, int startLine, int offset,
+            int numLines, int length)
+        {
+            if (shouldIgnoreBufferChange()) {
+                return;
+            }
+
+            Position start = offsetToPosition(offset);
+            TextDocumentContentChangeEvent event = new TextDocumentContentChangeEvent();
+            event.setRange(new Range(start, start));
+            event.setRangeLength(0);
+            event.setText(this.buffer.getText(offset, length));
+            pendingChanges.add(event);
+            needsSync = true;
             notifyChange();
         }
 
         @Override
-        public void contentRemoved(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {
-            markDirty();
+        public void contentRemoved(JEditBuffer buffer, int startLine, int offset,
+            int numLines, int length)
+        {
+            if (shouldIgnoreBufferChange()) {
+                return;
+            }
             notifyChange();
         }
 
-        private void markDirty() {
-            if (applyingLspEdits) {
-                return;
-            }
-            needsSync = true;
+        private boolean shouldIgnoreBufferChange() {
+            return applyingLspEdits || buffer.isLoading();
+        }
+
+        private Position offsetToPosition(int offset) {
+            int line = buffer.getLineOfOffset(offset);
+            int lineStart = buffer.getLineStartOffset(line);
+            return new Position(line, offset - lineStart);
         }
 
         private void notifyChange() {
-            if (client.getServer() == null) return;
-            if (true) return;
+            if (client.getServer() == null || !needsSync) {
+                return;
+            }
+            changeSyncTimer.restart();
+        }
+
+        private void flushChangeToServer() {
+            if (client.getServer() == null || !needsSync || pendingChanges.isEmpty()) {
+                return;
+            }
+            if (!documentOpenOnServer) {
+                changeSyncTimer.restart();
+                return;
+            }
 
             DidChangeTextDocumentParams params = new DidChangeTextDocumentParams();
             VersionedTextDocumentIdentifier id = new VersionedTextDocumentIdentifier();
-            id.setUri(new java.io.File(this.buffer.getPath()).toURI().toString());
+            id.setUri(LspDocumentUri.pathToUri(buffer.getPath()));
             id.setVersion(version++);
             params.setTextDocument(id);
+            params.setContentChanges(new ArrayList<>(pendingChanges));
 
-            // Full sync for simplicity in this initial implementation
-            TextDocumentContentChangeEvent event = new TextDocumentContentChangeEvent();
-            event.setText(this.buffer.getText(0, this.buffer.getLength()));
-            params.setContentChanges(Collections.singletonList(event));
-            Log.log(Log.ERROR, BufferLspHandler.class, "Document version " + version);
+            List<TextDocumentContentChangeEvent> sentChanges =
+                new ArrayList<>(pendingChanges);
             Try.of(() -> {
                 client.getServer().getTextDocumentService().didChange(params);
+                pendingChanges.removeAll(sentChanges);
+                if (pendingChanges.isEmpty()) {
+                    needsSync = false;
+                }
                 return true;
             }).onFailure(e -> {
-                Log.log(Log.ERROR, this, "Failed to send didChange for buffer " + buffer.getPath(), e);
+                Log.log(Log.ERROR, this,
+                    "Failed to send didChange for buffer " + buffer.getPath(), e);
             });
         }
     }

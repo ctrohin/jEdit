@@ -132,7 +132,12 @@ final class LspDiagnosticHighlights implements EBComponent {
         List<LspDiagnosticProblem> problems =
             LspDiagnosticsHub.getInstance().getProblemsForBuffer(buffer);
         if (problems.isEmpty()) {
-            textArea.getPainter().repaint();
+            int visibleLines = textArea.getVisibleLines();
+            if (visibleLines > 0) {
+                textArea.invalidateScreenLineRange(0, visibleLines - 1);
+            } else {
+                textArea.getPainter().repaint();
+            }
             return;
         }
 
