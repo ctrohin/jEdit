@@ -172,7 +172,11 @@ final class LspWorkspaceEdits {
         if (merged.isEmpty()) {
             return false;
         }
-        return applyTextEdits(buffer, merged);
+        boolean applied = applyTextEdits(buffer, merged);
+        if (applied) {
+            LspPlugin.republishBufferToServer(buffer);
+        }
+        return applied;
     }
 
     /**

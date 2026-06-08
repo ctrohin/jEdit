@@ -120,8 +120,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     /**
-     * Re-sends {@code didClose} + {@code didOpen} so the server overlay matches
-     * the current buffer (used after applying edits and before rename).
+     * Same LSP sync as saving the buffer: cancel pending {@code didChange},
+     * then {@code didClose} + {@code didOpen} with current text.
      */
     static void republishBufferToServer(Buffer buffer) {
         republishBufferToServerAsync(buffer);
@@ -132,7 +132,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         if (handler == null) {
             return CompletableFuture.completedFuture(null);
         }
-        return handler.republishDocumentToServerAsync();
+        return handler.syncToServerAsync();
     }
 
     static void beginApplyingLspEdits() {
@@ -306,10 +306,14 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         void syncOnSave() {
+            syncToServerAsync();
+        }
+
+        CompletableFuture<Void> syncToServerAsync() {
             changeSyncTimer.stop();
             pendingChanges.clear();
             needsSync = false;
-            republishDocumentToServerAsync();
+            return republishDocumentToServerAsync();
         }
 
         CompletableFuture<Void> republishDocumentToServerAsync() {
