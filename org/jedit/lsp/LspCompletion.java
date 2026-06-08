@@ -25,10 +25,11 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
@@ -50,6 +51,9 @@ import org.gjt.sp.util.Log;
  * Similar to CompleteWord but uses Language Server Protocol for completions.
  */
 public class LspCompletion extends CompletionPopup {
+
+    private static final ConcurrentHashMap<GenericLspClient, CompletionCoordinator> completionCoordinators =
+        new ConcurrentHashMap<>();
 
     private final JEditTextArea textArea;
     private final Buffer buffer;
@@ -85,82 +89,166 @@ public class LspCompletion extends CompletionPopup {
 //            return;
 //        }
 
-        // Request completions from LSP server
-        requestLspCompletions(view, lspClient, wordToComplete, noWordSep, caret);
+        completionCoordinators
+            .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
+            .schedule(view, lspClient, wordToComplete, noWordSep, caret);
     }
 
     /**
-     * Request completions from the LSP server asynchronously.
+     * Serialize completion requests per LSP client so only one is in flight at a time.
+     * Rapid re-triggers coalesce to the latest caret position.
      */
-    private static void requestLspCompletions(View view, GenericLspClient lspClient,
-                                               String word, String noWordSep, int caret) {
-        JEditTextArea textArea = view.getTextArea();
-        Buffer buffer = view.getBuffer();
-        int caretLine = textArea.getCaretLine();
+    private static final class CompletionCoordinator {
+        private final AtomicInteger generation = new AtomicInteger(0);
+        private final Object lock = new Object();
+        private boolean inFlight;
+        private PendingCompletion pending;
 
-        try {
-            // Build completion request
-            CompletionParams params = new CompletionParams();
-            params.setTextDocument(new TextDocumentIdentifier(
-                new File(buffer.getPath()).toURI().toString()));
+        void schedule(View view, GenericLspClient client, String word,
+                        String noWordSep, int caret) {
+            int requestGeneration = generation.incrementAndGet();
+            PendingCompletion request = new PendingCompletion(
+                view, word, noWordSep, caret, requestGeneration);
 
-            int lineStartOffset = buffer.getLineStartOffset(caretLine);
-            int character = caret - lineStartOffset;
-            params.setPosition(new Position(caretLine, character));
-
-            CompletionContext context = new CompletionContext();
-            context.setTriggerKind(CompletionTriggerKind.Invoked); // Invoked
-            params.setContext(context);
-
-            // Request from server asynchronously
-            CompletableFuture<Either<List<CompletionItem>, CompletionList>> future =
-                lspClient.getServer().getTextDocumentService().completion(params);
-
-            future.thenAccept(result -> {
-                List<CompletionItem> items = new ArrayList<>();
-
-                if (result != null) {
-                    if (result.isLeft()) {
-                        items = result.getLeft();
-                    } else if (result.isRight()) {
-                        items = result.getRight().getItems();
-                    }
-                }
-
-                if (items.isEmpty()) {
-                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            synchronized (lock) {
+                if (inFlight) {
+                    pending = request;
                     return;
                 }
+                inFlight = true;
+            }
 
-                // Display completions in popup
-                List<CompletionItem> finalItems = items;
-                SwingUtilities.invokeLater(() -> {
-                    final int wordLength = word == null ? 0 : word.length();
-                    textArea.scrollToCaret(false);
-                    Point location = textArea.offsetToXY(caret - wordLength);
-                    location.y += textArea.getPainter().getLineHeight();
-
-                    SwingUtilities.convertPointToScreen(location,
-                        textArea.getPainter());
-
-                    new LspCompletion(view, word, finalItems, location, noWordSep);
-                });
-            }).exceptionally(ex -> {
-                Log.log(Log.ERROR, LspCompletion.class, "Error requesting LSP completions", ex);
-                // Check if this is a connection error that indicates server is dead
-                if (isConnectionError(ex)) {
-                    Log.log(Log.WARNING, LspCompletion.class, "LSP server connection error, server may have crashed");
-                }
-                SwingUtilities.invokeLater(() -> {
-                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
-                });
-                return null;
-            });
-
-        } catch (Exception e) {
-            Log.log(Log.ERROR, LspCompletion.class, "Error in LSP completion request", e);
-            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+            sendRequest(client, request);
         }
+
+        private void sendRequest(GenericLspClient client, PendingCompletion request) {
+            try {
+                View view = request.view;
+                JEditTextArea textArea = view.getTextArea();
+                Buffer buffer = view.getBuffer();
+                int caretLine = textArea.getCaretLine();
+
+                CompletionParams params = new CompletionParams();
+                params.setTextDocument(new TextDocumentIdentifier(
+                    LspDocumentUri.pathToUri(buffer.getPath())));
+
+                int lineStartOffset = buffer.getLineStartOffset(caretLine);
+                int character = request.caret - lineStartOffset;
+                params.setPosition(new Position(caretLine, character));
+
+                CompletionContext context = new CompletionContext();
+                context.setTriggerKind(CompletionTriggerKind.Invoked);
+                params.setContext(context);
+
+                CompletableFuture<Either<List<CompletionItem>, CompletionList>> future =
+                    client.getServer().getTextDocumentService().completion(params);
+
+                future.whenComplete((result, ex) -> {
+                    try {
+                        if (request.generation != generation.get()) {
+                            return;
+                        }
+
+                        if (ex != null) {
+                            if (!isSupersededCompletionError(ex)) {
+                                Log.log(Log.ERROR, LspCompletion.class,
+                                    "Error requesting LSP completions", ex);
+                                if (isConnectionError(ex)) {
+                                    Log.log(Log.WARNING, LspCompletion.class,
+                                        "LSP server connection error, server may have crashed");
+                                }
+                                SwingUtilities.invokeLater(() ->
+                                    javax.swing.UIManager.getLookAndFeel()
+                                        .provideErrorFeedback(null));
+                            }
+                            return;
+                        }
+
+                        List<CompletionItem> items = new ArrayList<>();
+                        if (result != null) {
+                            if (result.isLeft()) {
+                                items = result.getLeft();
+                            } else if (result.isRight()) {
+                                items = result.getRight().getItems();
+                            }
+                        }
+
+                        if (items.isEmpty()) {
+                            SwingUtilities.invokeLater(() ->
+                                javax.swing.UIManager.getLookAndFeel()
+                                    .provideErrorFeedback(null));
+                            return;
+                        }
+
+                        List<CompletionItem> finalItems = items;
+                        String word = request.word;
+                        String noWordSep = request.noWordSep;
+                        int caret = request.caret;
+                        SwingUtilities.invokeLater(() -> {
+                            final int wordLength = word == null ? 0 : word.length();
+                            textArea.scrollToCaret(false);
+                            Point location = textArea.offsetToXY(caret - wordLength);
+                            location.y += textArea.getPainter().getLineHeight();
+                            SwingUtilities.convertPointToScreen(location,
+                                textArea.getPainter());
+                            new LspCompletion(view, word, finalItems, location, noWordSep);
+                        });
+                    } finally {
+                        dispatchNext(client);
+                    }
+                });
+            } catch (Exception e) {
+                Log.log(Log.ERROR, LspCompletion.class, "Error in LSP completion request", e);
+                javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                dispatchNext(client);
+            }
+        }
+
+        private void dispatchNext(GenericLspClient client) {
+            PendingCompletion next;
+            synchronized (lock) {
+                next = pending;
+                pending = null;
+                if (next == null) {
+                    inFlight = false;
+                    return;
+                }
+            }
+            sendRequest(client, next);
+        }
+    }
+
+    private static final class PendingCompletion {
+        final View view;
+        final String word;
+        final String noWordSep;
+        final int caret;
+        final int generation;
+
+        PendingCompletion(View view, String word, String noWordSep,
+                          int caret, int generation) {
+            this.view = view;
+            this.word = word;
+            this.noWordSep = noWordSep;
+            this.caret = caret;
+            this.generation = generation;
+        }
+    }
+
+    /**
+     * Dart and some other servers reject the previous request when a new one starts.
+     */
+    private static boolean isSupersededCompletionError(Throwable ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            String message = cause.getMessage();
+            if (message != null
+                && message.contains("Another textDocument/completion request was started")) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     /**
