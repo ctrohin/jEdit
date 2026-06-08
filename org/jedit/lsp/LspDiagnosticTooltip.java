@@ -134,6 +134,21 @@ final class LspDiagnosticTooltip {
         hideTooltip();
     }
 
+    /**
+     * Clears cached code actions when LSP diagnostics change for this buffer.
+     */
+    void onDiagnosticsChanged(Buffer buffer) {
+        if (!(textArea.getBuffer() instanceof Buffer current) || !current.equals(buffer)) {
+            return;
+        }
+        actionCache.clear();
+        pendingProblem = null;
+        showTimer.stop();
+        if (window.isVisible()) {
+            hideTooltip();
+        }
+    }
+
     void dispose() {
         showTimer.stop();
         hideTimer.stop();
@@ -278,6 +293,7 @@ final class LspDiagnosticTooltip {
             if (!(textArea.getBuffer() instanceof Buffer buffer)) {
                 return;
             }
+            actionCache.clear();
             GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
             if (client != null) {
                 LspCodeActions.applyCodeAction(view, client, buffer, problem, item);
@@ -343,6 +359,8 @@ final class LspDiagnosticTooltip {
         }
 
         int line = buffer.getLineOfOffset(offset);
+        LspDiagnosticProblem best = null;
+        int bestSpan = Integer.MAX_VALUE;
         for (LspDiagnosticProblem problem :
             LspDiagnosticsHub.getInstance().getProblemsForBuffer(buffer)) {
             if (line < problem.getLine() || line > problem.getEndLine()) {
@@ -351,17 +369,21 @@ final class LspDiagnosticTooltip {
             int rangeStart = problem.getStartOffset(buffer);
             int rangeEnd = problem.getEndOffset(buffer);
             if (offset >= rangeStart && offset < rangeEnd) {
-                return problem;
+                int span = rangeEnd - rangeStart;
+                if (span < bestSpan) {
+                    bestSpan = span;
+                    best = problem;
+                }
             }
         }
-        return null;
+        return best;
     }
 
     private static String problemKey(LspDiagnosticProblem problem) {
         if (problem == null) {
             return "";
         }
-        return problem.getUri() + ':' + problem.getLine() + ':' + problem.getCharacter();
+        return problem.getCacheKey();
     }
 
     private static String escapeHtml(String text) {

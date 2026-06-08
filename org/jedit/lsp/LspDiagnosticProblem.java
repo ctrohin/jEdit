@@ -166,6 +166,14 @@ public final class LspDiagnosticProblem implements Comparable<LspDiagnosticProbl
         return severity;
     }
 
+    /**
+     * Stable key for caching code actions for this specific diagnostic.
+     */
+    String getCacheKey() {
+        return uri + '\0' + line + '\0' + character + '\0'
+            + endLine + '\0' + endCharacter + '\0' + message;
+    }
+
     /** LSP range for this diagnostic. */
     public Range toRange() {
         Range range = new Range();

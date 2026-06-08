@@ -140,6 +140,10 @@ final class LspDiagnosticHighlights implements EBComponent {
         if (highlight != null) {
             highlight.updateProblems(buffer, problems);
         }
+        LspDiagnosticTooltip tooltip = tooltips.get(textArea);
+        if (tooltip != null) {
+            tooltip.onDiagnosticsChanged(buffer);
+        }
         if (problems.isEmpty()) {
             int visibleLines = textArea.getVisibleLines();
             if (visibleLines > 0) {
