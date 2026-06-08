@@ -102,11 +102,15 @@ final class LspDiagnosticHighlights implements EBComponent {
     }
 
     private void ensureHighlight(JEditTextArea textArea) {
-        if (!extensions.containsKey(textArea)) {
-            LspDiagnosticHighlight highlight = new LspDiagnosticHighlight(textArea);
+        LspDiagnosticHighlight highlight = extensions.get(textArea);
+        if (highlight == null) {
+            highlight = new LspDiagnosticHighlight(textArea);
             textArea.getPainter().addExtension(
                 TextAreaPainter.BELOW_MOST_EXTENSIONS_LAYER, highlight);
             extensions.put(textArea, highlight);
+        }
+        if (textArea.getBuffer() instanceof Buffer buffer) {
+            highlight.updateProblems(buffer);
         }
         if (!tooltips.containsKey(textArea)) {
             tooltips.put(textArea, new LspDiagnosticTooltip(textArea));
@@ -131,6 +135,11 @@ final class LspDiagnosticHighlights implements EBComponent {
 
         List<LspDiagnosticProblem> problems =
             LspDiagnosticsHub.getInstance().getProblemsForBuffer(buffer);
+
+        LspDiagnosticHighlight highlight = extensions.get(textArea);
+        if (highlight != null) {
+            highlight.updateProblems(buffer, problems);
+        }
         if (problems.isEmpty()) {
             int visibleLines = textArea.getVisibleLines();
             if (visibleLines > 0) {

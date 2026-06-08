@@ -342,8 +342,12 @@ final class LspDiagnosticTooltip {
             return null;
         }
 
+        int line = buffer.getLineOfOffset(offset);
         for (LspDiagnosticProblem problem :
             LspDiagnosticsHub.getInstance().getProblemsForBuffer(buffer)) {
+            if (line < problem.getLine() || line > problem.getEndLine()) {
+                continue;
+            }
             int rangeStart = problem.getStartOffset(buffer);
             int rangeEnd = problem.getEndOffset(buffer);
             if (offset >= rangeStart && offset < rangeEnd) {
