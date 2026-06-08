@@ -62,10 +62,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     public void start() {
         Log.log(DEFAULT_LEVEL, this, "LSP Plugin starting...");
         LspDiagnosticHighlights.install();
+        LspGoToDefinition.install();
     }
 
     @Override
     public void stop() {
+        LspGoToDefinition.uninstall();
         LspDiagnosticHighlights.uninstall();
         // Shutdown all clients
         clients.values().forEach(GenericLspClient::shutdown);
@@ -100,6 +102,13 @@ public class LspPlugin extends EditPlugin implements EBComponent {
      */
     public static void renameLsp(View view) {
         invokeLspFeature(view, (v, client) -> LspRename.renameLsp(v, client));
+    }
+
+    /**
+     * Go to the LSP definition of the symbol at the caret.
+     */
+    public static void goToDefinitionLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspGoToDefinition.goToDefinitionLsp(v, client));
     }
 
     @FunctionalInterface

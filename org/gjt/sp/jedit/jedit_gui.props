@@ -128,7 +128,7 @@ icons=MatIcons.RESIZE_HORIZONTAL:22 \
 
 #{{{ Context menu
 view.context=cut copy paste paste-previous paste-deleted - \
-	select-block to-upper to-lower - hypersearch-word - \
+	select-block to-upper to-lower - hypersearch-word goto-definition-lsp - \
 	add-marker - collapse-fold expand-fold narrow-to-fold
 #}}}
 

@@ -163,6 +163,7 @@ public class GenericLspClient {
 
         TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
         textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
+        textDocCaps.setDefinition(new DefinitionCapabilities(true));
         textDocCaps.setCodeAction(buildCodeActionCapabilities());
         textDocCaps.setRename(new RenameCapabilities(false, true));
         capabilities.setTextDocument(textDocCaps);

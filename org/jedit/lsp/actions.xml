@@ -61,5 +61,12 @@
             org.jedit.lsp.LspPlugin.renameLsp(view);
         </CODE>
     </ACTION>
+
+    <!-- LSP Go to Definition -->
+    <ACTION NAME="goto-definition-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.goToDefinitionLsp(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 
