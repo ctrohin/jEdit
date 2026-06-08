@@ -89,6 +89,7 @@ final class LspDiagnosticTooltip {
     private int anchorScreenX;
     private int anchorScreenY;
     private boolean actionsRequested;
+    private Runnable hideCompanionHover;
 
     LspDiagnosticTooltip(JEditTextArea textArea) {
         this.textArea = textArea;
@@ -132,6 +133,18 @@ final class LspDiagnosticTooltip {
 
     void hide() {
         hideTooltip();
+    }
+
+    boolean isShowing() {
+        return window.isVisible();
+    }
+
+    boolean hasProblemAt(int x, int y) {
+        return problemAt(x, y) != null;
+    }
+
+    void setHideCompanionHover(Runnable hideCompanionHover) {
+        this.hideCompanionHover = hideCompanionHover;
     }
 
     /**
@@ -186,6 +199,9 @@ final class LspDiagnosticTooltip {
     private void showPendingTooltip() {
         if (pendingProblem == null) {
             return;
+        }
+        if (hideCompanionHover != null) {
+            hideCompanionHover.run();
         }
         shownProblem = pendingProblem;
         shownProblemKey = problemKey(shownProblem);

@@ -164,6 +164,7 @@ public class GenericLspClient {
         TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
         textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
         textDocCaps.setDefinition(new DefinitionCapabilities(true));
+        textDocCaps.setHover(buildHoverCapabilities());
         textDocCaps.setCodeAction(buildCodeActionCapabilities());
         textDocCaps.setRename(new RenameCapabilities(false, true));
         capabilities.setTextDocument(textDocCaps);
@@ -190,6 +191,12 @@ public class GenericLspClient {
 
         capabilities.setExperimental(buildExperimentalCapabilities());
         return capabilities;
+    }
+
+    private static HoverCapabilities buildHoverCapabilities() {
+        HoverCapabilities hoverCaps = new HoverCapabilities();
+        hoverCaps.setContentFormat(List.of(MarkupKind.MARKDOWN, MarkupKind.PLAINTEXT));
+        return hoverCaps;
     }
 
     private static CodeActionCapabilities buildCodeActionCapabilities() {

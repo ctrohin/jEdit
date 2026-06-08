@@ -47,6 +47,8 @@ final class LspDiagnosticHighlights implements EBComponent {
         new IdentityHashMap<>();
     private final Map<JEditTextArea, LspDiagnosticTooltip> tooltips =
         new IdentityHashMap<>();
+    private final Map<JEditTextArea, LspSymbolHoverTooltip> hoverTooltips =
+        new IdentityHashMap<>();
     private final Runnable diagnosticsListener = this::repaintAll;
 
     private LspDiagnosticHighlights() {}
@@ -74,6 +76,10 @@ final class LspDiagnosticHighlights implements EBComponent {
             if (tooltip != null) {
                 tooltip.hide();
             }
+            LspSymbolHoverTooltip hoverTooltip = hoverTooltips.get(textArea);
+            if (hoverTooltip != null) {
+                hoverTooltip.onBufferChanged();
+            }
         }
         if (update.getWhat() == EditPaneUpdate.CREATED
             || update.getWhat() == EditPaneUpdate.BUFFER_CHANGED) {
@@ -99,6 +105,10 @@ final class LspDiagnosticHighlights implements EBComponent {
             tooltip.dispose();
         }
         tooltips.clear();
+        for (LspSymbolHoverTooltip hoverTooltip : hoverTooltips.values()) {
+            hoverTooltip.dispose();
+        }
+        hoverTooltips.clear();
     }
 
     private void ensureHighlight(JEditTextArea textArea) {
@@ -114,6 +124,13 @@ final class LspDiagnosticHighlights implements EBComponent {
         }
         if (!tooltips.containsKey(textArea)) {
             tooltips.put(textArea, new LspDiagnosticTooltip(textArea));
+        }
+        if (!hoverTooltips.containsKey(textArea)) {
+            LspDiagnosticTooltip diagnosticTooltip = tooltips.get(textArea);
+            LspSymbolHoverTooltip symbolHover =
+                new LspSymbolHoverTooltip(textArea, diagnosticTooltip);
+            diagnosticTooltip.setHideCompanionHover(symbolHover::hide);
+            hoverTooltips.put(textArea, symbolHover);
         }
     }
 
