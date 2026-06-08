@@ -32,22 +32,27 @@ import java.util.Objects;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.TextUtilities;
 import org.gjt.sp.jedit.buffer.BufferAdapter;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
+import org.gjt.sp.jedit.syntax.KeywordMap;
 
 /**
- * When a non-empty range of text is selected, highlights every other occurrence
- * of that text in the buffer using the selection background color at 50% opacity.
+ * Highlights every occurrence of the selected text, or when nothing is selected,
+ * every occurrence of the word at the caret. Selection matches use a stronger
+ * tint; caret-symbol matches use a lighter one.
  */
 public class SelectionMatchHighlight extends TextAreaExtension
 {
 	private static final int[] NO_MATCHES = new int[0];
-	private static final int HIGHLIGHT_ALPHA = 128;
+	private static final int SELECTION_MATCH_ALPHA = 128;
+	private static final int CARET_SYMBOL_ALPHA = 70;
 
 	private final JEditTextArea textArea;
 	private String cachedNeedle;
 	private int[] cachedMatches = NO_MATCHES;
-	private String lastRepaintNeedle;
+	private HighlightTarget lastRepaintTarget;
 	private JEditBuffer attachedBuffer;
 
 	private final CaretListener caretListener = e -> onSelectionChanged();
@@ -91,13 +96,13 @@ public class SelectionMatchHighlight extends TextAreaExtension
 	{
 		attachBufferListener(textArea.getBuffer());
 
-		String needle = getSelectedNeedle();
-		if (needle == null)
+		HighlightTarget target = getHighlightTarget();
+		if (target == null)
 		{
 			return;
 		}
 
-		int[] matches = getMatches(needle);
+		int[] matches = getMatches(target.needle());
 		if (matches.length == 0)
 		{
 			return;
@@ -111,10 +116,10 @@ public class SelectionMatchHighlight extends TextAreaExtension
 			selectionColor.getRed(),
 			selectionColor.getGreen(),
 			selectionColor.getBlue(),
-			HIGHLIGHT_ALPHA));
+			target.alpha()));
 
 		int lineHeight = painter.getLineHeight();
-		int needleLength = needle.length();
+		int needleLength = target.needle().length();
 		for (int matchStart : matches)
 		{
 			int matchEnd = matchStart + needleLength;
@@ -125,6 +130,23 @@ public class SelectionMatchHighlight extends TextAreaExtension
 			paintMatch(gfx, screenLine, physicalLine, matchStart, matchEnd,
 				start, end, y, lineHeight);
 		}
+	}
+
+	private record HighlightTarget(String needle, int alpha) {}
+
+	private HighlightTarget getHighlightTarget()
+	{
+		String selected = getSelectedNeedle();
+		if (selected != null)
+		{
+			return new HighlightTarget(selected, SELECTION_MATCH_ALPHA);
+		}
+		String word = getWordAtCaret();
+		if (word != null)
+		{
+			return new HighlightTarget(word, CARET_SYMBOL_ALPHA);
+		}
+		return null;
 	}
 
 	private String getSelectedNeedle()
@@ -144,6 +166,90 @@ public class SelectionMatchHighlight extends TextAreaExtension
 		}
 
 		return textArea.getBuffer().getText(start, end - start);
+	}
+
+	private String getWordAtCaret()
+	{
+		JEditBuffer jeditBuffer = textArea.getBuffer();
+		if (!(jeditBuffer instanceof Buffer buffer))
+		{
+			return null;
+		}
+
+		int caret = textArea.getCaretPosition();
+		int caretLine = textArea.getCaretLine();
+		CharSequence line = buffer.getLineSegment(caretLine);
+		int dot = caret - buffer.getLineStartOffset(caretLine);
+		if (line.isEmpty())
+		{
+			return null;
+		}
+
+		KeywordMap keywordMap = buffer.getKeywordMapAtOffset(caret);
+		String noWordSep = getNonAlphaNumericWordChars(buffer, keywordMap);
+
+		int index = dot;
+		if (index >= line.length())
+		{
+			index = line.length() - 1;
+		}
+		if (index < 0)
+		{
+			return null;
+		}
+
+		char ch = line.charAt(index);
+		if (!isWordChar(ch, noWordSep))
+		{
+			if (index == 0)
+			{
+				return null;
+			}
+			index--;
+			ch = line.charAt(index);
+			if (!isWordChar(ch, noWordSep))
+			{
+				return null;
+			}
+		}
+
+		boolean joinNonWordChars = textArea.getJoinNonWordChars();
+		int wordStart = TextUtilities.findWordStart(line, index, noWordSep,
+			joinNonWordChars, false, false);
+		int wordEnd = TextUtilities.findWordEnd(line, index + 1, noWordSep,
+			joinNonWordChars, false, false);
+		if (wordEnd <= wordStart)
+		{
+			return null;
+		}
+
+		return buffer.getText(
+			buffer.getLineStartOffset(caretLine) + wordStart,
+			wordEnd - wordStart);
+	}
+
+	private static boolean isWordChar(char ch, String noWordSep)
+	{
+		return Character.isLetterOrDigit(ch) || noWordSep.indexOf(ch) != -1;
+	}
+
+	private static String getNonAlphaNumericWordChars(Buffer buffer,
+		KeywordMap keywordMap)
+	{
+		String noWordSep = buffer.getStringProperty("noWordSep");
+		if (noWordSep == null)
+		{
+			noWordSep = "";
+		}
+		if (keywordMap != null)
+		{
+			String keywordNoWordSep = keywordMap.getNonAlphaNumericChars();
+			if (keywordNoWordSep != null)
+			{
+				noWordSep += keywordNoWordSep;
+			}
+		}
+		return noWordSep;
 	}
 
 	private int[] getMatches(String needle)
@@ -286,13 +392,13 @@ public class SelectionMatchHighlight extends TextAreaExtension
 
 	private void onSelectionChanged()
 	{
-		String needle = getSelectedNeedle();
-		if (Objects.equals(needle, lastRepaintNeedle))
+		HighlightTarget target = getHighlightTarget();
+		if (Objects.equals(target, lastRepaintTarget))
 		{
 			return;
 		}
 
-		lastRepaintNeedle = needle;
+		lastRepaintTarget = target;
 		invalidateCache();
 		repaintVisibleLines();
 	}
@@ -300,7 +406,7 @@ public class SelectionMatchHighlight extends TextAreaExtension
 	private void onBufferChanged()
 	{
 		invalidateCache();
-		if (lastRepaintNeedle != null)
+		if (lastRepaintTarget != null)
 		{
 			repaintVisibleLines();
 		}
