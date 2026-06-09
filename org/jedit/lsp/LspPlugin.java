@@ -236,7 +236,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     private synchronized void startLspForBuffer(Buffer buffer) {
         String modeName = buffer.getMode().getName();
-        if (!LspConfig.SERVER_COMMANDS.containsKey(modeName)) {
+        if (!LspConfig.isServerConfigured(modeName)) {
             Log.log(DEFAULT_LEVEL, this,"LSP not available for mode " + modeName + ".");
             return;
         }
@@ -266,8 +266,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             client.start(client.getMode(), currentProjectRoot);
             return client;
         }).onSuccess(m -> m.setServerStarted(true))
-            .onFailure(e -> Log.log(Log.ERROR, this, "Failed to start LSP server for " + client.getMode(), e))
-            .get();
+            .onFailure(e -> Log.log(Log.ERROR, this,
+                "Failed to start LSP server for " + client.getMode(), e));
     }
 
     private void stopMetaClient(GenericLspClient client) {
@@ -524,6 +524,21 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (handler.client == client) {
                 handler.resetVersionForServerRestart();
                 handler.notifyOpen();
+            }
+        }
+    }
+
+    /**
+     * Reload LSP configuration after options change: restart servers for open buffers.
+     */
+    public synchronized void reloadConfiguration() {
+        List<Buffer> openBuffers = new ArrayList<>(handlers.keySet());
+        for (Buffer buffer : openBuffers) {
+            stopLspForBuffer(buffer);
+        }
+        for (Buffer buffer : openBuffers) {
+            if (!buffer.isClosed()) {
+                startLspForBuffer(buffer);
             }
         }
     }

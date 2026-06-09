@@ -806,7 +806,7 @@ options.last=editing
 #{{{ Options groups
 options.groups=jedit browser
 options.group.jedit=general abbrevs appearance context docking editing \
-	encodings gutter large-files mouse plugin-manager firewall save-back \
+	encodings gutter large-files mouse plugin-manager lsp-servers firewall save-back \
 	shortcuts status syntax textarea toolbar view
 options.group.browser=browser.general browser.colors browser.custom.context browser.additional-unc-roots
 #}}}
@@ -882,6 +882,10 @@ options.mouse.code=new MouseOptionPane();
 
 #{{{ Plugin Manager pane
 options.plugin-manager.code=new PluginManagerOptionPane();
+#}}}
+
+#{{{ LSP Servers pane
+options.lsp-servers.code=new org.jedit.lsp.LspServersOptionPane();
 #}}}
 
 #{{{ Printing pane

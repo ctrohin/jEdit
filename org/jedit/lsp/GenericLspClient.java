@@ -26,11 +26,12 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.gjt.sp.util.Log;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 public class GenericLspClient {
 
@@ -71,21 +72,21 @@ public class GenericLspClient {
         this.serverStarted = serverStarted;
     }
 
-    private String[] getOSSpecificCommand() {
-        return new String[]{"cmd", "/c"};
-    }
-
     public void start(String languageId, String projectRoot) throws Exception {
-        String[] command = LspConfig.SERVER_COMMANDS.get(languageId.toLowerCase());
+        String[] command = LspConfig.getServerCommand(languageId);
 
-        if (command == null) {
+        if (command == null || command.length == 0) {
             throw new IllegalArgumentException("No server configured for: " + languageId);
         }
 
+        String executable = command[0];
+        if (LspServerInstaller.findExecutable(executable) == null) {
+            throw new IOException("Cannot find LSP server executable \"" + executable
+                + "\". Install it or set the full path in Global Options → LSP Servers.");
+        }
+
         // 1. Start the specific process
-        final var osPrefix = getOSSpecificCommand();
-        final var executeCommand = Stream.concat(Stream.of(osPrefix), Stream.of(command)).toArray(String[]::new);
-        final var builder = new ProcessBuilder(executeCommand);
+        ProcessBuilder builder = LspServerInstaller.createProcessBuilder(command);
         builder.redirectError(ProcessBuilder.Redirect.INHERIT);
         this.process = builder.start();
 

@@ -1689,6 +1689,54 @@ options.plugin-manager.no-plugin-available=No plugin available
 options.plugin-manager.no-plugin-uptodate=All plugins are up to date
 #}}}
 
+#{{{ LSP Servers pane
+options.lsp-servers.label=LSP Servers
+options.lsp-servers.intro=Configure language servers used for completion, navigation, \
+	diagnostics, and refactoring. A check mark means the server executable was found on PATH.
+options.lsp-servers.enabled=Enable LSP for this mode
+options.lsp-servers.command=Server command:
+options.lsp-servers.install-help-title=Installation notes
+options.lsp-servers.output-title=Command output
+options.lsp-servers.refresh=Check installation
+options.lsp-servers.test=Test command
+options.lsp-servers.install=Install server
+options.lsp-servers.testing=Testing server command...
+options.lsp-servers.install-confirm=Install the {0} language server now? \
+	This runs the platform install command shown in the installation notes.
+options.lsp-servers.install-success={0} server installed successfully.
+options.lsp-servers.install-error-title=Install failed
+options.lsp-servers.install-manual-title=Manual installation required
+options.lsp-servers.status.installed=Status: {0} was found on PATH.
+options.lsp-servers.status.missing=Status: {0} was not found on PATH.
+options.lsp-servers.status.disabled=Status: LSP is disabled for this mode.
+options.lsp-servers.python.install-help=Install Pyright with pip (recommended): \
+	python -m pip install --upgrade pyright\n\
+After installation, the pyright-langserver command should be on your PATH.
+options.lsp-servers.java.install-help=Eclipse JDT Language Server (jdtls) must be installed manually.\n\
+Windows: install via Scoop (scoop install jdtls) or follow the Eclipse JDT.LS documentation.\n\
+macOS: brew install jdtls\n\
+Linux: sdk install jdtls (SDKMAN) or follow the Eclipse JDT.LS documentation.\n\
+Set the command above to the jdtls launcher script on your system.
+options.lsp-servers.c.install-help=clangd is provided by the LLVM/Clang toolchain.\n\
+Windows: winget install LLVM.LLVM\n\
+macOS: brew install llvm (add LLVM bin to PATH)\n\
+Linux: install the clangd package for your distribution.
+options.lsp-servers.cpp.install-help=Same as C: install clangd from the LLVM/Clang toolchain.\n\
+Windows: winget install LLVM.LLVM\n\
+macOS: brew install llvm\n\
+Linux: install the clangd package for your distribution.
+options.lsp-servers.javascript.install-help=Install the TypeScript language server globally with npm:\n\
+npm install -g typescript typescript-language-server\n\
+Node.js and npm must already be installed.
+options.lsp-servers.dart.install-help=Install the Dart SDK.\n\
+Windows: winget install Google.DartSDK\n\
+macOS: brew install dart\n\
+Linux: install the dart package for your distribution, or use the official installer.
+options.lsp-servers.rust.install-help=Install rust-analyzer through rustup:\n\
+rustup component add rust-analyzer\n\
+Rust and rustup must already be installed.
+#}}}
+
 #{{{ Printing pane
 options.print.label=Printing
 options.print.font=Print font:
