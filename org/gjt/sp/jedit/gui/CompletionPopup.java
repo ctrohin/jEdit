@@ -125,7 +125,7 @@ public class CompletionPopup extends JWindow
 			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		content.add(scroller, BorderLayout.CENTER);
 		setContentPane(content);
-		addWindowFocusListener(new WindowFocusHandler());
+		windowFocusHandler = new WindowFocusHandler();
 	}
 
 	public CompletionPopup(View view, Point location)
@@ -182,18 +182,38 @@ public class CompletionPopup extends JWindow
 		}
 
 		this.candidates = candidates;
+		editorFocusedCompletion = !active;
 		list.setModel(new CandidateListModel());
 		list.setVisibleRowCount(Math.min(candidates.getSize(),8));
 		pack();
 		setLocation(fitInScreen(getLocation(null),this,
 					view.getTextArea().getPainter().getLineHeight()));
+		setSelectedIndex(0);
 		if (active)
 		{
-			setSelectedIndex(0);
+			list.setFocusable(true);
+			addWindowFocusListener(windowFocusHandler);
 			GenericGUIUtilities.requestFocus(this,list);
+		}
+		else
+		{
+			list.setFocusable(false);
+			removeWindowFocusListener(windowFocusHandler);
+			view.getTextArea().requestFocusInWindow();
 		}
 		setVisible(true);
 		view.setKeyEventInterceptor(keyHandler);
+	} //}}}
+
+	//{{{ reposition() method
+	/**
+	 * Reposition the popup near the caret while keeping it on screen.
+	 */
+	protected void reposition(Point location)
+	{
+		pack();
+		setLocation(fitInScreen(location, this,
+			view.getTextArea().getPainter().getLineHeight()));
 	} //}}}
 
 	//{{{ getCandidates() method
@@ -274,8 +294,10 @@ public class CompletionPopup extends JWindow
 	//{{{ Instance variables
 	private final View view;
 	private final KeyHandler keyHandler;
+	private final WindowFocusHandler windowFocusHandler;
 	private Candidates candidates;
 	private final JList list;
+	private boolean editorFocusedCompletion;
 	//}}}
 
 	//{{{ fitInScreen() method
@@ -508,7 +530,10 @@ public class CompletionPopup extends JWindow
 		@Override
 		public void windowLostFocus(WindowEvent e)
 		{
-			dispose();
+			if (!editorFocusedCompletion)
+			{
+				dispose();
+			}
 		}
 	} //}}}
 

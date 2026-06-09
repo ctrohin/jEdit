@@ -26,7 +26,9 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,11 +56,15 @@ public class LspCompletion extends CompletionPopup {
 
     private static final ConcurrentHashMap<GenericLspClient, CompletionCoordinator> completionCoordinators =
         new ConcurrentHashMap<>();
+    private static final Map<View, LspCompletion> activePopups = new IdentityHashMap<>();
 
+    private final View view;
+    private final GenericLspClient lspClient;
     private final JEditTextArea textArea;
     private final Buffer buffer;
-    private final String word;
+    private String word;
     private final String noWordSep;
+    private List<CompletionItem> allItems;
 
     /**
      * Trigger LSP completion at the current caret position.
@@ -89,9 +95,34 @@ public class LspCompletion extends CompletionPopup {
 //            return;
 //        }
 
+        closeActivePopup(view);
+
         completionCoordinators
             .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
-            .schedule(view, lspClient, wordToComplete, noWordSep, caret);
+            .schedule(view, lspClient, wordToComplete, noWordSep, caret, false);
+    }
+
+    private static synchronized void closeActivePopup(View view) {
+        LspCompletion active = activePopups.get(view);
+        if (active != null) {
+            active.dispose();
+        }
+    }
+
+    private static synchronized void setActivePopup(View view, LspCompletion popup) {
+        if (popup == null) {
+            activePopups.remove(view);
+        } else {
+            LspCompletion existing = activePopups.get(view);
+            if (existing != null && existing != popup) {
+                existing.dispose();
+            }
+            activePopups.put(view, popup);
+        }
+    }
+
+    private static synchronized LspCompletion getActivePopup(View view) {
+        return activePopups.get(view);
     }
 
     /**
@@ -105,10 +136,10 @@ public class LspCompletion extends CompletionPopup {
         private PendingCompletion pending;
 
         void schedule(View view, GenericLspClient client, String word,
-                        String noWordSep, int caret) {
+                        String noWordSep, int caret, boolean refreshExisting) {
             int requestGeneration = generation.incrementAndGet();
             PendingCompletion request = new PendingCompletion(
-                view, word, noWordSep, caret, requestGeneration);
+                view, word, noWordSep, caret, requestGeneration, refreshExisting);
 
             synchronized (lock) {
                 if (inFlight) {
@@ -137,7 +168,9 @@ public class LspCompletion extends CompletionPopup {
                 params.setPosition(new Position(caretLine, character));
 
                 CompletionContext context = new CompletionContext();
-                context.setTriggerKind(CompletionTriggerKind.Invoked);
+                context.setTriggerKind(request.refreshExisting
+                    ? CompletionTriggerKind.TriggerForIncompleteCompletions
+                    : CompletionTriggerKind.Invoked);
                 params.setContext(context);
 
                 CompletableFuture<Either<List<CompletionItem>, CompletionList>> future =
@@ -184,14 +217,21 @@ public class LspCompletion extends CompletionPopup {
                         String word = request.word;
                         String noWordSep = request.noWordSep;
                         int caret = request.caret;
+                        boolean refreshExisting = request.refreshExisting;
                         SwingUtilities.invokeLater(() -> {
+                            LspCompletion active = getActivePopup(view);
+                            if (refreshExisting && active != null && active.isDisplayable()) {
+                                active.refreshFromServer(finalItems, word, caret);
+                                return;
+                            }
+                            closeActivePopup(view);
                             final int wordLength = word == null ? 0 : word.length();
                             textArea.scrollToCaret(false);
                             Point location = textArea.offsetToXY(caret - wordLength);
                             location.y += textArea.getPainter().getLineHeight();
                             SwingUtilities.convertPointToScreen(location,
                                 textArea.getPainter());
-                            new LspCompletion(view, word, finalItems, location, noWordSep);
+                            new LspCompletion(view, client, word, finalItems, location, noWordSep);
                         });
                     } finally {
                         dispatchNext(client);
@@ -224,14 +264,16 @@ public class LspCompletion extends CompletionPopup {
         final String noWordSep;
         final int caret;
         final int generation;
+        final boolean refreshExisting;
 
         PendingCompletion(View view, String word, String noWordSep,
-                          int caret, int generation) {
+                          int caret, int generation, boolean refreshExisting) {
             this.view = view;
             this.word = word;
             this.noWordSep = noWordSep;
             this.caret = caret;
             this.generation = generation;
+            this.refreshExisting = refreshExisting;
         }
     }
 
@@ -254,16 +296,95 @@ public class LspCompletion extends CompletionPopup {
     /**
      * Create an LSP completion popup.
      */
-    public LspCompletion(View view, String word, List<CompletionItem> items,
-                         Point location, String noWordSep) {
+    public LspCompletion(View view, GenericLspClient lspClient, String word,
+                         List<CompletionItem> items, Point location, String noWordSep) {
         super(view, location);
 
+        this.view = view;
+        this.lspClient = lspClient;
         this.textArea = view.getTextArea();
         this.buffer = view.getBuffer();
-        this.word = word;
+        this.word = word == null ? "" : word;
         this.noWordSep = noWordSep;
+        this.allItems = new ArrayList<>(items);
 
-        reset(new LspCompletionCandidates(items), true);
+        setActivePopup(view, this);
+        showFilteredItems(items, textArea.getCaretPosition(), 0);
+    }
+
+    @Override
+    public void dispose() {
+        synchronized (LspCompletion.class) {
+            if (activePopups.get(view) == this) {
+                activePopups.remove(view);
+            }
+        }
+        super.dispose();
+    }
+
+    private void refreshFromServer(List<CompletionItem> items, String newWord, int caret) {
+        allItems = new ArrayList<>(items);
+        word = newWord == null ? "" : newWord;
+        List<CompletionItem> filtered = filterItems(allItems, word);
+        if (filtered.isEmpty()) {
+            dispose();
+            return;
+        }
+        int selected = Math.min(Math.max(getSelectedIndex(), 0), filtered.size() - 1);
+        showFilteredItems(filtered, caret, selected);
+    }
+
+    private void showFilteredItems(List<CompletionItem> items, int caret, int selectedIndex) {
+        if (items.isEmpty()) {
+            dispose();
+            return;
+        }
+        reset(new LspCompletionCandidates(items), false);
+        setSelectedIndex(selectedIndex);
+        repositionPopup(caret);
+        textArea.requestFocusInWindow();
+    }
+
+    private void repositionPopup(int caret) {
+        int wordLength = word.length();
+        Point location = textArea.offsetToXY(Math.max(0, caret - wordLength));
+        location.y += textArea.getPainter().getLineHeight();
+        SwingUtilities.convertPointToScreen(location, textArea.getPainter());
+        reposition(location);
+    }
+
+    private static List<CompletionItem> filterItems(List<CompletionItem> items, String prefix) {
+        if (prefix == null || prefix.isEmpty()) {
+            return new ArrayList<>(items);
+        }
+        List<CompletionItem> filtered = new ArrayList<>();
+        for (CompletionItem item : items) {
+            if (matchesPrefix(item, prefix)) {
+                filtered.add(item);
+            }
+        }
+        return filtered;
+    }
+
+    private static boolean matchesPrefix(CompletionItem item, String prefix) {
+        String filterText = getFilterText(item);
+        return filterText.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    private static String getFilterText(CompletionItem item) {
+        String filter = item.getFilterText();
+        if (filter != null && !filter.isEmpty()) {
+            return filter;
+        }
+        String label = item.getLabel();
+        if (label != null && !label.isEmpty()) {
+            return label;
+        }
+        String insertText = item.getInsertText();
+        if (insertText != null && !insertText.isEmpty()) {
+            return insertText;
+        }
+        return "";
     }
 
     /**
@@ -312,8 +433,10 @@ public class LspCompletion extends CompletionPopup {
             textArea.backspace();
             e.consume();
 
-            if (word.length() == 1) {
+            if (word.isEmpty()) {
                 dispose();
+            } else if (word.length() == 1) {
+                resetWords("");
             } else {
                 resetWords(word.substring(0, word.length() - 1));
             }
@@ -354,13 +477,18 @@ public class LspCompletion extends CompletionPopup {
         }
     }
 
-    /**
-     * Reset candidates with a new word.
-     */
-    private void resetWords(@SuppressWarnings("unused") String newWord) {
-        // For simplicity, just dispose and let user request completion again
-        // A more sophisticated implementation could filter the existing results
-        dispose();
+    private void resetWords(String newWord) {
+        word = newWord == null ? "" : newWord;
+        int caret = textArea.getCaretPosition();
+        List<CompletionItem> filtered = filterItems(allItems, word);
+        if (!filtered.isEmpty()) {
+            int selected = Math.min(getSelectedIndex(), filtered.size() - 1);
+            showFilteredItems(filtered, caret, Math.max(selected, 0));
+            return;
+        }
+        completionCoordinators
+            .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
+            .schedule(this.view, lspClient, word, noWordSep, caret, true);
     }
 
     /**
