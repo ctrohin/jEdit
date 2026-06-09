@@ -23,6 +23,7 @@ package org.jedit.lsp;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,9 +31,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JWindow;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -54,18 +57,21 @@ final class LspSymbolHoverTooltip {
 
     private static final int SHOW_DELAY_MS = 600;
     private static final int HIDE_DELAY_MS = 400;
-    private static final int HOVER_CHECK_MS = 100;
-    private static final int CURSOR_OFFSET_X = 12;
-    private static final int CURSOR_OFFSET_Y = 16;
-    private static final int TOOLTIP_MAX_WIDTH = 480;
+    private static final int HOVER_CHECK_MS = 300;
+    private static final int CURSOR_OFFSET_X = 0;
+    private static final int CURSOR_OFFSET_Y = 0;
+    private static final int SCREEN_EDGE_MARGIN = 12;
+    private static final int PREFERRED_TOOLTIP_WIDTH = 400;
+    private static final int MIN_TOOLTIP_WIDTH = 220;
+    private static final double MAX_HEIGHT_SCREEN_FRACTION = 0.70;
 
     private final JEditTextArea textArea;
     private final TextAreaPainter painter;
     private final View view;
     private final LspDiagnosticTooltip diagnosticTooltip;
     private final JPanel panel;
-    private final JLabel contentLabel;
-    private final JLabel statusLabel;
+    private final JEditorPane contentPane;
+    private final JScrollPane scrollPane;
     private final JWindow window;
     private final Timer showTimer;
     private final Timer hideTimer;
@@ -79,6 +85,7 @@ final class LspSymbolHoverTooltip {
 
     private String pendingHoverKey;
     private Position pendingPosition;
+    private String inFlightHoverKey;
     private String shownHoverKey;
     private int anchorScreenX;
     private int anchorScreenY;
@@ -89,13 +96,20 @@ final class LspSymbolHoverTooltip {
         this.view = textArea.getView();
         this.diagnosticTooltip = diagnosticTooltip;
 
-        contentLabel = new JLabel();
-        statusLabel = new JLabel("Loading...");
-        statusLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
+        contentPane = new JEditorPane();
+        contentPane.setContentType("text/html");
+        contentPane.setEditable(false);
+        contentPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        contentPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        panel = new JPanel(new BorderLayout(0, 4));
-        panel.add(contentLabel, BorderLayout.CENTER);
-        panel.add(statusLabel, BorderLayout.SOUTH);
+        scrollPane = new JScrollPane(contentPane,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        panel = new JPanel(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
 
         window = new JWindow(view);
         window.getContentPane().add(panel);
@@ -119,13 +133,7 @@ final class LspSymbolHoverTooltip {
     }
 
     void onBufferChanged() {
-        pendingHoverKey = null;
-        pendingPosition = null;
-        showTimer.stop();
-        LspHover.cancelPendingRequests();
-        if (window.isVisible()) {
-            hideTooltip();
-        }
+        hideTooltip();
     }
 
     void dispose() {
@@ -174,9 +182,7 @@ final class LspSymbolHoverTooltip {
             return;
         }
 
-        Point screen = painter.getLocationOnScreen();
-        anchorScreenX = screen.x + x;
-        anchorScreenY = screen.y + y;
+        updateAnchorFromPainterPoint(x, y);
 
         if (window.isVisible()) {
             if (symbol.key().equals(shownHoverKey)) {
@@ -190,6 +196,7 @@ final class LspSymbolHoverTooltip {
             return;
         }
 
+        cancelInFlightRequest();
         pendingHoverKey = symbol.key();
         pendingPosition = symbol.position();
         showTimer.restart();
@@ -210,73 +217,139 @@ final class LspSymbolHoverTooltip {
 
         final String requestKey = pendingHoverKey;
         final Position requestPosition = pendingPosition;
-        shownHoverKey = requestKey;
+        inFlightHoverKey = requestKey;
+        updateAnchorFromPointer();
 
-        Point pointer = MouseInfo.getPointerInfo().getLocation();
-        anchorScreenX = pointer.x;
-        anchorScreenY = pointer.y;
+        LspHover.requestHover(client, buffer, requestPosition, hover ->
+            SwingUtilities.invokeLater(() -> setHoverContent(requestKey, hover)));
+    }
+
+    private void setHoverContent(String requestKey, Hover hover) {
+        if (!requestKey.equals(inFlightHoverKey)
+            || !requestKey.equals(pendingHoverKey)) {
+            return;
+        }
+        inFlightHoverKey = null;
+        updateAnchorFromPointer();
+
+        Color foreground = labelForeground();
+        Rectangle screenBounds = screenBounds();
+        int maxWidth = maxTooltipWidth(screenBounds);
+        int width = Math.min(PREFERRED_TOOLTIP_WIDTH, maxWidth);
+        String html = LspHover.hoverToHtml(hover, width, foreground);
+        if (html == null) {
+            return;
+        }
 
         applyLookAndFeelColors();
-        contentLabel.setText("");
-        statusLabel.setText("Loading...");
-        statusLabel.setVisible(true);
-        panel.revalidate();
-        window.pack();
-        positionWindow();
+        contentPane.setText(html);
+        scrollTooltipToTop();
+
+        int initialWidth = width;
+        width = measureExpandedWidth(width, maxWidth);
+        if (width != initialWidth) {
+            html = LspHover.hoverToHtml(hover, width, foreground);
+            contentPane.setText(html);
+            scrollTooltipToTop();
+        }
+
+        layoutWindow(width, screenBounds);
+        shownHoverKey = requestKey;
         window.setVisible(true);
         hideTimer.stop();
         hoverCheckTimer.start();
         updateHideTimer();
-
-        LspHover.requestHover(client, buffer, requestPosition, hover ->
-            SwingUtilities.invokeLater(() -> {
-                if (!requestKey.equals(shownHoverKey) || !window.isVisible()) {
-                    return;
-                }
-                setHoverContent(hover);
-            }));
     }
 
-    private void setHoverContent(Hover hover) {
-        if (!window.isVisible()) {
-            return;
+    private void cancelInFlightRequest() {
+        if (inFlightHoverKey != null) {
+            LspHover.cancelPendingRequests();
+            inFlightHoverKey = null;
         }
-
-        Color foreground = labelForeground();
-        String html = LspHover.hoverToHtml(hover, TOOLTIP_MAX_WIDTH, foreground);
-        if (html == null) {
-            hideTooltip();
-            return;
-        }
-
-        contentLabel.setText(html);
-        statusLabel.setVisible(false);
-        panel.revalidate();
-        window.pack();
-        positionWindow();
     }
 
     private void clearPending() {
         pendingHoverKey = null;
         pendingPosition = null;
         showTimer.stop();
+        cancelInFlightRequest();
     }
 
-    private void positionWindow() {
+    private void updateAnchorFromPainterPoint(int x, int y) {
+        Point painterScreen = painter.getLocationOnScreen();
+        anchorScreenX = painterScreen.x + x;
+        anchorScreenY = painterScreen.y + y;
+    }
+
+    private void updateAnchorFromPointer() {
+        Point pointer = MouseInfo.getPointerInfo().getLocation();
+        anchorScreenX = pointer.x;
+        anchorScreenY = pointer.y;
+    }
+
+    private Rectangle screenBounds() {
+        return painter.getGraphicsConfiguration().getBounds();
+    }
+
+    private int maxTooltipWidth(Rectangle screenBounds) {
+        int available = screenBounds.x + screenBounds.width - anchorScreenX
+            - SCREEN_EDGE_MARGIN;
+        return Math.max(MIN_TOOLTIP_WIDTH, available);
+    }
+
+    private int maxTooltipHeight(Rectangle screenBounds) {
+        return Math.max(120, (int) (screenBounds.height * MAX_HEIGHT_SCREEN_FRACTION));
+    }
+
+    private int measureExpandedWidth(int width, int maxWidth) {
+        contentPane.setSize(width, Integer.MAX_VALUE);
+        int needed = contentPane.getPreferredSize().width;
+        if (needed <= width) {
+            return width;
+        }
+        return Math.min(Math.max(needed, PREFERRED_TOOLTIP_WIDTH), maxWidth);
+    }
+
+    private void scrollTooltipToTop() {
+        contentPane.setCaretPosition(0);
+        scrollPane.getViewport().setViewPosition(new Point(0, 0));
+        scrollPane.getVerticalScrollBar().setValue(0);
+    }
+
+    private void layoutWindow(int width, Rectangle screenBounds) {
+        int maxHeight = maxTooltipHeight(screenBounds);
+        contentPane.setSize(width, Integer.MAX_VALUE);
+        int height = Math.min(contentPane.getPreferredSize().height, maxHeight);
+
+        scrollPane.setPreferredSize(new Dimension(width, height));
+        panel.revalidate();
+        window.pack();
+        scrollTooltipToTop();
+        positionWindow(screenBounds);
+    }
+
+    private void positionWindow(Rectangle screenBounds) {
+        Dimension size = window.getSize();
         int windowX = anchorScreenX + CURSOR_OFFSET_X;
         int windowY = anchorScreenY + CURSOR_OFFSET_Y;
 
-        java.awt.Dimension size = window.getSize();
-        Rectangle screenBounds = painter.getGraphicsConfiguration().getBounds();
-        if (windowX + size.width > screenBounds.x + screenBounds.width) {
+        if (windowX + size.width > screenBounds.x + screenBounds.width - SCREEN_EDGE_MARGIN) {
             windowX = anchorScreenX - size.width - CURSOR_OFFSET_X;
         }
-        if (windowY + size.height > screenBounds.y + screenBounds.height) {
+        if (windowY + size.height > screenBounds.y + screenBounds.height - SCREEN_EDGE_MARGIN) {
             windowY = anchorScreenY - size.height - CURSOR_OFFSET_Y;
         }
-        window.setLocation(
-            Math.max(screenBounds.x, windowX),
-            Math.max(screenBounds.y, windowY));
+
+        windowX = Math.max(screenBounds.x + SCREEN_EDGE_MARGIN, windowX);
+        windowY = Math.max(screenBounds.y + SCREEN_EDGE_MARGIN, windowY);
+        if (windowX + size.width > screenBounds.x + screenBounds.width - SCREEN_EDGE_MARGIN) {
+            windowX = screenBounds.x + screenBounds.width - size.width - SCREEN_EDGE_MARGIN;
+        }
+        if (windowY + size.height > screenBounds.y + screenBounds.height - SCREEN_EDGE_MARGIN) {
+            windowY = screenBounds.y + screenBounds.height - size.height - SCREEN_EDGE_MARGIN;
+        }
+
+        window.setLocation(windowX, windowY);
     }
 
     private void updateHideTimer() {
@@ -320,7 +393,7 @@ final class LspSymbolHoverTooltip {
         shownHoverKey = null;
         pendingHoverKey = null;
         pendingPosition = null;
-        LspHover.cancelPendingRequests();
+        cancelInFlightRequest();
     }
 
     private record SymbolAtPointer(String key, Position position) {}
@@ -411,12 +484,11 @@ final class LspSymbolHoverTooltip {
         panel.setOpaque(true);
         panel.setBackground(background);
         panel.setBorder(border);
-        contentLabel.setOpaque(true);
-        contentLabel.setBackground(background);
-        contentLabel.setForeground(foreground);
-        statusLabel.setOpaque(true);
-        statusLabel.setBackground(background);
-        statusLabel.setForeground(foreground);
+        contentPane.setOpaque(true);
+        contentPane.setBackground(background);
+        contentPane.setForeground(foreground);
+        contentPane.setCaretPosition(0);
+        scrollPane.getViewport().setBackground(background);
 
         if (window != null) {
             JPanel content = (JPanel) window.getContentPane();
