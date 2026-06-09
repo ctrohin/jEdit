@@ -427,6 +427,87 @@ public class LspCompletion extends CompletionPopup {
         return wordChars.toString();
     }
 
+    private static boolean isWordChar(char ch, String noWordSep) {
+        return Character.isLetterOrDigit(ch) || noWordSep.indexOf(ch) != -1;
+    }
+
+    /**
+     * Returns {@code [startOffset, endOffset]} for the word at the caret.
+     */
+    private int[] getWordRangeAtCaret(int caret) {
+        int line = buffer.getLineOfOffset(caret);
+        int lineStart = buffer.getLineStartOffset(line);
+        int dot = caret - lineStart;
+        CharSequence lineText = buffer.getLineSegment(line);
+
+        if (lineText.isEmpty()) {
+            return new int[] {caret, caret};
+        }
+
+        int index = dot;
+        if (index >= lineText.length()) {
+            index = lineText.length() - 1;
+        } else if (index > 0 && !isWordChar(lineText.charAt(index), noWordSep)) {
+            index--;
+        }
+
+        if (index < 0 || !isWordChar(lineText.charAt(index), noWordSep)) {
+            return new int[] {caret, caret};
+        }
+
+        boolean joinNonWordChars = textArea.getJoinNonWordChars();
+        int wordStart = TextUtilities.findWordStart(lineText, index, noWordSep,
+            joinNonWordChars, false, false);
+        int wordEnd = TextUtilities.findWordEnd(lineText, index + 1, noWordSep,
+            joinNonWordChars, false, false);
+        return new int[] {lineStart + wordStart, lineStart + wordEnd};
+    }
+
+    private void replaceWordAtCaret(String newText) {
+        if (newText == null) {
+            return;
+        }
+
+        int caret = textArea.getCaretPosition();
+        int[] range = getWordRangeAtCaret(caret);
+        int start = range[0];
+        int end = range[1];
+
+        buffer.beginCompoundEdit();
+        try {
+            if (end > start) {
+                buffer.remove(start, end - start);
+            }
+            buffer.insert(start, newText);
+        } finally {
+            buffer.endCompoundEdit();
+        }
+        textArea.setCaretPosition(start + newText.length());
+    }
+
+    private static String getCompletionInsertText(CompletionItem item) {
+        Either<TextEdit, InsertReplaceEdit> textEditEither = item.getTextEdit();
+        if (textEditEither != null) {
+            if (textEditEither.isLeft()) {
+                TextEdit textEdit = textEditEither.getLeft();
+                if (textEdit != null && textEdit.getNewText() != null) {
+                    return textEdit.getNewText();
+                }
+            } else if (textEditEither.isRight()) {
+                InsertReplaceEdit insertReplaceEdit = textEditEither.getRight();
+                if (insertReplaceEdit != null && insertReplaceEdit.getNewText() != null) {
+                    return insertReplaceEdit.getNewText();
+                }
+            }
+        }
+
+        String insertText = item.getInsertText();
+        if (insertText != null && !insertText.isEmpty()) {
+            return insertText;
+        }
+        return item.getLabel();
+    }
+
     @Override
     protected void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
@@ -515,135 +596,14 @@ public class LspCompletion extends CompletionPopup {
 
         @Override
         public void complete(int index) {
-            if (index < 0 || index >= items.size())
-                return;
-
-            CompletionItem item = items.get(index);
-
-            // Try to use textEdit if available (more accurate positioning)
-            Either<TextEdit, InsertReplaceEdit> textEditEither = item.getTextEdit();
-            if (textEditEither != null) {
-                if (textEditEither.isLeft()) {
-                    applyTextEdit(textEditEither.getLeft());
-                    return;
-                } else if (textEditEither.isRight()) {
-                    applyInsertReplaceEdit(textEditEither.getRight());
-                    return;
-                }
-            }
-
-            // Fallback: use insertText with simple word replacement
-            String insertText = item.getInsertText();
-            if (insertText == null || insertText.isEmpty()) {
-                insertText = item.getLabel();
-            }
-
-            int wordLen = word == null ? 0 : word.length();
-            if (wordLen <= insertText.length()) {
-                String insertion = insertText.substring(wordLen);
-                textArea.replaceSelection(insertion);
-            }
-        }
-
-        /**
-         * Apply a TextEdit from the LSP completion item.
-         * This uses the precise range provided by the language server.
-         */
-        private void applyTextEdit(TextEdit textEdit) {
-            Range range = textEdit.getRange();
-            String newText = textEdit.getNewText();
-
-            if (range == null || newText == null) {
+            if (index < 0 || index >= items.size()) {
                 return;
             }
 
-            try {
-                int startOffset = convertLspPositionToOffset(range.getStart());
-                int endOffset = convertLspPositionToOffset(range.getEnd());
-
-                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
-                    Log.log(Log.WARNING, LspCompletion.class,
-                        "Invalid textEdit range: start=" + startOffset + ", end=" + endOffset);
-                    return;
-                }
-
-                // Replace the range with the new text
-                int lengthToDelete = endOffset - startOffset;
-                buffer.remove(startOffset, lengthToDelete);
-                buffer.insert(startOffset, newText);
-            } catch (Exception e) {
-                Log.log(Log.ERROR, LspCompletion.class, "Error applying textEdit", e);
+            String newText = getCompletionInsertText(items.get(index));
+            if (newText != null && !newText.isEmpty()) {
+                replaceWordAtCaret(newText);
             }
-        }
-
-        /**
-         * Apply an InsertReplaceEdit from the LSP completion item.
-         * Chooses between insert or replace range based on context.
-         */
-        private void applyInsertReplaceEdit(InsertReplaceEdit insertReplaceEdit) {
-            Range insertRange = insertReplaceEdit.getInsert();
-            Range replaceRange = insertReplaceEdit.getReplace();
-            String newText = insertReplaceEdit.getNewText();
-
-            if (newText == null) {
-                return;
-            }
-
-            // Use replace range (more common for completions)
-            Range rangeToUse = replaceRange != null ? replaceRange : insertRange;
-            if (rangeToUse == null) {
-                return;
-            }
-
-            try {
-                int startOffset = convertLspPositionToOffset(rangeToUse.getStart());
-                int endOffset = convertLspPositionToOffset(rangeToUse.getEnd());
-
-                if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
-                    Log.log(Log.WARNING, LspCompletion.class,
-                        "Invalid insertReplaceEdit range");
-                    return;
-                }
-
-                // Replace the range with the new text
-                int lengthToDelete = endOffset - startOffset;
-                buffer.remove(startOffset, lengthToDelete);
-                buffer.insert(startOffset, newText);
-            } catch (Exception e) {
-                Log.log(Log.ERROR, LspCompletion.class, "Error applying insertReplaceEdit", e);
-            }
-        }
-
-        /**
-         * Convert an LSP Position to a jEdit buffer offset.
-         * LSP uses 0-based line and character positions.
-         */
-        private int convertLspPositionToOffset(Position position) {
-            if (position == null) {
-                return -1;
-            }
-
-            int line = position.getLine();
-            int character = position.getCharacter();
-
-            // Validate line
-            if (line < 0 || line >= buffer.getLineCount()) {
-                Log.log(Log.WARNING, LspCompletion.class,
-                    "Invalid line number: " + line + " (total lines: " + buffer.getLineCount() + ")");
-                return -1;
-            }
-
-            // Get line content and validate character position
-            CharSequence lineContent = buffer.getLineSegment(line);
-            if (character < 0 || character > lineContent.length()) {
-                Log.log(Log.WARNING, LspCompletion.class,
-                    "Invalid character position: " + character + " (line length: " + lineContent.length() + ")");
-                return -1;
-            }
-
-            // Calculate the absolute offset in the buffer
-            int lineStartOffset = buffer.getLineStartOffset(line);
-            return lineStartOffset + character;
         }
 
         @Override
