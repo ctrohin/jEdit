@@ -21,6 +21,7 @@
 
 package org.jedit.lsp;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
@@ -32,10 +33,13 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -53,6 +57,10 @@ import org.gjt.sp.util.Log;
  * Similar to CompleteWord but uses Language Server Protocol for completions.
  */
 public class LspCompletion extends CompletionPopup {
+
+    private static final int LIST_CELL_WIDTH = 520;
+    private static final Pattern ARROW_SIGNATURE =
+        Pattern.compile("^\\((.*)\\)\\s*->\\s*(.+)$");
 
     private static final ConcurrentHashMap<GenericLspClient, CompletionCoordinator> completionCoordinators =
         new ConcurrentHashMap<>();
@@ -340,6 +348,7 @@ public class LspCompletion extends CompletionPopup {
             return;
         }
         reset(new LspCompletionCandidates(items), false);
+        setListCellWidth(LIST_CELL_WIDTH);
         setSelectedIndex(selectedIndex);
         repositionPopup(caret);
         textArea.requestFocusInWindow();
@@ -614,32 +623,49 @@ public class LspCompletion extends CompletionPopup {
                 null, index, isSelected, cellHasFocus);
 
             CompletionItem item = items.get(index);
-            String text = item.getLabel();
-            Font font = list.getFont();
-
-            // Add completion kind indicator
-            String kind = getCompletionKindString(item.getKind());
-            if (kind != null) {
-                text = text + " [" + kind + "]";
-            }
-
-            if (index < 9)
-                text = (index + 1) + ": " + text;
-            else if (index == 9)
-                text = "0: " + text;
-
-            renderer.setText(text);
-            renderer.setFont(font);
+            renderer.setText(formatItemHtml(item, index));
+            renderer.setFont(list.getFont());
             return renderer;
         }
 
         @Override
         public String getDescription(int index) {
-            if (index < 0 || index >= items.size())
+            if (index < 0 || index >= items.size()) {
                 return null;
+            }
+            return getItemDocumentation(items.get(index));
+        }
 
-            CompletionItem item = items.get(index);
-            return item.getDetail();
+        private String formatItemHtml(CompletionItem item, int index) {
+            String label = item.getLabel() != null ? item.getLabel() : "";
+            String prefix = "";
+            if (index < 9) {
+                prefix = (index + 1) + ": ";
+            } else if (index == 9) {
+                prefix = "0: ";
+            }
+
+            String detail = getItemDetail(item);
+            String display = formatSignatureDisplay(label, detail);
+            StringBuilder html = new StringBuilder("<html>").append(escapeHtml(prefix));
+
+            int returnTypeSep = findReturnTypeSeparator(display);
+            if (returnTypeSep >= 0) {
+                html.append(escapeHtml(display.substring(0, returnTypeSep)));
+                html.append("<font color='").append(detailColorHex()).append("'>")
+                    .append(escapeHtml(display.substring(returnTypeSep))).append("</font>");
+            } else {
+                html.append(escapeHtml(display));
+                if (detail == null || detail.isEmpty()) {
+                    String kind = getCompletionKindString(item.getKind());
+                    if (kind != null) {
+                        html.append(" <font color='").append(detailColorHex()).append("'>[")
+                            .append(escapeHtml(kind)).append("]</font>");
+                    }
+                }
+            }
+            html.append("</html>");
+            return html.toString();
         }
 
         /**
@@ -704,6 +730,94 @@ public class LspCompletion extends CompletionPopup {
                     return null;
             }
         }
+    }
+
+    /**
+     * Formats label and LSP detail into {@code name(params): returnType}.
+     * Handles Dart-style details such as {@code () -> String}.
+     */
+    private static String formatSignatureDisplay(String label, String detail) {
+        if (detail == null || detail.isEmpty()) {
+            return label;
+        }
+        if (detail.startsWith("(")) {
+            label = label.replaceAll("\\([^)]*\\)", "");
+        }
+        else {
+            label = label + ": ";
+        }
+        return label + detail;
+    }
+
+    private static String extractMethodBaseName(String label) {
+        int paren = label.indexOf('(');
+        if (paren >= 0) {
+            return label.substring(0, paren);
+        }
+        return label;
+    }
+
+    /**
+     * Index of the colon that separates the signature from the return type.
+     */
+    private static int findReturnTypeSeparator(String display) {
+        int lastParen = display.lastIndexOf(')');
+        if (lastParen >= 0) {
+            int colon = display.indexOf(": ", lastParen);
+            if (colon >= 0) {
+                return colon;
+            }
+        }
+        int colon = display.indexOf(": ");
+        return colon > 0 ? colon : -1;
+    }
+
+    private static String getItemDetail(CompletionItem item) {
+        String detail = item.getDetail();
+        if (detail != null && !detail.isEmpty()) {
+            return detail;
+        }
+        CompletionItemLabelDetails labelDetails = item.getLabelDetails();
+        if (labelDetails != null) {
+            detail = labelDetails.getDetail();
+            if (detail != null && !detail.isEmpty()) {
+                return detail;
+            }
+        }
+        return null;
+    }
+
+    private static String getItemDocumentation(CompletionItem item) {
+        Either<String, MarkupContent> documentation = item.getDocumentation();
+        if (documentation == null) {
+            return null;
+        }
+        if (documentation.isLeft()) {
+            return documentation.getLeft();
+        }
+        MarkupContent markup = documentation.getRight();
+        return markup != null ? markup.getValue() : null;
+    }
+
+    private static String detailColorHex() {
+        Color color = UIManager.getColor("Label.disabledForeground");
+        if (color == null) {
+            color = UIManager.getColor("Label.foreground");
+        }
+        if (color == null) {
+            return "#707070";
+        }
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    private static String escapeHtml(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;");
     }
 
     /**

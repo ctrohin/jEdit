@@ -225,6 +225,18 @@ public class CompletionPopup extends JWindow
 		return candidates;
 	} //}}}
 
+	//{{{ setListCellWidth() method
+	/**
+	 * Sets a fixed width for list cells and repacks the popup.
+	 */
+	protected void setListCellWidth(int width)
+	{
+		list.setFixedCellWidth(width);
+		pack();
+		setLocation(fitInScreen(getLocation(), this,
+			view.getTextArea().getPainter().getLineHeight()));
+	} //}}}
+
 	//{{{ getSelectedIndex() method
 	/**
 	 * Returns index of current selection.
