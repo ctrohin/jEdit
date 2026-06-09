@@ -926,13 +926,14 @@ public class LspCompletion extends CompletionPopup {
         if (detail == null || detail.isEmpty()) {
             return label;
         }
-        if (detail.startsWith("(")) {
-            label = label.replaceAll("\\([^)]*\\)", "");
-        }
-        else {
-            label = label + ": ";
-        }
-        return label + detail;
+        return label + " - " + detail;
+//        if (detail.startsWith("(")) {
+//            label = label.replaceAll("\\([^)]*\\)", "");
+//        }
+//        else {
+//            label = label + ": ";
+//        }
+//        return label + detail;
     }
 
     private static String extractMethodBaseName(String label) {
