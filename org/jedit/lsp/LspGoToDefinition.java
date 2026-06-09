@@ -51,7 +51,9 @@ import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.EditPane;
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.EBMessage;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
 import org.gjt.sp.jedit.syntax.KeywordMap;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -225,31 +227,48 @@ public final class LspGoToDefinition {
             return;
         }
 
-        int offset = 0;
-        if (location.getRange() != null && location.getRange().getStart() != null) {
-            offset = Math.max(0, positionToOffsetForPath(path, location.getRange().getStart()));
-        }
-
-        Hashtable<String, Object> props = new Hashtable<>();
-        props.put(Buffer.CARET, Integer.valueOf(offset));
-        props.put(Buffer.CARET_POSITIONED, Boolean.TRUE);
-
-        Buffer buffer = jEdit.openFile(view, null, path, false, props);
+        Buffer buffer = jEdit.openFile(view, null, path, false, new Hashtable<>());
         if (buffer == null) {
             UIManager.getLookAndFeel().provideErrorFeedback(view);
             return;
         }
 
-        int targetOffset = offset;
-        if (location.getRange() != null && location.getRange().getStart() != null) {
-            int resolved = positionToOffset(buffer, location.getRange().getStart());
-            if (resolved >= 0) {
-                targetOffset = resolved;
-            }
+        Position start = location.getRange() != null
+            ? location.getRange().getStart() : null;
+        scheduleNavigateToPosition(view, buffer, start);
+    }
+
+    private static void scheduleNavigateToPosition(View view, Buffer buffer,
+                                                   Position position) {
+        Runnable navigate = () -> {
+            int offset = positionToOffsetOrZero(buffer, position);
+            reserveCaret(buffer, offset);
+            navigateToOffset(view, buffer, offset);
+        };
+
+        if (buffer.isLoaded()) {
+            SwingUtilities.invokeLater(navigate);
+        } else {
+            EditBus.addToBus(new EBComponent() {
+                @Override
+                public void handleMessage(EBMessage msg) {
+                    if (msg instanceof BufferUpdate update
+                        && update.getWhat() == BufferUpdate.LOADED
+                        && update.getBuffer() == buffer) {
+                        EditBus.removeFromBus(this);
+                        SwingUtilities.invokeLater(navigate);
+                    }
+                }
+            });
         }
-        targetOffset = Math.min(Math.max(0, targetOffset), buffer.getLength());
-        reserveCaret(buffer, targetOffset);
-        navigateToOffset(view, buffer, targetOffset);
+    }
+
+    private static int positionToOffsetOrZero(Buffer buffer, Position position) {
+        if (position == null) {
+            return 0;
+        }
+        int resolved = positionToOffset(buffer, position);
+        return resolved >= 0 ? Math.min(resolved, buffer.getLength()) : 0;
     }
 
     private static void reserveCaret(Buffer buffer, int offset) {
@@ -278,21 +297,6 @@ public final class LspGoToDefinition {
             view.requestFocus();
         };
         SwingUtilities.invokeLater(navigate);
-    }
-
-    /**
-     * Best-effort offset before the buffer is loaded (for open-file props).
-     */
-    private static int positionToOffsetForPath(String path, Position position) {
-        if (position == null) {
-            return 0;
-        }
-        Buffer buffer = jEdit.getBuffer(path);
-        if (buffer == null) {
-            return 0;
-        }
-        int offset = positionToOffset(buffer, position);
-        return offset >= 0 ? offset : 0;
     }
 
     private static Position offsetToPosition(Buffer buffer, int offset) {

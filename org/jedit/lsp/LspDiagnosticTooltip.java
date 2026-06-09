@@ -368,6 +368,9 @@ final class LspDiagnosticTooltip {
         if (!(textArea.getBuffer() instanceof Buffer buffer)) {
             return null;
         }
+        if (buffer.isLoading()) {
+            return null;
+        }
 
         int offset = textArea.xyToOffset(x, y, false);
         if (offset < 0) {
