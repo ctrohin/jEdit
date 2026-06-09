@@ -7,6 +7,8 @@ show-context-menu.shortcut=CONTEXT_MENU
 select-all.shortcut=C+a
 complete-word.shortcut=C+b
 complete-lsp.shortcut=C+\
+goto-back-lsp.shortcut=CA+LEFT
+goto-forward-lsp.shortcut=CA+RIGHT
 copy.shortcut=C+c
 delete-line.shortcut=C+d
 # C+e is a prefix

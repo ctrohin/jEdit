@@ -63,10 +63,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         Log.log(DEFAULT_LEVEL, this, "LSP Plugin starting...");
         LspDiagnosticHighlights.install();
         LspGoToDefinition.install();
+        LspNavigationHistory.install();
     }
 
     @Override
     public void stop() {
+        LspNavigationHistory.uninstall();
         LspGoToDefinition.uninstall();
         LspDiagnosticHighlights.uninstall();
         // Shutdown all clients
@@ -109,6 +111,24 @@ public class LspPlugin extends EditPlugin implements EBComponent {
      */
     public static void goToDefinitionLsp(View view) {
         invokeLspFeature(view, (v, client) -> LspGoToDefinition.goToDefinitionLsp(v, client));
+    }
+
+    /**
+     * Navigate back to the previous location before an LSP go-to-definition jump.
+     */
+    public static void goBackLsp(View view) {
+        if (view != null) {
+            LspNavigationHistory.goBack(view);
+        }
+    }
+
+    /**
+     * Navigate forward after an LSP go-back action.
+     */
+    public static void goForwardLsp(View view) {
+        if (view != null) {
+            LspNavigationHistory.goForward(view);
+        }
     }
 
     @FunctionalInterface

@@ -151,6 +151,8 @@ code-actions-lsp.label=LSP Code $Actions
 refactor-lsp.label=LSP $Refactor
 rename-lsp.label=LSP $Rename
 goto-definition-lsp.label=Go to $Definition (LSP)
+goto-back-lsp.label=Go $Back (LSP)
+goto-forward-lsp.label=Go $Forward (LSP)
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 

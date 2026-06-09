@@ -228,6 +228,18 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="goto-back-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.goBackLsp(view);
+	</CODE>
+</ACTION>
+
+<ACTION NAME="goto-forward-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.goForwardLsp(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

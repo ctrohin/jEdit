@@ -67,8 +67,17 @@ import org.gjt.sp.util.Log;
 public final class LspGoToDefinition {
 
     private static final LspGoToDefinitionInput INPUT = new LspGoToDefinitionInput();
+    private static boolean historySuppressed;
 
     private LspGoToDefinition() {}
+
+    static boolean isHistorySuppressed() {
+        return historySuppressed;
+    }
+
+    static void setHistorySuppressed(boolean suppressed) {
+        historySuppressed = suppressed;
+    }
 
     static void install() {
         INPUT.install();
@@ -110,6 +119,9 @@ public final class LspGoToDefinition {
             return;
         }
 
+        LspNavigationHistory.NavigationEntry origin =
+            LspNavigationHistory.capture(view);
+
         String documentUri = LspDocumentUri.pathToUri(buffer.getPath());
         Position position = offsetToPosition(buffer, offset);
 
@@ -120,7 +132,7 @@ public final class LspGoToDefinition {
         lspClient.whenReady().thenCompose(ignored ->
             lspClient.getServer().getTextDocumentService().definition(params))
             .thenAccept(result -> SwingUtilities.invokeLater(() ->
-                handleDefinitionResult(view, result)))
+                handleDefinitionResult(view, result, origin)))
             .exceptionally(ex -> {
                 Log.log(Log.ERROR, LspGoToDefinition.class,
                     "Error requesting LSP definition", ex);
@@ -131,7 +143,8 @@ public final class LspGoToDefinition {
     }
 
     private static void handleDefinitionResult(View view,
-            Either<List<? extends Location>, List<? extends LocationLink>> result) {
+            Either<List<? extends Location>, List<? extends LocationLink>> result,
+            LspNavigationHistory.NavigationEntry origin) {
         List<Location> locations = parseLocations(result);
         if (locations.isEmpty()) {
             UIManager.getLookAndFeel().provideErrorFeedback(view);
@@ -147,7 +160,7 @@ public final class LspGoToDefinition {
                 return;
             }
         }
-        openLocation(view, target);
+        openLocation(view, target, origin);
     }
 
     private static List<Location> parseLocations(
@@ -213,11 +226,14 @@ public final class LspGoToDefinition {
         return file;
     }
 
-    static void openLocation(View view, Location location) {
+    static void openLocation(View view, Location location,
+                             LspNavigationHistory.NavigationEntry origin) {
         if (location == null || location.getUri() == null) {
             UIManager.getLookAndFeel().provideErrorFeedback(view);
             return;
         }
+
+        LspNavigationHistory.pushBack(view, origin);
 
         String path = LspDocumentUri.uriToPath(location.getUri());
         if (path == null) {
@@ -238,6 +254,21 @@ public final class LspGoToDefinition {
         scheduleNavigateToPosition(view, buffer, start);
     }
 
+    static void navigateToEntry(View view, String path, int offset) {
+        if (view == null || path == null) {
+            UIManager.getLookAndFeel().provideErrorFeedback(view);
+            return;
+        }
+
+        Buffer buffer = jEdit.openFile(view, null, path, false, new Hashtable<>());
+        if (buffer == null) {
+            UIManager.getLookAndFeel().provideErrorFeedback(view);
+            return;
+        }
+
+        scheduleNavigateToOffset(view, buffer, offset);
+    }
+
     private static void scheduleNavigateToPosition(View view, Buffer buffer,
                                                    Position position) {
         Runnable navigate = () -> {
@@ -245,7 +276,20 @@ public final class LspGoToDefinition {
             reserveCaret(buffer, offset);
             navigateToOffset(view, buffer, offset);
         };
+        runWhenBufferReady(view, buffer, navigate);
+    }
 
+    private static void scheduleNavigateToOffset(View view, Buffer buffer, int offset) {
+        final int targetOffset = Math.max(0, offset);
+        Runnable navigate = () -> {
+            int safeOffset = Math.min(targetOffset, buffer.getLength());
+            reserveCaret(buffer, safeOffset);
+            navigateToOffset(view, buffer, safeOffset);
+        };
+        runWhenBufferReady(view, buffer, navigate);
+    }
+
+    private static void runWhenBufferReady(View view, Buffer buffer, Runnable navigate) {
         if (buffer.isLoaded()) {
             SwingUtilities.invokeLater(navigate);
         } else {

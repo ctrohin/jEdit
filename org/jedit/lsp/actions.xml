@@ -68,5 +68,18 @@
             org.jedit.lsp.LspPlugin.goToDefinitionLsp(view);
         </CODE>
     </ACTION>
+
+    <!-- LSP navigation history -->
+    <ACTION NAME="goto-back-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.goBackLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="goto-forward-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.goForwardLsp(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 
