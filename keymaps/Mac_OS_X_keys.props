@@ -17,6 +17,7 @@ collapse-all-folds.shortcut=AS+BACK_SPACE
 collapse-fold.shortcut=A+BACK_SPACE
 complete-word.shortcut=C+b
 complete-lsp.shortcut=C+\
+signature-help-lsp.shortcut=CS+p
 goto-back-lsp.shortcut=CA+LEFT
 goto-forward-lsp.shortcut=CA+RIGHT
 copy-append-string-register.shortcut=MC+c

@@ -20,6 +20,7 @@ collapse-all-folds.shortcut=CS+SUBTRACT
 collapse-fold.shortcut=C+SUBTRACT
 complete-word.shortcut=C+SPACE
 complete-lsp.shortcut=C+\
+signature-help-lsp.shortcut=CS+p
 goto-back-lsp.shortcut=CA+LEFT
 goto-forward-lsp.shortcut=CA+RIGHT
 copy-append-string-register.shortcut=C+r C+a

@@ -58,6 +58,7 @@ show-context-menu.shortcut=CONTEXT_MENU
 #{{{ C+X
 select-all.shortcut=C+a
 complete-lsp.shortcut=C+\
+signature-help-lsp.shortcut=CS+p
 goto-back-lsp.shortcut=CA+LEFT
 goto-forward-lsp.shortcut=CA+RIGHT
 complete-word.shortcut=C+b

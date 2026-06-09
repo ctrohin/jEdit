@@ -64,10 +64,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         LspDiagnosticHighlights.install();
         LspGoToDefinition.install();
         LspNavigationHistory.install();
+        LspSignatureHelp.install();
     }
 
     @Override
     public void stop() {
+        LspSignatureHelp.uninstall();
         LspNavigationHistory.uninstall();
         LspGoToDefinition.uninstall();
         LspDiagnosticHighlights.uninstall();
@@ -111,6 +113,13 @@ public class LspPlugin extends EditPlugin implements EBComponent {
      */
     public static void goToDefinitionLsp(View view) {
         invokeLspFeature(view, (v, client) -> LspGoToDefinition.goToDefinitionLsp(v, client));
+    }
+
+    /**
+     * Show method parameter info when the caret is inside a method call's parentheses.
+     */
+    public static void signatureHelpLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSignatureHelp.showSignatureHelp(v, client));
     }
 
     /**

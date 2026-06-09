@@ -62,6 +62,13 @@
         </CODE>
     </ACTION>
 
+    <!-- LSP Method Parameters (signature help) -->
+    <ACTION NAME="signature-help-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.signatureHelpLsp(view);
+        </CODE>
+    </ACTION>
+
     <!-- LSP Go to Definition -->
     <ACTION NAME="goto-definition-lsp">
         <CODE>
