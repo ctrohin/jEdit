@@ -21,10 +21,13 @@
 
 package org.jedit.lsp;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -36,10 +39,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JEditorPane;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JWindow;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -58,7 +68,10 @@ import org.gjt.sp.util.Log;
  */
 public class LspCompletion extends CompletionPopup {
 
-    private static final int LIST_CELL_WIDTH = 520;
+    private static final int LIST_CELL_WIDTH = 300;
+    private static final int DESCRIPTION_WIDTH = 400;
+    private static final int DESCRIPTION_MAX_HEIGHT = 320;
+    private static final int DESCRIPTION_GAP = 4;
     private static final Pattern ARROW_SIGNATURE =
         Pattern.compile("^\\((.*)\\)\\s*->\\s*(.+)$");
 
@@ -73,6 +86,11 @@ public class LspCompletion extends CompletionPopup {
     private String word;
     private final String noWordSep;
     private List<CompletionItem> allItems;
+    private List<CompletionItem> visibleItems;
+    private final JWindow descriptionWindow;
+    private final JEditorPane descriptionPane;
+    private final JScrollPane descriptionScroll;
+    private final JPanel descriptionPanel;
 
     /**
      * Trigger LSP completion at the current caret position.
@@ -316,8 +334,50 @@ public class LspCompletion extends CompletionPopup {
         this.noWordSep = noWordSep;
         this.allItems = new ArrayList<>(items);
 
+        descriptionPane = new JEditorPane();
+        descriptionPane.setContentType("text/html");
+        descriptionPane.setEditable(false);
+        descriptionPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        descriptionPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+        descriptionScroll = new JScrollPane(descriptionPane,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        descriptionScroll.setBorder(BorderFactory.createEmptyBorder());
+        descriptionScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        descriptionPanel = new JPanel(new BorderLayout());
+        descriptionPanel.add(descriptionScroll, BorderLayout.CENTER);
+
+        descriptionWindow = new JWindow(view);
+        descriptionWindow.getContentPane().add(descriptionPanel);
+        descriptionWindow.setFocusableWindowState(false);
+        applyDescriptionColors();
+
         setActivePopup(view, this);
         showFilteredItems(items, textArea.getCaretPosition(), 0);
+    }
+
+    @Override
+    protected void onCandidateSelected(int index, String description) {
+        updateDescriptionWindow(index);
+    }
+
+    @Override
+    protected void reposition(Point location) {
+        super.reposition(location);
+        if (descriptionWindow.isVisible()) {
+            positionDescriptionWindow();
+        }
+    }
+
+    @Override
+    protected void setListCellWidth(int width) {
+        super.setListCellWidth(width);
+        if (descriptionWindow.isVisible()) {
+            layoutDescriptionWindow();
+            positionDescriptionWindow();
+        }
     }
 
     @Override
@@ -327,7 +387,132 @@ public class LspCompletion extends CompletionPopup {
                 activePopups.remove(view);
             }
         }
+        if (descriptionWindow != null) {
+            descriptionWindow.dispose();
+        }
         super.dispose();
+    }
+
+    private void updateDescriptionWindow(int index) {
+        if (visibleItems == null || index < 0 || index >= visibleItems.size()) {
+            descriptionWindow.setVisible(false);
+            return;
+        }
+
+        CompletionItem item = visibleItems.get(index);
+        Color foreground = descriptionForeground();
+        String html = LspHover.documentationToHtml(
+            item.getDocumentation(), DESCRIPTION_WIDTH, foreground);
+        if (html == null) {
+            descriptionWindow.setVisible(false);
+            return;
+        }
+
+        applyDescriptionColors();
+        descriptionPane.setText(html);
+        scrollDescriptionToTop();
+        layoutDescriptionWindow();
+        positionDescriptionWindow();
+        descriptionWindow.setVisible(true);
+    }
+
+    private void layoutDescriptionWindow() {
+        descriptionPane.setSize(DESCRIPTION_WIDTH, Integer.MAX_VALUE);
+        int contentHeight = descriptionPane.getPreferredSize().height;
+        int height;
+        if (isDisplayable() && getHeight() > 0) {
+            height = getHeight();
+        } else {
+            height = Math.min(contentHeight + 16, DESCRIPTION_MAX_HEIGHT);
+        }
+        descriptionScroll.setPreferredSize(new Dimension(DESCRIPTION_WIDTH, height));
+        descriptionPanel.revalidate();
+        descriptionWindow.pack();
+        scrollDescriptionToTop();
+    }
+
+    private void positionDescriptionWindow() {
+        Rectangle screen = getGraphicsConfiguration().getBounds();
+        Point popupLoc = getLocation();
+        Dimension popupSize = getSize();
+        Dimension descSize = descriptionWindow.getSize();
+
+        int x = popupLoc.x + popupSize.width + DESCRIPTION_GAP;
+        int y = popupLoc.y;
+
+        if (x + descSize.width > screen.x + screen.width - DESCRIPTION_GAP) {
+            x = popupLoc.x - descSize.width - DESCRIPTION_GAP;
+        }
+        if (x < screen.x + DESCRIPTION_GAP) {
+            x = screen.x + screen.width - descSize.width - DESCRIPTION_GAP;
+        }
+        if (y + descSize.height > screen.y + screen.height - DESCRIPTION_GAP) {
+            y = screen.y + screen.height - descSize.height - DESCRIPTION_GAP;
+        }
+        descriptionWindow.setLocation(
+            Math.max(screen.x + DESCRIPTION_GAP, x),
+            Math.max(screen.y + DESCRIPTION_GAP, y));
+    }
+
+    private void scrollDescriptionToTop() {
+        descriptionPane.setCaretPosition(0);
+        descriptionScroll.getViewport().setViewPosition(new Point(0, 0));
+        descriptionScroll.getVerticalScrollBar().setValue(0);
+    }
+
+    private void applyDescriptionColors() {
+        Color background = descriptionBackground();
+        Color foreground = descriptionForeground();
+        Color borderColor = descriptionBorderColor(background, foreground);
+
+        Border border = BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(1, 1, 2, 1, borderColor),
+            BorderFactory.createEmptyBorder(8, 10, 8, 10));
+
+        descriptionPanel.setOpaque(true);
+        descriptionPanel.setBackground(background);
+        descriptionPanel.setBorder(border);
+        descriptionPane.setOpaque(true);
+        descriptionPane.setBackground(background);
+        descriptionPane.setForeground(foreground);
+        descriptionScroll.getViewport().setBackground(background);
+
+        if (descriptionWindow != null) {
+            JPanel content = (JPanel) descriptionWindow.getContentPane();
+            content.setOpaque(true);
+            content.setBackground(background);
+            content.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+        }
+    }
+
+    private static Color descriptionBackground() {
+        Color background = UIManager.getColor("ToolTip.background");
+        if (background == null) {
+            background = UIManager.getColor("Panel.background");
+        }
+        return background;
+    }
+
+    private static Color descriptionForeground() {
+        Color foreground = UIManager.getColor("ToolTip.foreground");
+        if (foreground == null) {
+            foreground = UIManager.getColor("Label.foreground");
+        }
+        return foreground;
+    }
+
+    private static Color descriptionBorderColor(Color background, Color foreground) {
+        Color border = UIManager.getColor("Component.borderColor");
+        if (border == null) {
+            border = UIManager.getColor("controlShadow");
+        }
+        if (border == null) {
+            return foreground;
+        }
+        int delta = Math.abs(border.getRed() - background.getRed())
+            + Math.abs(border.getGreen() - background.getGreen())
+            + Math.abs(border.getBlue() - background.getBlue());
+        return delta < 40 ? foreground : border;
     }
 
     private void refreshFromServer(List<CompletionItem> items, String newWord, int caret) {
@@ -347,10 +532,11 @@ public class LspCompletion extends CompletionPopup {
             dispose();
             return;
         }
+        visibleItems = items;
         reset(new LspCompletionCandidates(items), false);
         setListCellWidth(LIST_CELL_WIDTH);
-        setSelectedIndex(selectedIndex);
         repositionPopup(caret);
+        setSelectedIndex(selectedIndex);
         textArea.requestFocusInWindow();
     }
 

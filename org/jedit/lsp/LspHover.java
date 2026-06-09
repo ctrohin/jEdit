@@ -96,6 +96,26 @@ final class LspHover {
             + colorHex(foreground) + ";'>" + body + "</body></html>";
     }
 
+    static String documentationToHtml(Either<String, MarkupContent> documentation,
+                                    int maxWidth, Color foreground) {
+        if (documentation == null) {
+            return null;
+        }
+
+        String body;
+        if (documentation.isLeft()) {
+            body = plainTextToHtml(documentation.getLeft());
+        } else {
+            body = formatMarkup(documentation.getRight(), foreground);
+        }
+        if (body == null || body.isBlank()) {
+            return null;
+        }
+
+        return "<html><body style='width: " + maxWidth + "px; color: "
+            + colorHex(foreground) + ";'>" + body + "</body></html>";
+    }
+
     private static String formatContents(
             Either<List<Either<String, MarkedString>>, MarkupContent> contents,
             Color foreground) {

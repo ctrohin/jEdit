@@ -258,11 +258,19 @@ public class CompletionPopup extends JWindow
 		{
 			list.setSelectedIndex(index);
 			list.ensureIndexIsVisible(index);
-			String description = candidates.getDescription(index);
-			if (description != null)
-			{
-				view.getStatus().setMessageAndClear(description);
-			}
+			onCandidateSelected(index, candidates.getDescription(index));
+		}
+	} //}}}
+
+	//{{{ onCandidateSelected() method
+	/**
+	 * Called when the selected completion candidate changes.
+	 */
+	protected void onCandidateSelected(int index, String description)
+	{
+		if (description != null)
+		{
+			view.getStatus().setMessageAndClear(description);
 		}
 	} //}}}
 
