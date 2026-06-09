@@ -380,6 +380,24 @@ final class LspSignatureHelp {
                     if (e.getKeyCode() == KeyEvent.VK_ESCAPE && window.isVisible()) {
                         LspSignatureHelp.hide(view);
                         e.consume();
+                        return;
+                    }
+                    if (!e.isConsumed()) {
+                        passKeyEventToView(e);
+                    }
+                }
+
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    if (!e.isConsumed()) {
+                        passKeyEventToView(e);
+                    }
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    if (!e.isConsumed()) {
+                        passKeyEventToView(e);
                     }
                 }
             };
@@ -435,7 +453,7 @@ final class LspSignatureHelp {
                 return;
             }
             textArea.addCaretListener(caretListener);
-            textArea.addKeyListener(keyListener);
+            view.setKeyEventInterceptor(keyListener);
             buffer.addBufferListener(bufferListener);
             listenersInstalled = true;
         }
@@ -445,11 +463,24 @@ final class LspSignatureHelp {
                 return;
             }
             textArea.removeCaretListener(caretListener);
-            textArea.removeKeyListener(keyListener);
+            if (view.getKeyEventInterceptor() == keyListener) {
+                view.setKeyEventInterceptor(null);
+            }
             if (view.getBuffer() != null) {
                 view.getBuffer().removeBufferListener(bufferListener);
             }
             listenersInstalled = false;
+        }
+
+        private void passKeyEventToView(KeyEvent e) {
+            if (view.getKeyEventInterceptor() != keyListener) {
+                return;
+            }
+            view.setKeyEventInterceptor(null);
+            view.getInputHandler().processKeyEvent(e, View.ACTION_BAR, false);
+            if (window.isDisplayable() && window.isVisible()) {
+                view.setKeyEventInterceptor(keyListener);
+            }
         }
 
         private void checkStillInsideCall() {
