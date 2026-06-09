@@ -238,11 +238,8 @@ public class LspServersOptionPane extends AbstractOptionPane {
 
     private void refreshAllStatuses() {
         ThreadUtilities.runInBackground(() -> {
-            Map<String, Boolean> installed = new HashMap<>();
-            for (LspServerDefinition definition : definitions) {
-                installed.put(definition.getModeName(),
-                    LspServerInstaller.isServerInstalled(definition));
-            }
+            Map<String, Boolean> installed = new HashMap<>(
+                LspServerInstaller.detectAllServers());
             SwingUtilities.invokeLater(() -> {
                 for (Map.Entry<String, Boolean> entry : installed.entrySet()) {
                     rows.get(entry.getKey()).installed = entry.getValue();

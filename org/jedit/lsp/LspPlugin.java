@@ -497,17 +497,15 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     @Override
     public void handleMessage(EBMessage message) {
-        if (message instanceof ProjectFolderOpened) {
-            Log.log(Log.ERROR, this, "Handle message called " + message);
-            final var openedFolder = ((ProjectFolderOpened) message).getFolder();
-            // If a different folder is opened, then restart the LSP clients
+        if (message instanceof ProjectFolderOpened opened) {
+            final String openedFolder = opened.getFolder();
             if (!Objects.equals(currentProjectRoot, openedFolder)) {
                 currentProjectRoot = openedFolder;
                 clients.values().forEach(this::restartLspClient);
             }
+            LspProjectInstallDialog.maybePromptForProject(openedFolder);
         }
         if (message instanceof ProjectFolderClosed) {
-            Log.log(Log.ERROR, this, "Handle message called " + message);
             currentProjectRoot = null;
             clients.values().forEach(this::stopMetaClient);
         }

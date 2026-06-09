@@ -29,8 +29,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -105,7 +107,22 @@ final class LspServerInstaller {
         if (definition == null) {
             return false;
         }
+        String[] command = LspConfig.getServerCommand(definition.getModeName());
+        if (command != null && command.length > 0) {
+            return findExecutable(command[0]) != null;
+        }
         return isOnPath(definition.getExecutable());
+    }
+
+    /**
+     * Returns installation status for every configured language server.
+     */
+    static Map<String, Boolean> detectAllServers() {
+        Map<String, Boolean> installed = new LinkedHashMap<>();
+        for (LspServerDefinition definition : LspConfig.getServerDefinitions()) {
+            installed.put(definition.getModeName(), isServerInstalled(definition));
+        }
+        return installed;
     }
 
     static String formatResolvedCommand(String commandLine) {
@@ -273,6 +290,16 @@ final class LspServerInstaller {
             entries.add(userProfile + "\\flutter\\bin\\cache\\dart-sdk\\bin");
             entries.add(userProfile + "\\scoop\\apps\\dart\\current\\bin");
             entries.add(userProfile + "\\scoop\\shims");
+            entries.add(userProfile + "\\.cargo\\bin");
+        }
+        String appData = System.getenv("APPDATA");
+        if (appData != null) {
+            entries.add(appData + "\\npm");
+        }
+        String home = System.getenv("HOME");
+        if (home != null) {
+            entries.add(home + "/.cargo/bin");
+            entries.add(home + "/.local/bin");
         }
     }
 

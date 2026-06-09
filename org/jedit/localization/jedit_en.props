@@ -1735,6 +1735,18 @@ Linux: install the dart package for your distribution, or use the official insta
 options.lsp-servers.rust.install-help=Install rust-analyzer through rustup:\n\
 rustup component add rust-analyzer\n\
 Rust and rustup must already be installed.
+lsp.project.install.title=LSP servers for this project
+lsp.project.install.intro=This project appears to use: <b>{0}</b>.<br>\
+	The following language servers were not found for <code>{1}</code>:
+lsp.project.install.missing-title=Missing language servers
+lsp.project.install.server-line={0} ({1})
+lsp.project.install.manual-hint=Manual installation required (see LSP Servers options).
+lsp.project.install.suppress=Don't show this again for this folder
+lsp.project.install.install-selected=Install selected
+lsp.project.install.skip=Skip
+lsp.project.install.none-selected=Select at least one language server to install.
+lsp.project.install.installing=Installing selected language servers...
+lsp.project.install.server-header==== {0} ===
 #}}}
 
 #{{{ Printing pane
