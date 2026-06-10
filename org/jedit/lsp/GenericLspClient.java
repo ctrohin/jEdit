@@ -175,9 +175,26 @@ public class GenericLspClient {
         } catch (Exception e) {
             Log.log(Log.WARNING, this, "Error while shutting down LSP server for " + mode, e);
         } finally {
-            if (activeProcess != null && activeProcess.isAlive()) {
-                activeProcess.destroy();
+            destroyProcess(activeProcess);
+        }
+    }
+
+    private static void destroyProcess(Process process) {
+        if (process == null) {
+            return;
+        }
+        try {
+            process.descendants().forEach(ProcessHandle::destroy);
+            process.destroy();
+            if (!process.waitFor(3, TimeUnit.SECONDS)) {
+                process.descendants().forEach(ProcessHandle::destroyForcibly);
+                process.destroyForcibly();
+                process.waitFor(2, TimeUnit.SECONDS);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            process.descendants().forEach(ProcessHandle::destroyForcibly);
+            process.destroyForcibly();
         }
     }
 

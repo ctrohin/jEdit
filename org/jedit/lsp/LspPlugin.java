@@ -27,6 +27,7 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.buffer.BufferAdapter;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
+import org.gjt.sp.jedit.msg.EditorExiting;
 import org.gjt.sp.jedit.msg.ProjectFolderClosed;
 import org.gjt.sp.jedit.msg.ProjectFolderOpened;
 import org.gjt.sp.util.Log;
@@ -37,6 +38,7 @@ import org.eclipse.lsp4j.*;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -50,9 +52,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     // Package-protected so sub-components can access clients
     final Map<String, GenericLspClient> clients = new HashMap<>();
     private final Map<Buffer, BufferLspHandler> handlers = new HashMap<>();
+    private final List<GenericLspClient> startedClients = new CopyOnWriteArrayList<>();
     private final int DEFAULT_LEVEL = Log.ERROR;
     private String currentProjectRoot;
     private static LspPlugin instance;
+    private volatile boolean stopped;
+    private Thread shutdownHook;
 
     public LspPlugin() {
         instance = this;
@@ -68,18 +73,36 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         LspGoToDefinition.install();
         LspNavigationHistory.install();
         LspSignatureHelp.install();
+        shutdownHook = new Thread(this::stop, "jedit-lsp-shutdown");
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
     @Override
     public void stop() {
+        if (stopped) {
+            return;
+        }
+        stopped = true;
+        if (shutdownHook != null) {
+            try {
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            } catch (IllegalStateException ignored) {
+                // JVM is already shutting down
+            }
+        }
         LspSignatureHelp.uninstall();
         LspNavigationHistory.uninstall();
         LspGoToDefinition.uninstall();
         LspDiagnosticHighlights.uninstall();
-        // Shutdown all clients
-        clients.values().forEach(GenericLspClient::shutdownAndWait);
+        for (GenericLspClient client : startedClients) {
+            if (client.hasActiveSession()) {
+                client.shutdownAndWait();
+            }
+        }
+        startedClients.clear();
         clients.clear();
         handlers.clear();
+        EditBus.removeFromBus(this);
     }
 
     /**
@@ -256,6 +279,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     private GenericLspClient createLspClient(final String modeName) {
         final var client = new GenericLspClient(modeName);
+        startedClients.add(client);
         startMetaClient(client);
         clients.put(modeName, client);
         return client;
@@ -553,6 +577,10 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     @Override
     public void handleMessage(EBMessage message) {
+        if (message instanceof EditorExiting) {
+            stop();
+            return;
+        }
         if (message instanceof ProjectFolderOpened opened) {
             final String openedFolder = opened.getFolder();
             if (!Objects.equals(currentProjectRoot, openedFolder)) {
