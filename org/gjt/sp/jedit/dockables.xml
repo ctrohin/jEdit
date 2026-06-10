@@ -27,4 +27,16 @@
 	<DOCKABLE NAME="lsp-problems" MOVABLE="TRUE">
 		new org.jedit.lsp.LspProblemsView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="build-output" MOVABLE="TRUE">
+		new org.jedit.build.BuildOutputView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="ant-project" MOVABLE="TRUE">
+		new org.jedit.build.AntProjectView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="maven-project" MOVABLE="TRUE">
+		new org.jedit.build.MavenProjectView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="terminal" MOVABLE="TRUE">
+		new org.jedit.build.TerminalView(view);
+	</DOCKABLE>
 </DOCKABLES>

@@ -433,6 +433,10 @@ docking=left-docking-area \
 	close-docking-area \
 	- \
 	workspace \
+	build-output \
+	ant-project \
+	maven-project \
+	terminal \
 	- \
 	layout-load \
 	layout-save \
@@ -446,6 +450,10 @@ docking=left-docking-area \
 utils=vfs.browser \
 	  workspace \
 	  lsp-problems \
+	  build-output \
+	  ant-project \
+	  maven-project \
+	  terminal \
 	  %recent-directories \
 	  - \
 	  %favorites \
@@ -1040,3 +1048,21 @@ lsp-problems.title=Problems
 lsp-problems.label=Problems
 lsp-problems.dock-position=bottom
 lsp-problems.icon=MatIcons.ERROR_OUTLINE:22
+
+build-output.title=Build
+build-output.label=Build
+build-output.dock-position=bottom
+build-output.icon=MatIcons.BUILD:22
+
+ant-project.title=Ant
+ant-project.label=Ant
+ant-project.icon=MatIcons.CODE:22
+
+maven-project.title=Maven
+maven-project.label=Maven
+maven-project.icon=MatIcons.INVENTORY_2:22
+
+terminal.title=Terminal
+terminal.label=Terminal
+terminal.dock-position=bottom
+terminal.icon=MatIcons.TERMINAL:22

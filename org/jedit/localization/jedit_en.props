@@ -2108,6 +2108,38 @@ log-viewer.tail.label=Tail
 view-markers.label=Vie$w Markers
 view-markers.title=Markers
 
+build.no-workspace=Open a project folder first (File \u2192 Open Project Folder).
+build-output.label=$Build
+build-output.title=Build
+build-output.clear=Clear
+build-output.stop=Stop
+build-output.running=Running...
+build-output.finished=Finished
+build-output.stopped=Stopped
+
+ant-project.label=$Ant
+ant-project.title=Ant
+ant-project.refresh=Refresh
+ant-project.run=Run Target
+ant-project.no-build-xml=No build.xml found in the project folder.
+ant-project.parse-error=Could not read targets from {0}.
+ant-project.caption=build.xml: {0}
+
+maven-project.label=$Maven
+maven-project.title=Maven
+maven-project.refresh=Refresh
+maven-project.run=Run Goal
+maven-project.no-pom=No pom.xml found in the project folder.
+maven-project.caption=pom.xml: {0}
+
+terminal.label=$Terminal
+terminal.title=Terminal
+terminal.run=Run
+terminal.clear=Clear
+terminal.stop=Stop
+terminal.no-workspace=Open a project folder to run commands in its directory.
+terminal.caption=Working directory: {0}
+
 lsp-problems.label=$Problems
 lsp-problems.title=Problems
 lsp-problems.empty=No problems reported
