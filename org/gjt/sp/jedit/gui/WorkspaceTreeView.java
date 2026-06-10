@@ -68,6 +68,24 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     private volatile String currentWorkspace;
     private boolean opened = false;
 
+    /**
+     * Shows the project-folder chooser for the given view (from the File menu, etc.).
+     */
+    public static void openProjectFolder(View view) {
+        if (view == null) {
+            view = jEdit.getActiveView();
+        }
+        if (view == null) {
+            return;
+        }
+        DockableWindowManager dwm = view.getDockableWindowManager();
+        dwm.addDockableWindow(NAME);
+        JComponent comp = dwm.getDockableWindow(NAME);
+        if (comp instanceof WorkspaceTreeView workspace) {
+            workspace.chooseWorkspace();
+        }
+    }
+
     public WorkspaceTreeView(View view) {
         super(new BorderLayout());
         this.view = view;

@@ -851,6 +851,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="open-project-folder">
+	<CODE>
+		org.gjt.sp.jedit.gui.WorkspaceTreeView.openProjectFolder(view);
+	</CODE>
+</ACTION>
+
 <ACTION NAME="overwrite" NO_RECORD="TRUE">
 	<CODE>
 		textArea.toggleOverwriteEnabled();

@@ -97,6 +97,7 @@ new-file-in-mode.label=New in $Mode
 new-file-in-mode.dialog.title=New File
 new-file-in-mode.dialog.message=With Edit Mode:
 open-file.label=$Open...
+open-project-folder.label=Open Project $Folder...
 reload.label=$Reload
 reload-all.label=Reloa$d All
 close-buffer.label=$Close

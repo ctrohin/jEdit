@@ -143,6 +143,7 @@ view.mbar=file edit search markers folds view utils macros plugins help-menu
 file=new-file \
 	 new-file-in-mode \
 	 open-file \
+	 open-project-folder \
 	 %recent-files \
 	 - \
 	 reload \
@@ -166,6 +167,7 @@ file=new-file \
 new-file.icon.small=MatIcons.NOTE_ADD:22
 new-file-in-mode.icon.small=MatIcons.NOTE_ADD:22
 open-file.icon.small=MatIcons.FILE_OPEN:22
+open-project-folder.icon.small=MatIcons.FOLDER_OPEN:22
 reload.icon.small=MatIcons.REFRESH:22
 reload-all.icon.small=MatIcons.REFRESH:22
 close-buffer.icon.small=MatIcons.CLOSE:22
