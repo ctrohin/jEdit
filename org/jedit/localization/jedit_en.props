@@ -2121,9 +2121,28 @@ ant-project.label=$Ant
 ant-project.title=Ant
 ant-project.refresh=Refresh
 ant-project.run=Run Target
+ant-project.settings=Settings...
 ant-project.no-build-xml=No build.xml found in the project folder.
 ant-project.parse-error=Could not read targets from {0}.
 ant-project.caption=build.xml: {0}
+
+ant-project.settings.title=Ant Project Settings
+ant-project.settings.intro=Settings for project folder:<br><b>{0}</b><br>Leave fields empty to use the Ant installation from your environment.
+ant-project.settings.ant-section=Ant
+ant-project.settings.project-section=Build File
+ant-project.settings.properties-section=Properties
+ant-project.settings.ant-home=Ant home:
+ant-project.settings.jdk-home=JDK home:
+ant-project.settings.ant-executable=Ant executable:
+ant-project.settings.ant-opts=Environment / VM options (ANT_OPTS):
+ant-project.settings.log-level=Log level:
+ant-project.settings.additional-args=Additional command-line arguments:
+ant-project.settings.build-file=Build file:
+ant-project.settings.working-directory=Working directory:
+ant-project.settings.property-file=Property file (-propertyfile):
+ant-project.settings.properties-hint=One property per line: name=value (passed as -Dname=value)
+ant-project.settings.reset=Reset to Defaults
+ant-project.settings.reset-confirm=Reset Ant settings for this project folder to defaults?
 
 maven-project.label=$Maven
 maven-project.title=Maven

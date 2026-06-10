@@ -24,7 +24,6 @@ package org.jedit.build;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -36,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import org.gjt.sp.jedit.EditBus;
-import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.jEdit;
@@ -52,9 +50,13 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
     private final JLabel caption;
     private final DefaultListModel<String> targetModel = new DefaultListModel<>();
     private final JList<String> targetList;
+    private final JButton runButton;
+    private final JButton settingsButton;
     private final ProjectFolderListener folderListener =
         new ProjectFolderListener(this::refreshTargets);
+    private File projectRoot;
     private AntBuildFile buildFile;
+    private AntProjectSettings projectSettings = new AntProjectSettings();
 
     public AntProjectView(View view) {
         super(new BorderLayout(0, 4));
@@ -78,10 +80,13 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
         JButton refresh = new JButton(jEdit.getProperty("ant-project.refresh"));
         refresh.addActionListener(e -> refreshTargets());
-        JButton run = new JButton(jEdit.getProperty("ant-project.run"));
-        run.addActionListener(e -> runSelectedTarget());
+        settingsButton = new JButton(jEdit.getProperty("ant-project.settings"));
+        settingsButton.addActionListener(e -> openSettings());
+        runButton = new JButton(jEdit.getProperty("ant-project.run"));
+        runButton.addActionListener(e -> runSelectedTarget());
         buttons.add(refresh);
-        buttons.add(run);
+        buttons.add(settingsButton);
+        buttons.add(runButton);
         add(buttons, BorderLayout.SOUTH);
 
         refreshTargets();
@@ -90,12 +95,17 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
     private void refreshTargets() {
         targetModel.clear();
         buildFile = null;
+        projectRoot = null;
+        setProjectControlsEnabled(false);
+
         File root = ProjectRoots.workspaceRoot();
         if (root == null) {
             caption.setText(jEdit.getProperty("build.no-workspace"));
             return;
         }
-        File buildXml = ProjectRoots.findBuildXml(root);
+        projectRoot = root;
+        projectSettings = AntProjectPreferences.load(root);
+        File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(root, projectSettings);
         if (buildXml == null) {
             caption.setText(jEdit.getProperty("ant-project.no-build-xml"));
             return;
@@ -116,6 +126,26 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
         } else if (!buildFile.targets.isEmpty()) {
             targetList.setSelectedIndex(0);
         }
+        setProjectControlsEnabled(true);
+    }
+
+    private void setProjectControlsEnabled(boolean enabled) {
+        targetList.setEnabled(enabled);
+        runButton.setEnabled(enabled);
+        settingsButton.setEnabled(enabled);
+    }
+
+    private void openSettings() {
+        if (projectRoot == null) {
+            refreshTargets();
+            if (projectRoot == null) {
+                return;
+            }
+        }
+        if (AntProjectSettingsDialog.show(view, projectRoot)) {
+            projectSettings = AntProjectPreferences.load(projectRoot);
+            refreshTargets();
+        }
     }
 
     private void runSelectedTarget() {
@@ -129,17 +159,10 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
         if (target == null || target.isBlank()) {
             return;
         }
-        File root = buildFile.file.getParentFile();
-        List<String> command = antCommand(target);
+        AntCommandBuilder.Invocation invocation = AntCommandBuilder.build(
+            buildFile.file, projectSettings, target);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(root, command);
-    }
-
-    private static List<String> antCommand(String target) {
-        if (OperatingSystem.isWindows()) {
-            return Arrays.asList("cmd.exe", "/c", "ant", target);
-        }
-        return Arrays.asList("ant", target);
+        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override
