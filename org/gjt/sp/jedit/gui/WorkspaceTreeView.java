@@ -28,6 +28,7 @@ import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.layout.WrapLayout;
 import org.gjt.sp.jedit.icons.IconManager;
+import org.gjt.sp.jedit.icons.WorkspaceFileIcons;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.msg.ProjectFolderClosed;
 import org.gjt.sp.jedit.msg.ProjectFolderOpened;
@@ -39,7 +40,6 @@ import org.gjt.sp.util.Log;
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -421,8 +421,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         if (iconCache.containsKey(ext)) {
             return iconCache.get(ext);
         }
-        final var icon = FileSystemView.getFileSystemView().getSystemIcon(file);
-//        final var icon = IconManager.loadIcon("FileIcons." + (file.isDirectory() ? "FOLDER"  : ext.toUpperCase()) + ":10");
+        final Icon icon = WorkspaceFileIcons.getIcon(file);
         iconCache.put(ext, icon);
         return icon;
     }
