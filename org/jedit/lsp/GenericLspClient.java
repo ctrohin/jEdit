@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.SwingUtilities;
+
 import org.gjt.sp.util.ThreadUtilities;
 
 public class GenericLspClient {
@@ -44,6 +46,7 @@ public class GenericLspClient {
     private Launcher<LanguageServer> launcher;
     private volatile int bufferCount = 0;
     private final String mode;
+    private final Object sessionLock = new Object();
     private boolean serverStarted = false;
     private volatile CompletableFuture<Void> initializationComplete;
 
@@ -76,6 +79,12 @@ public class GenericLspClient {
     }
 
     public void start(String languageId, String projectRoot) throws Exception {
+        synchronized (sessionLock) {
+            startLocked(languageId, projectRoot);
+        }
+    }
+
+    private void startLocked(String languageId, String projectRoot) throws Exception {
         String[] command = LspConfig.getServerCommand(languageId);
 
         if (command == null || command.length == 0) {
@@ -155,28 +164,74 @@ public class GenericLspClient {
         return server != null || (process != null && process.isAlive());
     }
 
+    void resetSessionState() {
+        synchronized (sessionLock) {
+            setServerStarted(false);
+            initializationComplete = null;
+            server = null;
+            launcher = null;
+            process = null;
+        }
+    }
+
     void shutdown() {
         ThreadUtilities.runInBackground(this::shutdownAndWait);
     }
 
     void shutdownAndWait() {
+        synchronized (sessionLock) {
+            if (SwingUtilities.isEventDispatchThread()) {
+                shutdownForExitLocked();
+                return;
+            }
+            setServerStarted(false);
+            initializationComplete = null;
+            LanguageServer activeServer = server;
+            Process activeProcess = detachProcessLocked();
+            try {
+                if (activeServer != null) {
+                    activeServer.shutdown().get(3, TimeUnit.SECONDS);
+                    activeServer.exit();
+                }
+            } catch (Exception e) {
+                Log.log(Log.WARNING, this, "Error while shutting down LSP server for " + mode, e);
+            } finally {
+                destroyProcess(activeProcess);
+            }
+        }
+    }
+
+    /**
+     * Fast shutdown for application exit. Never blocks the EDT waiting on the server.
+     */
+    void shutdownForExit() {
+        synchronized (sessionLock) {
+            shutdownForExitLocked();
+        }
+    }
+
+    private void shutdownForExitLocked() {
         setServerStarted(false);
         initializationComplete = null;
         LanguageServer activeServer = server;
+        Process activeProcess = detachProcessLocked();
+        if (activeServer != null && !SwingUtilities.isEventDispatchThread()) {
+            try {
+                activeServer.shutdown().get(500, TimeUnit.MILLISECONDS);
+                activeServer.exit();
+            } catch (Exception ignored) {
+                // Fall through to process termination.
+            }
+        }
+        destroyProcessForcibly(activeProcess);
+    }
+
+    private Process detachProcessLocked() {
         Process activeProcess = process;
         server = null;
         launcher = null;
         process = null;
-        try {
-            if (activeServer != null) {
-                activeServer.shutdown().get(10, TimeUnit.SECONDS);
-                activeServer.exit();
-            }
-        } catch (Exception e) {
-            Log.log(Log.WARNING, this, "Error while shutting down LSP server for " + mode, e);
-        } finally {
-            destroyProcess(activeProcess);
-        }
+        return activeProcess;
     }
 
     private static void destroyProcess(Process process) {
@@ -184,17 +239,48 @@ public class GenericLspClient {
             return;
         }
         try {
-            process.descendants().forEach(ProcessHandle::destroy);
-            process.destroy();
-            if (!process.waitFor(3, TimeUnit.SECONDS)) {
-                process.descendants().forEach(ProcessHandle::destroyForcibly);
-                process.destroyForcibly();
-                process.waitFor(2, TimeUnit.SECONDS);
+            destroyProcessTree(process, false);
+            if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                destroyProcessTree(process, true);
+                process.waitFor(1, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            process.descendants().forEach(ProcessHandle::destroyForcibly);
+            destroyProcessTree(process, true);
+        }
+    }
+
+    private static void destroyProcessForcibly(Process process) {
+        if (process == null) {
+            return;
+        }
+        try {
+            destroyProcessTree(process, true);
+            process.waitFor(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            destroyProcessTree(process, true);
+        }
+    }
+
+    private static void destroyProcessTree(Process process, boolean forcibly) {
+        ProcessHandle.of(process.pid()).ifPresent(root -> {
+            root.descendants().forEach(child -> terminateHandle(child, forcibly));
+            terminateHandle(root, forcibly);
+        });
+        process.descendants().forEach(child -> terminateHandle(child, forcibly));
+        if (forcibly) {
             process.destroyForcibly();
+        } else {
+            process.destroy();
+        }
+    }
+
+    private static void terminateHandle(ProcessHandle handle, boolean forcibly) {
+        if (forcibly) {
+            handle.destroyForcibly();
+        } else {
+            handle.destroy();
         }
     }
 

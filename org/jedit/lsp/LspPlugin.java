@@ -73,8 +73,24 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         LspGoToDefinition.install();
         LspNavigationHistory.install();
         LspSignatureHelp.install();
-        shutdownHook = new Thread(this::stop, "jedit-lsp-shutdown");
+        shutdownHook = new Thread(this::shutdownHookKill, "jedit-lsp-shutdown");
         Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    /**
+     * Stops LSP clients during application exit without blocking the UI thread.
+     */
+    public void stopForExit() {
+        if (stopped) {
+            return;
+        }
+        stopped = true;
+        removeShutdownHook();
+        uninstallLspUi();
+        shutdownAllClientsForExit();
+        startedClients.clear();
+        clients.clear();
+        handlers.clear();
     }
 
     @Override
@@ -83,17 +99,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return;
         }
         stopped = true;
-        if (shutdownHook != null) {
-            try {
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            } catch (IllegalStateException ignored) {
-                // JVM is already shutting down
-            }
-        }
-        LspSignatureHelp.uninstall();
-        LspNavigationHistory.uninstall();
-        LspGoToDefinition.uninstall();
-        LspDiagnosticHighlights.uninstall();
+        removeShutdownHook();
+        uninstallLspUi();
         for (GenericLspClient client : startedClients) {
             if (client.hasActiveSession()) {
                 client.shutdownAndWait();
@@ -103,6 +110,36 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         clients.clear();
         handlers.clear();
         EditBus.removeFromBus(this);
+    }
+
+    private void shutdownHookKill() {
+        for (GenericLspClient client : startedClients) {
+            client.shutdownForExit();
+        }
+    }
+
+    private void shutdownAllClientsForExit() {
+        for (GenericLspClient client : startedClients) {
+            client.shutdownForExit();
+        }
+    }
+
+    private void uninstallLspUi() {
+        LspSignatureHelp.uninstall();
+        LspNavigationHistory.uninstall();
+        LspGoToDefinition.uninstall();
+        LspDiagnosticHighlights.uninstall();
+    }
+
+    private void removeShutdownHook() {
+        if (shutdownHook == null) {
+            return;
+        }
+        try {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        } catch (IllegalStateException ignored) {
+            // JVM is already shutting down
+        }
     }
 
     /**
@@ -224,20 +261,27 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
         final String modeName = view.getBuffer().getMode().getName();
         LspPlugin lspPlugin = getInstance();
-        GenericLspClient client = lspPlugin.clients.get(modeName);
-        if (client != null && client.getServer() != null) {
-            if (client.isAlive()) {
-                feature.run(view, client);
-            } else {
-                Log.log(Log.WARNING, LspPlugin.class,
-                    "LSP server for " + modeName + " is not responding, attempting restart");
-                if (lspPlugin.restartServer(client)) {
+        if (lspPlugin == null || lspPlugin.stopped) {
+            return;
+        }
+        GenericLspClient client = lspPlugin.resolveClientForMode(modeName, view.getBuffer());
+        if (client != null && client.hasActiveSession() && client.isAlive()) {
+            feature.run(view, client);
+        } else if (client != null) {
+            Log.log(Log.WARNING, LspPlugin.class,
+                "LSP server for " + modeName + " is not running, attempting restart");
+            if (lspPlugin.restartServer(client)) {
+                if (client.hasActiveSession()) {
                     feature.run(view, client);
                 } else {
                     Log.log(Log.ERROR, LspPlugin.class,
                         "Failed to restart LSP server for " + modeName);
                     javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
                 }
+            } else {
+                Log.log(Log.ERROR, LspPlugin.class,
+                    "Failed to restart LSP server for " + modeName);
+                javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
             }
         } else {
             Log.log(Log.WARNING, LspPlugin.class, "LSP client not available for mode " + modeName);
@@ -286,7 +330,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void startMetaClient(GenericLspClient client) {
-        if (client.isServerStarted()) {
+        if (client.hasActiveSession()) {
             return;
         }
         String projectRoot = resolveLspProjectRoot(client);
@@ -297,7 +341,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void startMetaClientBlocking(GenericLspClient client, String projectRoot) {
-        if (projectRoot == null || client.isServerStarted()) {
+        if (projectRoot == null || client.hasActiveSession()) {
             return;
         }
         Try.of(() -> {
@@ -336,17 +380,15 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void stopMetaClient(GenericLspClient client) {
-        if (!client.hasActiveSession()) {
-            return;
+        if (client.hasActiveSession()) {
+            client.shutdownAndWait();
+        } else {
+            client.resetSessionState();
         }
-        client.shutdownAndWait();
     }
 
     private void stopMetaClientAsync(GenericLspClient client) {
-        if (!client.hasActiveSession()) {
-            return;
-        }
-        client.shutdown();
+        ThreadUtilities.runInBackground(() -> stopMetaClient(client));
     }
 
     private synchronized void stopLspForBuffer(Buffer buffer) {
@@ -578,7 +620,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     @Override
     public void handleMessage(EBMessage message) {
         if (message instanceof EditorExiting) {
-            stop();
+            stopForExit();
             return;
         }
         if (message instanceof ProjectFolderOpened opened) {
@@ -593,20 +635,46 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         if (message instanceof ProjectFolderClosed) {
             currentProjectRoot = null;
             clearAllDiagnostics();
-            clients.values().forEach(this::stopMetaClientAsync);
+            ThreadUtilities.runInBackground(() -> {
+                for (GenericLspClient client : collectTrackedClients()) {
+                    stopMetaClient(client);
+                }
+            });
         }
     }
 
     private void scheduleRestartAllClients() {
-        List<GenericLspClient> toRestart = new ArrayList<>(clients.values());
-        if (toRestart.isEmpty()) {
-            return;
-        }
         ThreadUtilities.runInBackground(() -> {
-            for (GenericLspClient client : toRestart) {
+            for (GenericLspClient client : collectTrackedClients()) {
                 restartLspClientBlocking(client);
             }
         });
+    }
+
+    private synchronized List<GenericLspClient> collectTrackedClients() {
+        LinkedHashSet<GenericLspClient> tracked = new LinkedHashSet<>(clients.values());
+        for (BufferLspHandler handler : handlers.values()) {
+            tracked.add(handler.client);
+            clients.putIfAbsent(handler.client.getMode(), handler.client);
+        }
+        return new ArrayList<>(tracked);
+    }
+
+    private synchronized GenericLspClient resolveClientForMode(String modeName, Buffer buffer) {
+        GenericLspClient client = clients.get(modeName);
+        if (client != null) {
+            return client;
+        }
+        BufferLspHandler handler = handlers.get(buffer);
+        if (handler != null) {
+            clients.put(modeName, handler.client);
+            return handler.client;
+        }
+        if (buffer != null && LspConfig.isServerConfigured(modeName) && !buffer.isClosed()) {
+            startLspForBuffer(buffer);
+            return clients.get(modeName);
+        }
+        return null;
     }
 
     private void restartLspClientBlocking(GenericLspClient client) {
@@ -675,11 +743,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     boolean restartServer(GenericLspClient client) {
         if (SwingUtilities.isEventDispatchThread()) {
             ThreadUtilities.runInBackground(() -> restartLspClientBlocking(client));
-            return client.isAlive();
+            return false;
         }
         try {
             restartLspClientBlocking(client);
-            return client.isServerStarted();
+            return client.hasActiveSession();
         } catch (Exception e) {
             Log.log(Log.ERROR, this, "Error restarting server for " + client.getMode(), e);
             return false;

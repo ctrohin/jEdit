@@ -3194,6 +3194,11 @@ public class jEdit
 			// Save settings
 			saveSettings();
 
+			LspPlugin lspPlugin = LspPlugin.getInstance();
+			if (lspPlugin != null) {
+				lspPlugin.stopForExit();
+			}
+
 			// Close activity log stream
 			Log.closeStream();
 
