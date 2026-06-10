@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -104,10 +105,14 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
     }
 
     void runBuild(File workingDir, List<String> command) {
+        runBuild(workingDir, command, null);
+    }
+
+    void runBuild(File workingDir, List<String> command, Map<String, String> environment) {
         prepareForBuild();
         output.clearOutput();
         output.appendLine("$ " + String.join(" ", command));
-        runner.run(workingDir, command, this::appendLine, () ->
+        runner.run(workingDir, command, environment, this::appendLine, () ->
             statusLabel.setText(jEdit.getProperty("build-output.finished")));
     }
 

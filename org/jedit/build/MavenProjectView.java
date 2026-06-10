@@ -24,9 +24,10 @@ package org.jedit.build;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -38,7 +39,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.gjt.sp.jedit.EditBus;
-import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.jEdit;
@@ -60,9 +60,13 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
     private final JList<String> goalList;
     private final JTextField customGoalField;
     private final JButton runButton;
+    private final JButton settingsButton;
     private final ProjectFolderListener folderListener =
         new ProjectFolderListener(this::refreshProject);
     private File pomDirectory;
+    private File pomFile;
+    private File projectRoot;
+    private MavenProjectSettings projectSettings = new MavenProjectSettings();
 
     public MavenProjectView(View view) {
         super(new BorderLayout(0, 4));
@@ -90,9 +94,12 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
         JButton refresh = new JButton(jEdit.getProperty("maven-project.refresh"));
         refresh.addActionListener(e -> refreshProject());
+        settingsButton = new JButton(jEdit.getProperty("maven-project.settings"));
+        settingsButton.addActionListener(e -> openSettings());
         runButton = new JButton(jEdit.getProperty("maven-project.run"));
         runButton.addActionListener(e -> runSelectedGoal());
         buttons.add(refresh);
+        buttons.add(settingsButton);
         buttons.add(runButton);
         south.add(buttons, BorderLayout.SOUTH);
         add(south, BorderLayout.SOUTH);
@@ -102,6 +109,8 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
 
     private void refreshProject() {
         pomDirectory = null;
+        pomFile = null;
+        projectRoot = null;
         goalModel.clear();
         setProjectControlsEnabled(false);
 
@@ -115,20 +124,48 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
             caption.setText(jEdit.getProperty("maven-project.no-pom"));
             return;
         }
+        projectRoot = root;
+        pomFile = pom;
         pomDirectory = pom.getParentFile();
+        projectSettings = MavenProjectPreferences.load(root);
         caption.setText(jEdit.getProperty("maven-project.caption",
             new Object[] { pom.getAbsolutePath() }));
-        for (String goal : DEFAULT_GOALS) {
+        populateGoals(pom);
+        if (!goalModel.isEmpty()) {
+            goalList.setSelectedIndex(Math.min(2, goalModel.getSize() - 1));
+        }
+        setProjectControlsEnabled(true);
+    }
+
+    private void populateGoals(File pom) {
+        Set<String> goals = new LinkedHashSet<>();
+        goals.addAll(Arrays.asList(DEFAULT_GOALS));
+        MavenPomFile pomFile = MavenPomFile.parse(pom);
+        if (pomFile != null) {
+            goals.addAll(pomFile.customGoals());
+        }
+        for (String goal : goals) {
             goalModel.addElement(goal);
         }
-        goalList.setSelectedIndex(2);
-        setProjectControlsEnabled(true);
     }
 
     private void setProjectControlsEnabled(boolean enabled) {
         goalList.setEnabled(enabled);
         customGoalField.setEnabled(enabled);
         runButton.setEnabled(enabled);
+        settingsButton.setEnabled(enabled);
+    }
+
+    private void openSettings() {
+        if (projectRoot == null || pomFile == null) {
+            refreshProject();
+            if (projectRoot == null || pomFile == null) {
+                return;
+            }
+        }
+        if (MavenProjectSettingsDialog.show(view, projectRoot, pomFile)) {
+            projectSettings = MavenProjectPreferences.load(projectRoot);
+        }
     }
 
     private void runSelectedGoal() {
@@ -146,18 +183,10 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
         if (goal == null || goal.isBlank()) {
             return;
         }
-        List<String> args = new ArrayList<>();
-        args.addAll(mavenLauncher());
-        args.addAll(Arrays.asList(goal.split("\\s+")));
+        MavenCommandBuilder.Invocation invocation =
+            MavenCommandBuilder.build(pomDirectory, projectSettings, goal);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(pomDirectory, args);
-    }
-
-    private static List<String> mavenLauncher() {
-        if (OperatingSystem.isWindows()) {
-            return Arrays.asList("cmd.exe", "/c", "mvn");
-        }
-        return List.of("mvn");
+        output.runBuild(pomDirectory, invocation.command, invocation.environment);
     }
 
     @Override

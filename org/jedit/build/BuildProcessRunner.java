@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.swing.SwingUtilities;
@@ -52,6 +53,11 @@ final class BuildProcessRunner {
 
     void run(File workingDir, List<String> command, Consumer<String> onLine,
              Runnable onFinished) {
+        run(workingDir, command, null, onLine, onFinished);
+    }
+
+    void run(File workingDir, List<String> command, Map<String, String> environment,
+             Consumer<String> onLine, Runnable onFinished) {
         stop();
         running = true;
         ThreadUtilities.runInBackground(() -> {
@@ -60,6 +66,9 @@ final class BuildProcessRunner {
                 ProcessBuilder builder = new ProcessBuilder(command);
                 if (workingDir != null) {
                     builder.directory(workingDir);
+                }
+                if (environment != null && !environment.isEmpty()) {
+                    builder.environment().putAll(environment);
                 }
                 builder.redirectErrorStream(true);
                 process = builder.start();
