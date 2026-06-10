@@ -53,6 +53,16 @@ public final class LspDiagnosticsHub {
         return INSTANCE;
     }
 
+    public void clearAll() {
+        synchronized (this) {
+            if (byUri.isEmpty()) {
+                return;
+            }
+            byUri.clear();
+        }
+        scheduleNotifyListeners();
+    }
+
     public void setDiagnostics(String uri, List<Diagnostic> diagnostics) {
         if (uri == null) {
             return;

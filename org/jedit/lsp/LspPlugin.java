@@ -557,12 +557,14 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             final String openedFolder = opened.getFolder();
             if (!Objects.equals(currentProjectRoot, openedFolder)) {
                 currentProjectRoot = openedFolder;
+                clearAllDiagnostics();
                 scheduleRestartAllClients();
             }
             LspProjectInstallDialog.maybePromptForProject(openedFolder);
         }
         if (message instanceof ProjectFolderClosed) {
             currentProjectRoot = null;
+            clearAllDiagnostics();
             clients.values().forEach(this::stopMetaClientAsync);
         }
     }
@@ -580,10 +582,26 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void restartLspClientBlocking(GenericLspClient client) {
+        clearDiagnosticsForClient(client);
         stopMetaClient(client);
         String projectRoot = resolveLspProjectRoot(client);
         if (projectRoot != null) {
             startMetaClientBlocking(client, projectRoot);
+        }
+    }
+
+    private static void clearAllDiagnostics() {
+        LspDiagnosticsHub.getInstance().clearAll();
+    }
+
+    private void clearDiagnosticsForClient(GenericLspClient client) {
+        synchronized (this) {
+            for (BufferLspHandler handler : handlers.values()) {
+                if (handler.client == client) {
+                    LspDiagnosticsHub.getInstance().setDiagnostics(
+                        LspDocumentUri.pathToUri(handler.buffer.getPath()), List.of());
+                }
+            }
         }
     }
 
@@ -614,6 +632,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
      * Reload LSP configuration after options change: restart servers for open buffers.
      */
     public synchronized void reloadConfiguration() {
+        clearAllDiagnostics();
         List<Buffer> openBuffers = new ArrayList<>(handlers.keySet());
         for (Buffer buffer : openBuffers) {
             stopLspForBuffer(buffer);
