@@ -24,7 +24,7 @@ package org.jedit.lsp;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.LanguageClient;
 import java.awt.Component;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
+import org.gjt.sp.util.ThreadUtilities;
 
 public class MyLspClient implements LanguageClient {
 
@@ -44,6 +45,10 @@ public class MyLspClient implements LanguageClient {
 
     @Override
     public void showMessage(MessageParams params) {
+        if (isJdtlsNonProjectNoise(params)) {
+            Log.log(Log.DEBUG, MyLspClient.class, "[jdtls] " + params.getMessage());
+            return;
+        }
         runOnEdt(() -> showMessageOnEdt(params));
     }
 
@@ -59,6 +64,22 @@ public class MyLspClient implements LanguageClient {
 
     @Override
     public void telemetryEvent(Object object) {}
+
+    /**
+     * jdtls requests workspace configuration when the client advertises
+     * {@code workspace.configuration} support.
+     */
+    @Override
+    public CompletableFuture<List<Object>> configuration(ConfigurationParams params) {
+        List<Object> result = new ArrayList<>();
+        if (params != null && params.getItems() != null) {
+            for (ConfigurationItem item : params.getItems()) {
+                String section = item != null ? item.getSection() : null;
+                result.add(JdtlsSupport.configurationForSection(section));
+            }
+        }
+        return CompletableFuture.completedFuture(result);
+    }
 
     /**
      * Dart dynamically registers capabilities (e.g. rename, progress) after init.
@@ -90,29 +111,7 @@ public class MyLspClient implements LanguageClient {
     public CompletableFuture<MessageActionItem> showMessageRequest(
         ShowMessageRequestParams requestParams) {
         CompletableFuture<MessageActionItem> result = new CompletableFuture<>();
-        Runnable task = () -> {
-            try {
-                result.complete(showMessageRequestOnEdt(requestParams));
-            } catch (Exception e) {
-                Log.log(Log.ERROR, MyLspClient.class, "window/showMessageRequest failed", e);
-                result.complete(null);
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(task);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                Log.log(Log.ERROR, MyLspClient.class, "window/showMessageRequest interrupted", e);
-                result.complete(null);
-            } catch (InvocationTargetException e) {
-                Log.log(Log.ERROR, MyLspClient.class, "window/showMessageRequest failed",
-                    e.getCause());
-                result.complete(null);
-            }
-        }
+        runOnEdtCompleting(result, () -> showMessageRequestOnEdt(requestParams));
         return result;
     }
 
@@ -123,30 +122,21 @@ public class MyLspClient implements LanguageClient {
     @Override
     public CompletableFuture<ApplyWorkspaceEditResponse> applyEdit(ApplyWorkspaceEditParams params) {
         CompletableFuture<ApplyWorkspaceEditResponse> result = new CompletableFuture<>();
-        Runnable task = () -> {
+        WorkspaceEdit edit = params != null ? params.getEdit() : null;
+        Runnable applyTask = () -> {
             try {
-                WorkspaceEdit edit = params != null ? params.getEdit() : null;
                 boolean applied = LspWorkspaceEdits.apply(edit);
-                ApplyWorkspaceEditResponse response = new ApplyWorkspaceEditResponse(applied);
-                result.complete(response);
+                result.complete(new ApplyWorkspaceEditResponse(applied));
             } catch (Exception e) {
                 Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit failed", e);
                 result.complete(new ApplyWorkspaceEditResponse(false));
             }
         };
         if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
+            applyTask.run();
         } else {
-            try {
-                SwingUtilities.invokeAndWait(task);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit interrupted", e);
-                result.complete(new ApplyWorkspaceEditResponse(false));
-            } catch (InvocationTargetException e) {
-                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit failed", e.getCause());
-                result.complete(new ApplyWorkspaceEditResponse(false));
-            }
+            ThreadUtilities.runInBackground(() ->
+                ThreadUtilities.runInDispatchThreadAndWait(applyTask));
         }
         return result;
     }
@@ -244,5 +234,35 @@ public class MyLspClient implements LanguageClient {
         } else {
             SwingUtilities.invokeLater(task);
         }
+    }
+
+    /**
+     * Runs work on the EDT without {@code invokeAndWait}, so LSP threads never
+     * block waiting for the EDT while the EDT is waiting on the language server.
+     */
+    private static <T> void runOnEdtCompleting(CompletableFuture<T> result,
+                                               java.util.concurrent.Callable<T> task) {
+        Runnable edtTask = () -> {
+            try {
+                result.complete(task.call());
+            } catch (Exception e) {
+                Log.log(Log.ERROR, MyLspClient.class, "LSP client callback failed", e);
+                result.complete(null);
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            edtTask.run();
+        } else {
+            SwingUtilities.invokeLater(edtTask);
+        }
+    }
+
+    private static boolean isJdtlsNonProjectNoise(MessageParams params) {
+        if (params == null || params.getMessage() == null) {
+            return false;
+        }
+        String message = params.getMessage().toLowerCase();
+        return message.contains("non-project file")
+            && message.contains("only syntax errors are reported");
     }
 }

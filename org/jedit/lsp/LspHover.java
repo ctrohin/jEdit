@@ -38,6 +38,9 @@ import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.util.Log;
+import org.gjt.sp.util.ThreadUtilities;
+
+import javax.swing.SwingUtilities;
 
 /**
  * LSP {@code textDocument/hover} requests and hover content formatting.
@@ -45,6 +48,7 @@ import org.gjt.sp.util.Log;
 final class LspHover {
 
     private static final AtomicInteger REQUEST_GENERATION = new AtomicInteger(0);
+    private static final int MAX_MARKDOWN_CHARS = 16_000;
 
     private LspHover() {}
 
@@ -63,23 +67,35 @@ final class LspHover {
         params.setTextDocument(new TextDocumentIdentifier(documentUri));
         params.setPosition(position);
 
-        client.whenReady().thenCompose(ignored ->
-            client.getServer().getTextDocumentService().hover(params))
-            .whenComplete((hover, ex) -> {
-                if (generation != REQUEST_GENERATION.get()) {
-                    return;
-                }
-                if (ex != null) {
-                    Log.log(Log.DEBUG, LspHover.class, "Error requesting LSP hover", ex);
-                    onResult.accept(null);
-                    return;
-                }
-                onResult.accept(hover);
-            });
+        ThreadUtilities.runInBackground(() ->
+            client.whenReady().thenCompose(ignored ->
+                client.getServer().getTextDocumentService().hover(params))
+                .whenComplete((hover, ex) -> {
+                    if (generation != REQUEST_GENERATION.get()) {
+                        return;
+                    }
+                    if (ex != null) {
+                        Log.log(Log.DEBUG, LspHover.class, "Error requesting LSP hover", ex);
+                        SwingUtilities.invokeLater(() -> onResult.accept(null));
+                        return;
+                    }
+                    SwingUtilities.invokeLater(() -> onResult.accept(hover));
+                }));
     }
 
     static void cancelPendingRequests() {
         REQUEST_GENERATION.incrementAndGet();
+    }
+
+    static String hoverToPlainText(Hover hover) {
+        if (hover == null || hover.getContents() == null) {
+            return null;
+        }
+        String text = plainTextFromContents(hover.getContents());
+        if (text == null || text.isBlank()) {
+            return null;
+        }
+        return text;
     }
 
     static String hoverToHtml(Hover hover, int maxWidth, Color foreground) {
@@ -116,6 +132,53 @@ final class LspHover {
             + colorHex(foreground) + ";'>" + body + "</body></html>";
     }
 
+    private static String plainTextFromContents(
+            Either<List<Either<String, MarkedString>>, MarkupContent> contents) {
+        if (contents.isRight()) {
+            MarkupContent markup = contents.getRight();
+            if (markup == null || markup.getValue() == null) {
+                return null;
+            }
+            return truncate(stripMarkdown(markup.getValue()));
+        }
+
+        List<Either<String, MarkedString>> parts = contents.getLeft();
+        if (parts == null || parts.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder text = new StringBuilder();
+        for (Either<String, MarkedString> part : parts) {
+            if (part == null) {
+                continue;
+            }
+            if (text.length() > 0) {
+                text.append("\n\n");
+            }
+            if (part.isLeft()) {
+                text.append(part.getLeft());
+            } else {
+                MarkedString marked = part.getRight();
+                if (marked != null && marked.getValue() != null) {
+                    text.append(marked.getValue());
+                }
+            }
+        }
+        return truncate(text.toString());
+    }
+
+    private static String stripMarkdown(String markdown) {
+        if (markdown == null) {
+            return "";
+        }
+        String stripped = markdown.replaceAll("```[\\s\\S]*?```", "");
+        stripped = stripped.replace('`', ' ');
+        stripped = stripped.replaceAll("\\*\\*([^*]+)\\*\\*", "$1");
+        stripped = stripped.replaceAll("\\*([^*]+)\\*", "$1");
+        stripped = stripped.replaceAll("_([^_]+)_", "$1");
+        return stripped.trim();
+    }
+
     private static String formatContents(
             Either<List<Either<String, MarkedString>>, MarkupContent> contents,
             Color foreground) {
@@ -149,11 +212,18 @@ final class LspHover {
         if (markup == null || markup.getValue() == null) {
             return null;
         }
-        String value = markup.getValue();
+        String value = truncate(markup.getValue());
         if (MarkupKind.MARKDOWN.equals(markup.getKind())) {
             return markdownToHtml(value, foreground);
         }
         return plainTextToHtml(value);
+    }
+
+    private static String truncate(String text) {
+        if (text == null || text.length() <= MAX_MARKDOWN_CHARS) {
+            return text;
+        }
+        return text.substring(0, MAX_MARKDOWN_CHARS) + "\n\n…";
     }
 
     private static String markedStringToHtml(MarkedString marked, Color foreground) {

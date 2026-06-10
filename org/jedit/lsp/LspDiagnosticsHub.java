@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.eclipse.lsp4j.Diagnostic;
 import org.gjt.sp.jedit.Buffer;
@@ -40,8 +41,11 @@ public final class LspDiagnosticsHub {
 
     private static final LspDiagnosticsHub INSTANCE = new LspDiagnosticsHub();
 
+    private static final int NOTIFY_DEBOUNCE_MS = 250;
+
     private final Map<String, List<LspDiagnosticProblem>> byUri = new TreeMap<>();
     private final CopyOnWriteArrayList<Runnable> listeners = new CopyOnWriteArrayList<>();
+    private Timer debounceTimer;
 
     private LspDiagnosticsHub() {}
 
@@ -49,23 +53,25 @@ public final class LspDiagnosticsHub {
         return INSTANCE;
     }
 
-    public synchronized void setDiagnostics(String uri, List<Diagnostic> diagnostics) {
+    public void setDiagnostics(String uri, List<Diagnostic> diagnostics) {
         if (uri == null) {
             return;
         }
-        if (diagnostics == null || diagnostics.isEmpty()) {
-            byUri.remove(uri);
-        } else {
-            List<LspDiagnosticProblem> problems = new ArrayList<>(diagnostics.size());
-            for (Diagnostic diagnostic : diagnostics) {
-                if (diagnostic != null) {
-                    problems.add(LspDiagnosticProblem.fromLsp(uri, diagnostic));
+        synchronized (this) {
+            if (diagnostics == null || diagnostics.isEmpty()) {
+                byUri.remove(uri);
+            } else {
+                List<LspDiagnosticProblem> problems = new ArrayList<>(diagnostics.size());
+                for (Diagnostic diagnostic : diagnostics) {
+                    if (diagnostic != null) {
+                        problems.add(LspDiagnosticProblem.fromLsp(uri, diagnostic));
+                    }
                 }
+                Collections.sort(problems);
+                byUri.put(uri, problems);
             }
-            Collections.sort(problems);
-            byUri.put(uri, problems);
         }
-        notifyListeners();
+        scheduleNotifyListeners();
     }
 
     public synchronized List<FileProblems> getFileProblems() {
@@ -123,13 +129,19 @@ public final class LspDiagnosticsHub {
         listeners.remove(listener);
     }
 
-    private void notifyListeners() {
-        for (Runnable listener : listeners) {
-            if (SwingUtilities.isEventDispatchThread()) {
-                listener.run();
-            } else {
-                SwingUtilities.invokeLater(listener);
+    private void scheduleNotifyListeners() {
+        SwingUtilities.invokeLater(() -> {
+            if (debounceTimer == null) {
+                debounceTimer = new Timer(NOTIFY_DEBOUNCE_MS, e -> fireListeners());
+                debounceTimer.setRepeats(false);
             }
+            debounceTimer.restart();
+        });
+    }
+
+    private void fireListeners() {
+        for (Runnable listener : listeners) {
+            listener.run();
         }
     }
 

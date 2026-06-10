@@ -31,9 +31,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -49,6 +49,7 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.syntax.KeywordMap;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.TextAreaPainter;
+import org.gjt.sp.util.ThreadUtilities;
 
 /**
  * Shows LSP hover documentation when the pointer rests over a symbol.
@@ -70,7 +71,7 @@ final class LspSymbolHoverTooltip {
     private final View view;
     private final LspDiagnosticTooltip diagnosticTooltip;
     private final JPanel panel;
-    private final JEditorPane contentPane;
+    private final JTextArea contentArea;
     private final JScrollPane scrollPane;
     private final JWindow window;
     private final Timer showTimer;
@@ -96,13 +97,13 @@ final class LspSymbolHoverTooltip {
         this.view = textArea.getView();
         this.diagnosticTooltip = diagnosticTooltip;
 
-        contentPane = new JEditorPane();
-        contentPane.setContentType("text/html");
-        contentPane.setEditable(false);
-        contentPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-        contentPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        contentArea = new JTextArea();
+        contentArea.setEditable(false);
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        contentArea.setBorder(BorderFactory.createEmptyBorder());
 
-        scrollPane = new JScrollPane(contentPane,
+        scrollPane = new JScrollPane(contentArea,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -221,10 +222,30 @@ final class LspSymbolHoverTooltip {
         updateAnchorFromPointer();
 
         LspHover.requestHover(client, buffer, requestPosition, hover ->
-            SwingUtilities.invokeLater(() -> setHoverContent(requestKey, hover)));
+            prepareHoverContent(requestKey, hover));
     }
 
-    private void setHoverContent(String requestKey, Hover hover) {
+    private void prepareHoverContent(String requestKey, Hover hover) {
+        if (!requestKey.equals(inFlightHoverKey)
+            || !requestKey.equals(pendingHoverKey)) {
+            return;
+        }
+
+        final Rectangle screenBounds = screenBounds();
+        final int width = Math.min(PREFERRED_TOOLTIP_WIDTH, maxTooltipWidth(screenBounds));
+
+        ThreadUtilities.runInBackground(() -> {
+            String text = LspHover.hoverToPlainText(hover);
+            if (text == null) {
+                return;
+            }
+            SwingUtilities.invokeLater(() ->
+                showHoverContent(requestKey, text, width, screenBounds));
+        });
+    }
+
+    private void showHoverContent(String requestKey, String text, int width,
+                                  Rectangle screenBounds) {
         if (!requestKey.equals(inFlightHoverKey)
             || !requestKey.equals(pendingHoverKey)) {
             return;
@@ -232,27 +253,9 @@ final class LspSymbolHoverTooltip {
         inFlightHoverKey = null;
         updateAnchorFromPointer();
 
-        Color foreground = labelForeground();
-        Rectangle screenBounds = screenBounds();
-        int maxWidth = maxTooltipWidth(screenBounds);
-        int width = Math.min(PREFERRED_TOOLTIP_WIDTH, maxWidth);
-        String html = LspHover.hoverToHtml(hover, width, foreground);
-        if (html == null) {
-            return;
-        }
-
         applyLookAndFeelColors();
-        contentPane.setText(html);
+        contentArea.setText(text);
         scrollTooltipToTop();
-
-        int initialWidth = width;
-        width = measureExpandedWidth(width, maxWidth);
-        if (width != initialWidth) {
-            html = LspHover.hoverToHtml(hover, width, foreground);
-            contentPane.setText(html);
-            scrollTooltipToTop();
-        }
-
         layoutWindow(width, screenBounds);
         shownHoverKey = requestKey;
         window.setVisible(true);
@@ -301,25 +304,16 @@ final class LspSymbolHoverTooltip {
         return Math.max(120, (int) (screenBounds.height * MAX_HEIGHT_SCREEN_FRACTION));
     }
 
-    private int measureExpandedWidth(int width, int maxWidth) {
-        contentPane.setSize(width, Integer.MAX_VALUE);
-        int needed = contentPane.getPreferredSize().width;
-        if (needed <= width) {
-            return width;
-        }
-        return Math.min(Math.max(needed, PREFERRED_TOOLTIP_WIDTH), maxWidth);
-    }
-
     private void scrollTooltipToTop() {
-        contentPane.setCaretPosition(0);
+        contentArea.setCaretPosition(0);
         scrollPane.getViewport().setViewPosition(new Point(0, 0));
         scrollPane.getVerticalScrollBar().setValue(0);
     }
 
     private void layoutWindow(int width, Rectangle screenBounds) {
         int maxHeight = maxTooltipHeight(screenBounds);
-        contentPane.setSize(width, Integer.MAX_VALUE);
-        int height = Math.min(contentPane.getPreferredSize().height, maxHeight);
+        contentArea.setSize(width, Integer.MAX_VALUE);
+        int height = Math.min(contentArea.getPreferredSize().height, maxHeight);
 
         scrollPane.setPreferredSize(new Dimension(width, height));
         panel.revalidate();
@@ -484,10 +478,10 @@ final class LspSymbolHoverTooltip {
         panel.setOpaque(true);
         panel.setBackground(background);
         panel.setBorder(border);
-        contentPane.setOpaque(true);
-        contentPane.setBackground(background);
-        contentPane.setForeground(foreground);
-        contentPane.setCaretPosition(0);
+        contentArea.setOpaque(true);
+        contentArea.setBackground(background);
+        contentArea.setForeground(foreground);
+        contentArea.setCaretPosition(0);
         scrollPane.getViewport().setBackground(background);
 
         if (window != null) {

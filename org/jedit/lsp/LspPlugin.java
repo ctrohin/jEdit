@@ -30,12 +30,15 @@ import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.msg.ProjectFolderClosed;
 import org.gjt.sp.jedit.msg.ProjectFolderOpened;
 import org.gjt.sp.util.Log;
+import org.gjt.sp.util.ThreadUtilities;
 
 import org.eclipse.lsp4j.*;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
@@ -74,7 +77,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         LspGoToDefinition.uninstall();
         LspDiagnosticHighlights.uninstall();
         // Shutdown all clients
-        clients.values().forEach(GenericLspClient::shutdown);
+        clients.values().forEach(GenericLspClient::shutdownAndWait);
         clients.clear();
         handlers.clear();
     }
@@ -259,19 +262,64 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void startMetaClient(GenericLspClient client) {
-        if (client.isServerStarted() || Objects.isNull(currentProjectRoot)) {
+        if (client.isServerStarted()) {
+            return;
+        }
+        String projectRoot = resolveLspProjectRoot(client);
+        if (projectRoot == null) {
+            return;
+        }
+        ThreadUtilities.runInBackground(() -> startMetaClientBlocking(client, projectRoot));
+    }
+
+    private void startMetaClientBlocking(GenericLspClient client, String projectRoot) {
+        if (projectRoot == null || client.isServerStarted()) {
             return;
         }
         Try.of(() -> {
-            client.start(client.getMode(), currentProjectRoot);
+            client.start(client.getMode(), projectRoot);
             return client;
-        }).onSuccess(m -> m.setServerStarted(true))
-            .onFailure(e -> Log.log(Log.ERROR, this,
-                "Failed to start LSP server for " + client.getMode(), e));
+        }).onSuccess(m -> {
+            m.setServerStarted(true);
+            SwingUtilities.invokeLater(() -> reopenBuffersForClient(m));
+        }).onFailure(e -> Log.log(Log.ERROR, this,
+            "Failed to start LSP server for " + client.getMode(), e));
+    }
+
+    private String resolveLspProjectRoot(GenericLspClient client) {
+        if (currentProjectRoot != null) {
+            if (JdtlsSupport.isJavaMode(client.getMode())) {
+                return JdtlsSupport.resolveProjectRoot(currentProjectRoot);
+            }
+            return currentProjectRoot;
+        }
+        if (!JdtlsSupport.isJavaMode(client.getMode())) {
+            return null;
+        }
+        for (BufferLspHandler handler : handlers.values()) {
+            if (!client.getMode().equals(handler.buffer.getMode().getName())) {
+                continue;
+            }
+            String path = handler.buffer.getPath();
+            if (path != null && !path.isBlank()) {
+                File parent = new File(path).getParentFile();
+                if (parent != null) {
+                    return JdtlsSupport.resolveProjectRoot(parent.getAbsolutePath());
+                }
+            }
+        }
+        return null;
     }
 
     private void stopMetaClient(GenericLspClient client) {
-        if (!client.isServerStarted()) {
+        if (!client.hasActiveSession()) {
+            return;
+        }
+        client.shutdownAndWait();
+    }
+
+    private void stopMetaClientAsync(GenericLspClient client) {
+        if (!client.hasActiveSession()) {
             return;
         }
         client.shutdown();
@@ -323,7 +371,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (client.getServer() == null) {
                 return;
             }
-            client.whenReady().thenRun(this::sendDidOpen).exceptionally(ex -> {
+            client.whenReady().thenRun(() ->
+                ThreadUtilities.runInBackground(this::sendDidOpen)).exceptionally(ex -> {
                 Log.log(Log.ERROR, this,
                     "Failed waiting for LSP server before didOpen: " + buffer.getPath(), ex);
                 return null;
@@ -358,10 +407,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (client.getServer() == null) {
                 return CompletableFuture.completedFuture(null);
             }
-            return client.whenReady().thenRun(() -> {
-                notifyClose();
-                sendDidOpen();
-            });
+            return client.whenReady().thenRun(() ->
+                ThreadUtilities.runInBackground(() -> {
+                    sendDidClose();
+                    sendDidOpen();
+                }));
         }
 
         private void sendDidOpen() {
@@ -393,7 +443,13 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (client.getServer() == null) {
                 return;
             }
+            ThreadUtilities.runInBackground(this::sendDidClose);
+        }
 
+        private void sendDidClose() {
+            if (client.getServer() == null) {
+                return;
+            }
             DidCloseTextDocumentParams params = new DidCloseTextDocumentParams();
             params.setTextDocument(new TextDocumentIdentifier(
                 LspDocumentUri.pathToUri(buffer.getPath())));
@@ -501,27 +557,55 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             final String openedFolder = opened.getFolder();
             if (!Objects.equals(currentProjectRoot, openedFolder)) {
                 currentProjectRoot = openedFolder;
-                clients.values().forEach(this::restartLspClient);
+                scheduleRestartAllClients();
             }
             LspProjectInstallDialog.maybePromptForProject(openedFolder);
         }
         if (message instanceof ProjectFolderClosed) {
             currentProjectRoot = null;
-            clients.values().forEach(this::stopMetaClient);
+            clients.values().forEach(this::stopMetaClientAsync);
         }
     }
 
-    private void restartLspClient(GenericLspClient client) {
-        stopMetaClient(client);
-        startMetaClient(client);
-        reopenBuffersForClient(client);
+    private void scheduleRestartAllClients() {
+        List<GenericLspClient> toRestart = new ArrayList<>(clients.values());
+        if (toRestart.isEmpty()) {
+            return;
+        }
+        ThreadUtilities.runInBackground(() -> {
+            for (GenericLspClient client : toRestart) {
+                restartLspClientBlocking(client);
+            }
+        });
     }
 
-    private synchronized void reopenBuffersForClient(GenericLspClient client) {
-        for (BufferLspHandler handler : handlers.values()) {
-            if (handler.client == client) {
-                handler.resetVersionForServerRestart();
+    private void restartLspClientBlocking(GenericLspClient client) {
+        stopMetaClient(client);
+        String projectRoot = resolveLspProjectRoot(client);
+        if (projectRoot != null) {
+            startMetaClientBlocking(client, projectRoot);
+        }
+    }
+
+    private void reopenBuffersForClient(GenericLspClient client) {
+        List<BufferLspHandler> toReopen = new ArrayList<>();
+        synchronized (this) {
+            for (BufferLspHandler handler : handlers.values()) {
+                if (handler.client == client) {
+                    toReopen.add(handler);
+                }
+            }
+        }
+        for (int i = 0; i < toReopen.size(); i++) {
+            BufferLspHandler handler = toReopen.get(i);
+            handler.resetVersionForServerRestart();
+            int delayMs = i * 100;
+            if (delayMs == 0) {
                 handler.notifyOpen();
+            } else {
+                Timer timer = new Timer(delayMs, e -> handler.notifyOpen());
+                timer.setRepeats(false);
+                timer.start();
             }
         }
     }
@@ -542,10 +626,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     boolean restartServer(GenericLspClient client) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            ThreadUtilities.runInBackground(() -> restartLspClientBlocking(client));
+            return client.isAlive();
+        }
         try {
-            client.shutdown();
-            startMetaClient(client);
-            reopenBuffersForClient(client);
+            restartLspClientBlocking(client);
             return client.isServerStarted();
         } catch (Exception e) {
             Log.log(Log.ERROR, this, "Error restarting server for " + client.getMode(), e);

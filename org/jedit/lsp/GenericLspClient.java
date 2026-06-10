@@ -32,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import org.gjt.sp.util.ThreadUtilities;
 
 public class GenericLspClient {
 
@@ -79,6 +82,10 @@ public class GenericLspClient {
             throw new IllegalArgumentException("No server configured for: " + languageId);
         }
 
+        if (JdtlsSupport.isJavaMode(languageId)) {
+            command = JdtlsSupport.augmentCommand(command, projectRoot);
+        }
+
         String executable = command[0];
         if (LspServerInstaller.findExecutable(executable) == null) {
             throw new IOException("Cannot find LSP server executable \"" + executable
@@ -103,9 +110,15 @@ public class GenericLspClient {
 
         // 3. Handshake
         InitializeParams params = new InitializeParams();
-        WorkspaceFolder rootFolder = new WorkspaceFolder(
-            LspDocumentUri.pathToUri(projectRoot), "root");
+        WorkspaceFolder rootFolder = JdtlsSupport.isJavaMode(languageId)
+            ? JdtlsSupport.buildWorkspaceFolder(projectRoot)
+            : new WorkspaceFolder(LspDocumentUri.pathToUri(projectRoot), "root");
         params.setWorkspaceFolders(List.of(rootFolder));
+        params.setRootUri(rootFolder.getUri());
+        if (JdtlsSupport.isJavaMode(languageId)) {
+            params.setInitializationOptions(
+                JdtlsSupport.buildInitializationOptions(projectRoot));
+        }
 
         params.setCapabilities(buildClientCapabilities());
 
@@ -113,8 +126,11 @@ public class GenericLspClient {
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
             server.initialized(new InitializedParams());
+            if (JdtlsSupport.isJavaMode(languageId)) {
+                JdtlsSupport.pushConfiguration(server);
+            }
             initializationComplete.complete(null);
-            System.out.println(languageId + " server is ready!");
+            Log.log(Log.MESSAGE, this, languageId + " LSP server is ready");
         }).exceptionally(ex -> {
             setServerStarted(false);
             initializationComplete.completeExceptionally(ex);
@@ -135,23 +151,33 @@ public class GenericLspClient {
         return serverStarted && process != null && process.isAlive() && server != null;
     }
 
+    boolean hasActiveSession() {
+        return server != null || (process != null && process.isAlive());
+    }
+
     void shutdown() {
+        ThreadUtilities.runInBackground(this::shutdownAndWait);
+    }
+
+    void shutdownAndWait() {
         setServerStarted(false);
         initializationComplete = null;
+        LanguageServer activeServer = server;
+        Process activeProcess = process;
+        server = null;
+        launcher = null;
+        process = null;
         try {
-            if (server != null) {
-                server.shutdown().get();
-                server.exit();
+            if (activeServer != null) {
+                activeServer.shutdown().get(10, TimeUnit.SECONDS);
+                activeServer.exit();
             }
         } catch (Exception e) {
             Log.log(Log.WARNING, this, "Error while shutting down LSP server for " + mode, e);
         } finally {
-            if (process != null && process.isAlive()) {
-                process.destroy();
+            if (activeProcess != null && activeProcess.isAlive()) {
+                activeProcess.destroy();
             }
-            server = null;
-            launcher = null;
-            process = null;
         }
     }
 
@@ -173,6 +199,7 @@ public class GenericLspClient {
 
         WorkspaceClientCapabilities workspaceCaps = new WorkspaceClientCapabilities();
         workspaceCaps.setApplyEdit(true);
+        workspaceCaps.setConfiguration(true);
         WorkspaceEditCapabilities workspaceEditCaps = new WorkspaceEditCapabilities(true);
         workspaceEditCaps.setDocumentChanges(true);
         workspaceEditCaps.setResourceOperations(List.of(
