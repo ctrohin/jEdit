@@ -39,4 +39,7 @@
 	<DOCKABLE NAME="terminal" MOVABLE="TRUE">
 		new org.jedit.build.TerminalView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="git" MOVABLE="TRUE">
+		new org.jedit.git.GitView(view);
+	</DOCKABLE>
 </DOCKABLES>

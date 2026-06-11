@@ -437,6 +437,7 @@ docking=left-docking-area \
 	ant-project \
 	maven-project \
 	terminal \
+	git \
 	- \
 	layout-load \
 	layout-save \
@@ -454,6 +455,7 @@ utils=vfs.browser \
 	  ant-project \
 	  maven-project \
 	  terminal \
+	  git \
 	  %recent-directories \
 	  - \
 	  %favorites \
@@ -1066,3 +1068,8 @@ terminal.title=Terminal
 terminal.label=Terminal
 terminal.dock-position=bottom
 terminal.icon=MatIcons.TERMINAL:22
+
+git.title=Git
+git.label=Git
+git.dock-position=bottom
+git.icon=MatIcons.HISTORY:22
