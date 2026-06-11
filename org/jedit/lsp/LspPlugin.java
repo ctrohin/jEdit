@@ -305,7 +305,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
     }
 
-    private static String resolveLspMode(Buffer buffer) {
+    static String resolveLspMode(Buffer buffer) {
         String buildMode = BuildConfigLspSupport.resolveLspMode(buffer);
         return buildMode != null ? buildMode : buffer.getMode().getName();
     }
@@ -562,6 +562,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             pendingChanges.add(event);
             needsSync = true;
             notifyChange();
+            LspCompletionTriggers.onTextInserted(this.buffer, offset, length);
         }
 
         @Override

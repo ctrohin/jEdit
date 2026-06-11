@@ -10,9 +10,11 @@ package org.jedit.lsp.buildconfig;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.eclipse.lsp4j.CompletionOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
 import org.eclipse.lsp4j.ServerCapabilities;
+import org.jedit.lsp.LspCompletionTriggerCharacters;
 import org.eclipse.lsp4j.TextDocumentSyncKind;
 import org.eclipse.lsp4j.TextDocumentSyncOptions;
 import org.eclipse.lsp4j.WorkspaceFolder;
@@ -43,8 +45,8 @@ public final class BuildConfigLanguageServer implements LanguageServer {
         sync.setOpenClose(true);
         sync.setChange(TextDocumentSyncKind.Incremental);
         capabilities.setTextDocumentSync(sync);
-        capabilities.setCompletionProvider(
-            new org.eclipse.lsp4j.CompletionOptions(true, null));
+        capabilities.setCompletionProvider(new CompletionOptions(
+            true, LspCompletionTriggerCharacters.charactersForMode(languageId)));
         WorkspaceServerCapabilities workspace = new WorkspaceServerCapabilities();
         WorkspaceFoldersOptions folderOptions = new WorkspaceFoldersOptions();
         folderOptions.setSupported(true);

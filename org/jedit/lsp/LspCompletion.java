@@ -125,7 +125,42 @@ public class LspCompletion extends CompletionPopup {
 
         completionCoordinators
             .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
-            .schedule(view, lspClient, wordToComplete, noWordSep, caret, false);
+            .schedule(view, lspClient, wordToComplete, noWordSep, caret, false,
+                CompletionTriggerKind.Invoked, null);
+    }
+
+    /**
+     * Trigger LSP completion because the user typed a mode-specific trigger character.
+     */
+    static void completeLspOnTrigger(View view, GenericLspClient lspClient,
+                                     String triggerCharacter) {
+        if (view == null || triggerCharacter == null || triggerCharacter.isEmpty()) {
+            return;
+        }
+        if (getActivePopup(view) != null) {
+            return;
+        }
+
+        JEditTextArea textArea = view.getTextArea();
+        Buffer buffer = view.getBuffer();
+        int caretLine = textArea.getCaretLine();
+        int caret = textArea.getCaretPosition();
+
+        if (!buffer.isEditable()) {
+            return;
+        }
+        if (lspClient == null || lspClient.getServer() == null) {
+            return;
+        }
+
+        KeywordMap keywordMap = buffer.getKeywordMapAtOffset(caret);
+        String noWordSep = getNonAlphaNumericWordChars(buffer, keywordMap);
+        String wordToComplete = getWordToComplete(buffer, caretLine, caret, noWordSep);
+
+        completionCoordinators
+            .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
+            .schedule(view, lspClient, wordToComplete, noWordSep, caret, false,
+                CompletionTriggerKind.TriggerCharacter, triggerCharacter);
     }
 
     private static synchronized void closeActivePopup(View view) {
@@ -162,10 +197,12 @@ public class LspCompletion extends CompletionPopup {
         private PendingCompletion pending;
 
         void schedule(View view, GenericLspClient client, String word,
-                        String noWordSep, int caret, boolean refreshExisting) {
+                        String noWordSep, int caret, boolean refreshExisting,
+                        CompletionTriggerKind triggerKind, String triggerCharacter) {
             int requestGeneration = generation.incrementAndGet();
             PendingCompletion request = new PendingCompletion(
-                view, word, noWordSep, caret, requestGeneration, refreshExisting);
+                view, word, noWordSep, caret, requestGeneration, refreshExisting,
+                triggerKind, triggerCharacter);
 
             synchronized (lock) {
                 if (inFlight) {
@@ -194,9 +231,15 @@ public class LspCompletion extends CompletionPopup {
                 params.setPosition(new Position(caretLine, character));
 
                 CompletionContext context = new CompletionContext();
-                context.setTriggerKind(request.refreshExisting
-                    ? CompletionTriggerKind.TriggerForIncompleteCompletions
-                    : CompletionTriggerKind.Invoked);
+                if (request.refreshExisting) {
+                    context.setTriggerKind(
+                        CompletionTriggerKind.TriggerForIncompleteCompletions);
+                } else {
+                    context.setTriggerKind(request.triggerKind);
+                    if (request.triggerCharacter != null) {
+                        context.setTriggerCharacter(request.triggerCharacter);
+                    }
+                }
                 params.setContext(context);
 
                 CompletableFuture<Either<List<CompletionItem>, CompletionList>> future =
@@ -291,15 +334,21 @@ public class LspCompletion extends CompletionPopup {
         final int caret;
         final int generation;
         final boolean refreshExisting;
+        final CompletionTriggerKind triggerKind;
+        final String triggerCharacter;
 
         PendingCompletion(View view, String word, String noWordSep,
-                          int caret, int generation, boolean refreshExisting) {
+                          int caret, int generation, boolean refreshExisting,
+                          CompletionTriggerKind triggerKind, String triggerCharacter) {
             this.view = view;
             this.word = word;
             this.noWordSep = noWordSep;
             this.caret = caret;
             this.generation = generation;
             this.refreshExisting = refreshExisting;
+            this.triggerKind = triggerKind != null
+                ? triggerKind : CompletionTriggerKind.Invoked;
+            this.triggerCharacter = triggerCharacter;
         }
     }
 
@@ -764,7 +813,8 @@ public class LspCompletion extends CompletionPopup {
         }
         completionCoordinators
             .computeIfAbsent(lspClient, c -> new CompletionCoordinator())
-            .schedule(this.view, lspClient, word, noWordSep, caret, true);
+            .schedule(this.view, lspClient, word, noWordSep, caret, true,
+                CompletionTriggerKind.Invoked, null);
     }
 
     /**
