@@ -52,19 +52,67 @@ final class ProjectRoots {
         return pom.isFile() ? pom : null;
     }
 
-    private static File findNamedFile(File root, String name) {
+    static File findGradleBuild(File root) {
         if (root == null) {
             return null;
         }
-        File direct = new File(root, name);
-        if (direct.isFile()) {
-            return direct;
+        for (String name : new String[] {"build.gradle.kts", "build.gradle"}) {
+            File file = new File(root, name);
+            if (file.isFile()) {
+                return file;
+            }
+        }
+        return findNamedFile(root, "build.gradle.kts", "build.gradle");
+    }
+
+    static File findPackageJson(File root) {
+        if (root == null) {
+            return null;
+        }
+        File direct = new File(root, "package.json");
+        return direct.isFile() ? direct : findNamedFile(root, "package.json");
+    }
+
+    static File findPubspecYaml(File root) {
+        if (root == null) {
+            return null;
+        }
+        File direct = new File(root, "pubspec.yaml");
+        return direct.isFile() ? direct : findNamedFile(root, "pubspec.yaml");
+    }
+
+    static File findPythonMarker(File root) {
+        if (root == null) {
+            return null;
+        }
+        for (String name : new String[] {
+            "requirements.txt", "pyproject.toml", "setup.py", "Pipfile"
+        }) {
+            File file = new File(root, name);
+            if (file.isFile()) {
+                return file;
+            }
+        }
+        return findNamedFile(root, "requirements.txt", "pyproject.toml", "setup.py", "Pipfile");
+    }
+
+    private static File findNamedFile(File root, String... names) {
+        if (root == null) {
+            return null;
+        }
+        for (String name : names) {
+            File direct = new File(root, name);
+            if (direct.isFile()) {
+                return direct;
+            }
         }
         File current = root;
         while (current != null) {
-            File candidate = new File(current, name);
-            if (candidate.isFile()) {
-                return candidate;
+            for (String name : names) {
+                File candidate = new File(current, name);
+                if (candidate.isFile()) {
+                    return candidate;
+                }
             }
             current = current.getParentFile();
         }

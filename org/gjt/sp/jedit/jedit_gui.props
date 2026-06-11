@@ -436,6 +436,10 @@ docking=left-docking-area \
 	build-output \
 	ant-project \
 	maven-project \
+	gradle-project \
+	npm-project \
+	flutter-project \
+	pip-project \
 	terminal \
 	git \
 	- \
@@ -454,6 +458,10 @@ utils=vfs.browser \
 	  build-output \
 	  ant-project \
 	  maven-project \
+	  gradle-project \
+	  npm-project \
+	  flutter-project \
+	  pip-project \
 	  terminal \
 	  git \
 	  %recent-directories \
@@ -1063,6 +1071,22 @@ ant-project.icon=MatIcons.CODE:22
 maven-project.title=Maven
 maven-project.label=Maven
 maven-project.icon=MatIcons.INVENTORY_2:22
+
+gradle-project.title=Gradle
+gradle-project.label=Gradle
+gradle-project.icon=MatIcons.STORAGE:22
+
+npm-project.title=NPM
+npm-project.label=NPM
+npm-project.icon=MatIcons.WEB:22
+
+flutter-project.title=Flutter
+flutter-project.label=Flutter
+flutter-project.icon=MatIcons.PHONE_ANDROID:22
+
+pip-project.title=Pip
+pip-project.label=Pip
+pip-project.icon=MatIcons.DATA_USAGE:22
 
 terminal.title=Terminal
 terminal.label=Terminal

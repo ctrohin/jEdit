@@ -2194,6 +2194,91 @@ maven-project.settings.no-profiles=No profiles declared in pom.xml
 maven-project.settings.reset=Reset to Defaults
 maven-project.settings.reset-confirm=Reset Maven settings for this project folder to defaults?
 
+gradle-project.label=$Gradle
+gradle-project.title=Gradle
+gradle-project.refresh=Refresh
+gradle-project.run=Run Task
+gradle-project.settings=Settings...
+gradle-project.no-build=No build.gradle or build.gradle.kts found in the project folder.
+gradle-project.caption=Gradle build: {0}
+
+gradle-project.settings.title=Gradle Project Settings
+gradle-project.settings.intro=Settings for project folder:<br><b>{0}</b><br>Leave fields empty to use the Gradle installation from your environment.
+gradle-project.settings.gradle-section=Gradle
+gradle-project.settings.gradle-home=Gradle home:
+gradle-project.settings.jdk-home=JDK home:
+gradle-project.settings.gradle-executable=Gradle executable:
+gradle-project.settings.gradle-user-home=Gradle user home:
+gradle-project.settings.working-directory=Working directory:
+gradle-project.settings.gradle-opts=Environment / VM options (GRADLE_OPTS):
+gradle-project.settings.additional-args=Additional command-line arguments:
+gradle-project.settings.use-wrapper=Use Gradle wrapper (gradlew) when present
+gradle-project.settings.reset=Reset to Defaults
+gradle-project.settings.reset-confirm=Reset Gradle settings for this project folder to defaults?
+
+npm-project.label=$NPM
+npm-project.title=NPM
+npm-project.refresh=Refresh
+npm-project.run=Run Script
+npm-project.settings=Settings...
+npm-project.no-package-json=No package.json found in the project folder.
+npm-project.caption=package.json: {0}
+
+npm-project.settings.title=NPM Project Settings
+npm-project.settings.intro=Settings for project folder:<br><b>{0}</b><br>Leave fields empty to use npm or yarn from your environment.
+npm-project.settings.node-section=Node.js
+npm-project.settings.node-home=Node home:
+npm-project.settings.package-manager=Package manager:
+npm-project.settings.npm-executable=npm executable:
+npm-project.settings.yarn-executable=yarn executable:
+npm-project.settings.working-directory=Working directory:
+npm-project.settings.node-options=Environment options (NODE_OPTIONS):
+npm-project.settings.additional-args=Additional command-line arguments:
+npm-project.settings.reset=Reset to Defaults
+npm-project.settings.reset-confirm=Reset NPM settings for this project folder to defaults?
+
+flutter-project.label=$Flutter
+flutter-project.title=Flutter
+flutter-project.refresh=Refresh
+flutter-project.run=Run Goal
+flutter-project.settings=Settings...
+flutter-project.no-pubspec=No pubspec.yaml found in the project folder.
+flutter-project.caption=pubspec.yaml: {0}
+
+flutter-project.settings.title=Flutter Project Settings
+flutter-project.settings.intro=Settings for project folder:<br><b>{0}</b><br>Leave fields empty to use Flutter and Dart from your environment.
+flutter-project.settings.sdk-section=SDK
+flutter-project.settings.flutter-sdk=Flutter SDK:
+flutter-project.settings.dart-sdk=Dart SDK:
+flutter-project.settings.flutter-executable=Flutter executable:
+flutter-project.settings.dart-executable=Dart executable:
+flutter-project.settings.working-directory=Working directory:
+flutter-project.settings.additional-args=Additional command-line arguments:
+flutter-project.settings.use-flutter=Use flutter CLI for pub goals (otherwise dart pub)
+flutter-project.settings.reset=Reset to Defaults
+flutter-project.settings.reset-confirm=Reset Flutter settings for this project folder to defaults?
+
+pip-project.label=$Pip
+pip-project.title=Pip
+pip-project.refresh=Refresh
+pip-project.run=Run Command
+pip-project.settings=Settings...
+pip-project.no-marker=No requirements.txt, pyproject.toml, setup.py, or Pipfile found in the project folder.
+pip-project.caption=Python project: {0}
+
+pip-project.settings.title=Pip Project Settings
+pip-project.settings.intro=Settings for project folder:<br><b>{0}</b><br>Leave fields empty to use Python and pip from your environment.
+pip-project.settings.python-section=Python
+pip-project.settings.python-home=Python home (PYTHONHOME):
+pip-project.settings.python-executable=Python executable:
+pip-project.settings.pip-executable=pip executable:
+pip-project.settings.virtual-env=Virtual environment (VIRTUAL_ENV):
+pip-project.settings.working-directory=Working directory:
+pip-project.settings.additional-args=Additional command-line arguments:
+pip-project.settings.use-pip-module=Invoke pip as python -m pip
+pip-project.settings.reset=Reset to Defaults
+pip-project.settings.reset-confirm=Reset Pip settings for this project folder to defaults?
+
 terminal.label=$Terminal
 terminal.title=Terminal
 terminal.run=Run

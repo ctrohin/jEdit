@@ -36,6 +36,18 @@
 	<DOCKABLE NAME="maven-project" MOVABLE="TRUE">
 		new org.jedit.build.MavenProjectView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="gradle-project" MOVABLE="TRUE">
+		new org.jedit.build.GradleProjectView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="npm-project" MOVABLE="TRUE">
+		new org.jedit.build.NpmProjectView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="flutter-project" MOVABLE="TRUE">
+		new org.jedit.build.FlutterProjectView(view);
+	</DOCKABLE>
+	<DOCKABLE NAME="pip-project" MOVABLE="TRUE">
+		new org.jedit.build.PipProjectView(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="terminal" MOVABLE="TRUE">
 		new org.jedit.build.TerminalView(view);
 	</DOCKABLE>
