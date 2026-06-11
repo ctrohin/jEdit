@@ -116,7 +116,7 @@ public class TaskMonitorWidgetFactory implements StatusWidgetFactory
 			{
 				synchronized (messageFormat)
 				{
-					setIcon(GUIUtilities.loadIcon("MatIcons.BLUR_ON:22"));
+					setIcon(GUIUtilities.loadIcon("MatIcons.BLUR_ON:12"));
 					args[0] = count;
 					setText(messageFormat.format(args, stringBuffer, fieldPosition).toString());
 					stringBuffer.setLength(0);

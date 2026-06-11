@@ -48,7 +48,6 @@ import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
-Upimport org.gjt.sp.jedit.gui.RolloverButton;
 import org.gjt.sp.jedit.gui.RolloverButton;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
