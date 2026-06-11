@@ -28,6 +28,7 @@ import javax.swing.plaf.*;
 import javax.swing.plaf.basic.*;
 
 import java.awt.*;
+import java.io.File;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -40,6 +41,7 @@ import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import io.vavr.control.Try;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
+import org.gjt.sp.jedit.icons.WorkspaceFileIcons;
 import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.bufferset.BufferSetManager;
 import org.gjt.sp.jedit.gui.components.CustomTabHeader;
@@ -239,10 +241,12 @@ public class BufferSwitcher extends JComboBox<Buffer>
 
 
 	private void buildTabs(final Buffer[] buffers) {
-		//			tabs.setTabs(buffers, editPane.getBuffer());
 		tabsListenerEnabled = false;
 		tabs.removeAll();
-		Arrays.stream(buffers).forEach((buffer) -> tabs.addTab(buffer.getName(), null));
+		for (Buffer buffer : buffers) {
+			tabs.addTab(buffer.getName(), tabIcon(buffer), null,
+				makeToolTipText(buffer.getPath(), buffer.isBackup()));
+		}
 		var idx = 0;
 		for (int i = 0; i < buffers.length; i++) {
 			if (buffers[i] == editPane.getBuffer()) {
@@ -252,6 +256,14 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		}
 		tabsListenerEnabled = true;
 		tabs.setSelectedIndex(idx);
+	}
+
+	private static Icon tabIcon(Buffer buffer) {
+		String path = buffer.getPath();
+		File file = (path != null && !path.isEmpty())
+			? new File(path)
+			: new File(buffer.getName());
+		return WorkspaceFileIcons.getIcon(file);
 	}
 
 	private Buffer[] getSortedBuffers() {
