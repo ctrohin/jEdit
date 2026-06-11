@@ -68,8 +68,8 @@ import org.gjt.sp.util.Log;
  */
 public class LspCompletion extends CompletionPopup {
 
-    private static final int LIST_CELL_WIDTH = 300;
-    private static final int DESCRIPTION_WIDTH = 400;
+    private static final int LIST_CELL_WIDTH = 600;
+    private static final int DESCRIPTION_WIDTH = 300;
     private static final int DESCRIPTION_MAX_HEIGHT = 320;
     private static final int DESCRIPTION_GAP = 4;
     private static final Pattern ARROW_SIGNATURE =
@@ -923,7 +923,7 @@ public class LspCompletion extends CompletionPopup {
      * Handles Dart-style details such as {@code () -> String}.
      */
     private static String formatSignatureDisplay(String label, String detail) {
-        if (detail == null || detail.isEmpty()) {
+        if (detail == null || detail.trim().isEmpty()) {
             return label;
         }
         return label + " - " + detail;

@@ -1748,6 +1748,27 @@ lsp.project.install.skip=Skip
 lsp.project.install.none-selected=Select at least one language server to install.
 lsp.project.install.installing=Installing selected language servers...
 lsp.project.install.server-header==== {0} ===
+lsp.jdtls.status.ready=Java language server ready
+lsp.jdtls.status.started=Java language server started
+lsp.jdtls.status.error=Java language server error: {0}
+lsp.jdtls.status.error-unknown=The Java language server reported an error.
+lsp.jdtls.status.error-title=Java Language Server
+lsp.jdtls.status.project-warning=Java project configuration has warnings
+lsp.jdtls.status.project-ok=Java project configuration is up to date
+lsp.jdtls.event.classpath-updated=Java classpath updated for {0}
+lsp.jdtls.event.projects-imported=Imported {0} Java project(s): {1}
+lsp.jdtls.event.projects-deleted=Removed {0} Java project(s) from the workspace
+lsp.jdtls.event.sources-attached=Updated source attachments for {0} library root(s)
+lsp.jdtls.gradle-compat.title=Gradle / JDK compatibility
+lsp.jdtls.gradle-upgrade.title=Gradle upgrade recommended
+lsp.jdtls.gradle-upgrade.action=Upgrade to {0}
+lsp.jdtls.gradle-upgrade.started=Upgrading Gradle wrapper...
+lsp.jdtls.preview-features.title=Java preview features
+lsp.jdtls.dialog.title=Java Language Server
+lsp.jdtls.dialog.error=Java Error
+lsp.jdtls.dialog.warning=Java Warning
+lsp.jdtls.dialog.info=Java
+lsp.jdtls.action.run=Run
 #}}}
 
 #{{{ Printing pane

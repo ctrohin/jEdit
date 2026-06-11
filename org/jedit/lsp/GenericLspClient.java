@@ -172,6 +172,16 @@ public class GenericLspClient {
             launcher = null;
             process = null;
         }
+        if (JdtlsSupport.isJavaMode(mode)) {
+            JdtlsNotifications.resetSession();
+        }
+    }
+
+    void notifyServer(String method, Object params) {
+        Launcher<LanguageServer> activeLauncher = launcher;
+        if (activeLauncher != null) {
+            activeLauncher.getRemoteEndpoint().notify(method, params);
+        }
     }
 
     void shutdown() {

@@ -22,6 +22,7 @@
 package org.jedit.lsp;
 
 import org.eclipse.lsp4j.*;
+import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.lsp4j.services.LanguageClient;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -106,6 +107,38 @@ public class MyLspClient implements LanguageClient {
 
     @Override
     public void notifyProgress(ProgressParams params) {}
+
+    /**
+     * jdtls extension: startup / workspace status (not part of standard LSP).
+     */
+    @JsonNotification("language/status")
+    public void languageStatus(JdtlsProtocol.StatusReport report) {
+        JdtlsNotifications.handleStatus(report);
+    }
+
+    /**
+     * jdtls extension: import/build progress during startup.
+     */
+    @JsonNotification("language/progressReport")
+    public void languageProgressReport(JdtlsProtocol.ProgressReport report) {
+        JdtlsNotifications.handleProgress(report);
+    }
+
+    /**
+     * jdtls extension: internal events (classpath changes, project import, etc.).
+     */
+    @JsonNotification("language/eventNotification")
+    public void languageEventNotification(JdtlsProtocol.EventNotification notification) {
+        JdtlsNotifications.handleEvent(notification);
+    }
+
+    /**
+     * jdtls extension: messages with optional client commands.
+     */
+    @JsonNotification("language/actionableNotification")
+    public void languageActionableNotification(JdtlsProtocol.ActionableNotification notification) {
+        JdtlsNotifications.handleActionable(notification);
+    }
 
     @Override
     public CompletableFuture<MessageActionItem> showMessageRequest(

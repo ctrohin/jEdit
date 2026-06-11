@@ -112,6 +112,18 @@ final class JdtlsSupport {
         return Map.of();
     }
 
+    static void requestProjectConfigurationUpdate(GenericLspClient client, String projectUri) {
+        if (client == null || projectUri == null || projectUri.isBlank()) {
+            return;
+        }
+        try {
+            client.notifyServer("java/projectConfigurationUpdate", Map.of("uri", projectUri));
+        } catch (Exception ex) {
+            Log.log(Log.WARNING, JdtlsSupport.class,
+                "Failed to request jdtls project configuration update", ex);
+        }
+    }
+
     static void pushConfiguration(LanguageServer server) {
         if (server == null) {
             return;
