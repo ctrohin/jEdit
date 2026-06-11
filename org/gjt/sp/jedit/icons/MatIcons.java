@@ -994,7 +994,9 @@ public enum MatIcons implements IconCode {
     WIZZARD_WAND('\ue664'),
     FETCH('\ueb61'),
     PULL('\ueba1'),
-    PUSH('\ueb9a');
+    PUSH('\ueb9a'),
+    DIFF('\uf1b9');
+
 
     private final char character;
 

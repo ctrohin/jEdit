@@ -115,8 +115,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
             actionButton("MatIcons.PLAYLIST_ADD:22", "git.stage-all", this::stageAll),
             actionButton("MatIcons.REPLY_ALL:22", "git.unstage-all", this::unstageAll),
             actionButton("MatIcons.UNDO:22", "git.discard", this::discardSelected),
-            actionButton("MatIcons.PRESENT_TO_ALL:22", "git.open", this::openSelectedFile),
-            actionButton("MatIcons.LOW_PRIORITY:22", "git.diff", this::diffSelected));
+            actionButton("MatIcons.OPEN_IN_NEW:22", "git.open", this::openSelectedFile),
+            actionButton("MatIcons.DIFF:22", "git.diff", this::diffSelected));
         changesPanel.add(changeButtons, BorderLayout.NORTH);
         changesPanel.add(new JScrollPane(changeList), BorderLayout.CENTER);
 
