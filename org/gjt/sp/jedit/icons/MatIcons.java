@@ -991,7 +991,10 @@ public enum MatIcons implements IconCode {
     HIGHLIGHT_ONE('\ue26c'),
     ONE('\ue3d0'),
     NINE_PLUS('\ue3da'),
-    WIZZARD_WAND('\ue664');
+    WIZZARD_WAND('\ue664'),
+    FETCH('\ueb61'),
+    PULL('\ueba1'),
+    PUSH('\ueb9a');
 
     private final char character;
 

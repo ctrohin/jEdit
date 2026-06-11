@@ -48,6 +48,9 @@ import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
+Upimport org.gjt.sp.jedit.gui.RolloverButton;
+import org.gjt.sp.jedit.gui.RolloverButton;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 /**
  * Git integration dockable: status, staging, commit, diff, log, branches, pull/push.
@@ -85,9 +88,9 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         refreshButton.addActionListener(e -> refreshRepository());
         branchCombo = new JComboBox<>();
         branchCombo.addActionListener(e -> switchSelectedBranch());
-        JButton fetchButton = actionButton("git.fetch", () -> runGitAsync("fetch"));
-        JButton pullButton = actionButton("git.pull", () -> runGitAsync("pull"));
-        JButton pushButton = actionButton("git.push", () -> runGitAsync("push"));
+        JButton fetchButton = actionButton("MatIcons.FETCH:22", "git.fetch", () -> runGitAsync("fetch"));
+        JButton pullButton = actionButton("MatIcons.PULL:22","git.pull", () -> runGitAsync("pull"));
+        JButton pushButton = actionButton("MatIcons.PUSH:22","git.push", () -> runGitAsync("push"));
         toolbar.add(refreshButton);
         toolbar.add(new JLabel(jEdit.getProperty("git.branch")));
         toolbar.add(branchCombo);
@@ -108,13 +111,13 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         });
         JPanel changesPanel = new JPanel(new BorderLayout(0, 4));
         JPanel changeButtons = buttonRow(
-            actionButton("git.stage", this::stageSelected),
-            actionButton("git.unstage", this::unstageSelected),
-            actionButton("git.stage-all", this::stageAll),
-            actionButton("git.unstage-all", this::unstageAll),
-            actionButton("git.discard", this::discardSelected),
-            actionButton("git.open", this::openSelectedFile),
-            actionButton("git.diff", this::diffSelected));
+            actionButton("MatIcons.ADD:22","git.stage", this::stageSelected),
+            actionButton("MatIcons.REMOVE:22", "git.unstage", this::unstageSelected),
+            actionButton("MatIcons.PLAYLIST_ADD:22", "git.stage-all", this::stageAll),
+            actionButton("MatIcons.REPLY_ALL:22", "git.unstage-all", this::unstageAll),
+            actionButton("MatIcons.UNDO:22", "git.discard", this::discardSelected),
+            actionButton("MatIcons.PRESENT_TO_ALL:22", "git.open", this::openSelectedFile),
+            actionButton("MatIcons.LOW_PRIORITY:22", "git.diff", this::diffSelected));
         changesPanel.add(changeButtons, BorderLayout.NORTH);
         changesPanel.add(new JScrollPane(changeList), BorderLayout.CENTER);
 
@@ -124,8 +127,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         JPanel commitPanel = new JPanel(new BorderLayout(0, 4));
         commitPanel.add(new JScrollPane(commitMessage), BorderLayout.CENTER);
         JPanel commitButtons = buttonRow(
-            actionButton("git.commit", this::commitChanges),
-            actionButton("git.commit-all", this::commitAll));
+            simpleActionButton("git.commit", this::commitChanges),
+            simpleActionButton("git.commit-all", this::commitAll));
         commitPanel.add(commitButtons, BorderLayout.SOUTH);
         changesPanel.add(commitPanel, BorderLayout.SOUTH);
 
@@ -141,9 +144,9 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         });
         JPanel logPanel = new JPanel(new BorderLayout(0, 4));
         logPanel.add(buttonRow(
-            actionButton("git.show-commit", this::showSelectedCommit),
-            actionButton("git.diff-commit", this::diffSelectedCommit),
-            actionButton("git.checkout-commit", this::checkoutSelectedCommit)),
+            actionButton("MatIcons.REMOVE_RED_EYE:22", "git.show-commit", this::showSelectedCommit),
+            actionButton("MatIcons.COMPARE_ARROWS:22", "git.diff-commit", this::diffSelectedCommit),
+            actionButton("MatIcons.FILE_DOWNLOAD:22","git.checkout-commit", this::checkoutSelectedCommit)),
             BorderLayout.NORTH);
         logPanel.add(new JScrollPane(logList), BorderLayout.CENTER);
 
@@ -160,13 +163,13 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         JPanel branchesPanel = new JPanel(new BorderLayout(0, 4));
         JPanel branchControls = new JPanel(new BorderLayout(0, 4));
         branchControls.add(buttonRow(
-            actionButton("git.checkout-branch", this::checkoutSelectedBranch),
-            actionButton("git.delete-branch", this::deleteSelectedBranch)),
+            actionButton("MatIcons.KEYBOARD_ARROW_DOWN:22", "git.checkout-branch", this::checkoutSelectedBranch),
+            actionButton("MatIcons.DELETE:22","git.delete-branch", this::deleteSelectedBranch)),
             BorderLayout.NORTH);
         JPanel createBranchRow = new JPanel(new BorderLayout(4, 0));
         JTextField newBranchField = new JTextField();
         createBranchRow.add(newBranchField, BorderLayout.CENTER);
-        createBranchRow.add(actionButton("git.create-branch",
+        createBranchRow.add(actionButton("MatIcons.ADD:22","git.create-branch",
             () -> createBranch(newBranchField.getText())), BorderLayout.EAST);
         branchControls.add(createBranchRow, BorderLayout.SOUTH);
         branchesPanel.add(branchControls, BorderLayout.NORTH);
@@ -182,8 +185,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, output.getFont().getSize()));
         JPanel outputPanel = new JPanel(new BorderLayout(0, 4));
         outputPanel.add(buttonRow(
-            actionButton("git.output.clear", () -> output.setText("")),
-            actionButton("git.output.stop", runner::stop)),
+            actionButton("MatIcons.REMOVE:22", "git.output.clear", () -> output.setText("")),
+            actionButton("MatIcons.STOP:22", "git.output.stop", runner::stop)),
             BorderLayout.NORTH);
         outputPanel.add(new JScrollPane(output), BorderLayout.CENTER);
 
@@ -224,8 +227,14 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         changeList.requestFocusInWindow();
     }
 
-    private static JButton actionButton(String propertyKey, Runnable action) {
+    private static JButton simpleActionButton(String propertyKey, Runnable action) {
         JButton button = new JButton(jEdit.getProperty(propertyKey));
+        button.addActionListener(e -> action.run());
+        return button;
+    }
+
+    private static JButton actionButton(String iconName, String propertyKey, Runnable action) {
+        JButton button = new RolloverButton(IconManager.loadIcon(iconName), jEdit.getProperty(propertyKey));
         button.addActionListener(e -> action.run());
         return button;
     }
