@@ -237,6 +237,22 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         return handler.syncToServerAsync();
     }
 
+    /**
+     * Sends any buffered {@code didChange} events immediately so LSP features
+     * (completion, signature help, etc.) see the latest editor text.
+     */
+    static CompletableFuture<Void> flushBufferChangesAsync(Buffer buffer) {
+        LspPlugin plugin = getInstance();
+        if (plugin == null || buffer == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        BufferLspHandler handler = plugin.handlers.get(buffer);
+        if (handler == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return handler.flushPendingChangeAsync();
+    }
+
     static void beginApplyingLspEdits() {
         applyingLspEdits = true;
     }
@@ -462,6 +478,23 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         void flushPendingChange() {
             changeSyncTimer.stop();
             flushChangeToServer();
+        }
+
+        CompletableFuture<Void> flushPendingChangeAsync() {
+            if (client.getServer() == null) {
+                return CompletableFuture.completedFuture(null);
+            }
+            return client.whenReady().thenRun(() -> {
+                changeSyncTimer.stop();
+                if (!needsSync || pendingChanges.isEmpty()) {
+                    return;
+                }
+                if (!documentOpenOnServer) {
+                    sendDidOpen();
+                    return;
+                }
+                flushChangeToServer();
+            });
         }
 
         void syncOnSave() {
