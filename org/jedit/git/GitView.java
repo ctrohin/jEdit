@@ -96,6 +96,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         toolbar.add(pushButton);
 
         changeList = new JList<>(changeModel);
+        changeList.setCellRenderer(new GitChangeCellRenderer());
         changeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         changeList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override

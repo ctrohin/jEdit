@@ -21,12 +21,46 @@
 
 package org.jedit.git;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 final class GitModels {
 
     private GitModels() {}
+
+    enum ChangeKind {
+        UNTRACKED,
+        ADDED,
+        MODIFIED,
+        DELETED,
+        RENAMED,
+        COPIED,
+        CONFLICT,
+        OTHER;
+
+        Color foreground() {
+            switch (this) {
+                case UNTRACKED:
+                    return new Color(0, 102, 204);
+                case ADDED:
+                    return new Color(0, 128, 0);
+                case MODIFIED:
+                    return new Color(180, 95, 0);
+                case DELETED:
+                    return new Color(180, 0, 0);
+                case RENAMED:
+                    return new Color(128, 0, 128);
+                case COPIED:
+                    return new Color(0, 128, 128);
+                case CONFLICT:
+                    return new Color(200, 0, 0);
+                case OTHER:
+                default:
+                    return null;
+            }
+        }
+    }
 
     static final class FileChange {
         final char indexStatus;
@@ -53,7 +87,7 @@ final class GitModels {
 
         String statusLabel() {
             if (isUntracked()) {
-                return "??";
+                return "U";
             }
             if (isStaged() && hasWorkTreeChanges()) {
                 return "" + indexStatus + workTreeStatus;
@@ -64,9 +98,38 @@ final class GitModels {
             return String.valueOf(workTreeStatus);
         }
 
+        ChangeKind kind() {
+            if (isUntracked()) {
+                return ChangeKind.UNTRACKED;
+            }
+            if (indexStatus == 'U' || workTreeStatus == 'U') {
+                return ChangeKind.CONFLICT;
+            }
+            if (indexStatus == 'A' || workTreeStatus == 'A') {
+                return ChangeKind.ADDED;
+            }
+            if (indexStatus == 'D' || workTreeStatus == 'D') {
+                return ChangeKind.DELETED;
+            }
+            if (indexStatus == 'R' || workTreeStatus == 'R') {
+                return ChangeKind.RENAMED;
+            }
+            if (indexStatus == 'C' || workTreeStatus == 'C') {
+                return ChangeKind.COPIED;
+            }
+            if (indexStatus == 'M' || workTreeStatus == 'M') {
+                return ChangeKind.MODIFIED;
+            }
+            return ChangeKind.OTHER;
+        }
+
+        String displayText() {
+            return statusLabel() + "  " + path;
+        }
+
         @Override
         public String toString() {
-            return statusLabel() + "  " + path;
+            return displayText();
         }
     }
 
