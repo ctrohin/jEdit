@@ -307,7 +307,6 @@
 			<compilerarg line="${config.build.compilerarg}"/>
 		</javac>
 	</target>
-
 	<target name="prepare-textArea"
 		depends="init">
 		<delete includeemptydirs="true"

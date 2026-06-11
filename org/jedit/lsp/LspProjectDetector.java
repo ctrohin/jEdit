@@ -94,21 +94,38 @@ final class LspProjectDetector {
         if (exists(root, "Cargo.toml")) {
             modeNames.add("rust");
         }
+        if (exists(root, "pom.xml")) {
+            modeNames.add("maven");
+        }
+        if (exists(root, "build.xml")) {
+            modeNames.add("ant");
+        }
         if (exists(root, "pom.xml") || exists(root, "build.gradle")
             || exists(root, "build.gradle.kts") || exists(root, "settings.gradle")
             || exists(root, "settings.gradle.kts") || exists(root, "mvnw")
             || exists(root, "mvnw.cmd")) {
             modeNames.add("java");
+            if (exists(root, "build.gradle") || exists(root, "build.gradle.kts")
+                || exists(root, "settings.gradle") || exists(root, "settings.gradle.kts")) {
+                modeNames.add("gradle");
+            }
         }
         if (exists(root, "package.json") || exists(root, "pnpm-lock.yaml")
             || exists(root, "yarn.lock") || exists(root, "bun.lockb")
             || exists(root, "tsconfig.json")) {
             modeNames.add("javascript");
+            if (exists(root, "package.json")) {
+                modeNames.add("json");
+            }
+        }
+        if (exists(root, "pubspec.yaml") || exists(root, "pubspec.yml")) {
+            modeNames.add("yaml");
         }
         if (exists(root, "pyproject.toml") || exists(root, "requirements.txt")
             || exists(root, "setup.py") || exists(root, "setup.cfg")
             || exists(root, "Pipfile") || exists(root, "poetry.lock")) {
             modeNames.add("python");
+            modeNames.add("pip");
         }
         if (exists(root, "CMakeLists.txt") || exists(root, "Makefile")
             || exists(root, "compile_commands.json") || exists(root, "meson.build")

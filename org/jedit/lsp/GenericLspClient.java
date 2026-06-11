@@ -26,6 +26,9 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageServer;
 import org.gjt.sp.util.Log;
+import org.jedit.lsp.buildconfig.BuildConfigLanguageServer;
+import org.jedit.lsp.buildconfig.BuildConfigLspSupport;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -85,6 +88,11 @@ public class GenericLspClient {
     }
 
     private void startLocked(String languageId, String projectRoot) throws Exception {
+        if (BuildConfigLspSupport.isBuiltinMode(languageId)) {
+            startBuiltinLocked(languageId, projectRoot);
+            return;
+        }
+
         String[] command = LspConfig.getServerCommand(languageId);
 
         if (command == null || command.length == 0) {
@@ -148,6 +156,34 @@ public class GenericLspClient {
         });
     }
 
+    private void startBuiltinLocked(String languageId, String projectRoot) {
+        this.clientImpl = new MyLspClient();
+        this.launcher = null;
+        this.process = null;
+        this.server = new BuildConfigLanguageServer(languageId, projectRoot);
+
+        InitializeParams params = new InitializeParams();
+        WorkspaceFolder rootFolder = new WorkspaceFolder(
+            LspDocumentUri.pathToUri(projectRoot), "root");
+        params.setWorkspaceFolders(List.of(rootFolder));
+        params.setRootUri(rootFolder.getUri());
+        params.setCapabilities(buildClientCapabilities());
+
+        initializationComplete = new CompletableFuture<>();
+        CompletableFuture<InitializeResult> initResult = server.initialize(params);
+        initResult.thenAccept(res -> {
+            server.initialized(new InitializedParams());
+            initializationComplete.complete(null);
+            Log.log(Log.MESSAGE, this, languageId + " built-in LSP server is ready");
+        }).exceptionally(ex -> {
+            setServerStarted(false);
+            initializationComplete.completeExceptionally(ex);
+            Log.log(Log.ERROR, this,
+                "Failed to initialize built-in LSP server for " + languageId, ex);
+            return null;
+        });
+    }
+
     CompletableFuture<Void> whenReady() {
         CompletableFuture<Void> ready = initializationComplete;
         if (ready == null) {
@@ -157,7 +193,8 @@ public class GenericLspClient {
     }
 
     boolean isAlive() {
-        return serverStarted && process != null && process.isAlive() && server != null;
+        return serverStarted && server != null
+            && (process == null || process.isAlive());
     }
 
     boolean hasActiveSession() {

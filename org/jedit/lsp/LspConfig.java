@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gjt.sp.jedit.jEdit;
+import org.jedit.lsp.buildconfig.BuildConfigLspSupport;
 
 public class LspConfig {
 
@@ -99,7 +100,19 @@ public class LspConfig {
             new String[] {"rustup", "component", "add", "rust-analyzer"},
             new String[] {"rustup", "component", "add", "rust-analyzer"},
             new String[] {"rustup", "component", "add", "rust-analyzer"},
-            "options.lsp-servers.rust.install-help")
+            "options.lsp-servers.rust.install-help"),
+        builtinServer("maven", "Maven (pom.xml)",
+            "options.lsp-servers.maven.install-help"),
+        builtinServer("ant", "Ant (build.xml)",
+            "options.lsp-servers.ant.install-help"),
+        builtinServer("json", "npm (package.json)",
+            "options.lsp-servers.json.install-help"),
+        builtinServer("yaml", "Flutter (pubspec.yaml)",
+            "options.lsp-servers.yaml.install-help"),
+        builtinServer("gradle", "Gradle",
+            "options.lsp-servers.gradle.install-help"),
+        builtinServer("pip", "Python packages",
+            "options.lsp-servers.pip.install-help")
     );
 
     private static final Map<String, LspServerDefinition> DEFINITIONS_BY_MODE =
@@ -230,6 +243,14 @@ public class LspConfig {
 
     static List<String> getConfiguredModeNames() {
         return new ArrayList<>(DEFINITIONS_BY_MODE.keySet());
+    }
+
+    private static LspServerDefinition builtinServer(String modeName, String displayName,
+                                                     String installHelpProperty) {
+        return server(modeName, displayName,
+            new String[] {BuildConfigLspSupport.BUILTIN_EXECUTABLE},
+            BuildConfigLspSupport.BUILTIN_EXECUTABLE,
+            null, null, null, installHelpProperty);
     }
 
     private static LspServerDefinition server(String modeName,

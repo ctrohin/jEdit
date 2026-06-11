@@ -34,6 +34,7 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
 
 import org.eclipse.lsp4j.*;
+import org.jedit.lsp.buildconfig.BuildConfigLspSupport;
 
 import java.io.File;
 import java.util.*;
@@ -251,7 +252,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         if (plugin == null || buffer == null) {
             return null;
         }
-        return plugin.clients.get(buffer.getMode().getName());
+        return plugin.clients.get(resolveLspMode(buffer));
     }
 
     private static void invokeLspFeature(View view, LspFeature feature) {
@@ -259,7 +260,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return;
         }
 
-        final String modeName = view.getBuffer().getMode().getName();
+        final String modeName = resolveLspMode(view.getBuffer());
         LspPlugin lspPlugin = getInstance();
         if (lspPlugin == null || lspPlugin.stopped) {
             return;
@@ -304,8 +305,13 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
     }
 
+    private static String resolveLspMode(Buffer buffer) {
+        String buildMode = BuildConfigLspSupport.resolveLspMode(buffer);
+        return buildMode != null ? buildMode : buffer.getMode().getName();
+    }
+
     private synchronized void startLspForBuffer(Buffer buffer) {
-        String modeName = buffer.getMode().getName();
+        String modeName = resolveLspMode(buffer);
         if (!LspConfig.isServerConfigured(modeName)) {
             Log.log(DEFAULT_LEVEL, this,"LSP not available for mode " + modeName + ".");
             return;
@@ -365,7 +371,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return null;
         }
         for (BufferLspHandler handler : handlers.values()) {
-            if (!client.getMode().equals(handler.buffer.getMode().getName())) {
+            if (!client.getMode().equals(resolveLspMode(handler.buffer))) {
                 continue;
             }
             String path = handler.buffer.getPath();
@@ -397,7 +403,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             buffer.removeBufferListener(handler);
             handler.notifyClose();
         }
-        String modeName = buffer.getMode().getName();
+        String modeName = resolveLspMode(buffer);
         Optional.ofNullable(clients.get(modeName))
             .stream()
             .peek(GenericLspClient::decrementBufferCount)
@@ -488,7 +494,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             DidOpenTextDocumentParams params = new DidOpenTextDocumentParams();
             TextDocumentItem item = new TextDocumentItem();
             item.setUri(LspDocumentUri.pathToUri(buffer.getPath()));
-            item.setLanguageId(buffer.getMode().getName());
+            item.setLanguageId(resolveLspMode(buffer));
             item.setVersion(version++);
             item.setText(buffer.getText(0, buffer.getLength()));
             params.setTextDocument(item);

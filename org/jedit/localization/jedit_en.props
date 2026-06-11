@@ -1734,7 +1734,14 @@ Windows: winget install Google.DartSDK\n\
 macOS: brew install dart\n\
 Linux: install the dart package for your distribution, or use the official installer.
 options.lsp-servers.rust.install-help=Install rust-analyzer through rustup:\n\
-rustup component add rust-analyzer\n\
+  rustup component add rust-analyzer
+
+options.lsp-servers.maven.install-help=Built into jEdit. Provides XML element completion for Maven pom.xml files.
+options.lsp-servers.ant.install-help=Built into jEdit. Provides XML element and Ant task completion for build.xml files.
+options.lsp-servers.json.install-help=Built into jEdit. Provides package.json field, script, and dependency completion.
+options.lsp-servers.yaml.install-help=Built into jEdit. Provides pubspec.yaml field and dependency completion for Flutter projects.
+options.lsp-servers.gradle.install-help=Built into jEdit. Provides Gradle DSL keyword and task completion.
+options.lsp-servers.pip.install-help=Built into jEdit. Provides Python package completion for requirements.txt, pyproject.toml, and related files.\n\
 Rust and rustup must already be installed.
 lsp.project.install.title=LSP servers for this project
 lsp.project.install.intro=This project appears to use: <b>{0}</b>.<br>\

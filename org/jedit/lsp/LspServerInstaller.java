@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import org.gjt.sp.jedit.OperatingSystem;
+import org.jedit.lsp.buildconfig.BuildConfigLspSupport;
 import org.gjt.sp.util.Log;
 
 /**
@@ -106,6 +107,9 @@ final class LspServerInstaller {
     static boolean isServerInstalled(LspServerDefinition definition) {
         if (definition == null) {
             return false;
+        }
+        if (BuildConfigLspSupport.isBuiltinMode(definition.getModeName())) {
+            return true;
         }
         String[] command = LspConfig.getServerCommand(definition.getModeName());
         if (command != null && command.length > 0) {
