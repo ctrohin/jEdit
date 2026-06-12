@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +54,7 @@ public class GenericLspClient {
     private boolean serverStarted = false;
     private volatile CompletableFuture<Void> initializationComplete;
     private volatile ServerCapabilities serverCapabilities;
+    private volatile boolean shuttingDown;
 
     public GenericLspClient(final String mode) {
         this.mode = mode;
@@ -89,6 +91,16 @@ public class GenericLspClient {
     }
 
     private void startLocked(String languageId, String projectRoot) throws Exception {
+        initializationComplete = new CompletableFuture<>();
+        try {
+            startLockedImpl(languageId, projectRoot);
+        } catch (Exception ex) {
+            initializationComplete.completeExceptionally(ex);
+            throw ex;
+        }
+    }
+
+    private void startLockedImpl(String languageId, String projectRoot) throws Exception {
         if (BuildConfigLspSupport.isBuiltinMode(languageId)) {
             startBuiltinLocked(languageId, projectRoot);
             return;
@@ -140,7 +152,6 @@ public class GenericLspClient {
 
         params.setCapabilities(buildClientCapabilities());
 
-        initializationComplete = new CompletableFuture<>();
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
             serverCapabilities = res.getCapabilities();
@@ -171,7 +182,6 @@ public class GenericLspClient {
         params.setRootUri(rootFolder.getUri());
         params.setCapabilities(buildClientCapabilities());
 
-        initializationComplete = new CompletableFuture<>();
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
             serverCapabilities = res.getCapabilities();
@@ -203,11 +213,24 @@ public class GenericLspClient {
     }
 
     CompletableFuture<Void> whenReady() {
+        if (shuttingDown) {
+            return CompletableFuture.failedFuture(
+                new CancellationException("LSP client shutdown"));
+        }
         CompletableFuture<Void> ready = initializationComplete;
         if (ready == null) {
-            return CompletableFuture.completedFuture(null);
+            return CompletableFuture.failedFuture(
+                new CancellationException("LSP client not initialized"));
         }
         return ready;
+    }
+
+    boolean isReadyForDocumentSync() {
+        if (shuttingDown || server == null) {
+            return false;
+        }
+        CompletableFuture<Void> ready = initializationComplete;
+        return ready != null && ready.isDone() && !ready.isCompletedExceptionally();
     }
 
     boolean isAlive() {
@@ -219,7 +242,12 @@ public class GenericLspClient {
         return server != null || (process != null && process.isAlive());
     }
 
+    boolean isShuttingDown() {
+        return shuttingDown;
+    }
+
     void resetSessionState() {
+        shuttingDown = false;
         synchronized (sessionLock) {
             setServerStarted(false);
             initializationComplete = null;
@@ -245,12 +273,13 @@ public class GenericLspClient {
 
     void shutdownAndWait() {
         synchronized (sessionLock) {
+            shuttingDown = true;
             if (SwingUtilities.isEventDispatchThread()) {
                 shutdownForExitLocked();
                 return;
             }
+            cancelPendingInitialization();
             setServerStarted(false);
-            initializationComplete = null;
             LanguageServer activeServer = server;
             Process activeProcess = detachProcessLocked();
             try {
@@ -269,15 +298,22 @@ public class GenericLspClient {
     /**
      * Fast shutdown for application exit. Never blocks the EDT waiting on the server.
      */
+    void markShuttingDown() {
+        shuttingDown = true;
+        cancelPendingInitialization();
+    }
+
     void shutdownForExit() {
         synchronized (sessionLock) {
+            shuttingDown = true;
             shutdownForExitLocked();
         }
     }
 
     private void shutdownForExitLocked() {
+        shuttingDown = true;
+        cancelPendingInitialization();
         setServerStarted(false);
-        initializationComplete = null;
         LanguageServer activeServer = server;
         Process activeProcess = detachProcessLocked();
         if (activeServer != null && !SwingUtilities.isEventDispatchThread()) {
@@ -289,6 +325,15 @@ public class GenericLspClient {
             }
         }
         destroyProcessForcibly(activeProcess);
+    }
+
+    private void cancelPendingInitialization() {
+        CompletableFuture<Void> pending = initializationComplete;
+        initializationComplete = null;
+        if (pending != null && !pending.isDone()) {
+            pending.completeExceptionally(
+                new CancellationException("LSP client shutdown"));
+        }
     }
 
     private Process detachProcessLocked() {

@@ -67,6 +67,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     public static LspPlugin getInstance() {
         return instance;
     }
+
+    static boolean isStopped() {
+        LspPlugin plugin = getInstance();
+        return plugin == null || plugin.stopped;
+    }
     @Override
     public void start() {
         Log.log(DEFAULT_LEVEL, this, "LSP Plugin starting...");
@@ -88,6 +93,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         stopped = true;
         removeShutdownHook();
         uninstallLspUi();
+        markAllClientsShuttingDown();
+        markAllHandlersClosedForExit();
         shutdownAllClientsForExit();
         startedClients.clear();
         clients.clear();
@@ -102,6 +109,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         stopped = true;
         removeShutdownHook();
         uninstallLspUi();
+        markAllClientsShuttingDown();
+        markAllHandlersClosedForExit();
         for (GenericLspClient client : startedClients) {
             if (client.hasActiveSession()) {
                 client.shutdownAndWait();
@@ -122,6 +131,20 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     private void shutdownAllClientsForExit() {
         for (GenericLspClient client : startedClients) {
             client.shutdownForExit();
+        }
+    }
+
+    private void markAllHandlersClosedForExit() {
+        synchronized (this) {
+            for (BufferLspHandler handler : handlers.values()) {
+                handler.markClosedForExit();
+            }
+        }
+    }
+
+    private void markAllClientsShuttingDown() {
+        for (GenericLspClient client : startedClients) {
+            client.markShuttingDown();
         }
     }
 
@@ -361,6 +384,9 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private synchronized void startLspForBuffer(Buffer buffer) {
+        if (stopped) {
+            return;
+        }
         String modeName = resolveLspMode(buffer);
         if (!LspConfig.isServerConfigured(modeName)) {
             Log.log(DEFAULT_LEVEL, this,"LSP not available for mode " + modeName + ".");
@@ -405,7 +431,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return client;
         }).onSuccess(m -> {
             m.setServerStarted(true);
-            SwingUtilities.invokeLater(() -> reopenBuffersForClient(m));
+            SwingUtilities.invokeLater(() -> {
+                if (!stopped) {
+                    reopenBuffersForClient(m);
+                }
+            });
         }).onFailure(e -> Log.log(Log.ERROR, this,
             "Failed to start LSP server for " + client.getMode(), e));
     }
@@ -476,6 +506,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         private int version = 0;
         private volatile boolean needsSync;
         private volatile boolean documentOpenOnServer;
+        private volatile boolean closed;
 
         BufferLspHandler(Buffer buffer, GenericLspClient client) {
             this.buffer = buffer;
@@ -490,15 +521,28 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         void notifyOpen() {
-            if (client.getServer() == null) {
+            if (shouldSkipLspSync() || client.getServer() == null) {
                 return;
             }
             client.whenReady().thenRun(() ->
-                ThreadUtilities.runInBackground(this::sendDidOpen)).exceptionally(ex -> {
-                Log.log(Log.ERROR, this,
-                    "Failed waiting for LSP server before didOpen: " + buffer.getPath(), ex);
+                ThreadUtilities.runInBackground(() -> {
+                    if (!shouldSkipLspSync() && client.isReadyForDocumentSync()) {
+                        sendDidOpen();
+                    }
+                })).exceptionally(ex -> {
+                if (!shouldSkipLspSync() && !isTransportClosed(ex)) {
+                    Log.log(Log.ERROR, this,
+                        "Failed waiting for LSP server before didOpen: " + buffer.getPath(), ex);
+                }
                 return null;
             });
+        }
+
+        void markClosedForExit() {
+            closed = true;
+            changeSyncTimer.stop();
+            documentOpenOnServer = false;
+            pendingChanges.clear();
         }
 
         void resetVersionForServerRestart() {
@@ -520,6 +564,9 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             }
             return client.whenReady().thenRun(() -> {
                 changeSyncTimer.stop();
+                if (shouldSkipLspSync() || !client.isReadyForDocumentSync()) {
+                    return;
+                }
                 if (!needsSync || pendingChanges.isEmpty()) {
                     return;
                 }
@@ -548,13 +595,22 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             }
             return client.whenReady().thenRun(() ->
                 ThreadUtilities.runInBackground(() -> {
+                    if (shouldSkipLspSync() || !client.isReadyForDocumentSync()) {
+                        return;
+                    }
                     sendDidClose();
-                    sendDidOpen();
+                    if (!shouldSkipLspSync() && client.isReadyForDocumentSync()) {
+                        sendDidOpen();
+                    }
                 }));
         }
 
         private void sendDidOpen() {
-            if (client.getServer() == null) {
+            if (shouldSkipLspSync() || !client.isReadyForDocumentSync()) {
+                return;
+            }
+            LanguageServer server = client.getServer();
+            if (server == null) {
                 return;
             }
 
@@ -566,33 +622,56 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             item.setText(buffer.getText(0, buffer.getLength()));
             params.setTextDocument(item);
 
-            client.getServer().getTextDocumentService().didOpen(params);
-            documentOpenOnServer = true;
-            pendingChanges.clear();
-            needsSync = false;
+            try {
+                if (shouldSkipLspSync() || !client.isReadyForDocumentSync()) {
+                    return;
+                }
+                server.getTextDocumentService().didOpen(params);
+                documentOpenOnServer = true;
+                pendingChanges.clear();
+                needsSync = false;
+            } catch (RuntimeException ex) {
+                if (!shouldSkipLspSync() && !isTransportClosed(ex)) {
+                    Log.log(Log.ERROR, this,
+                        "Failed to send didOpen for buffer " + buffer.getPath(), ex);
+                }
+            }
         }
 
         void notifyClose() {
+            closed = true;
             changeSyncTimer.stop();
+            boolean wasOpenOnServer = documentOpenOnServer;
             documentOpenOnServer = false;
             pendingChanges.clear();
             LspDiagnosticsHub.getInstance().setDiagnostics(
                 LspDocumentUri.pathToUri(buffer.getPath()), List.of());
 
-            if (client.getServer() == null) {
+            if (!wasOpenOnServer) {
                 return;
             }
             ThreadUtilities.runInBackground(this::sendDidClose);
         }
 
         private void sendDidClose() {
-            if (client.getServer() == null) {
+            if (shouldSkipLspSync()) {
+                return;
+            }
+            LanguageServer server = client.getServer();
+            if (server == null) {
                 return;
             }
             DidCloseTextDocumentParams params = new DidCloseTextDocumentParams();
             params.setTextDocument(new TextDocumentIdentifier(
                 LspDocumentUri.pathToUri(buffer.getPath())));
-            client.getServer().getTextDocumentService().didClose(params);
+            try {
+                server.getTextDocumentService().didClose(params);
+            } catch (RuntimeException ex) {
+                if (!shouldSkipLspSync() && !isTransportClosed(ex)) {
+                    Log.log(Log.ERROR, this,
+                        "Failed to send didClose for buffer " + buffer.getPath(), ex);
+                }
+            }
         }
 
         @Override
@@ -643,7 +722,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         private boolean shouldIgnoreBufferChange() {
-            return applyingLspEdits || buffer.isLoading();
+            return applyingLspEdits || buffer.isLoading() || shouldSkipLspSync();
+        }
+
+        private boolean shouldSkipLspSync() {
+            return closed || isStopped() || client.isShuttingDown();
         }
 
         private Position offsetToPosition(int offset) {
@@ -660,7 +743,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
 
         private void flushChangeToServer() {
-            if (client.getServer() == null || !needsSync || pendingChanges.isEmpty()) {
+            if (shouldSkipLspSync() || !client.isReadyForDocumentSync()
+                || client.getServer() == null || !needsSync || pendingChanges.isEmpty()) {
                 return;
             }
             if (!documentOpenOnServer) {
@@ -677,18 +761,54 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
             List<TextDocumentContentChangeEvent> sentChanges =
                 new ArrayList<>(pendingChanges);
+            LanguageServer server = client.getServer();
+            if (server == null) {
+                return;
+            }
             Try.of(() -> {
-                client.getServer().getTextDocumentService().didChange(params);
+                if (shouldSkipLspSync() || !client.isReadyForDocumentSync()) {
+                    return false;
+                }
+                server.getTextDocumentService().didChange(params);
                 pendingChanges.removeAll(sentChanges);
                 if (pendingChanges.isEmpty()) {
                     needsSync = false;
                 }
                 return true;
             }).onFailure(e -> {
-                Log.log(Log.ERROR, this,
-                    "Failed to send didChange for buffer " + buffer.getPath(), e);
+                if (!shouldSkipLspSync() && !isTransportClosed(e)) {
+                    Log.log(Log.ERROR, this,
+                        "Failed to send didChange for buffer " + buffer.getPath(), e);
+                }
             });
         }
+    }
+
+    private static boolean isTransportClosed(Throwable ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof java.io.IOException io) {
+                String message = io.getMessage();
+                if (message != null) {
+                    String lower = message.toLowerCase(Locale.ROOT);
+                    if (lower.contains("pipe")
+                        || lower.contains("stream closed")
+                        || lower.contains("broken pipe")) {
+                        return true;
+                    }
+                }
+            }
+            String message = cause.getMessage();
+            if (message != null) {
+                String lower = message.toLowerCase(Locale.ROOT);
+                if (lower.contains("pipe is being closed")
+                    || lower.contains("pipe has been ended")) {
+                    return true;
+                }
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     @Override
@@ -776,6 +896,9 @@ public class LspPlugin extends EditPlugin implements EBComponent {
     }
 
     private void reopenBuffersForClient(GenericLspClient client) {
+        if (stopped || client.isShuttingDown()) {
+            return;
+        }
         List<BufferLspHandler> toReopen = new ArrayList<>();
         synchronized (this) {
             for (BufferLspHandler handler : handlers.values()) {
@@ -791,7 +914,11 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             if (delayMs == 0) {
                 handler.notifyOpen();
             } else {
-                Timer timer = new Timer(delayMs, e -> handler.notifyOpen());
+                Timer timer = new Timer(delayMs, e -> {
+                    if (!stopped) {
+                        handler.notifyOpen();
+                    }
+                });
                 timer.setRepeats(false);
                 timer.start();
             }
