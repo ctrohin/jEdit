@@ -33,8 +33,12 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
@@ -84,6 +88,17 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		tabs.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
 		tabs.setTabCloseCallback((pane, idx) -> {
 			jEdit.closeBuffer(editPane, getSortedBuffers()[idx]);
+		});
+		tabs.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				showTabPopupMenu(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				showTabPopupMenu(e);
+			}
 		});
 		tabs.addChangeListener(e -> {
 			if (!tabsListenerEnabled) {
@@ -280,6 +295,130 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			});
 		}
 		return buffers;
+	}
+
+	private void showTabPopupMenu(MouseEvent e) {
+		if (!e.isPopupTrigger()) {
+			return;
+		}
+		int tabIndex = tabs.indexAtLocation(e.getX(), e.getY());
+		if (tabIndex < 0) {
+			return;
+		}
+		Buffer[] buffers = getSortedBuffers();
+		if (tabIndex >= buffers.length) {
+			return;
+		}
+		tabs.setSelectedIndex(tabIndex);
+		editPane.setBuffer(buffers[tabIndex]);
+		buildTabPopupMenu(tabIndex, buffers.length).show(tabs, e.getX(), e.getY());
+	}
+
+	private JPopupMenu buildTabPopupMenu(int tabIndex, int tabCount) {
+		JPopupMenu menu = new JPopupMenu();
+		menu.add(createTabMenuItem("buffer-tabs.close", () -> closeBufferAtTab(tabIndex)));
+		menu.add(createTabMenuItem("buffer-tabs.close-all", this::closeAllTabs));
+		menu.addSeparator();
+		JMenuItem closeRight = createTabMenuItem("buffer-tabs.close-right",
+			() -> closeTabsToRight(tabIndex));
+		closeRight.setEnabled(tabIndex < tabCount - 1);
+		menu.add(closeRight);
+		JMenuItem closeLeft = createTabMenuItem("buffer-tabs.close-left",
+			() -> closeTabsToLeft(tabIndex));
+		closeLeft.setEnabled(tabIndex > 0);
+		menu.add(closeLeft);
+		JMenuItem closeOthers = createTabMenuItem("buffer-tabs.close-others",
+			() -> closeOtherTabs(tabIndex));
+		closeOthers.setEnabled(tabCount > 1);
+		menu.add(closeOthers);
+		menu.addSeparator();
+		menu.add(createTabMenuItem("buffer-tabs.close-unmodified", this::closeUnmodifiedTabs));
+		return menu;
+	}
+
+	private JMenuItem createTabMenuItem(String labelProperty, Runnable action) {
+		JMenuItem item = new JMenuItem(jEdit.getProperty(labelProperty));
+		item.addActionListener(evt -> action.run());
+		return item;
+	}
+
+	private void closeBufferAtTab(int tabIndex) {
+		Buffer[] buffers = getSortedBuffers();
+		if (tabIndex >= 0 && tabIndex < buffers.length) {
+			jEdit.closeBuffer(editPane, buffers[tabIndex]);
+		}
+	}
+
+	private void closeAllTabs() {
+		if (!confirmCloseAll("closeall")) {
+			return;
+		}
+		closeBuffers(List.of(getSortedBuffers()));
+	}
+
+	private void closeTabsToRight(int tabIndex) {
+		Buffer[] buffers = getSortedBuffers();
+		List<Buffer> toClose = new ArrayList<>();
+		for (int i = tabIndex + 1; i < buffers.length; i++) {
+			toClose.add(buffers[i]);
+		}
+		closeBuffers(toClose);
+	}
+
+	private void closeTabsToLeft(int tabIndex) {
+		Buffer[] buffers = getSortedBuffers();
+		List<Buffer> toClose = new ArrayList<>();
+		for (int i = 0; i < tabIndex; i++) {
+			toClose.add(buffers[i]);
+		}
+		closeBuffers(toClose);
+	}
+
+	private void closeOtherTabs(int tabIndex) {
+		if (!confirmCloseAll("closeothers")) {
+			return;
+		}
+		Buffer[] buffers = getSortedBuffers();
+		if (tabIndex < 0 || tabIndex >= buffers.length) {
+			return;
+		}
+		Buffer keep = buffers[tabIndex];
+		List<Buffer> toClose = new ArrayList<>();
+		for (Buffer buffer : buffers) {
+			if (buffer != keep) {
+				toClose.add(buffer);
+			}
+		}
+		closeBuffers(toClose);
+	}
+
+	private void closeUnmodifiedTabs() {
+		List<Buffer> toClose = new ArrayList<>();
+		for (Buffer buffer : getSortedBuffers()) {
+			if (!buffer.isDirty()) {
+				toClose.add(buffer);
+			}
+		}
+		closeBuffers(toClose);
+	}
+
+	private boolean confirmCloseAll(String messageProperty) {
+		if (!jEdit.getBooleanProperty("closeAllConfirm")) {
+			return true;
+		}
+		int answer = GUIUtilities.confirm(
+			editPane.getView(),
+			messageProperty,
+			null,
+			JOptionPane.YES_NO_CANCEL_OPTION,
+			JOptionPane.WARNING_MESSAGE);
+		return answer == JOptionPane.YES_OPTION;
+	}
+
+	private void closeBuffers(List<Buffer> buffers) {
+		for (Buffer buffer : buffers) {
+			jEdit.closeBuffer(editPane, buffer);
+		}
 	}
 
 	@EBHandler
