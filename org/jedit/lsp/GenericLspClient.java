@@ -52,6 +52,7 @@ public class GenericLspClient {
     private final Object sessionLock = new Object();
     private boolean serverStarted = false;
     private volatile CompletableFuture<Void> initializationComplete;
+    private volatile ServerCapabilities serverCapabilities;
 
     public GenericLspClient(final String mode) {
         this.mode = mode;
@@ -142,6 +143,7 @@ public class GenericLspClient {
         initializationComplete = new CompletableFuture<>();
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
+            serverCapabilities = res.getCapabilities();
             server.initialized(new InitializedParams());
             if (JdtlsSupport.isJavaMode(languageId)) {
                 JdtlsSupport.pushConfiguration(server);
@@ -172,6 +174,7 @@ public class GenericLspClient {
         initializationComplete = new CompletableFuture<>();
         CompletableFuture<InitializeResult> initResult = server.initialize(params);
         initResult.thenAccept(res -> {
+            serverCapabilities = res.getCapabilities();
             server.initialized(new InitializedParams());
             initializationComplete.complete(null);
             Log.log(Log.MESSAGE, this, languageId + " built-in LSP server is ready");
@@ -182,6 +185,21 @@ public class GenericLspClient {
                 "Failed to initialize built-in LSP server for " + languageId, ex);
             return null;
         });
+    }
+
+    boolean supportsDeclaration() {
+        return supportsProvider(
+            serverCapabilities != null ? serverCapabilities.getDeclarationProvider() : null);
+    }
+
+    private static boolean supportsProvider(Object provider) {
+        if (provider == null) {
+            return false;
+        }
+        if (provider instanceof Boolean enabled) {
+            return enabled;
+        }
+        return true;
     }
 
     CompletableFuture<Void> whenReady() {
@@ -341,6 +359,12 @@ public class GenericLspClient {
         TextDocumentClientCapabilities textDocCaps = new TextDocumentClientCapabilities();
         textDocCaps.setCompletion(new CompletionCapabilities(new CompletionItemCapabilities(true)));
         textDocCaps.setDefinition(new DefinitionCapabilities(true));
+        textDocCaps.setReferences(new ReferencesCapabilities());
+        textDocCaps.setImplementation(new ImplementationCapabilities());
+        textDocCaps.setTypeDefinition(new TypeDefinitionCapabilities());
+        textDocCaps.setDeclaration(new DeclarationCapabilities(true));
+        textDocCaps.setDocumentSymbol(new DocumentSymbolCapabilities());
+        textDocCaps.setCallHierarchy(new CallHierarchyCapabilities());
         textDocCaps.setHover(buildHoverCapabilities());
         textDocCaps.setSignatureHelp(buildSignatureHelpCapabilities());
         textDocCaps.setCodeAction(buildCodeActionCapabilities());
@@ -357,6 +381,7 @@ public class GenericLspClient {
             ResourceOperationKind.Rename,
             ResourceOperationKind.Delete));
         workspaceCaps.setWorkspaceEdit(workspaceEditCaps);
+        workspaceCaps.setSymbol(new SymbolCapabilities(true));
         capabilities.setWorkspace(workspaceCaps);
 
         WindowClientCapabilities windowCaps = new WindowClientCapabilities();

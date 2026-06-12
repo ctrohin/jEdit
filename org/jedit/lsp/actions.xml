@@ -88,5 +88,53 @@
             org.jedit.lsp.LspPlugin.goForwardLsp(view);
         </CODE>
     </ACTION>
+
+    <ACTION NAME="find-references-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.findReferencesLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="find-implementations-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.findImplementationsLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="type-definition-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.findTypeDefinitionLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="find-declaration-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.findDeclarationLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="document-symbols-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.documentSymbolsLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="workspace-symbol-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.workspaceSymbolLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="call-hierarchy-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.callHierarchyLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="show-symbol-results-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.showSymbolResults(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 

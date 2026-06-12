@@ -155,6 +155,14 @@ signature-help-lsp.label=Method $Parameters (LSP)
 goto-definition-lsp.label=Go to $Definition (LSP)
 goto-back-lsp.label=Go $Back (LSP)
 goto-forward-lsp.label=Go $Forward (LSP)
+find-references-lsp.label=Find $References (LSP)
+find-implementations-lsp.label=Find $Implementations (LSP)
+type-definition-lsp.label=Go to $Type Definition (LSP)
+find-declaration-lsp.label=Go to $Declaration (LSP)
+document-symbols-lsp.label=$Document Symbols (LSP)
+workspace-symbol-lsp.label=$Workspace Symbol Search (LSP)
+call-hierarchy-lsp.label=$Call Hierarchy (LSP)
+show-symbol-results-lsp.label=Show LSP Symbol $Results
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 
@@ -2338,6 +2346,24 @@ lsp-problems.label=$Problems
 lsp-problems.title=Problems
 lsp-problems.empty=No problems reported
 lsp-problems.caption={0,choice,0#No problems|1#1 problem in {1,number,integer} file|1<{0,number,integer} problems in {1,number,integer} files}
+
+lsp-symbol-results.label=Symbol Results
+lsp-symbol-results.title=Symbol Results
+lsp-symbol-results.empty=No symbol search results
+lsp-symbol-results.caption={0}: {1} — {2,number,integer} result(s) in {3,number,integer} file(s)
+lsp-symbol-results.workspace-query-title=Workspace Symbol Search
+lsp-symbol-results.workspace-query-prompt=Enter symbol name to search:
+lsp-symbol-results.unknown-symbol=(symbol)
+lsp-symbol-results.incoming-calls=Incoming calls
+lsp-symbol-results.outgoing-calls=Outgoing calls
+lsp-symbol-results.loading=Loading...
+lsp-symbol-results.kind.references=Find References
+lsp-symbol-results.kind.implementation=Implementations
+lsp-symbol-results.kind.type-definition=Type Definition
+lsp-symbol-results.kind.declaration=Declaration
+lsp-symbol-results.kind.document-symbols=Document Symbols
+lsp-symbol-results.kind.workspace-symbols=Workspace Symbols
+lsp-symbol-results.kind.call-hierarchy=Call Hierarchy
 #}}}
 
 #{{{ I/O progress monitor

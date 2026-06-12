@@ -179,6 +179,40 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         invokeLspFeature(view, (v, client) -> LspGoToDefinition.goToDefinitionLsp(v, client));
     }
 
+    public static void findReferencesLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.findReferencesLsp(v, client));
+    }
+
+    public static void findImplementationsLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.findImplementationsLsp(v, client));
+    }
+
+    public static void findTypeDefinitionLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.findTypeDefinitionLsp(v, client));
+    }
+
+    public static void findDeclarationLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.findDeclarationLsp(v, client));
+    }
+
+    public static void documentSymbolsLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.documentSymbolsLsp(v, client));
+    }
+
+    public static void workspaceSymbolLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.workspaceSymbolsLsp(v, client));
+    }
+
+    public static void callHierarchyLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspSymbolSearches.callHierarchyLsp(v, client));
+    }
+
+    public static void showSymbolResults(View view) {
+        if (view != null) {
+            LspSymbolSearches.showResults(view);
+        }
+    }
+
     /**
      * Show method parameter info when the caret is inside a method call's parentheses.
      */

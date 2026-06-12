@@ -27,6 +27,9 @@
 	<DOCKABLE NAME="lsp-problems" MOVABLE="TRUE">
 		new org.jedit.lsp.LspProblemsView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="lsp-symbol-results" MOVABLE="TRUE">
+		new org.jedit.lsp.LspSymbolResultsView(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="build-output" MOVABLE="TRUE">
 		new org.jedit.build.BuildOutputView(view);
 	</DOCKABLE>
