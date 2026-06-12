@@ -418,9 +418,11 @@ public class LspSymbolResultsView extends JPanel implements DefaultFocusComponen
             if (userObject instanceof FileNode fileNode) {
                 setText(fileNode.toString());
                 setToolTipText(fileNode.uri);
+                setIcon(LspFileIcons.iconForUri(fileNode.uri));
                 return;
             }
             if (userObject instanceof GroupLabel groupLabel) {
+                setIcon(null);
                 setText(groupLabel.toString());
                 LspCallHierarchyBranch branch = hierarchyBranches.get(
                     findHierarchyBranchNode(node));
@@ -430,6 +432,7 @@ public class LspSymbolResultsView extends JPanel implements DefaultFocusComponen
                 return;
             }
             if (userObject instanceof LspSymbolHit hit) {
+                setIcon(null);
                 setText(hit.formatDisplayText());
                 setToolTipText(hit.getDetail());
             }

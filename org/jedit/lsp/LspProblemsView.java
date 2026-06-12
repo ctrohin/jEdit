@@ -227,9 +227,11 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
             if (userObject instanceof FileNode fileNode) {
                 setText(fileNode.toString());
                 setToolTipText(fileNode.getUri());
+                setIcon(LspFileIcons.iconForUri(fileNode.getUri()));
                 return;
             }
             if (userObject instanceof LspDiagnosticProblem problem) {
+                setIcon(null);
                 setText(formatProblemHtml(problem));
                 setToolTipText(problem.getMessage());
             }
