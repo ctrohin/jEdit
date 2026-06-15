@@ -104,7 +104,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    openSelectedFile();
+                    openDiffViewer();
                 }
             }
         });
@@ -435,6 +435,10 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     }
 
     private void diffSelected() {
+        openDiffViewer();
+    }
+
+    private void openDiffViewer() {
         GitModels.FileChange change = changeList.getSelectedValue();
         if (change == null || repoRoot == null) {
             JOptionPane.showMessageDialog(view,
@@ -443,19 +447,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
                 JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        GitRunner.Result result;
-        if (change.isUntracked()) {
-            String nullPath = isWindows() ? "NUL" : "/dev/null";
-            result = runner.run(repoRoot, "diff", "--no-index", "--", nullPath, change.path);
-        } else if (change.isStaged() && !change.hasWorkTreeChanges()) {
-            result = runner.run(repoRoot, "diff", "--cached", "--", change.path);
-        } else {
-            result = runner.run(repoRoot, "diff", "--", change.path);
-        }
-        if (!result.success() && !result.output.isBlank()) {
-            appendOutput("$ git diff\n" + result.output);
-        }
-        openDiffBuffer(change.path, result.output);
+        GitDiffDialog.show(view, repoRoot, change, runner, this::reloadChanges);
     }
 
     private void commitChanges() {
