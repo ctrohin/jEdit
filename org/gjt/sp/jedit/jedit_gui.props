@@ -574,7 +574,7 @@ help-menu=about \
 
 #{{{ Status bar component visibility
 view.status-leading=caret-status
-view.status=mode fold encoding locked wrap multiSelect rectSelect overwrite lineSep buffersets task-monitor memory-status errors clock
+view.status=mode git-head fold encoding locked wrap multiSelect rectSelect overwrite lineSep buffersets task-monitor memory-status errors clock
 view.status.compact=false
 #}}}
 

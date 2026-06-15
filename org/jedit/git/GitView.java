@@ -28,10 +28,8 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -60,7 +58,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
 
     private final View view;
     private final JLabel caption;
-    private final JComboBox<String> branchCombo;
+    private final JButton refButton;
     private final DefaultListModel<GitModels.FileChange> changeModel = new DefaultListModel<>();
     private final JList<GitModels.FileChange> changeList;
     private final DefaultListModel<GitModels.Commit> logModel = new DefaultListModel<>();
@@ -72,8 +70,6 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     private final GitRunner runner = new GitRunner();
     private final GitFolderListener folderListener = new GitFolderListener(this::refreshRepository);
     private File repoRoot;
-    private String currentBranch;
-    private boolean suppressBranchEvents;
 
     public GitView(View view) {
         super(new BorderLayout(0, 4));
@@ -85,14 +81,17 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
         JButton refreshButton = new JButton(jEdit.getProperty("git.refresh"));
         refreshButton.addActionListener(e -> refreshRepository());
-        branchCombo = new JComboBox<>();
-        branchCombo.addActionListener(e -> switchSelectedBranch());
+        refButton = new JButton(jEdit.getProperty("git.branch.menu"));
+        refButton.addActionListener(e -> {
+            if (repoRoot != null) {
+                GitRefMenu.show(refButton, view, repoRoot, runner, this::refreshRepository);
+            }
+        });
         JButton fetchButton = actionButton("MatIcons.FETCH:22", "git.fetch", () -> runGitAsync("fetch"));
         JButton pullButton = actionButton("MatIcons.PULL:22","git.pull", () -> runGitAsync("pull"));
         JButton pushButton = actionButton("MatIcons.PUSH:22","git.push", () -> runGitAsync("push"));
         toolbar.add(refreshButton);
-        toolbar.add(new JLabel(jEdit.getProperty("git.branch")));
-        toolbar.add(branchCombo);
+        toolbar.add(refButton);
         toolbar.add(fetchButton);
         toolbar.add(pullButton);
         toolbar.add(pushButton);
@@ -251,9 +250,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         changeModel.clear();
         logModel.clear();
         branchModel.clear();
-        branchCombo.setModel(new DefaultComboBoxModel<>());
-        currentBranch = null;
         setControlsEnabled(false);
+        updateRefButton();
 
         if (repoRoot == null) {
             caption.setText(jEdit.getProperty("git.no-repo"));
@@ -270,14 +268,14 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
 
         caption.setText(jEdit.getProperty("git.caption", new String[] {repoRoot.getAbsolutePath()}));
         setControlsEnabled(true);
-        reloadBranchCombo();
+        updateRefButton();
         reloadChanges();
         reloadLog();
         reloadBranches();
     }
 
     private void setControlsEnabled(boolean enabled) {
-        branchCombo.setEnabled(enabled);
+        refButton.setEnabled(enabled);
         changeList.setEnabled(enabled);
         logList.setEnabled(enabled);
         branchList.setEnabled(enabled);
@@ -285,27 +283,17 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         output.setEnabled(enabled);
     }
 
-    private void reloadBranchCombo() {
-        suppressBranchEvents = true;
-        try {
-            GitRunner.Result result = runner.run(repoRoot, "branch", "--show-current");
-            currentBranch = result.success() ? result.output.trim() : "";
-            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-            GitRunner.Result branches = runner.run(repoRoot, "branch", "--format=%(refname:short)");
-            if (branches.success()) {
-                for (String line : branches.output.split("\n")) {
-                    if (!line.isBlank()) {
-                        model.addElement(line.trim());
-                    }
-                }
-            }
-            branchCombo.setModel(model);
-            if (currentBranch != null && !currentBranch.isBlank()) {
-                branchCombo.setSelectedItem(currentBranch);
-            }
-        } finally {
-            suppressBranchEvents = false;
+    private void updateRefButton() {
+        if (repoRoot == null) {
+            refButton.setText(jEdit.getProperty("git.branch.menu"));
+            refButton.setToolTipText(jEdit.getProperty("git.head.tooltip.none"));
+            return;
         }
+        GitHeadState head = GitHeadState.query(repoRoot, runner);
+        refButton.setText(head.statusText().isBlank()
+            ? jEdit.getProperty("git.branch.menu")
+            : head.statusText());
+        refButton.setToolTipText(head.tooltip());
     }
 
     private void reloadChanges() {
@@ -347,24 +335,13 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         }
     }
 
-    private void switchSelectedBranch() {
-        if (suppressBranchEvents) {
-            return;
+    private void runGitAndRefresh(String... args) {
+        GitRunner.Result result = runner.run(repoRoot, args);
+        appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
+        if (result.success()) {
+            refreshRepository();
+            EditBus.send(new GitHeadChanged());
         }
-        Object selected = branchCombo.getSelectedItem();
-        if (selected == null || repoRoot == null) {
-            return;
-        }
-        String branch = selected.toString();
-        if (branch.equals(currentBranch)) {
-            return;
-        }
-        if (!confirm(jEdit.getProperty("git.checkout-branch.confirm",
-            new String[] {branch}))) {
-            branchCombo.setSelectedItem(currentBranch);
-            return;
-        }
-        runGitAndRefresh("checkout", branch);
     }
 
     private void stageSelected() {
@@ -538,17 +515,12 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
     }
 
-    private void runGitAndRefresh(String... args) {
-        GitRunner.Result result = runner.run(repoRoot, args);
-        appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
-        if (result.success()) {
-            refreshRepository();
-        }
-    }
-
     private void runGitAsync(String... args) {
         appendOutput("$ git " + String.join(" ", args));
-        runner.runAsync(repoRoot, line -> appendOutput(line), this::refreshRepository, args);
+        runner.runAsync(repoRoot, line -> appendOutput(line), () -> {
+            refreshRepository();
+            EditBus.send(new GitHeadChanged());
+        }, args);
     }
 
     private void openDiffBuffer(String title, String text) {

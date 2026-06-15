@@ -163,6 +163,10 @@
 		import org.gjt.sp.jedit.gui.statusbar.*;
 		new CaretStatusWidgetFactory();
 	</SERVICE>
+	<SERVICE CLASS="org.gjt.sp.jedit.gui.statusbar.StatusWidgetFactory" NAME="git-head">
+		import org.jedit.git.*;
+		new GitStatusWidgetFactory();
+	</SERVICE>
 	<!-- }}} -->
 	<!--jEdit.setProperty("view.status"," mode , fold , encoding ) wrap multiSelect rectSelect overwrite lineSep memory-status clock")-->
 

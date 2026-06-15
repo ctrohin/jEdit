@@ -86,7 +86,10 @@ public class ModeWidgetFactory implements StatusWidgetFactory
 		{
 			Buffer buffer = view.getBuffer();
 			if (buffer.isLoaded())
-				label.setText(buffer.getMode().toString());
+			{
+				label.setText(jEdit.getProperty("view.status.mode-display",
+					new String[] {buffer.getMode().toString()}));
+			}
 		}
 
 		@Override
