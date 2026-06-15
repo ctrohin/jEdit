@@ -24,11 +24,12 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
@@ -50,7 +51,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
     private final JButton loginButton;
     private final JButton logoutButton;
     private final JButton newConversationButton;
-    private final JTabbedPane conversationTabs;
+    private final FlatTabbedPane conversationTabs;
     private final JComboBox<CursorMode> modeSelector;
     private final JComboBox<CursorModelInfo> modelSelector;
     private final DefaultComboBoxModel<CursorModelInfo> modelSelectorModel;
@@ -89,7 +90,12 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         newConversationButton = new JButton(jEdit.getProperty("cursor.new-conversation"));
         newConversationButton.addActionListener(e -> openNewConversationTab());
 
-        conversationTabs = new JTabbedPane();
+        conversationTabs = new FlatTabbedPane();
+        conversationTabs.setTabsClosable(true);
+        conversationTabs.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
+        conversationTabs.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
+        conversationTabs.setTabCloseToolTipText(jEdit.getProperty("cursor.tab.close.tooltip"));
+        conversationTabs.setTabCloseCallback((pane, tabIndex) -> closeConversationTab(tabIndex));
         conversationTabs.addChangeListener(new TabChangeListener());
 
         JPanel conversationArea = new JPanel(new BorderLayout(0, 4));
@@ -224,6 +230,32 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
             conversationTabs.setSelectedComponent(panel);
         }
         updateComposerState();
+    }
+
+    private void closeConversationTab(int tabIndex) {
+        if (tabIndex < 0 || tabIndex >= conversationTabs.getTabCount()) {
+            return;
+        }
+        int answer = JOptionPane.showConfirmDialog(view,
+            jEdit.getProperty("cursor.tab.close.confirm"),
+            jEdit.getProperty("cursor.tab.close.title"),
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+        if (answer != JOptionPane.YES_OPTION) {
+            return;
+        }
+        Component component = conversationTabs.getComponentAt(tabIndex);
+        if (component instanceof CursorConversationPanel panel) {
+            panel.stopActiveRun();
+        }
+        conversationTabs.removeTabAt(tabIndex);
+        saveHistory();
+        if (conversationTabs.getTabCount() == 0) {
+            openConversationTab(CursorConversation.createNew(selectedMode()), true);
+        } else {
+            syncModeSelectorFromActiveTab();
+            updateComposerState();
+        }
     }
 
     private void onConversationUpdated(CursorConversation conversation) {
