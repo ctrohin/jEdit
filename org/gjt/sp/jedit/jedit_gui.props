@@ -445,6 +445,7 @@ docking=left-docking-area \
 	pip-project \
 	terminal \
 	git \
+	cursor \
 	- \
 	layout-load \
 	layout-save \
@@ -468,6 +469,7 @@ utils=vfs.browser \
 	  pip-project \
 	  terminal \
 	  git \
+	  cursor \
 	  %recent-directories \
 	  - \
 	  %favorites \
@@ -1106,3 +1108,8 @@ git.title=Git
 git.label=Git
 git.dock-position=bottom
 git.icon=MatIcons.HISTORY:22
+
+cursor.title=Cursor
+cursor.label=Cursor
+cursor.dock-position=bottom
+cursor.icon=MatIcons.CHAT:22

@@ -38,6 +38,7 @@ import org.jedit.migration.OneTimeMigrationService;
 import org.jedit.keymap.KeymapManager;
 import org.jedit.keymap.KeymapManagerImpl;
 import org.jedit.lsp.LspPlugin;
+import org.jedit.cursor.CursorPlugin;
 import org.gjt.sp.jedit.visitors.JEditVisitor;
 
 import java.awt.*;
@@ -597,6 +598,10 @@ public class jEdit
 		LspPlugin lspPlugin = new LspPlugin();
 		lspPlugin.start();
 		EditBus.addToBus(lspPlugin);
+
+		// Cursor integration
+		CursorPlugin cursorPlugin = new CursorPlugin();
+		cursorPlugin.start();
 
 		String[] serviceNames = ServiceManager.getServiceNames(JEditTransferableService.class);
 		for (String serviceName : serviceNames)

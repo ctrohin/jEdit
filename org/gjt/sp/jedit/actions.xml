@@ -294,6 +294,18 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="cursor-login">
+	<CODE>
+		org.jedit.cursor.CursorPlugin.login(view);
+	</CODE>
+</ACTION>
+
+<ACTION NAME="cursor-logout">
+	<CODE>
+		org.jedit.cursor.CursorPlugin.logout(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>
