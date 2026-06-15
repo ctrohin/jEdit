@@ -67,18 +67,7 @@ final class CursorApiClient {
         }
     }
 
-    interface StreamListener {
-        void onAssistantDelta(String text);
-
-        void onThinkingDelta(String text);
-
-        void onToolCall(String name, String status);
-
-        void onStatus(String status);
-
-        void onResult(String text, String status);
-
-        void onError(String message);
+    interface StreamListener extends CursorRunListener {
     }
 
     private static final URI BASE = URI.create("https://api.cursor.com");
@@ -154,7 +143,7 @@ final class CursorApiClient {
             body.add("model", model);
         }
 
-        if (attachRepo && repo != null) {
+        if (creatingAgent && attachRepo && repo != null) {
             JsonObject repoEntry = new JsonObject();
             repoEntry.addProperty("url", repo.url);
             if (repo.startingRef != null && !repo.startingRef.isBlank()) {
@@ -199,7 +188,7 @@ final class CursorApiClient {
         return new RunStart(agentId, runId, agentUrl);
     }
 
-    void streamRun(String agentId, String runId, StreamListener listener) throws IOException {
+    void streamRun(String agentId, String runId, CursorRunListener listener) throws IOException {
         HttpRequest request = HttpRequest.newBuilder(BASE.resolve(
             "/v1/agents/" + agentId + "/runs/" + runId + "/stream"))
             .timeout(Duration.ofMinutes(30))
@@ -302,7 +291,7 @@ final class CursorApiClient {
         return lower.contains("storage") || lower.contains("privacy mode");
     }
 
-    private static void parseSse(InputStream stream, StreamListener listener) throws IOException {
+    private static void parseSse(InputStream stream, CursorRunListener listener) throws IOException {
         String eventName = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
             stream, StandardCharsets.UTF_8))) {
@@ -320,7 +309,7 @@ final class CursorApiClient {
         }
     }
 
-    private static void dispatchEvent(String eventName, String data, StreamListener listener) {
+    private static void dispatchEvent(String eventName, String data, CursorRunListener listener) {
         if (eventName == null || data == null || data.isEmpty()) {
             return;
         }
@@ -339,9 +328,15 @@ final class CursorApiClient {
                         listener.onThinkingDelta(text);
                     }
                 }
-                case "tool_call" -> listener.onToolCall(
-                    stringOrNull(json, "name"),
-                    stringOrNull(json, "status"));
+                case "tool_call" -> {
+                    JsonObject args = json.has("args") && json.get("args").isJsonObject()
+                        ? json.getAsJsonObject("args")
+                        : null;
+                    listener.onToolCall(
+                        stringOrNull(json, "name"),
+                        stringOrNull(json, "status"),
+                        args);
+                }
                 case "status" -> listener.onStatus(stringOrNull(json, "status"));
                 case "result" -> listener.onResult(
                     stringOrNull(json, "text"),

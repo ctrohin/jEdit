@@ -28,6 +28,9 @@ final class CursorConfig {
     static final String API_KEY_PROPERTY = "cursor.api-key";
     static final String MODE_PROPERTY = "cursor.selected-mode";
     static final String MODEL_PROPERTY = "cursor.selected-model-id";
+    static final String RUNTIME_PROPERTY = "cursor.selected-runtime";
+    static final String NODE_PROPERTY = "cursor.node-executable";
+    static final String NPM_PROPERTY = "cursor.npm-executable";
 
     private CursorConfig() {}
 
@@ -59,5 +62,37 @@ final class CursorConfig {
         } else {
             jEdit.setProperty(MODEL_PROPERTY, modelId.trim());
         }
+    }
+
+    static CursorRuntime runtime() {
+        String saved = jEdit.getProperty(RUNTIME_PROPERTY);
+        if (saved != null) {
+            try {
+                return CursorRuntime.valueOf(saved);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        return CursorRuntime.LOCAL;
+    }
+
+    static void setRuntime(CursorRuntime runtime) {
+        if (runtime == null) {
+            jEdit.unsetProperty(RUNTIME_PROPERTY);
+        } else {
+            jEdit.setProperty(RUNTIME_PROPERTY, runtime.name());
+        }
+    }
+
+    static String nodeExecutable() {
+        String configured = jEdit.getProperty(NODE_PROPERTY);
+        if (configured != null && !configured.isBlank()) {
+            return configured.trim();
+        }
+        return isWindows() ? "node.exe" : "node";
+    }
+
+    private static boolean isWindows() {
+        String os = System.getProperty("os.name", "");
+        return os.toLowerCase().contains("win");
     }
 }

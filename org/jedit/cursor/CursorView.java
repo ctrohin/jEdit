@@ -53,6 +53,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
     private final JButton newConversationButton;
     private final FlatTabbedPane conversationTabs;
     private final JComboBox<CursorMode> modeSelector;
+    private final JComboBox<CursorRuntime> runtimeSelector;
     private final JComboBox<CursorModelInfo> modelSelector;
     private final DefaultComboBoxModel<CursorModelInfo> modelSelectorModel;
     private final JTextField input;
@@ -108,6 +109,10 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         modeSelector = new JComboBox<>(CursorMode.values());
         modeSelector.setRenderer(new ModeCellRenderer());
 
+        runtimeSelector = new JComboBox<>(CursorRuntime.values());
+        runtimeSelector.setRenderer(new RuntimeCellRenderer());
+        runtimeSelector.setSelectedItem(CursorConfig.runtime());
+
         modelSelectorModel = new DefaultComboBoxModel<>();
         modelSelectorModel.addElement(CursorModelInfo.accountDefault());
         modelSelector = new JComboBox<>(modelSelectorModel);
@@ -128,6 +133,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         JPanel composer = new JPanel(new BorderLayout(4, 0));
         JPanel composerLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         composerLeft.add(modeSelector);
+        composerLeft.add(runtimeSelector);
         composerLeft.add(modelSelector);
         composer.add(composerLeft, BorderLayout.WEST);
         composer.add(input, BorderLayout.CENTER);
@@ -147,6 +153,12 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
                 updateModeTooltip();
             }
         });
+        runtimeSelector.addActionListener(e -> {
+            if (runtimeSelector.getSelectedItem() instanceof CursorRuntime runtime) {
+                CursorConfig.setRuntime(runtime);
+                updateRuntimeTooltip();
+            }
+        });
         modelSelector.addActionListener(e -> {
             Object item = modelSelector.getSelectedItem();
             if (item instanceof CursorModelInfo selected) {
@@ -157,6 +169,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
 
         restoreConversations();
         updateModeTooltip();
+        updateRuntimeTooltip();
         updateModelTooltip();
         refreshWorkspaceCaption();
         refreshAuthState();
@@ -192,6 +205,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
             }
         }
         saveHistory();
+        CursorLocalBridgePool.releaseAll();
         super.removeNotify();
     }
 
@@ -247,6 +261,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         Component component = conversationTabs.getComponentAt(tabIndex);
         if (component instanceof CursorConversationPanel panel) {
             panel.stopActiveRun();
+            panel.disposeBridge();
         }
         conversationTabs.removeTabAt(tabIndex);
         saveHistory();
@@ -308,6 +323,14 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         }
     }
 
+    private void updateRuntimeTooltip() {
+        Object item = runtimeSelector.getSelectedItem();
+        if (item instanceof CursorRuntime runtime) {
+            runtimeSelector.setToolTipText(jEdit.getProperty(
+                "cursor.runtime." + runtime.name().toLowerCase() + ".description"));
+        }
+    }
+
     private void updateModelTooltip() {
         Object item = modelSelector.getSelectedItem();
         if (item instanceof CursorModelInfo selected
@@ -342,6 +365,11 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         return CursorMode.AGENT;
     }
 
+    private CursorRuntime selectedRuntime() {
+        Object item = runtimeSelector.getSelectedItem();
+        return item instanceof CursorRuntime runtime ? runtime : CursorConfig.runtime();
+    }
+
     private void sendPrompt() {
         CursorConversationPanel panel = activePanel();
         if (panel == null || panel.isRunning()) {
@@ -352,7 +380,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
             return;
         }
         input.setText("");
-        panel.sendMessage(userText, selectedModelId());
+        panel.sendMessage(userText, selectedModelId(), selectedRuntime());
         updateComposerState();
     }
 
@@ -364,6 +392,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         sendButton.setEnabled(loggedIn && !running);
         stopButton.setEnabled(loggedIn && running);
         modeSelector.setEnabled(loggedIn && !running);
+        runtimeSelector.setEnabled(loggedIn && !running);
         modelSelector.setEnabled(loggedIn && !running);
         newConversationButton.setEnabled(loggedIn && !running);
         if (panel != null) {
@@ -538,6 +567,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
             }
         }
         saveHistory();
+        CursorLocalBridgePool.releaseAll();
         CursorConfig.clearSession();
         accountInfo = null;
         refreshAuthState();
@@ -567,6 +597,19 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
                 list, value, index, isSelected, cellHasFocus);
             if (value instanceof CursorMode mode && component instanceof JLabel label) {
                 label.setText(mode.label());
+            }
+            return component;
+        }
+    }
+
+    private static final class RuntimeCellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) {
+            Component component = super.getListCellRendererComponent(
+                list, value, index, isSelected, cellHasFocus);
+            if (value instanceof CursorRuntime runtime && component instanceof JLabel label) {
+                label.setText(runtime.label());
             }
             return component;
         }

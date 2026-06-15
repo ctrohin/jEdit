@@ -9,7 +9,11 @@
 package org.jedit.cursor;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.gjt.sp.jedit.jEdit;
@@ -22,6 +26,10 @@ final class CursorConversation {
     String agentId;
     String agentUrl;
     final List<CursorExchange> exchanges = new ArrayList<>();
+    final Set<CursorModifiedFile> modifiedFiles = new LinkedHashSet<>();
+    final Map<String, String> undoBaselines = new LinkedHashMap<>();
+    final Set<String> runStartDirtyPaths = new LinkedHashSet<>();
+    final Map<String, String> runStartSnapshots = new LinkedHashMap<>();
 
     CursorConversation(String id, String title, CursorMode mode,
                        String agentId, String agentUrl) {
@@ -73,6 +81,21 @@ final class CursorConversation {
 
     boolean hasExchanges() {
         return !exchanges.isEmpty();
+    }
+
+    void addModifiedFile(CursorModifiedFile file) {
+        if (file == null || file.path == null || file.path.isBlank()) {
+            return;
+        }
+        modifiedFiles.removeIf(existing -> file.path.equals(existing.path));
+        modifiedFiles.add(file);
+    }
+
+    void clearModifiedFiles() {
+        modifiedFiles.clear();
+        undoBaselines.clear();
+        runStartDirtyPaths.clear();
+        runStartSnapshots.clear();
     }
 
     private static String truncate(String text, int max) {

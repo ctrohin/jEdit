@@ -141,6 +141,20 @@ final class CursorHistoryStore {
                 conversation.exchanges.add(new CursorExchange(query, response, timestamp));
             }
         }
+        if (json.has("modifiedFiles") && json.get("modifiedFiles").isJsonArray()) {
+            for (JsonElement element : json.getAsJsonArray("modifiedFiles")) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject fileJson = element.getAsJsonObject();
+                String path = stringOrNull(fileJson, "path");
+                if (path == null || path.isBlank()) {
+                    continue;
+                }
+                boolean local = !fileJson.has("local") || fileJson.get("local").getAsBoolean();
+                conversation.addModifiedFile(new CursorModifiedFile(path, local));
+            }
+        }
         return conversation;
     }
 
@@ -164,6 +178,16 @@ final class CursorHistoryStore {
             exchanges.add(item);
         }
         json.add("exchanges", exchanges);
+        if (!conversation.modifiedFiles.isEmpty()) {
+            JsonArray modifiedFiles = new JsonArray();
+            for (CursorModifiedFile file : conversation.modifiedFiles) {
+                JsonObject item = new JsonObject();
+                item.addProperty("path", file.path);
+                item.addProperty("local", file.local);
+                modifiedFiles.add(item);
+            }
+            json.add("modifiedFiles", modifiedFiles);
+        }
         return json;
     }
 
