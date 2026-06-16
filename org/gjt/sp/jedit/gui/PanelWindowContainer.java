@@ -54,7 +54,6 @@ import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import com.formdev.flatlaf.extras.components.FlatButton;
 import com.formdev.flatlaf.extras.components.FlatToggleButton;
@@ -508,12 +507,17 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 	//{{{ DockBorder class
 	private static class DockBorder implements Border
 	{
+		private static final int GRIP_DOT = 2;
+		private static final int GRIP_GAP = 2;
+		private static final int GRIP_COLS = 3;
+		private static final int GRIP_ROWS = 2;
+
 		private final String position;
 		private final Insets insets;
 
-		private Color color1;
-		private Color color2;
-		private Color color3;
+		private Color stripColor;
+		private Color edgeColor;
+		private Color gripColor;
 
 		//{{{ DockBorder constructor
 		DockBorder(String position)
@@ -535,24 +539,21 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		public void paintBorder(Component c, Graphics g,
 					int x, int y, int width, int height)
 		{
-			updateColors();
-
-			if(color1 == null || color2 == null || color3 == null)
-				return;
+			updateColors(c);
 
 			switch (position)
 			{
 				case DockableWindowManager.BOTTOM:
-					paintHorizBorder(g, x, y, width);
+					paintHorizBorder(g, x, y, width, true);
 					break;
 				case DockableWindowManager.RIGHT:
-					paintVertBorder(g, x, y, height);
+					paintVertBorder(g, x, y, height, true);
 					break;
 				case DockableWindowManager.TOP:
-					paintHorizBorder(g, x, y + height - SPLITTER_WIDTH, width);
+					paintHorizBorder(g, x, y + height - SPLITTER_WIDTH, width, false);
 					break;
 				case DockableWindowManager.LEFT:
-					paintVertBorder(g, x + width - SPLITTER_WIDTH, y, height);
+					paintVertBorder(g, x + width - SPLITTER_WIDTH, y, height, false);
 					break;
 			}
 		} //}}}
@@ -572,63 +573,84 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		} //}}}
 
 		//{{{ paintHorizBorder() method
-		private void paintHorizBorder(Graphics g, int x, int y, int width)
+		private void paintHorizBorder(Graphics g, int x, int y, int width,
+			boolean edgeAtStart)
 		{
-			g.setColor(color3);
-			g.fillRect(x,y,width,SPLITTER_WIDTH);
+			g.setColor(stripColor);
+			g.fillRect(x, y, width, SPLITTER_WIDTH);
 
-			for(int i = 0; i < width / 4 - 1; i++)
-			{
-				g.setColor(color1);
-				g.drawLine(x + (i << 2) + 2,y + 3,
-					x + (i << 2) + 2,y + 3);
-				g.setColor(color2);
-				g.drawLine(x + (i << 2) + 3,y + 4,
-					x + (i << 2) + 3,y + 4);
-				g.setColor(color1);
-				g.drawLine(x + (i << 2) + 4,y + 5,
-					x + (i << 2) + 4,y + 5);
-				g.setColor(color2);
-				g.drawLine(x + (i << 2) + 5,y + 6,
-					x + (i << 2) + 5,y + 6);
-			}
+			g.setColor(edgeColor);
+			int edgeY = edgeAtStart ? y : y + SPLITTER_WIDTH - 1;
+			g.drawLine(x, edgeY, x + width - 1, edgeY);
+
+			paintGrip(g, x, y, width, SPLITTER_WIDTH);
 		} //}}}
 
 		//{{{ paintVertBorder() method
-		private void paintVertBorder(Graphics g, int x, int y, int height)
+		private void paintVertBorder(Graphics g, int x, int y, int height,
+			boolean edgeAtStart)
 		{
-			g.setColor(color3);
-			g.fillRect(x,y,SPLITTER_WIDTH,height);
+			g.setColor(stripColor);
+			g.fillRect(x, y, SPLITTER_WIDTH, height);
 
-			for(int i = 0; i < height / 4 - 1; i++)
+			g.setColor(edgeColor);
+			int edgeX = edgeAtStart ? x : x + SPLITTER_WIDTH - 1;
+			g.drawLine(edgeX, y, edgeX, y + height - 1);
+
+			paintGrip(g, x, y, SPLITTER_WIDTH, height);
+		} //}}}
+
+		//{{{ paintGrip() method
+		private void paintGrip(Graphics g, int x, int y, int width, int height)
+		{
+			int gripW = GRIP_COLS * GRIP_DOT + (GRIP_COLS - 1) * GRIP_GAP;
+			int gripH = GRIP_ROWS * GRIP_DOT + (GRIP_ROWS - 1) * GRIP_GAP;
+			int startX = x + (width - gripW) / 2;
+			int startY = y + (height - gripH) / 2;
+
+			g.setColor(gripColor);
+			for(int row = 0; row < GRIP_ROWS; row++)
 			{
-				g.setColor(color1);
-				g.drawLine(x + 3,y + (i << 2) + 2,
-					x + 3,y + (i << 2) + 2);
-				g.setColor(color2);
-				g.drawLine(x + 4,y + (i << 2) + 3,
-					x + 4,y + (i << 2) + 3);
-				g.setColor(color1);
-				g.drawLine(x + 5,y + (i << 2) + 4,
-					x + 5,y + (i << 2) + 4);
-				g.setColor(color2);
-				g.drawLine(x + 6,y + (i << 2) + 5,
-					x + 6,y + (i << 2) + 5);
+				for(int col = 0; col < GRIP_COLS; col++)
+				{
+					int dotX = startX + col * (GRIP_DOT + GRIP_GAP);
+					int dotY = startY + row * (GRIP_DOT + GRIP_GAP);
+					g.fillRect(dotX, dotY, GRIP_DOT, GRIP_DOT);
+				}
 			}
 		} //}}}
 
 		//{{{ updateColors() method
-		private void updateColors()
+		private void updateColors(Component c)
 		{
-			if(UIManager.getLookAndFeel() instanceof MetalLookAndFeel)
+			Color panelBg = UIManager.getColor("Panel.background");
+			if(panelBg == null && c != null)
 			{
-				color1 = MetalLookAndFeel.getControlHighlight();
-				color2 = MetalLookAndFeel.getControlDarkShadow();
-				color3 = MetalLookAndFeel.getControl();
+				panelBg = c.getBackground();
 			}
-			else
+			if(panelBg == null)
 			{
-				color1 = color2 = color3 = null;
+				panelBg = Color.LIGHT_GRAY;
+			}
+
+			Color sepBg = UIManager.getColor("Separator.background");
+			stripColor = sepBg != null ? sepBg : panelBg;
+
+			Color border = UIManager.getColor("Component.borderColor");
+			if(border == null)
+			{
+				border = UIManager.getColor("Separator.foreground");
+			}
+			edgeColor = border != null ? border : panelBg.darker();
+
+			gripColor = UIManager.getColor("Label.disabledForeground");
+			if(gripColor == null)
+			{
+				gripColor = UIManager.getColor("Separator.foreground");
+			}
+			if(gripColor == null)
+			{
+				gripColor = edgeColor;
 			}
 		} //}}}
 	} //}}}
