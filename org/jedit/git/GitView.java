@@ -149,6 +149,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         logPanel.add(new JScrollPane(logList), BorderLayout.CENTER);
 
         branchList = new JList<>(branchModel);
+        branchList.setCellRenderer(new GitBranchCellRenderer());
         branchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         branchList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override

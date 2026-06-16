@@ -40,25 +40,7 @@ final class GitModels {
         OTHER;
 
         Color foreground() {
-            switch (this) {
-                case UNTRACKED:
-                    return new Color(0, 102, 204);
-                case ADDED:
-                    return new Color(0, 128, 0);
-                case MODIFIED:
-                    return new Color(180, 95, 0);
-                case DELETED:
-                    return new Color(180, 0, 0);
-                case RENAMED:
-                    return new Color(128, 0, 128);
-                case COPIED:
-                    return new Color(0, 128, 128);
-                case CONFLICT:
-                    return new Color(200, 0, 0);
-                case OTHER:
-                default:
-                    return null;
-            }
+            return GitColors.changeForeground(this);
         }
     }
 

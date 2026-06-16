@@ -37,8 +37,6 @@ import org.gjt.sp.jedit.textarea.TextAreaPainter;
 
 final class GitDiffHighlight extends TextAreaExtension {
 
-    private static final Color INSERTED_BORDER = new Color(34, 139, 34);
-    private static final Color DELETED_BORDER = new Color(178, 34, 34);
     private static final float BORDER_WIDTH = 2f;
     private static final Stroke BORDER_STROKE = new BasicStroke(BORDER_WIDTH);
 
@@ -82,7 +80,7 @@ final class GitDiffHighlight extends TextAreaExtension {
 
         Color previousColor = gfx.getColor();
         Stroke previousStroke = gfx.getStroke();
-        gfx.setColor(leftSide ? DELETED_BORDER : INSERTED_BORDER);
+        gfx.setColor(leftSide ? GitColors.diffDeleted() : GitColors.diffInserted());
         gfx.setStroke(BORDER_STROKE);
         gfx.drawRect(inset, y + inset, rectWidth, rectHeight);
         gfx.setStroke(previousStroke);

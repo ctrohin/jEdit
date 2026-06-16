@@ -39,18 +39,31 @@ final class GitChangeCellRenderer extends DefaultListCellRenderer {
             return this;
         }
         setText(change.displayText());
+        GitModels.ChangeKind kind = change.kind();
         if (isSelected) {
+            setOpaque(true);
             return this;
         }
-        Color color = change.kind().foreground();
-        if (color != null) {
-            setForeground(color);
+        Color foreground = GitColors.changeForeground(kind);
+        Color background = GitColors.changeBackground(kind);
+        if (foreground != null) {
+            setForeground(foreground);
         } else {
             setForeground(UIManager.getColor("List.foreground"));
         }
+        if (background != null) {
+            setBackground(background);
+            setOpaque(true);
+        } else {
+            setOpaque(false);
+        }
         Font base = list.getFont();
         if (base != null) {
-            setFont(change.isStaged() ? base.deriveFont(Font.BOLD) : base);
+            int style = base.getStyle();
+            if (change.isStaged() || kind == GitModels.ChangeKind.CONFLICT) {
+                style |= Font.BOLD;
+            }
+            setFont(base.deriveFont(style));
         }
         return this;
     }
