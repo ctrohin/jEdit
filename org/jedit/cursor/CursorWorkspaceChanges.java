@@ -22,13 +22,17 @@ public final class CursorWorkspaceChanges {
 
     private CursorWorkspaceChanges() {}
 
+    public static boolean tracksFileChanges(CursorMode mode) {
+        return mode == CursorMode.AGENT;
+    }
+
     public static void beginRun(CursorConversation conversation, File workspace) {
         conversation.modifiedFiles.clear();
         conversation.undoBaselines.clear();
         conversation.runStartDirtyPaths.clear();
         conversation.runStartSnapshots.clear();
 
-        if (conversation.mode != CursorMode.AGENT) {
+        if (!tracksFileChanges(conversation.mode)) {
             return;
         }
         File repoRoot = GitCursorBridge.repositoryFor(workspace);
@@ -42,31 +46,51 @@ public final class CursorWorkspaceChanges {
         conversation.undoBaselines.putAll(snapshots);
     }
 
-    public static void noteToolPath(CursorConversation conversation, String path, File workspace) {
-        if (path == null || path.isBlank()) {
+    public static void noteToolPath(CursorConversation conversation, String toolName,
+                                    String path, File workspace) {
+        if (!tracksFileChanges(conversation.mode)
+            || !CursorToolCallFiles.isMutatingTool(toolName)
+            || path == null
+            || path.isBlank()
+            || CursorToolCallFiles.isDirectoryPath(path)) {
             return;
         }
         String relative = toWorkspaceRelative(path, workspace);
+        String trackedPath = relative != null ? relative : path;
+        if (CursorToolCallFiles.isDirectoryPath(trackedPath)) {
+            return;
+        }
+        if (!isTrackableWorkspacePath(trackedPath, workspace)) {
+            return;
+        }
         boolean local = relative != null && new File(workspace, relative).isFile();
-        conversation.addModifiedFile(new CursorModifiedFile(
-            relative != null ? relative : path, local));
+        conversation.addModifiedFile(new CursorModifiedFile(trackedPath, local));
         File repoRoot = GitCursorBridge.repositoryFor(workspace);
         if (repoRoot != null) {
-            ensureUndoBaseline(conversation, repoRoot, relative != null ? relative : path);
+            ensureUndoBaseline(conversation, repoRoot, trackedPath);
         }
     }
 
     public static void syncRunChanges(CursorConversation conversation, File workspace) {
+        if (!tracksFileChanges(conversation.mode)) {
+            pruneUntrackableFiles(conversation, workspace);
+            return;
+        }
         File repoRoot = GitCursorBridge.repositoryFor(workspace);
         if (repoRoot == null) {
+            pruneUntrackableFiles(conversation, workspace);
             return;
         }
         for (String path : GitCursorBridge.changedPaths(repoRoot)) {
+            if (!isRepoFile(repoRoot, path)) {
+                continue;
+            }
             if (changedDuringRun(conversation, repoRoot, path)) {
                 conversation.addModifiedFile(new CursorModifiedFile(path, true));
                 ensureUndoBaseline(conversation, repoRoot, path);
             }
         }
+        pruneUntrackableFiles(conversation, workspace);
     }
 
     static void undoAll(View view, CursorConversation conversation, File workspace) {
@@ -93,7 +117,7 @@ public final class CursorWorkspaceChanges {
         }
         File repoRoot = GitCursorBridge.repositoryFor(workspace);
         String path = file.path;
-        if (repoRoot != null) {
+        if (repoRoot != null && isRepoFile(repoRoot, path)) {
             GitCursorBridge.reviewFile(view, repoRoot, path, onChanged);
             return;
         }
@@ -130,6 +154,31 @@ public final class CursorWorkspaceChanges {
         conversation.undoBaselines.put(path, GitCursorBridge.fileAtHead(repoRoot, path));
     }
 
+    private static void pruneUntrackableFiles(CursorConversation conversation, File workspace) {
+        conversation.modifiedFiles.removeIf(file ->
+            file == null
+                || file.path == null
+                || file.path.isBlank()
+                || CursorToolCallFiles.isDirectoryPath(file.path)
+                || !isTrackableWorkspacePath(file.path, workspace));
+    }
+
+    private static boolean isTrackableWorkspacePath(String path, File workspace) {
+        if (path == null || path.isBlank() || workspace == null) {
+            return false;
+        }
+        File file = new File(workspace, path.replace('/', File.separatorChar));
+        return !file.isDirectory();
+    }
+
+    private static boolean isRepoFile(File repoRoot, String path) {
+        if (repoRoot == null || path == null || path.isBlank()) {
+            return false;
+        }
+        File file = new File(repoRoot, path.replace('/', File.separatorChar));
+        return file.isFile();
+    }
+
     private static String toWorkspaceRelative(String path, File workspace) {
         if (path == null || workspace == null) {
             return null;
@@ -146,7 +195,6 @@ public final class CursorWorkspaceChanges {
         while (normalized.startsWith("/")) {
             normalized = normalized.substring(1);
         }
-        File candidate = new File(workspace, normalized.replace('/', File.separatorChar));
-        return candidate.isFile() ? normalized : null;
+        return normalized.isEmpty() ? null : normalized;
     }
 }

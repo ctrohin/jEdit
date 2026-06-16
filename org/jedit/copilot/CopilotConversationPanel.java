@@ -173,7 +173,7 @@ final class CopilotConversationPanel extends JPanel {
                 updateTool(name, status);
                 String path = CursorToolCallFiles.extractPath(name, args);
                 if (path != null) {
-                    CursorWorkspaceChanges.noteToolPath(conversation, path, workspace);
+                    CursorWorkspaceChanges.noteToolPath(conversation, name, path, workspace);
                     SwingUtilities.invokeLater(() -> changesPanel.refresh());
                 }
             }
@@ -187,13 +187,14 @@ final class CopilotConversationPanel extends JPanel {
 
             @Override
             public void onResult(String text, String status) {
-                if (text != null && !text.isBlank() && currentResponse.length() == 0) {
-                    currentResponse.append(text);
-                    appendAssistant(text);
-                } else if (text != null && !text.isBlank()
-                    && !text.equals(currentResponse.toString())) {
-                    currentResponse.setLength(0);
-                    currentResponse.append(text);
+                if (text != null && !text.isBlank()) {
+                    if (text.length() >= currentResponse.length()) {
+                        currentResponse.setLength(0);
+                        currentResponse.append(text);
+                    }
+                    if (currentResponse.length() == 0) {
+                        appendAssistant(text);
+                    }
                 }
                 if (status != null) {
                     updateStatus(status);

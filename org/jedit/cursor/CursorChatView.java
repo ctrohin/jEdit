@@ -9,6 +9,7 @@
 package org.jedit.cursor;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,6 +21,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -147,17 +149,19 @@ public final class CursorChatView extends JPanel {
             streamTimer.stop();
         }
         String display = text == null ? "" : text.trim();
-        if (streamingPane != null) {
-            if (!display.isEmpty()) {
-                streamingPane.setText(CursorMarkdown.documentHtml(display));
-                fitEditorPane(streamingPane);
-            } else {
-                removeLastMessageRow();
-            }
-            streamingPane = null;
-            streamingText.setLength(0);
-        } else if (!display.isEmpty()) {
+        String streamed = streamingText.toString().trim();
+        if (streamed.length() > display.length()) {
+            display = streamed;
+        }
+        boolean hadStreamingRow = streamingPane != null;
+        streamingPane = null;
+        streamingText.setLength(0);
+        if (hadStreamingRow) {
+            removeLastMessageRow();
+        }
+        if (!display.isEmpty()) {
             addAssistantMessage(display);
+            return;
         }
         scrollToBottom();
     }
@@ -166,15 +170,17 @@ public final class CursorChatView extends JPanel {
         if (streamTimer != null) {
             streamTimer.stop();
         }
-        if (streamingPane != null) {
-            if (streamingText.length() > 0) {
-                streamingPane.setText(CursorMarkdown.documentHtml(streamingText.toString()));
-                fitEditorPane(streamingPane);
-            } else {
-                removeLastMessageRow();
-            }
-            streamingPane = null;
-            streamingText.setLength(0);
+        if (streamingPane == null) {
+            scrollToBottom();
+            return;
+        }
+        String display = streamingText.toString().trim();
+        streamingPane = null;
+        streamingText.setLength(0);
+        removeLastMessageRow();
+        if (!display.isEmpty()) {
+            addAssistantMessage(display);
+            return;
         }
         scrollToBottom();
     }
@@ -215,7 +221,6 @@ public final class CursorChatView extends JPanel {
         JPanel row = new JPanel(new BorderLayout());
         row.setOpaque(false);
         row.setAlignmentX(Component.LEFT_ALIGNMENT);
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         row.setBorder(new EmptyBorder(6, 0, 6, 0));
 
         JLabel header = createHeader(jEdit.getProperty(propsPrefix + ".chat.error"), true);
@@ -249,7 +254,6 @@ public final class CursorChatView extends JPanel {
         JPanel row = new JPanel(new BorderLayout(0, 4));
         row.setOpaque(false);
         row.setAlignmentX(Component.LEFT_ALIGNMENT);
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         row.setBorder(new EmptyBorder(6, 0, 10, 0));
         row.add(createHeader(headerText, false), BorderLayout.NORTH);
         row.add(bodyWrapper, BorderLayout.CENTER);
@@ -278,12 +282,61 @@ public final class CursorChatView extends JPanel {
     }
 
     private void fitEditorPane(JEditorPane pane) {
+        if (pane == null) {
+            return;
+        }
+        int width = htmlPaneWidth();
+        if (width <= 0) {
+            return; // viewport not laid out yet
+        }
+        fitEditorPane(pane, width);
+    }
+
+    private void fitEditorPane(JEditorPane pane, int width) {
         pane.setCaretPosition(0);
-        Dimension size = pane.getPreferredSize();
-        if (size != null) {
-            pane.setPreferredSize(new Dimension(
-                Math.max(200, scrollPane.getViewport().getWidth() - 24),
-                size.height));
+        // Lock width to the viewport so preferred height matches actual wrapping.
+        pane.setSize(width, 1);
+        Dimension pref = pane.getPreferredSize();
+        int height = Math.max(24, pref.height);
+        Dimension size = new Dimension(width, height);
+        pane.setPreferredSize(size);
+        pane.setMinimumSize(size);
+    }
+
+    private int htmlPaneWidth() {
+        if (scrollPane.getViewport() == null) {
+            return 0;
+        }
+        int viewportWidth = scrollPane.getViewport().getWidth();
+        if (viewportWidth <= 0) {
+            return 0;
+        }
+        return Math.max(200, viewportWidth - 24);
+    }
+
+    private void refreshMessageListLayout() {
+        messageList.revalidate();
+        messageList.repaint();
+
+        // Ensure HTML pane height matches the final viewport width.
+        int width = htmlPaneWidth();
+        if (width > 0) {
+            for (Component child : messageList.getComponents()) {
+                fitDescendantHtmlPanes(child, width);
+            }
+        }
+        scrollPane.revalidate();
+    }
+
+    private void fitDescendantHtmlPanes(Component component, int width) {
+        if (component instanceof JEditorPane pane) {
+            fitEditorPane(pane, width);
+            return;
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                fitDescendantHtmlPanes(child, width);
+            }
         }
     }
 
@@ -329,16 +382,16 @@ public final class CursorChatView extends JPanel {
         }
         streamingPane.setText(CursorMarkdown.documentHtml(streamingText.toString()));
         fitEditorPane(streamingPane);
+        refreshMessageListLayout();
         scrollToBottom();
     }
 
     private void scrollToBottom() {
-        SwingUtilities.invokeLater(() -> {
-            if (scrollPane.getViewport() == null) {
-                return;
-            }
-            int max = scrollPane.getVerticalScrollBar().getMaximum();
-            scrollPane.getVerticalScrollBar().setValue(max);
-        });
+        Runnable scroll = () -> {
+            refreshMessageListLayout();
+            JScrollBar bar = scrollPane.getVerticalScrollBar();
+            bar.setValue(bar.getMaximum());
+        };
+        SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(scroll));
     }
 }

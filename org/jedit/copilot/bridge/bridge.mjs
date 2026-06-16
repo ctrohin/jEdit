@@ -101,7 +101,7 @@ async function ensureSession(cmd) {
 }
 
 function extractAssistantText(event) {
-  const data = event?.data;
+  const data = event?.data ?? event;
   if (!data) {
     return "";
   }
@@ -120,15 +120,41 @@ function extractAssistantText(event) {
   return "";
 }
 
+function longestText(...candidates) {
+  let best = "";
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.length > best.length) {
+      best = candidate;
+    }
+  }
+  return best;
+}
+
+async function lastAssistantMessageFromEvents(session) {
+  try {
+    const events = await session.getEvents();
+    let last = "";
+    for (const event of events) {
+      if (event?.type === "assistant.message") {
+        const text = extractAssistantText(event);
+        if (text) {
+          last = text;
+        }
+      }
+    }
+    return last;
+  } catch (_) {
+    return "";
+  }
+}
+
 async function handleSend(cmd) {
   const session = await ensureSession(cmd);
   clearActiveHandlers();
 
-  let fullAssistant = "";
+  let streamedAssistant = "";
+  let lastAssistantMessage = "";
   let streamedChars = 0;
-  const idlePromise = new Promise((resolve) => {
-    activeUnsubscribers.push(session.on("session.idle", () => resolve()));
-  });
 
   activeUnsubscribers.push(
     session.on("assistant.message_delta", (event) => {
@@ -137,7 +163,7 @@ async function handleSend(cmd) {
         return;
       }
       streamedChars += text.length;
-      fullAssistant += text;
+      streamedAssistant += text;
       emit({ type: "assistant", requestId: cmd.id, text });
     })
   );
@@ -148,8 +174,9 @@ async function handleSend(cmd) {
       if (!text) {
         return;
       }
-      fullAssistant = text;
+      lastAssistantMessage = text;
       if (streamedChars === 0) {
+        streamedAssistant = text;
         emit({ type: "assistant", requestId: cmd.id, text });
       }
     })
@@ -205,31 +232,21 @@ async function handleSend(cmd) {
   );
 
   try {
-    await session.send({ prompt: cmd.prompt });
-    await idlePromise;
-
-    if (!fullAssistant) {
-      try {
-        const events = await session.getEvents();
-        for (const event of events) {
-          if (event.type === "assistant.message") {
-            const text = extractAssistantText(event);
-            if (text) {
-              fullAssistant = text;
-              emit({ type: "assistant", requestId: cmd.id, text });
-              break;
-            }
-          }
-        }
-      } catch (_) {
-      }
-    }
+    const finalEvent = await session.sendAndWait({ prompt: cmd.prompt });
+    const finalFromWait = extractAssistantText(finalEvent);
+    const fromEvents = await lastAssistantMessageFromEvents(session);
+    const resultText = longestText(
+      finalFromWait,
+      lastAssistantMessage,
+      streamedAssistant,
+      fromEvents
+    );
 
     emit({
       type: "result",
       requestId: cmd.id,
       status: "completed",
-      text: fullAssistant,
+      text: resultText,
       sessionId: session.sessionId,
     });
   } finally {

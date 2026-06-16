@@ -217,7 +217,7 @@ final class CursorConversationPanel extends JPanel {
                 updateTool(name, status);
                 String path = CursorToolCallFiles.extractPath(name, args);
                 if (path != null) {
-                    CursorWorkspaceChanges.noteToolPath(conversation, path, workspace);
+                    CursorWorkspaceChanges.noteToolPath(conversation, name, path, workspace);
                     SwingUtilities.invokeLater(() -> changesPanel.refresh());
                 }
             }

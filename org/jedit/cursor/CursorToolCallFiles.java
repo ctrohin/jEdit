@@ -24,6 +24,35 @@ public final class CursorToolCallFiles {
 
     private CursorToolCallFiles() {}
 
+    public static boolean isMutatingTool(String toolName) {
+        if (toolName == null || toolName.isBlank()) {
+            return false;
+        }
+        String lower = toolName.toLowerCase();
+        if (isReadOnlyTool(lower)) {
+            return false;
+        }
+        return lower.contains("write")
+            || lower.contains("edit")
+            || lower.contains("replace")
+            || lower.contains("patch")
+            || lower.contains("create")
+            || lower.contains("delete")
+            || lower.contains("remove")
+            || lower.contains("apply")
+            || lower.contains("strreplace")
+            || lower.contains("insert")
+            || lower.contains("touch");
+    }
+
+    public static boolean isDirectoryPath(String path) {
+        if (path == null || path.isBlank()) {
+            return false;
+        }
+        String normalized = path.trim().replace('\\', '/');
+        return normalized.endsWith("/");
+    }
+
     public static String extractPath(String toolName, JsonObject args) {
         if (args == null) {
             return null;
@@ -52,6 +81,24 @@ public final class CursorToolCallFiles {
             }
         }
         return null;
+    }
+
+    private static boolean isReadOnlyTool(String lowerToolName) {
+        return lowerToolName.contains("read")
+            || lowerToolName.contains("grep")
+            || lowerToolName.contains("search")
+            || lowerToolName.contains("list")
+            || lowerToolName.contains("glob")
+            || lowerToolName.contains("find")
+            || lowerToolName.contains("fetch")
+            || lowerToolName.contains("http")
+            || lowerToolName.contains("web")
+            || lowerToolName.contains("view")
+            || lowerToolName.contains("cat")
+            || lowerToolName.contains("head")
+            || lowerToolName.contains("tail")
+            || lowerToolName.contains("stat")
+            || lowerToolName.contains("diff");
     }
 
     private static boolean looksLikePath(String text) {
