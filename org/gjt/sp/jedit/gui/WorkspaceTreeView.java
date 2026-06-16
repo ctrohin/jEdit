@@ -531,10 +531,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
                 .map(ws -> new ProjectFolderOpened(this, ws))
                 .map(EBMessage.class::cast)
                 .orElseGet(() -> new ProjectFolderClosed(this));
-            new Thread(() -> {
-                Log.log(Log.ERROR, this, "event emitted");
-                EditBus.send(event);
-            }).start();
+            EditBus.send(event);
         }
         if (willBeOpened != opened) {
             loadLayout();

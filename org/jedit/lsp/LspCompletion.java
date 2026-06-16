@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -265,7 +266,7 @@ public class LspCompletion extends CompletionPopup {
                 }
 
                 if (ex != null) {
-                    if (!isSupersededCompletionError(ex)) {
+                    if (!isBenignCompletionError(ex)) {
                         Log.log(Log.ERROR, LspCompletion.class,
                             "Error requesting LSP completions", ex);
                         if (isConnectionError(ex)) {
@@ -360,6 +361,26 @@ public class LspCompletion extends CompletionPopup {
                 ? triggerKind : CompletionTriggerKind.Invoked;
             this.triggerCharacter = triggerCharacter;
         }
+    }
+
+    /**
+     * Expected failures while a server is restarting or superseding a request.
+     */
+    private static boolean isBenignCompletionError(Throwable ex) {
+        if (isSupersededCompletionError(ex)) {
+            return true;
+        }
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof CancellationException cancellation) {
+                String message = cancellation.getMessage();
+                if (message != null && message.contains("LSP client shutdown")) {
+                    return true;
+                }
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     /**

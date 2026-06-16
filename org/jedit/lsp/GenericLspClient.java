@@ -91,6 +91,7 @@ public class GenericLspClient {
     }
 
     private void startLocked(String languageId, String projectRoot) throws Exception {
+        shuttingDown = false;
         initializationComplete = new CompletableFuture<>();
         try {
             startLockedImpl(languageId, projectRoot);
@@ -268,6 +269,10 @@ public class GenericLspClient {
     }
 
     void shutdown() {
+        if (LspPlugin.isStopped()) {
+            shutdownForExit();
+            return;
+        }
         ThreadUtilities.runInBackground(this::shutdownAndWait);
     }
 
