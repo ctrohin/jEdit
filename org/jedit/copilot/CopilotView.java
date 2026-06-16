@@ -158,7 +158,7 @@ public final class CopilotView extends JPanel implements DefaultFocusComponent {
             }
         });
 
-        restoreConversations();
+        restoreConversationsAsync();
         updateModeTooltip();
         updateModelTooltip();
         refreshWorkspaceCaption();
@@ -212,8 +212,17 @@ public final class CopilotView extends JPanel implements DefaultFocusComponent {
         logout();
     }
 
-    private void restoreConversations() {
-        List<CursorConversation> saved = CopilotHistoryStore.load();
+    private void restoreConversationsAsync() {
+        ThreadUtilities.runInBackground(() -> {
+            List<CursorConversation> saved = CopilotHistoryStore.load();
+            SwingUtilities.invokeLater(() -> applyRestoredConversations(saved));
+        });
+    }
+
+    private void applyRestoredConversations(List<CursorConversation> saved) {
+        if (conversationTabs.getTabCount() > 0) {
+            return;
+        }
         if (saved.isEmpty()) {
             openConversationTab(createNewConversation(loadSavedMode()), true);
         } else {
@@ -300,7 +309,8 @@ public final class CopilotView extends JPanel implements DefaultFocusComponent {
                 conversations.add(panel.conversation());
             }
         }
-        CopilotHistoryStore.save(conversations);
+        List<CursorConversation> snapshot = List.copyOf(conversations);
+        ThreadUtilities.runInBackground(() -> CopilotHistoryStore.save(snapshot));
     }
 
     private CopilotConversationPanel activePanel() {

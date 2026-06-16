@@ -2313,6 +2313,7 @@ terminal.caption=Working directory: {0}
 git.label=$Git
 git.title=Git
 git.refresh=Refresh
+git.loading=Loading…
 git.branch=Branch:
 git.fetch=Fetch
 git.pull=Pull

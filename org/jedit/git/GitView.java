@@ -53,6 +53,7 @@ import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.gui.RolloverButton;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.util.ThreadUtilities;
 /**
  * Git integration dockable: status, staging, commit, diff, log, branches, pull/push.
  */
@@ -74,6 +75,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     private final GitRunner runner = new GitRunner();
     private final GitFolderListener folderListener = new GitFolderListener(this::refreshRepository);
     private File repoRoot;
+    private GitHeadState lastHead = GitHeadState.none();
+    private int refreshGeneration;
 
     public GitView(View view) {
         super(new BorderLayout(0, 4));
@@ -255,32 +258,56 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     }
 
     private void refreshRepository() {
-        repoRoot = GitRepository.resolveRoot(view.getBuffer());
+        File root = GitRepository.resolveRoot(view.getBuffer());
+        repoRoot = root;
+        int generation = ++refreshGeneration;
+
         changeModel.clear();
         logModel.clear();
         branchModel.clear();
         setControlsEnabled(false);
+        lastHead = GitHeadState.none();
         updateRefButton();
 
-        if (repoRoot == null) {
+        if (root == null) {
             caption.setText(jEdit.getProperty("git.no-repo"));
             appendOutput(jEdit.getProperty("git.no-repo"));
             return;
         }
 
-        GitRunner.Result version = runner.run(repoRoot, "--version");
-        if (!version.success()) {
-            caption.setText(jEdit.getProperty("git.git-missing"));
-            appendOutput(version.output);
+        caption.setText(jEdit.getProperty("git.loading"));
+        ThreadUtilities.runInBackground(() -> {
+            GitRepositoryLoader.Snapshot snapshot = GitRepositoryLoader.load(root);
+            SwingUtilities.invokeLater(() -> applySnapshot(generation, snapshot));
+        });
+    }
+
+    private void applySnapshot(int generation, GitRepositoryLoader.Snapshot snapshot) {
+        if (generation != refreshGeneration) {
             return;
         }
-
-        caption.setText(jEdit.getProperty("git.caption", new String[] {repoRoot.getAbsolutePath()}));
+        repoRoot = snapshot.repoRoot;
+        caption.setText(snapshot.captionText);
+        if (snapshot.state == GitRepositoryLoader.State.NO_REPO) {
+            appendOutput(snapshot.outputMessage);
+            return;
+        }
+        if (snapshot.state == GitRepositoryLoader.State.GIT_MISSING) {
+            appendOutput(snapshot.outputMessage);
+            return;
+        }
+        lastHead = snapshot.head;
         setControlsEnabled(true);
         updateRefButton();
-        reloadChanges();
-        reloadLog();
-        reloadBranches();
+        for (GitModels.FileChange change : snapshot.changes) {
+            changeModel.addElement(change);
+        }
+        for (GitModels.Commit commit : snapshot.commits) {
+            logModel.addElement(commit);
+        }
+        for (GitModels.Branch branch : snapshot.branches) {
+            branchModel.addElement(branch);
+        }
     }
 
     private void setControlsEnabled(boolean enabled) {
@@ -298,83 +325,59 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
             refButton.setToolTipText(jEdit.getProperty("git.head.tooltip.none"));
             return;
         }
-        GitHeadState head = GitHeadState.query(repoRoot, runner);
-        refButton.setText(head.statusText().isBlank()
+        refButton.setText(lastHead.statusText().isBlank()
             ? jEdit.getProperty("git.branch.menu")
-            : head.statusText());
-        refButton.setToolTipText(head.tooltip());
-    }
-
-    private void reloadChanges() {
-        changeModel.clear();
-        GitRunner.Result result = runner.run(repoRoot, "status", "--porcelain", "-uall");
-        if (!result.success()) {
-            appendOutput(result.output);
-            return;
-        }
-        for (GitModels.FileChange change : GitModels.parseStatus(result.output)) {
-            changeModel.addElement(change);
-        }
-    }
-
-    private void reloadLog() {
-        logModel.clear();
-        GitRunner.Result result = runner.run(repoRoot, "log",
-            "--max-count=200",
-            "--date=short",
-            "--pretty=format:%H%x01%h%x01%an%x01%ad%x01%s");
-        if (!result.success()) {
-            appendOutput(result.output);
-            return;
-        }
-        for (GitModels.Commit commit : GitModels.parseLog(result.output)) {
-            logModel.addElement(commit);
-        }
-    }
-
-    private void reloadBranches() {
-        branchModel.clear();
-        GitRunner.Result result = runner.run(repoRoot, "branch", "--list");
-        if (!result.success()) {
-            appendOutput(result.output);
-            return;
-        }
-        for (GitModels.Branch branch : GitModels.parseBranches(result.output)) {
-            branchModel.addElement(branch);
-        }
+            : lastHead.statusText());
+        refButton.setToolTipText(lastHead.tooltip());
     }
 
     private void runGitAndRefresh(String... args) {
-        GitRunner.Result result = runner.run(repoRoot, args);
-        appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
-        if (result.success()) {
-            refreshRepository();
-            EditBus.send(new GitHeadChanged());
+        File root = repoRoot;
+        if (root == null) {
+            return;
         }
+        GitAsync.run(root, runner -> {
+            GitRunner.Result result = runner.run(root, args);
+            SwingUtilities.invokeLater(() -> {
+                appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
+                if (result.success()) {
+                    refreshRepository();
+                    EditBus.send(new GitHeadChanged());
+                }
+            });
+        });
     }
 
     private void stageSelected() {
         List<GitModels.FileChange> selected = changeList.getSelectedValuesList();
-        if (selected.isEmpty()) {
+        if (selected.isEmpty() || repoRoot == null) {
             return;
         }
-        for (GitModels.FileChange change : selected) {
-            if (change.isUntracked() || change.hasWorkTreeChanges() || change.isStaged()) {
-                runGit("add", "--", change.path);
+        File root = repoRoot;
+        GitAsync.run(root, runner -> {
+            for (GitModels.FileChange change : selected) {
+                if (change.isUntracked() || change.hasWorkTreeChanges() || change.isStaged()) {
+                    GitRunner.Result result = runner.run(root, "add", "--", change.path);
+                    appendGitOutput(result, "add", "--", change.path);
+                }
             }
-        }
-        reloadChanges();
+            SwingUtilities.invokeLater(this::refreshRepository);
+        });
     }
 
     private void unstageSelected() {
         List<GitModels.FileChange> selected = changeList.getSelectedValuesList();
-        if (selected.isEmpty()) {
+        if (selected.isEmpty() || repoRoot == null) {
             return;
         }
-        for (GitModels.FileChange change : selected) {
-            runGit("restore", "--staged", "--", change.path);
-        }
-        reloadChanges();
+        File root = repoRoot;
+        GitAsync.run(root, runner -> {
+            for (GitModels.FileChange change : selected) {
+                GitRunner.Result result = runner.run(root, "restore", "--staged", "--", change.path);
+                appendGitOutput(result, "restore", "--staged", "--", change.path);
+            }
+            SwingUtilities.invokeLater(this::refreshRepository);
+        });
     }
 
     private void stageAll() {
@@ -387,20 +390,26 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
 
     private void discardSelected() {
         List<GitModels.FileChange> selected = changeList.getSelectedValuesList();
-        if (selected.isEmpty()) {
+        if (selected.isEmpty() || repoRoot == null) {
             return;
         }
         if (!confirm(jEdit.getProperty("git.discard.confirm"))) {
             return;
         }
-        for (GitModels.FileChange change : selected) {
-            if (change.isUntracked()) {
-                runGit("clean", "-fd", "--", change.path);
-            } else {
-                runGit("restore", "--", change.path);
+        File root = repoRoot;
+        GitAsync.run(root, runner -> {
+            for (GitModels.FileChange change : selected) {
+                GitRunner.Result result;
+                if (change.isUntracked()) {
+                    result = runner.run(root, "clean", "-fd", "--", change.path);
+                    appendGitOutput(result, "clean", "-fd", "--", change.path);
+                } else {
+                    result = runner.run(root, "restore", "--", change.path);
+                    appendGitOutput(result, "restore", "--", change.path);
+                }
             }
-        }
-        reloadChanges();
+            SwingUtilities.invokeLater(this::refreshRepository);
+        });
     }
 
     private void openSelectedFile() {
@@ -433,7 +442,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
                 JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        GitDiffDialog.show(view, repoRoot, change, runner, this::reloadChanges);
+        GitDiffDialog.show(view, repoRoot, change, runner, this::refreshRepository);
     }
 
     private void commitChanges() {
@@ -445,17 +454,48 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
-        GitRunner.Result result = runner.run(repoRoot, "commit", "-m", message);
-        appendOutput(result.output);
-        if (result.success()) {
-            commitMessage.setText("");
-            refreshRepository();
+        File root = repoRoot;
+        if (root == null) {
+            return;
         }
+        GitAsync.run(root, runner -> {
+            GitRunner.Result result = runner.run(root, "commit", "-m", message);
+            SwingUtilities.invokeLater(() -> {
+                appendOutput(result.output);
+                if (result.success()) {
+                    commitMessage.setText("");
+                    refreshRepository();
+                    EditBus.send(new GitHeadChanged());
+                }
+            });
+        });
     }
 
     private void commitAll() {
-        stageAll();
-        commitChanges();
+        String message = commitMessage.getText().trim();
+        if (message.isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                jEdit.getProperty("git.commit.empty-message"),
+                jEdit.getProperty("git.title"),
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        File root = repoRoot;
+        if (root == null) {
+            return;
+        }
+        GitAsync.run(root, runner -> {
+            runner.run(root, "add", "-A");
+            GitRunner.Result result = runner.run(root, "commit", "-m", message);
+            SwingUtilities.invokeLater(() -> {
+                appendOutput("$ git add -A\n$ git commit -m ...\n" + result.output);
+                if (result.success()) {
+                    commitMessage.setText("");
+                    refreshRepository();
+                    EditBus.send(new GitHeadChanged());
+                }
+            });
+        });
     }
 
     private void showSelectedCommit() {
@@ -467,13 +507,17 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         if (commit == null || repoRoot == null) {
             return;
         }
-        GitRunner.Result result = runner.run(repoRoot, "show", "--stat", commit.hash);
-        String text = result.output;
-        if (text == null || text.isBlank()) {
-            text = jEdit.getProperty("git.diff.empty-body",
-                new String[] {"commit " + commit.shortHash});
-        }
-        GitCommitDialog.show(view, commit, text);
+        File root = repoRoot;
+        GitAsync.run(root, runner -> {
+            GitRunner.Result result = runner.run(root, "show", "--stat", commit.hash);
+            String text = result.output;
+            if (text == null || text.isBlank()) {
+                text = jEdit.getProperty("git.diff.empty-body",
+                    new String[] {"commit " + commit.shortHash});
+            }
+            String finalText = text;
+            SwingUtilities.invokeLater(() -> GitCommitDialog.show(view, commit, finalText));
+        });
     }
 
     private void handleLogMouse(MouseEvent e) {
@@ -508,8 +552,13 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         if (commit == null || repoRoot == null) {
             return;
         }
-        GitRunner.Result result = runner.run(repoRoot, "show", commit.hash);
-        openDiffBuffer("commit " + commit.shortHash, result.output);
+        File root = repoRoot;
+        GitAsync.run(root, runner -> {
+            GitRunner.Result result = runner.run(root, "show", commit.hash);
+            String output = result.output;
+            SwingUtilities.invokeLater(() ->
+                openDiffBuffer("commit " + commit.shortHash, output));
+        });
     }
 
     private void checkoutSelectedCommit() {
@@ -558,9 +607,9 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         runGitAndRefresh("branch", "-d", branch.name);
     }
 
-    private void runGit(String... args) {
-        GitRunner.Result result = runner.run(repoRoot, args);
-        appendOutput("$ git " + String.join(" ", args) + "\n" + result.output);
+    private void appendGitOutput(GitRunner.Result result, String... args) {
+        SwingUtilities.invokeLater(() ->
+            appendOutput("$ git " + String.join(" ", args) + "\n" + result.output));
     }
 
     private void runGitAsync(String... args) {

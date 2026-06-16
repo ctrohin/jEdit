@@ -131,21 +131,23 @@ final class CursorConversationPanel extends JPanel {
             return;
         }
 
-        CursorWorkspaceChanges.beginRun(conversation, workspace);
-        SwingUtilities.invokeLater(() -> changesPanel.refresh());
-
         pendingQuery = userText.trim();
         currentResponse.setLength(0);
         chatView.addUserMessage(pendingQuery);
+        chatView.beginRunStatus();
+        chatView.beginAssistantMessage();
         setRunning(true, selectedRuntime);
 
-        String fullPrompt = CursorWorkspaceContext.buildPromptPrefix(view, conversation.mode)
-            + pendingQuery;
-        String effectiveAgentId = CursorRuntime.effectiveAgentId(conversation.agentId, selectedRuntime);
+        final CursorMode mode = conversation.mode;
+        final String effectiveAgentId = CursorRuntime.effectiveAgentId(
+            conversation.agentId, selectedRuntime);
 
         ThreadUtilities.runInBackground(() -> {
+            CursorWorkspaceChanges.beginRun(conversation, workspace);
+            String fullPrompt = CursorWorkspaceContext.buildPromptPrefix(view, mode)
+                + pendingQuery;
+            SwingUtilities.invokeLater(() -> changesPanel.refresh());
             try {
-                beginRun();
                 if (selectedRuntime == CursorRuntime.LOCAL) {
                     runLocal(apiKey, workspace, effectiveAgentId, modelId, fullPrompt);
                 } else {
@@ -311,13 +313,6 @@ final class CursorConversationPanel extends JPanel {
 
     private boolean hasCloudAgentUrl() {
         return conversation.agentUrl != null && !conversation.agentUrl.isBlank();
-    }
-
-    private void beginRun() {
-        SwingUtilities.invokeLater(() -> {
-            chatView.beginRunStatus();
-            chatView.beginAssistantMessage();
-        });
     }
 
     private void updateStatus(String status) {

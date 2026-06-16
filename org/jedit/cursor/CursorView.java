@@ -167,7 +167,7 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
             }
         });
 
-        restoreConversations();
+        restoreConversationsAsync();
         updateModeTooltip();
         updateRuntimeTooltip();
         updateModelTooltip();
@@ -214,8 +214,17 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
         input.requestFocusInWindow();
     }
 
-    private void restoreConversations() {
-        List<CursorConversation> saved = CursorHistoryStore.load();
+    private void restoreConversationsAsync() {
+        ThreadUtilities.runInBackground(() -> {
+            List<CursorConversation> saved = CursorHistoryStore.load();
+            SwingUtilities.invokeLater(() -> applyRestoredConversations(saved));
+        });
+    }
+
+    private void applyRestoredConversations(List<CursorConversation> saved) {
+        if (conversationTabs.getTabCount() > 0) {
+            return;
+        }
         if (saved.isEmpty()) {
             openConversationTab(CursorConversation.createNew(loadSavedMode()), true);
         } else {
@@ -293,7 +302,8 @@ public final class CursorView extends JPanel implements DefaultFocusComponent {
                 conversations.add(panel.conversation());
             }
         }
-        CursorHistoryStore.save(conversations);
+        List<CursorConversation> snapshot = List.copyOf(conversations);
+        ThreadUtilities.runInBackground(() -> CursorHistoryStore.save(snapshot));
     }
 
     private CursorConversationPanel activePanel() {

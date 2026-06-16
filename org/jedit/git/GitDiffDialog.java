@@ -53,6 +53,7 @@ import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.syntax.ModeProvider;
 import org.gjt.sp.jedit.textarea.JEditEmbeddedTextArea;
+import org.gjt.sp.util.ThreadUtilities;
 
 final class GitDiffDialog extends EnhancedDialog {
 
@@ -78,10 +79,15 @@ final class GitDiffDialog extends EnhancedDialog {
 
     static void show(View view, File repoRoot, GitModels.FileChange change,
                      GitRunner runner, Runnable onRepositoryChanged) {
-        GitDiffLoader.Sides sides = GitDiffLoader.load(repoRoot, change, runner);
-        GitDiffDialog dialog = new GitDiffDialog(
-            view, repoRoot, change, runner, onRepositoryChanged, sides);
-        dialog.setVisible(true);
+        ThreadUtilities.runInBackground(() -> {
+            GitRunner loaderRunner = new GitRunner();
+            GitDiffLoader.Sides sides = GitDiffLoader.load(repoRoot, change, loaderRunner);
+            SwingUtilities.invokeLater(() -> {
+                GitDiffDialog dialog = new GitDiffDialog(
+                    view, repoRoot, change, runner, onRepositoryChanged, sides);
+                dialog.setVisible(true);
+            });
+        });
     }
 
     private GitDiffDialog(View view, File repoRoot, GitModels.FileChange change,
@@ -540,16 +546,24 @@ final class GitDiffDialog extends EnhancedDialog {
             JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
             return;
         }
-        if (change.isUntracked()) {
-            runner.run(repoRoot, "clean", "-fd", "--", change.path);
-        } else {
-            runner.run(repoRoot, "restore", "--", change.path);
-        }
-        dirty = false;
-        if (onRepositoryChanged != null) {
-            SwingUtilities.invokeLater(onRepositoryChanged);
-        }
-        GUIUtilities.saveGeometry(this, "git-diff-viewer");
-        dispose();
+        File root = repoRoot;
+        String path = change.path;
+        boolean untracked = change.isUntracked();
+        ThreadUtilities.runInBackground(() -> {
+            GitRunner bgRunner = new GitRunner();
+            if (untracked) {
+                bgRunner.run(root, "clean", "-fd", "--", path);
+            } else {
+                bgRunner.run(root, "restore", "--", path);
+            }
+            SwingUtilities.invokeLater(() -> {
+                dirty = false;
+                if (onRepositoryChanged != null) {
+                    onRepositoryChanged.run();
+                }
+                GUIUtilities.saveGeometry(this, "git-diff-viewer");
+                dispose();
+            });
+        });
     }
 }

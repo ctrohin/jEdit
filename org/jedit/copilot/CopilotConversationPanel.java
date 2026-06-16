@@ -113,22 +113,23 @@ final class CopilotConversationPanel extends JPanel {
             return;
         }
 
-        CursorWorkspaceChanges.beginRun(conversation, workspace);
-        SwingUtilities.invokeLater(() -> changesPanel.refresh());
-
         pendingQuery = userText.trim();
         currentResponse.setLength(0);
         chatView.addUserMessage(pendingQuery);
-        beginRun();
+        chatView.beginRunStatus();
+        chatView.beginAssistantMessage();
         setRunning(true);
 
-        String fullPrompt = CopilotWorkspaceContext.buildPromptPrefix(view, conversation.mode)
-            + pendingQuery;
+        final CursorMode mode = conversation.mode;
         String sessionId = conversation.agentId;
         String token = CopilotConfig.gitHubToken();
         String cwd = workspace.getAbsolutePath();
 
         ThreadUtilities.runInBackground(() -> {
+            CursorWorkspaceChanges.beginRun(conversation, workspace);
+            String fullPrompt = CopilotWorkspaceContext.buildPromptPrefix(view, mode)
+                + pendingQuery;
+            SwingUtilities.invokeLater(() -> changesPanel.refresh());
             try {
                 CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor(conversation.id);
                 CopilotLocalBridge.RunOutcome outcome = bridge.run(
@@ -252,11 +253,6 @@ final class CopilotConversationPanel extends JPanel {
         if (runningStateChanged != null) {
             runningStateChanged.run();
         }
-    }
-
-    private void beginRun() {
-        chatView.beginRunStatus();
-        chatView.beginAssistantMessage();
     }
 
     private void updateStatus(String status) {

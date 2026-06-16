@@ -41,6 +41,9 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.ProjectFolderClosed;
 import org.gjt.sp.jedit.msg.ProjectFolderOpened;
+import org.gjt.sp.util.ThreadUtilities;
+
+import javax.swing.SwingUtilities;
 
 public final class GitStatusWidgetFactory implements StatusWidgetFactory {
 
@@ -55,6 +58,7 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
         private final JLabel label;
         private final GitRunner runner = new GitRunner();
         private String lastText = "";
+        private int refreshGeneration;
 
         GitHeadWidget(View view) {
             this.view = view;
@@ -104,15 +108,26 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
                 label.setToolTipText(jEdit.getProperty("git.head.tooltip.none"));
                 return;
             }
-            GitRunner.Result version = runner.run(repoRoot, "--version");
-            if (!version.success()) {
-                setTextIfChanged("");
-                label.setToolTipText(jEdit.getProperty("git.git-missing"));
-                return;
-            }
-            GitHeadState head = GitHeadState.query(repoRoot, runner);
-            setTextIfChanged(head.statusText());
-            label.setToolTipText(head.tooltip());
+            int generation = ++refreshGeneration;
+            ThreadUtilities.runInBackground(() -> {
+                GitRunner bgRunner = new GitRunner();
+                GitRunner.Result version = bgRunner.run(repoRoot, "--version");
+                GitHeadState head = version.success()
+                    ? GitHeadState.query(repoRoot, bgRunner)
+                    : GitHeadState.none();
+                SwingUtilities.invokeLater(() -> {
+                    if (generation != refreshGeneration) {
+                        return;
+                    }
+                    if (!version.success()) {
+                        setTextIfChanged("");
+                        label.setToolTipText(jEdit.getProperty("git.git-missing"));
+                        return;
+                    }
+                    setTextIfChanged(head.statusText());
+                    label.setToolTipText(head.tooltip());
+                });
+            });
         }
 
         private void setTextIfChanged(String text) {
