@@ -10,15 +10,12 @@ package org.jedit.cursor;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import com.google.gson.JsonObject;
@@ -34,7 +31,7 @@ final class CursorConversationPanel extends JPanel {
     private final Runnable loginRequired;
     private final Runnable runningStateChanged;
     private final Consumer<CursorConversation> onConversationUpdated;
-    private final JTextArea conversationArea;
+    private final CursorChatView chatView;
     private final JButton openAgentButton;
     private final CursorChangesPanel changesPanel;
 
@@ -54,13 +51,8 @@ final class CursorConversationPanel extends JPanel {
         this.runningStateChanged = runningStateChanged;
         this.onConversationUpdated = onConversationUpdated;
 
-        conversationArea = new JTextArea();
-        conversationArea.setEditable(false);
-        conversationArea.setLineWrap(true);
-        conversationArea.setWrapStyleWord(true);
-        conversationArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN,
-            conversationArea.getFont().getSize()));
-        conversationArea.setText(conversation.formatDisplay());
+        chatView = new CursorChatView();
+        chatView.loadConversation(conversation);
 
         openAgentButton = new JButton(jEdit.getProperty("cursor.open-agent"));
         openAgentButton.setEnabled(hasCloudAgentUrl());
@@ -80,7 +72,7 @@ final class CursorConversationPanel extends JPanel {
         });
 
         JPanel center = new JPanel(new BorderLayout(0, 4));
-        center.add(new JScrollPane(conversationArea), BorderLayout.CENTER);
+        center.add(chatView, BorderLayout.CENTER);
         center.add(changesPanel, BorderLayout.SOUTH);
 
         add(toolbar, BorderLayout.NORTH);
@@ -144,7 +136,7 @@ final class CursorConversationPanel extends JPanel {
 
         pendingQuery = userText.trim();
         currentResponse.setLength(0);
-        appendLine(jEdit.getProperty("cursor.you-prefix") + pendingQuery + "\n\n");
+        chatView.addUserMessage(pendingQuery);
         setRunning(true, selectedRuntime);
 
         String fullPrompt = CursorWorkspaceContext.buildPromptPrefix(view, conversation.mode)
@@ -153,7 +145,7 @@ final class CursorConversationPanel extends JPanel {
 
         ThreadUtilities.runInBackground(() -> {
             try {
-                appendAssistantHeader();
+                beginRun();
                 if (selectedRuntime == CursorRuntime.LOCAL) {
                     runLocal(apiKey, workspace, effectiveAgentId, modelId, fullPrompt);
                 } else {
@@ -214,7 +206,7 @@ final class CursorConversationPanel extends JPanel {
 
             @Override
             public void onThinkingDelta(String text) {
-                appendMeta(jEdit.getProperty("cursor.thinking-prefix"), text);
+                updateThinking(text);
             }
 
             @Override
@@ -222,8 +214,7 @@ final class CursorConversationPanel extends JPanel {
                 if (name == null) {
                     return;
                 }
-                String label = name + (status != null ? " (" + status + ")" : "");
-                appendMeta(jEdit.getProperty("cursor.tool-prefix"), label + "\n");
+                updateTool(name, status);
                 String path = CursorToolCallFiles.extractPath(name, args);
                 if (path != null) {
                     CursorWorkspaceChanges.noteToolPath(conversation, path, workspace);
@@ -234,7 +225,7 @@ final class CursorConversationPanel extends JPanel {
             @Override
             public void onStatus(String status) {
                 if (status != null) {
-                    appendMeta(jEdit.getProperty("cursor.status-prefix"), status + "\n");
+                    updateStatus(status);
                 }
             }
 
@@ -247,9 +238,8 @@ final class CursorConversationPanel extends JPanel {
                     }
                 }
                 if (status != null) {
-                    appendMeta(jEdit.getProperty("cursor.status-prefix"), status + "\n");
+                    updateStatus(status);
                 }
-                appendLine("\n");
             }
 
             @Override
@@ -269,6 +259,10 @@ final class CursorConversationPanel extends JPanel {
         String response = currentResponse.toString().trim();
         pendingQuery = null;
         CursorWorkspaceChanges.syncRunChanges(conversation, workspace);
+        SwingUtilities.invokeLater(() -> {
+            chatView.finishAssistantMessage();
+            chatView.clearRunStatus();
+        });
         if (query != null && !query.isBlank()) {
             conversation.addExchange(query, response);
             SwingUtilities.invokeLater(() -> {
@@ -301,6 +295,7 @@ final class CursorConversationPanel extends JPanel {
             }
         }
         setRunning(false, null);
+        SwingUtilities.invokeLater(() -> chatView.clearRunStatus());
     }
 
     private void setRunning(boolean active, CursorRuntime runtime) {
@@ -315,16 +310,27 @@ final class CursorConversationPanel extends JPanel {
         return conversation.agentUrl != null && !conversation.agentUrl.isBlank();
     }
 
-    private void appendAssistantHeader() {
-        appendLine(jEdit.getProperty("cursor.assistant-prefix"));
+    private void beginRun() {
+        SwingUtilities.invokeLater(() -> {
+            chatView.beginRunStatus();
+            chatView.beginAssistantMessage();
+        });
+    }
+
+    private void updateStatus(String status) {
+        SwingUtilities.invokeLater(() -> chatView.updateRunStatus(status));
+    }
+
+    private void updateThinking(String text) {
+        SwingUtilities.invokeLater(() -> chatView.updateRunThinking(text));
+    }
+
+    private void updateTool(String name, String status) {
+        SwingUtilities.invokeLater(() -> chatView.updateRunTool(name, status));
     }
 
     private void appendAssistant(String text) {
-        appendLine(text);
-    }
-
-    private void appendMeta(String prefix, String text) {
-        appendLine(prefix + text);
+        SwingUtilities.invokeLater(() -> chatView.appendAssistantDelta(text));
     }
 
     private void appendError(String message) {
@@ -332,13 +338,7 @@ final class CursorConversationPanel extends JPanel {
         String line = formatted == null || formatted.isBlank()
             ? jEdit.getProperty("cursor.error.generic")
             : formatted;
-        appendLine(jEdit.getProperty("cursor.error-prefix") + line + "\n\n");
-    }
-
-    private void appendLine(String text) {
-        SwingUtilities.invokeLater(() -> {
-            conversationArea.append(text);
-            conversationArea.setCaretPosition(conversationArea.getDocument().getLength());
-        });
+        SwingUtilities.invokeLater(() -> chatView.addErrorMessage(
+            jEdit.getProperty("cursor.error-prefix") + line));
     }
 }
