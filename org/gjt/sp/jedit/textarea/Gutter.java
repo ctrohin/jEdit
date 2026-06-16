@@ -724,9 +724,8 @@ public class Gutter extends JComponent implements SwingConstants {
         if (buffer.isLoading())
             return;
 
-        FontMetrics textAreaFm = textArea.getPainter().getFontMetrics();
         int lineHeight = textArea.getPainter().getLineHeight();
-        int baseline = textAreaFm.getAscent() + textAreaFm.getLeading();
+        int textY = y + lineHeight - (fm.getLeading() + 1) - fm.getDescent();
 
         ChunkCache.LineInfo info = textArea.chunkCache.getLineInfo(line);
         int physicalLine = info.physicalLine;
@@ -840,19 +839,65 @@ public class Gutter extends JComponent implements SwingConstants {
                 default -> 0;
             };
 
+            gfx.setFont(getFont());
             if (physicalLine == textArea.getCaretLine() && currentLineHighlightEnabled) {
-                gfx.setColor(currentLineHighlight);
-            } else if (interval > 1 && (physicalLine + 1) % interval == 0)
-                gfx.setColor(intervalHighlight);
-            else
+                paintCurrentLineNumber(gfx, number, offset, y, lineHeight, textY);
+            } else if (interval > 1 && (physicalLine + 1) % interval == 0) {
+                gfx.setColor(chooseLineNumberColor(intervalHighlight));
+                gfx.drawString(number, FOLD_MARKER_SIZE + offset, textY);
+            } else {
                 gfx.setColor(getForeground());
-
-            gfx.drawString(number, FOLD_MARKER_SIZE + offset,
-                baseline + y);
+                gfx.drawString(number, FOLD_MARKER_SIZE + offset, textY);
+            }
         } //}}}
     } //}}}
 
-    //}}}
+    private void paintCurrentLineNumber(Graphics2D gfx, String number, int offset,
+                                        int y, int lineHeight, int textY) {
+        Color highlight = currentLineHighlight;
+        if (highlight != null && hasSufficientContrast(highlight, getBackground())) {
+            gfx.setColor(highlight);
+        } else {
+            if (highlight != null && !highlight.equals(getBackground())) {
+                gfx.setColor(highlight);
+                gfx.fillRect(FOLD_MARKER_SIZE, y, lineNumberWidth, lineHeight);
+            }
+            gfx.setColor(getForeground());
+        }
+        gfx.drawString(number, FOLD_MARKER_SIZE + offset, textY);
+    }
+
+    private Color chooseLineNumberColor(Color preferred) {
+        if (preferred != null && hasSufficientContrast(preferred, getBackground())) {
+            return preferred;
+        }
+        return getForeground();
+    }
+
+    private static boolean hasSufficientContrast(Color a, Color b) {
+        return contrastRatio(a, b) >= 2.5;
+    }
+
+    private static double contrastRatio(Color c1, Color c2) {
+        double l1 = relativeLuminance(c1);
+        double l2 = relativeLuminance(c2);
+        double lighter = Math.max(l1, l2);
+        double darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    private static double relativeLuminance(Color color) {
+        double r = linearizeChannel(color.getRed() / 255.0);
+        double g = linearizeChannel(color.getGreen() / 255.0);
+        double b = linearizeChannel(color.getBlue() / 255.0);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    private static double linearizeChannel(double channel) {
+        return channel <= 0.03928
+            ? channel / 12.92
+            : Math.pow((channel + 0.055) / 1.055, 2.4);
+    }
 
     //{{{ MouseHandler class
     class MouseHandler extends MouseInputAdapter {
