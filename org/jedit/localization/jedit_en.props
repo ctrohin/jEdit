@@ -2364,6 +2364,7 @@ git.head.tooltip.none=No Git repository (click to open checkout menu when in a r
 git.head.tooltip.branch=On branch {0} (click to checkout)
 git.head.tooltip.tag=On tag {0} (click to checkout)
 git.head.tooltip.detached=Detached HEAD at {0} (click to checkout)
+git.commit-viewer.title=Commit {0}
 git.diff-viewer.title=Diff: {0}
 git.diff-viewer.left.head=HEAD (repository)
 git.diff-viewer.left.untracked=Empty

@@ -24,6 +24,8 @@ package org.jedit.git;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,6 +36,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -131,13 +135,17 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         changesPanel.add(commitPanel, BorderLayout.SOUTH);
 
         logList = new JList<>(logModel);
+        logList.setCellRenderer(new GitCommitCellRenderer());
         logList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        logList.addMouseListener(new java.awt.event.MouseAdapter() {
+        logList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    showSelectedCommit();
-                }
+            public void mousePressed(MouseEvent e) {
+                handleLogMouse(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                handleLogMouse(e);
             }
         });
         JPanel logPanel = new JPanel(new BorderLayout(0, 4));
@@ -452,11 +460,47 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
 
     private void showSelectedCommit() {
         GitModels.Commit commit = logList.getSelectedValue();
+        showCommit(commit);
+    }
+
+    private void showCommit(GitModels.Commit commit) {
         if (commit == null || repoRoot == null) {
             return;
         }
         GitRunner.Result result = runner.run(repoRoot, "show", "--stat", commit.hash);
-        openDiffBuffer("commit " + commit.shortHash, result.output);
+        String text = result.output;
+        if (text == null || text.isBlank()) {
+            text = jEdit.getProperty("git.diff.empty-body",
+                new String[] {"commit " + commit.shortHash});
+        }
+        GitCommitDialog.show(view, commit, text);
+    }
+
+    private void handleLogMouse(MouseEvent e) {
+        int index = logList.locationToIndex(e.getPoint());
+        if (index < 0 || index >= logModel.size()) {
+            return;
+        }
+        GitModels.Commit commit = logModel.getElementAt(index);
+        logList.setSelectedIndex(index);
+        if (e.isPopupTrigger()) {
+            showCommitPopupMenu(e, commit);
+            return;
+        }
+        if (e.getID() == MouseEvent.MOUSE_RELEASED && e.getClickCount() == 2) {
+            showCommit(commit);
+        }
+    }
+
+    private void showCommitPopupMenu(MouseEvent e, GitModels.Commit commit) {
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem showItem = new JMenuItem(jEdit.getProperty("git.show-commit"));
+        showItem.addActionListener(ev -> showCommit(commit));
+        menu.add(showItem);
+        JMenuItem checkoutItem = new JMenuItem(jEdit.getProperty("git.checkout-commit"));
+        checkoutItem.addActionListener(ev -> checkoutCommit(commit));
+        menu.add(checkoutItem);
+        menu.show(logList, e.getX(), e.getY());
     }
 
     private void diffSelectedCommit() {
@@ -469,7 +513,10 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     }
 
     private void checkoutSelectedCommit() {
-        GitModels.Commit commit = logList.getSelectedValue();
+        checkoutCommit(logList.getSelectedValue());
+    }
+
+    private void checkoutCommit(GitModels.Commit commit) {
         if (commit == null || repoRoot == null) {
             return;
         }

@@ -132,7 +132,26 @@ final class GitModels {
 
         @Override
         public String toString() {
-            return shortHash + "  " + subject + "  (" + author + ", " + date + ")";
+            return displayText();
+        }
+
+        String displayText() {
+            return "[" + shortHash + "]  " + subject + "  (" + author + ", " + date + ")";
+        }
+
+        String displayHtml() {
+            return "<html><b>[" + escapeHtml(shortHash) + "]</b>  "
+                + escapeHtml(subject) + "  ("
+                + escapeHtml(author) + ", " + escapeHtml(date) + ")</html>";
+        }
+
+        private static String escapeHtml(String text) {
+            if (text == null || text.isEmpty()) {
+                return "";
+            }
+            return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
         }
     }
 
