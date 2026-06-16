@@ -89,6 +89,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     public WorkspaceTreeView(View view) {
         super(new BorderLayout());
         this.view = view;
+        WorkspaceOpenFiles.ensureRegistered();
         toolbar = createToolbar();
         treeView = createTree();
         loadFolder(jEdit.getProperty(FOLDER_KEY), false);
@@ -514,6 +515,11 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void loadFolder(final String folder, final boolean saveToRecents) {
+        final String previousWorkspace = currentWorkspace;
+        if (!Objects.equals(folder, previousWorkspace) && previousWorkspace != null) {
+            WorkspaceOpenFiles.save(previousWorkspace);
+        }
+
         final var willBeOpened = Objects.nonNull(folder);
         var emitEvent = !Objects.equals(folder, currentWorkspace);
         currentWorkspace = folder;
@@ -534,10 +540,11 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             loadLayout();
         }
         if (folder == null) {
+            jEdit.unsetProperty(FOLDER_KEY);
             return;
         }
         jEdit.setProperty(FOLDER_KEY, folder);
-        
+
         File rootFile = new File(folder);
         if (!rootFile.exists() || !rootFile.isDirectory()) {
             return;
@@ -547,6 +554,10 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         addChildren(root, false);
         root.setLoaded(true);
         tree.setModel(new DefaultTreeModel(root));
+
+        if (folder != null && !Objects.equals(folder, previousWorkspace)) {
+            WorkspaceOpenFiles.restore(view, folder);
+        }
     }
 
 
