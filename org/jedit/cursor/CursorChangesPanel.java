@@ -31,8 +31,9 @@ import javax.swing.SwingUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 
-final class CursorChangesPanel extends JPanel {
+public final class CursorChangesPanel extends JPanel {
 
+    private final String propsPrefix;
     private final View view;
     private final CursorConversation conversation;
     private final Runnable onChanged;
@@ -46,8 +47,14 @@ final class CursorChangesPanel extends JPanel {
     private final JScrollPane fileScroll;
     private boolean expanded = true;
 
-    CursorChangesPanel(View view, CursorConversation conversation, Runnable onChanged) {
+    public CursorChangesPanel(View view, CursorConversation conversation, Runnable onChanged) {
+        this("cursor", view, conversation, onChanged);
+    }
+
+    public CursorChangesPanel(String propsPrefix, View view, CursorConversation conversation,
+                              Runnable onChanged) {
         super(new BorderLayout(0, 4));
+        this.propsPrefix = propsPrefix;
         this.view = view;
         this.conversation = conversation;
         this.onChanged = onChanged;
@@ -59,10 +66,10 @@ final class CursorChangesPanel extends JPanel {
         summaryLabel = new JLabel();
         summaryLabel.setFont(summaryLabel.getFont().deriveFont(Font.BOLD));
 
-        undoAllButton = new JButton(jEdit.getProperty("cursor.changes.undo-all"));
+        undoAllButton = new JButton(jEdit.getProperty(propsPrefix + ".changes.undo-all"));
         undoAllButton.addActionListener(e -> undoAll());
 
-        reviewButton = new JButton(jEdit.getProperty("cursor.changes.review"));
+        reviewButton = new JButton(jEdit.getProperty(propsPrefix + ".changes.review"));
         reviewButton.addActionListener(e -> reviewSelected());
 
         fileModel = new DefaultListModel<>();
@@ -97,13 +104,13 @@ final class CursorChangesPanel extends JPanel {
         refresh();
     }
 
-    void refresh() {
+    public void refresh() {
         fileModel.clear();
         for (CursorModifiedFile file : conversation.modifiedFiles) {
             fileModel.addElement(file);
         }
         int count = conversation.modifiedFiles.size();
-        summaryLabel.setText(jEdit.getProperty("cursor.changes.summary", new String[] {
+        summaryLabel.setText(jEdit.getProperty(propsPrefix + ".changes.summary", new String[] {
             Integer.toString(count)
         }));
         boolean hasFiles = count > 0;
@@ -130,8 +137,8 @@ final class CursorChangesPanel extends JPanel {
             return;
         }
         int answer = JOptionPane.showConfirmDialog(view,
-            jEdit.getProperty("cursor.changes.undo-all.confirm"),
-            jEdit.getProperty("cursor.changes.undo-all.title"),
+            jEdit.getProperty(propsPrefix + ".changes.undo-all.confirm"),
+            jEdit.getProperty(propsPrefix + ".changes.undo-all.title"),
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE);
         if (answer != JOptionPane.YES_OPTION) {
@@ -163,7 +170,7 @@ final class CursorChangesPanel extends JPanel {
         });
     }
 
-    private static final class FileCellRenderer extends DefaultListCellRenderer {
+    private final class FileCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
@@ -172,8 +179,8 @@ final class CursorChangesPanel extends JPanel {
             if (value instanceof CursorModifiedFile file && component instanceof JLabel label) {
                 label.setText(file.path);
                 label.setToolTipText(file.local
-                    ? jEdit.getProperty("cursor.changes.file.local")
-                    : jEdit.getProperty("cursor.changes.file.remote"));
+                    ? jEdit.getProperty(propsPrefix + ".changes.file.local")
+                    : jEdit.getProperty(propsPrefix + ".changes.file.remote"));
             }
             return component;
         }

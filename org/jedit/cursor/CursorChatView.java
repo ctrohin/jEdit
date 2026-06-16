@@ -27,8 +27,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.gjt.sp.jedit.jEdit;
 
-final class CursorChatView extends JPanel {
+public final class CursorChatView extends JPanel {
 
+    private final String propsPrefix;
     private final JPanel messageList;
     private final JScrollPane scrollPane;
     private final CursorRunStatusPanel runStatusPanel;
@@ -36,8 +37,13 @@ final class CursorChatView extends JPanel {
     private JEditorPane streamingPane;
     private Timer streamTimer;
 
-    CursorChatView() {
+    public CursorChatView() {
+        this("cursor");
+    }
+
+    public CursorChatView(String propsPrefix) {
         super(new BorderLayout());
+        this.propsPrefix = propsPrefix;
         setOpaque(true);
         setBackground(CursorMarkdown.textBackground());
 
@@ -52,13 +58,13 @@ final class CursorChatView extends JPanel {
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
 
-        runStatusPanel = new CursorRunStatusPanel();
+        runStatusPanel = new CursorRunStatusPanel(propsPrefix);
 
         add(scrollPane, BorderLayout.CENTER);
         add(runStatusPanel, BorderLayout.SOUTH);
     }
 
-    void loadConversation(CursorConversation conversation) {
+    public void loadConversation(CursorConversation conversation) {
         clear();
         runStatusPanel.reset();
         if (conversation == null || conversation.exchanges.isEmpty()) {
@@ -87,45 +93,45 @@ final class CursorChatView extends JPanel {
         }
     }
 
-    void beginRunStatus() {
+    public void beginRunStatus() {
         runStatusPanel.reset();
-        runStatusPanel.setStatus(jEdit.getProperty("cursor.run.starting"));
+        runStatusPanel.setStatus(jEdit.getProperty(propsPrefix + ".run.starting"));
     }
 
-    void clearRunStatus() {
+    public void clearRunStatus() {
         runStatusPanel.reset();
     }
 
-    void updateRunStatus(String status) {
+    public void updateRunStatus(String status) {
         runStatusPanel.setStatus(status);
     }
 
-    void updateRunThinking(String text) {
+    public void updateRunThinking(String text) {
         runStatusPanel.setThinking(text);
     }
 
-    void updateRunTool(String name, String status) {
+    public void updateRunTool(String name, String status) {
         runStatusPanel.setTool(name, status);
     }
 
-    void addUserMessage(String text) {
+    public void addUserMessage(String text) {
         removeEmptyState();
         addMessageRow(buildMessageBlock(
-            jEdit.getProperty("cursor.chat.you"),
+            jEdit.getProperty(propsPrefix + ".chat.you"),
             CursorMarkdown.plainHtml(text),
             false));
     }
 
-    void beginAssistantMessage() {
+    public void beginAssistantMessage() {
         removeEmptyState();
         streamingText.setLength(0);
         addMessageRow(buildMessageBlock(
-            jEdit.getProperty("cursor.chat.assistant"),
+            jEdit.getProperty(propsPrefix + ".chat.assistant"),
             CursorMarkdown.documentHtml(""),
             true));
     }
 
-    void appendAssistantDelta(String text) {
+    public void appendAssistantDelta(String text) {
         if (text == null || text.isEmpty()) {
             return;
         }
@@ -136,34 +142,71 @@ final class CursorChatView extends JPanel {
         scheduleStreamRender();
     }
 
-    void finishAssistantMessage() {
+    public void completeAssistantMessage(String text) {
+        if (streamTimer != null) {
+            streamTimer.stop();
+        }
+        String display = text == null ? "" : text.trim();
+        if (streamingPane != null) {
+            if (!display.isEmpty()) {
+                streamingPane.setText(CursorMarkdown.documentHtml(display));
+                fitEditorPane(streamingPane);
+            } else {
+                removeLastMessageRow();
+            }
+            streamingPane = null;
+            streamingText.setLength(0);
+        } else if (!display.isEmpty()) {
+            addAssistantMessage(display);
+        }
+        scrollToBottom();
+    }
+
+    public void finishAssistantMessage() {
         if (streamTimer != null) {
             streamTimer.stop();
         }
         if (streamingPane != null) {
-            streamingPane.setText(CursorMarkdown.documentHtml(streamingText.toString()));
-            fitEditorPane(streamingPane);
+            if (streamingText.length() > 0) {
+                streamingPane.setText(CursorMarkdown.documentHtml(streamingText.toString()));
+                fitEditorPane(streamingPane);
+            } else {
+                removeLastMessageRow();
+            }
+            streamingPane = null;
+            streamingText.setLength(0);
         }
-        streamingPane = null;
-        streamingText.setLength(0);
         scrollToBottom();
     }
 
-    void addAssistantMessage(String text) {
+    private void removeLastMessageRow() {
+        int count = messageList.getComponentCount();
+        if (count == 0) {
+            return;
+        }
+        messageList.remove(count - 1);
+        if (count >= 2 && messageList.getComponent(count - 2) instanceof Box.Filler) {
+            messageList.remove(count - 2);
+        }
+        messageList.revalidate();
+        messageList.repaint();
+    }
+
+    public void addAssistantMessage(String text) {
         removeEmptyState();
         JEditorPane pane = createHtmlPane(CursorMarkdown.documentHtml(text));
         JPanel body = new JPanel(new BorderLayout());
         body.setOpaque(false);
         body.add(pane, BorderLayout.CENTER);
         addMessageRow(buildMessageBlock(
-            jEdit.getProperty("cursor.chat.assistant"),
+            jEdit.getProperty(propsPrefix + ".chat.assistant"),
             null,
             false,
             body));
         scrollToBottom();
     }
 
-    void addErrorMessage(String text) {
+    public void addErrorMessage(String text) {
         if (text == null || text.isBlank()) {
             return;
         }
@@ -175,7 +218,7 @@ final class CursorChatView extends JPanel {
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         row.setBorder(new EmptyBorder(6, 0, 6, 0));
 
-        JLabel header = createHeader(jEdit.getProperty("cursor.chat.error"), true);
+        JLabel header = createHeader(jEdit.getProperty(propsPrefix + ".chat.error"), true);
         JEditorPane body = createHtmlPane(CursorMarkdown.plainHtml(text));
         body.setForeground(CursorMarkdown.errorForeground());
 
@@ -256,7 +299,7 @@ final class CursorChatView extends JPanel {
         if (messageList.getComponentCount() > 0) {
             return;
         }
-        JLabel empty = new JLabel(jEdit.getProperty("cursor.chat.empty"));
+        JLabel empty = new JLabel(jEdit.getProperty(propsPrefix + ".chat.empty"));
         empty.setForeground(CursorMarkdown.metaForeground(CursorMarkdown.textForeground()));
         empty.setAlignmentX(Component.CENTER_ALIGNMENT);
         empty.setBorder(new EmptyBorder(24, 12, 24, 12));

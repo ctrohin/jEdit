@@ -39,6 +39,7 @@ import org.jedit.keymap.KeymapManager;
 import org.jedit.keymap.KeymapManagerImpl;
 import org.jedit.lsp.LspPlugin;
 import org.jedit.cursor.CursorPlugin;
+import org.jedit.copilot.CopilotPlugin;
 import org.gjt.sp.jedit.visitors.JEditVisitor;
 
 import java.awt.*;
@@ -602,6 +603,10 @@ public class jEdit
 		// Cursor integration
 		CursorPlugin cursorPlugin = new CursorPlugin();
 		cursorPlugin.start();
+
+		// GitHub Copilot integration
+		CopilotPlugin copilotPlugin = new CopilotPlugin();
+		copilotPlugin.start();
 
 		String[] serviceNames = ServiceManager.getServiceNames(JEditTransferableService.class);
 		for (String serviceName : serviceNames)

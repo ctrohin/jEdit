@@ -10,7 +10,7 @@ package org.jedit.cursor;
 
 import com.google.gson.JsonObject;
 
-interface CursorRunListener {
+public interface CursorRunListener {
     void onAssistantDelta(String text);
 
     void onThinkingDelta(String text);

@@ -18,11 +18,11 @@ import java.util.Set;
 import org.gjt.sp.jedit.View;
 import org.jedit.git.GitCursorBridge;
 
-final class CursorWorkspaceChanges {
+public final class CursorWorkspaceChanges {
 
     private CursorWorkspaceChanges() {}
 
-    static void beginRun(CursorConversation conversation, File workspace) {
+    public static void beginRun(CursorConversation conversation, File workspace) {
         conversation.modifiedFiles.clear();
         conversation.undoBaselines.clear();
         conversation.runStartDirtyPaths.clear();
@@ -42,7 +42,7 @@ final class CursorWorkspaceChanges {
         conversation.undoBaselines.putAll(snapshots);
     }
 
-    static void noteToolPath(CursorConversation conversation, String path, File workspace) {
+    public static void noteToolPath(CursorConversation conversation, String path, File workspace) {
         if (path == null || path.isBlank()) {
             return;
         }
@@ -56,7 +56,7 @@ final class CursorWorkspaceChanges {
         }
     }
 
-    static void syncRunChanges(CursorConversation conversation, File workspace) {
+    public static void syncRunChanges(CursorConversation conversation, File workspace) {
         File repoRoot = GitCursorBridge.repositoryFor(workspace);
         if (repoRoot == null) {
             return;

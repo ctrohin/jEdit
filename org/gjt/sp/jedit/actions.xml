@@ -306,6 +306,18 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="copilot-login">
+	<CODE>
+		org.jedit.copilot.CopilotPlugin.login(view);
+	</CODE>
+</ACTION>
+
+<ACTION NAME="copilot-logout">
+	<CODE>
+		org.jedit.copilot.CopilotPlugin.logout(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

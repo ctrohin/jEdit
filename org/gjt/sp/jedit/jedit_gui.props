@@ -446,6 +446,7 @@ docking=left-docking-area \
 	terminal \
 	git \
 	cursor \
+	copilot \
 	- \
 	layout-load \
 	layout-save \
@@ -1113,3 +1114,8 @@ cursor.title=Cursor
 cursor.label=Cursor
 cursor.dock-position=bottom
 cursor.icon=MatIcons.CHAT:22
+
+copilot.title=GitHub Copilot
+copilot.label=GitHub Copilot
+copilot.dock-position=bottom
+copilot.icon=MatIcons.ASSISTANT:22

@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 
 import org.gjt.sp.jedit.jEdit;
 
-final class CursorMarkdown {
+public final class CursorMarkdown {
 
     private CursorMarkdown() {}
 

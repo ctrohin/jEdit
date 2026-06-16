@@ -60,4 +60,7 @@
 	<DOCKABLE NAME="cursor" MOVABLE="TRUE">
 		new org.jedit.cursor.CursorView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="copilot" MOVABLE="TRUE">
+		new org.jedit.copilot.CopilotView(view);
+	</DOCKABLE>
 </DOCKABLES>

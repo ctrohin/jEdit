@@ -26,14 +26,20 @@ import org.gjt.sp.jedit.jEdit;
  * Live run activity shown at the bottom of the chat. Each row updates in place
  * instead of appending lines to the conversation.
  */
-final class CursorRunStatusPanel extends JPanel {
+public final class CursorRunStatusPanel extends JPanel {
 
+    private final String propsPrefix;
     private final JLabel statusLabel;
     private final JLabel thinkingLabel;
     private final JLabel toolLabel;
 
-    CursorRunStatusPanel() {
+    public CursorRunStatusPanel() {
+        this("cursor");
+    }
+
+    public CursorRunStatusPanel(String propsPrefix) {
         super(new GridBagLayout());
+        this.propsPrefix = propsPrefix;
         setOpaque(true);
         setBackground(CursorMarkdown.textBackground());
         Color border = UIManager.getColor("Component.borderColor");
@@ -80,7 +86,7 @@ final class CursorRunStatusPanel extends JPanel {
             updateVisibility();
             return;
         }
-        showRow(statusLabel, jEdit.getProperty("cursor.status-prefix") + status.trim());
+        showRow(statusLabel, jEdit.getProperty(propsPrefix + ".status-prefix") + status.trim());
     }
 
     void setThinking(String text) {
@@ -90,7 +96,7 @@ final class CursorRunStatusPanel extends JPanel {
             return;
         }
         String display = truncate(text.trim(), 240);
-        showRow(thinkingLabel, jEdit.getProperty("cursor.thinking-prefix") + display);
+        showRow(thinkingLabel, jEdit.getProperty(propsPrefix + ".thinking-prefix") + display);
     }
 
     void setTool(String name, String status) {
@@ -103,7 +109,7 @@ final class CursorRunStatusPanel extends JPanel {
         if (status != null && !status.isBlank()) {
             detail += " (" + status.trim() + ")";
         }
-        showRow(toolLabel, jEdit.getProperty("cursor.tool-prefix") + detail);
+        showRow(toolLabel, jEdit.getProperty(propsPrefix + ".tool-prefix") + detail);
     }
 
     private static JLabel createRowLabel(Font font, Color color) {

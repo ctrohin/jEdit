@@ -11,7 +11,7 @@ package org.jedit.cursor;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-final class CursorToolCallFiles {
+public final class CursorToolCallFiles {
 
     private static final String[] PATH_KEYS = {
         "path",
@@ -24,7 +24,7 @@ final class CursorToolCallFiles {
 
     private CursorToolCallFiles() {}
 
-    static String extractPath(String toolName, JsonObject args) {
+    public static String extractPath(String toolName, JsonObject args) {
         if (args == null) {
             return null;
         }

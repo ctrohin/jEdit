@@ -21,7 +21,7 @@
 
 package org.jedit.cursor;
 
-enum CursorMode {
+public enum CursorMode {
     CHAT("plan"),
     AGENT("agent");
 

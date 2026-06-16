@@ -11,12 +11,12 @@ package org.jedit.cursor;
 import java.io.File;
 import java.util.Objects;
 
-final class CursorModifiedFile {
+public final class CursorModifiedFile {
 
-    final String path;
-    final boolean local;
+    public final String path;
+    public final boolean local;
 
-    CursorModifiedFile(String path, boolean local) {
+    public CursorModifiedFile(String path, boolean local) {
         this.path = normalize(path);
         this.local = local;
     }

@@ -13,13 +13,13 @@
 
 package org.jedit.cursor;
 
-final class CursorExchange {
+public final class CursorExchange {
 
-    final String query;
-    final String response;
-    final long timestamp;
+    public final String query;
+    public final String response;
+    public final long timestamp;
 
-    CursorExchange(String query, String response, long timestamp) {
+    public CursorExchange(String query, String response, long timestamp) {
         this.query = query != null ? query : "";
         this.response = response != null ? response : "";
         this.timestamp = timestamp;

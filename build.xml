@@ -72,6 +72,7 @@
 		<include name="org/gjt/sp/jedit/icons/**/*.png"/>
 		<include name="org/jedit/localization/*.props"/>
 		<include name="org/jedit/cursor/bridge/**"/>
+		<include name="org/jedit/copilot/bridge/**"/>
 	</patternset>
 
 	<target name="init"

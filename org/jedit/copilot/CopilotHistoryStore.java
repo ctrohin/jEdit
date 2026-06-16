@@ -1,0 +1,213 @@
+/*
+ * jEdit - Programmer's Text Editor
+ * :tabSize=8:indentSize=8:noTabs=false:
+ * :folding=explicit:collapseFolds=1:
+ *
+ * Copyright © 2026 jEdit contributors
+ */
+
+package org.jedit.copilot;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.util.Log;
+import org.jedit.cursor.CursorConversation;
+import org.jedit.cursor.CursorExchange;
+import org.jedit.cursor.CursorMode;
+import org.jedit.cursor.CursorModifiedFile;
+
+final class CopilotHistoryStore {
+
+    static final int MAX_EXCHANGES = 100;
+
+    private CopilotHistoryStore() {}
+
+    static List<CursorConversation> load() {
+        File file = historyFile();
+        if (!file.isFile()) {
+            return new ArrayList<>();
+        }
+        try (Reader reader = new FileReader(file)) {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            List<CursorConversation> conversations = new ArrayList<>();
+            if (!root.has("conversations") || !root.get("conversations").isJsonArray()) {
+                return conversations;
+            }
+            for (JsonElement element : root.getAsJsonArray("conversations")) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                CursorConversation conversation = parseConversation(element.getAsJsonObject());
+                if (conversation != null && conversation.hasExchanges()) {
+                    conversations.add(conversation);
+                }
+            }
+            trimExchanges(conversations, MAX_EXCHANGES);
+            return conversations;
+        } catch (Exception ex) {
+            Log.log(Log.WARNING, CopilotHistoryStore.class, "Could not load " + file, ex);
+            return new ArrayList<>();
+        }
+    }
+
+    static void save(List<CursorConversation> conversations) {
+        List<CursorConversation> toSave = new ArrayList<>();
+        for (CursorConversation conversation : conversations) {
+            if (conversation.hasExchanges()) {
+                toSave.add(conversation);
+            }
+        }
+        trimExchanges(toSave, MAX_EXCHANGES);
+        File file = historyFile();
+        File parent = file.getParentFile();
+        if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
+            Log.log(Log.WARNING, CopilotHistoryStore.class, "Could not create " + parent);
+            return;
+        }
+        JsonObject root = new JsonObject();
+        JsonArray array = new JsonArray();
+        for (CursorConversation conversation : toSave) {
+            array.add(toJson(conversation));
+        }
+        root.add("conversations", array);
+        try (Writer writer = new FileWriter(file)) {
+            writer.write(root.toString());
+        } catch (IOException ex) {
+            Log.log(Log.WARNING, CopilotHistoryStore.class, "Could not save " + file, ex);
+        }
+    }
+
+    static void trimExchanges(List<CursorConversation> conversations, int maxExchanges) {
+        int total = countExchanges(conversations);
+        while (total > maxExchanges && !conversations.isEmpty()) {
+            CursorConversation oldest = conversations.get(0);
+            if (!oldest.exchanges.isEmpty()) {
+                oldest.exchanges.remove(0);
+                total--;
+            }
+            if (oldest.exchanges.isEmpty()) {
+                conversations.remove(0);
+            }
+        }
+    }
+
+    private static int countExchanges(List<CursorConversation> conversations) {
+        int total = 0;
+        for (CursorConversation conversation : conversations) {
+            total += conversation.exchanges.size();
+        }
+        return total;
+    }
+
+    private static CursorConversation parseConversation(JsonObject json) {
+        String id = stringOrNull(json, "id");
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        CursorMode mode = CursorMode.AGENT;
+        String modeName = stringOrNull(json, "mode");
+        if (modeName != null) {
+            try {
+                mode = CursorMode.valueOf(modeName);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        CursorConversation conversation = new CursorConversation(
+            id,
+            stringOrNull(json, "title", jEdit.getProperty("copilot.tab.new")),
+            mode,
+            stringOrNull(json, "sessionId"),
+            null);
+        if (json.has("exchanges") && json.get("exchanges").isJsonArray()) {
+            for (JsonElement element : json.getAsJsonArray("exchanges")) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject exchangeJson = element.getAsJsonObject();
+                String query = stringOrNull(exchangeJson, "query", "");
+                String response = stringOrNull(exchangeJson, "response", "");
+                long timestamp = exchangeJson.has("timestamp")
+                    ? exchangeJson.get("timestamp").getAsLong()
+                    : System.currentTimeMillis();
+                conversation.exchanges.add(new CursorExchange(query, response, timestamp));
+            }
+        }
+        if (json.has("modifiedFiles") && json.get("modifiedFiles").isJsonArray()) {
+            for (JsonElement element : json.getAsJsonArray("modifiedFiles")) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject fileJson = element.getAsJsonObject();
+                String path = stringOrNull(fileJson, "path");
+                if (path == null || path.isBlank()) {
+                    continue;
+                }
+                boolean local = !fileJson.has("local") || fileJson.get("local").getAsBoolean();
+                conversation.addModifiedFile(new CursorModifiedFile(path, local));
+            }
+        }
+        return conversation;
+    }
+
+    private static JsonObject toJson(CursorConversation conversation) {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", conversation.id);
+        json.addProperty("title", conversation.title);
+        json.addProperty("mode", conversation.mode.name());
+        if (conversation.agentId != null && !conversation.agentId.isBlank()) {
+            json.addProperty("sessionId", conversation.agentId);
+        }
+        JsonArray exchanges = new JsonArray();
+        for (CursorExchange exchange : conversation.exchanges) {
+            JsonObject item = new JsonObject();
+            item.addProperty("query", exchange.query);
+            item.addProperty("response", exchange.response);
+            item.addProperty("timestamp", exchange.timestamp);
+            exchanges.add(item);
+        }
+        json.add("exchanges", exchanges);
+        if (!conversation.modifiedFiles.isEmpty()) {
+            JsonArray modifiedFiles = new JsonArray();
+            for (CursorModifiedFile file : conversation.modifiedFiles) {
+                JsonObject item = new JsonObject();
+                item.addProperty("path", file.path);
+                item.addProperty("local", file.local);
+                modifiedFiles.add(item);
+            }
+            json.add("modifiedFiles", modifiedFiles);
+        }
+        return json;
+    }
+
+    private static String stringOrNull(JsonObject json, String key) {
+        return stringOrNull(json, key, null);
+    }
+
+    private static String stringOrNull(JsonObject json, String key, String fallback) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return fallback;
+        }
+        return json.get(key).getAsString();
+    }
+
+    private static File historyFile() {
+        String settings = jEdit.getSettingsDirectory();
+        if (settings == null || settings.isBlank()) {
+            return new File("copilot-history.json");
+        }
+        return new File(new File(settings, "copilot"), "history.json");
+    }
+}

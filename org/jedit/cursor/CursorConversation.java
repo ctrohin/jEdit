@@ -18,20 +18,20 @@ import java.util.UUID;
 
 import org.gjt.sp.jedit.jEdit;
 
-final class CursorConversation {
+public final class CursorConversation {
 
-    final String id;
-    String title;
-    CursorMode mode;
-    String agentId;
-    String agentUrl;
-    final List<CursorExchange> exchanges = new ArrayList<>();
-    final Set<CursorModifiedFile> modifiedFiles = new LinkedHashSet<>();
+    public final String id;
+    public String title;
+    public CursorMode mode;
+    public String agentId;
+    public String agentUrl;
+    public final List<CursorExchange> exchanges = new ArrayList<>();
+    public final Set<CursorModifiedFile> modifiedFiles = new LinkedHashSet<>();
     final Map<String, String> undoBaselines = new LinkedHashMap<>();
     final Set<String> runStartDirtyPaths = new LinkedHashSet<>();
     final Map<String, String> runStartSnapshots = new LinkedHashMap<>();
 
-    CursorConversation(String id, String title, CursorMode mode,
+    public CursorConversation(String id, String title, CursorMode mode,
                        String agentId, String agentUrl) {
         this.id = id;
         this.title = title;
@@ -49,7 +49,7 @@ final class CursorConversation {
             null);
     }
 
-    void addExchange(String query, String response) {
+    public void addExchange(String query, String response) {
         exchanges.add(new CursorExchange(query, response, System.currentTimeMillis()));
         updateTitleFromQuery(query);
     }
@@ -59,7 +59,8 @@ final class CursorConversation {
             return;
         }
         String defaultTitle = jEdit.getProperty("cursor.tab.new");
-        if (defaultTitle.equals(title)) {
+        if (defaultTitle.equals(title)
+            || jEdit.getProperty("copilot.tab.new").equals(title)) {
             title = truncate(query.trim(), 48);
         }
     }
@@ -79,11 +80,11 @@ final class CursorConversation {
         return sb.toString();
     }
 
-    boolean hasExchanges() {
+    public boolean hasExchanges() {
         return !exchanges.isEmpty();
     }
 
-    void addModifiedFile(CursorModifiedFile file) {
+    public void addModifiedFile(CursorModifiedFile file) {
         if (file == null || file.path == null || file.path.isBlank()) {
             return;
         }
