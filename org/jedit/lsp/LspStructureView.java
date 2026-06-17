@@ -249,7 +249,7 @@ public class LspStructureView extends JPanel
             }
         }
         treeModel.reload();
-        expandTopLevel();
+        expandStructureNodes();
         lastRenderedSnapshot = snapshot;
         updateCaption(buffer, snapshot);
         scheduleCaretSync();
@@ -263,11 +263,18 @@ public class LspStructureView extends JPanel
         return node;
     }
 
-    private void expandTopLevel() {
-        for (int i = 0; i < rootNode.getChildCount(); i++) {
-            DefaultMutableTreeNode child =
-                (DefaultMutableTreeNode) rootNode.getChildAt(i);
-            tree.expandPath(new TreePath(child.getPath()));
+    private void expandStructureNodes() {
+        expandNodesWithChildren(rootNode);
+    }
+
+    private void expandNodesWithChildren(DefaultMutableTreeNode parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent.getChildAt(i);
+            Object userObject = child.getUserObject();
+            if (userObject instanceof LspSymbolHit hit && hit.hasChildren()) {
+                tree.expandPath(new TreePath(child.getPath()));
+                expandNodesWithChildren(child);
+            }
         }
     }
 

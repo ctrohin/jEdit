@@ -413,7 +413,7 @@ public class GenericLspClient {
         textDocCaps.setImplementation(new ImplementationCapabilities());
         textDocCaps.setTypeDefinition(new TypeDefinitionCapabilities());
         textDocCaps.setDeclaration(new DeclarationCapabilities(true));
-        textDocCaps.setDocumentSymbol(new DocumentSymbolCapabilities());
+        textDocCaps.setDocumentSymbol(buildDocumentSymbolCapabilities());
         textDocCaps.setCallHierarchy(new CallHierarchyCapabilities());
         textDocCaps.setHover(buildHoverCapabilities());
         textDocCaps.setSignatureHelp(buildSignatureHelpCapabilities());
@@ -445,6 +445,12 @@ public class GenericLspClient {
 
         capabilities.setExperimental(buildExperimentalCapabilities());
         return capabilities;
+    }
+
+    private static DocumentSymbolCapabilities buildDocumentSymbolCapabilities() {
+        DocumentSymbolCapabilities caps = new DocumentSymbolCapabilities();
+        caps.setHierarchicalDocumentSymbolSupport(true);
+        return caps;
     }
 
     private static HoverCapabilities buildHoverCapabilities() {

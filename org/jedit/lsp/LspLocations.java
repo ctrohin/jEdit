@@ -87,10 +87,23 @@ final class LspLocations {
 
     static List<LspSymbolHit> fromDocumentSymbols(String fileUri,
         List<Either<SymbolInformation, DocumentSymbol>> symbols) {
-        List<LspSymbolHit> hits = new ArrayList<>();
-        if (symbols == null) {
+        if (symbols == null || symbols.isEmpty()) {
+            return List.of();
+        }
+        if (hasPopulatedHierarchy(symbols)) {
+            List<LspSymbolHit> hits = new ArrayList<>();
+            for (Either<SymbolInformation, DocumentSymbol> either : symbols) {
+                if (either != null && either.isRight()) {
+                    DocumentSymbol symbol = either.getRight();
+                    if (symbol != null) {
+                        hits.add(documentSymbolHit(symbol, fileUri));
+                    }
+                }
+            }
             return hits;
         }
+
+        List<LspStructureTreeBuilder.FlatSymbol> flat = new ArrayList<>();
         for (Either<SymbolInformation, DocumentSymbol> either : symbols) {
             if (either == null) {
                 continue;
@@ -98,16 +111,59 @@ final class LspLocations {
             if (either.isLeft()) {
                 SymbolInformation info = either.getLeft();
                 if (info != null && info.getLocation() != null) {
-                    hits.add(symbolInformationHit(info));
+                    flat.add(flatSymbolFromInformation(info, fileUri));
                 }
             } else {
                 DocumentSymbol symbol = either.getRight();
                 if (symbol != null) {
-                    hits.add(documentSymbolHit(symbol, fileUri));
+                    collectFlatDocumentSymbols(symbol, fileUri, null, flat);
                 }
             }
         }
-        return hits;
+        return LspStructureTreeBuilder.build(flat);
+    }
+
+    private static boolean hasPopulatedHierarchy(
+        List<Either<SymbolInformation, DocumentSymbol>> symbols) {
+        for (Either<SymbolInformation, DocumentSymbol> either : symbols) {
+            if (either != null && either.isRight()) {
+                DocumentSymbol symbol = either.getRight();
+                if (symbol != null && symbol.getChildren() != null
+                    && !symbol.getChildren().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static LspStructureTreeBuilder.FlatSymbol flatSymbolFromInformation(
+        SymbolInformation info, String fileUri) {
+        Location location = info.getLocation();
+        return new LspStructureTreeBuilder.FlatSymbol(
+            location.getUri(),
+            location.getRange(),
+            info.getKind(),
+            info.getName(),
+            info.getContainerName(),
+            info.getContainerName());
+    }
+
+    private static void collectFlatDocumentSymbols(DocumentSymbol symbol, String uri,
+                                                   String containerName,
+                                                   List<LspStructureTreeBuilder.FlatSymbol> flat) {
+        flat.add(new LspStructureTreeBuilder.FlatSymbol(
+            uri,
+            symbol.getRange(),
+            symbol.getKind(),
+            symbol.getName(),
+            symbol.getDetail(),
+            containerName));
+        if (symbol.getChildren() != null) {
+            for (DocumentSymbol child : symbol.getChildren()) {
+                collectFlatDocumentSymbols(child, uri, symbol.getName(), flat);
+            }
+        }
     }
 
     static List<LspSymbolHit> fromIncomingCalls(List<CallHierarchyIncomingCall> calls) {

@@ -33,10 +33,17 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
     private final String name;
     private final String label;
     private final String detail;
+    private final String containerName;
     private final List<LspSymbolHit> children;
 
     public LspSymbolHit(String uri, Range range, SymbolKind kind, String name,
                         String detail, List<LspSymbolHit> children) {
+        this(uri, range, kind, name, detail, null, children);
+    }
+
+    public LspSymbolHit(String uri, Range range, SymbolKind kind, String name,
+                        String detail, String containerName,
+                        List<LspSymbolHit> children) {
         this.uri = Objects.requireNonNull(uri, "uri");
         Position start = range != null ? range.getStart() : null;
         Position end = range != null ? range.getEnd() : null;
@@ -48,6 +55,7 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
         this.name = name != null && !name.isBlank() ? name : "(symbol)";
         this.label = kind != null ? formatKindLabel(kind) + " " + this.name : this.name;
         this.detail = detail;
+        this.containerName = containerName;
         this.children = children == null || children.isEmpty()
             ? List.of()
             : List.copyOf(children);
@@ -102,6 +110,10 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
 
     public String getDetail() {
         return detail;
+    }
+
+    public String getContainerName() {
+        return containerName;
     }
 
     public List<LspSymbolHit> getChildren() {
