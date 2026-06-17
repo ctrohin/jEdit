@@ -71,6 +71,25 @@ public final class WorkspaceFileIcons {
             () -> new CircleLanguageIcon(LanguageKind.GENERIC, size, extension));
     }
 
+    /**
+     * Circle icon with a single letter, matching the workspace tree style.
+     */
+    public static Icon createLetterIcon(String letter, Color background, Color foreground) {
+        return createLetterIcon(letter, background, foreground, DEFAULT_SIZE);
+    }
+
+    public static Icon createLetterIcon(String letter, Color background, Color foreground,
+                                        int size) {
+        String glyph = letter == null || letter.isEmpty() ? "?" : letter;
+        if (glyph.length() > 1) {
+            glyph = glyph.substring(0, 1);
+        }
+        String key = "letter:" + glyph.toLowerCase(Locale.ROOT) + ':'
+            + background.getRGB() + ':' + foreground.getRGB() + ':' + size;
+        String finalGlyph = glyph;
+        return cached(key, () -> new LetterCircleIcon(finalGlyph, background, foreground, size));
+    }
+
     public static String extensionOf(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             return "";
@@ -273,6 +292,54 @@ public final class WorkspaceFileIcons {
             float fontSize = iconSize * 0.55f;
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, fontSize));
             paintText(g2, x, y, iconSize, pad, diameter, "#");
+        }
+
+        @Override
+        public int getIconWidth() {
+            return size;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return size;
+        }
+    }
+
+    static final class LetterCircleIcon implements Icon {
+        private final String letter;
+        private final Color background;
+        private final Color foreground;
+        private final int size;
+
+        LetterCircleIcon(String letter, Color background, Color foreground, int size) {
+            this.letter = letter;
+            this.background = background;
+            this.foreground = foreground;
+            this.size = size;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            try {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+                int pad = Math.max(1, size / 10);
+                int diameter = size - pad * 2;
+                g2.setColor(background);
+                g2.fillOval(x + pad, y + pad, diameter, diameter);
+
+                g2.setColor(foreground);
+                float fontSize = size * 0.55f;
+                g2.setFont(g2.getFont().deriveFont(Font.BOLD, fontSize));
+                var fm = g2.getFontMetrics();
+                int textX = x + pad + (diameter - fm.stringWidth(letter)) / 2;
+                int textY = y + pad + (diameter + fm.getAscent() - fm.getDescent()) / 2;
+                g2.drawString(letter, textX, textY);
+            } finally {
+                g2.dispose();
+            }
         }
 
         @Override

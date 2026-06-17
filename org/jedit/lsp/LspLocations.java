@@ -152,28 +152,21 @@ final class LspLocations {
 
     static LspSymbolHit callHierarchyItemHit(CallHierarchyItem item) {
         Range range = selectionRange(item);
-        String label = item.getName();
-        if (item.getKind() != null) {
-            label = formatKind(item.getKind()) + " " + label;
-        }
         return new LspSymbolHit(
             item.getUri(),
             range,
-            label,
+            item.getKind(),
+            item.getName(),
             item.getDetail(),
             List.of());
     }
 
     private static LspSymbolHit callHierarchyHit(CallHierarchyItem item, Range range, String role) {
-        String label = item.getName();
-        if (item.getKind() != null) {
-            label = formatKind(item.getKind()) + " " + label;
-        }
         String detail = role;
         if (item.getDetail() != null && !item.getDetail().isBlank()) {
             detail = role + " — " + item.getDetail();
         }
-        return new LspSymbolHit(item.getUri(), range, label, detail, List.of());
+        return new LspSymbolHit(item.getUri(), range, item.getKind(), item.getName(), detail, List.of());
     }
 
     private static LspSymbolHit documentSymbolHit(DocumentSymbol symbol, String uri) {
@@ -187,43 +180,33 @@ final class LspLocations {
                 children.add(documentSymbolHit(child, symbolUri));
             }
         }
-        String label = symbol.getName();
-        if (symbol.getKind() != null) {
-            label = formatKind(symbol.getKind()) + " " + label;
-        }
         return new LspSymbolHit(
             symbolUri,
             symbol.getRange(),
-            label,
+            symbol.getKind(),
+            symbol.getName(),
             symbol.getDetail(),
             children);
     }
 
     static LspSymbolHit symbolInformationHit(SymbolInformation info) {
-        String label = info.getName();
-        if (info.getKind() != null) {
-            label = formatKind(info.getKind()) + " " + label;
-        }
         Location location = info.getLocation();
         return new LspSymbolHit(
             location.getUri(),
             location.getRange(),
-            label,
+            info.getKind(),
+            info.getName(),
             info.getContainerName(),
             List.of());
     }
 
     static LspSymbolHit workspaceSymbolHit(WorkspaceSymbol symbol) {
-        String label = symbol.getName();
-        if (symbol.getKind() != null) {
-            label = formatKind(symbol.getKind()) + " " + label;
-        }
         Either<Location, WorkspaceSymbolLocation> location = symbol.getLocation();
         String uri;
         Range range;
         if (location == null) {
-            return new LspSymbolHit("urn:workspace-symbol", null, label,
-                symbol.getContainerName(), List.of());
+            return new LspSymbolHit("urn:workspace-symbol", null, symbol.getKind(),
+                symbol.getName(), symbol.getContainerName(), List.of());
         }
         if (location.isLeft()) {
             Location left = location.getLeft();
@@ -234,7 +217,8 @@ final class LspLocations {
             uri = right.getUri();
             range = new Range(new Position(0, 0), new Position(0, 0));
         }
-        return new LspSymbolHit(uri, range, label, symbol.getContainerName(), List.of());
+        return new LspSymbolHit(uri, range, symbol.getKind(), symbol.getName(),
+            symbol.getContainerName(), List.of());
     }
 
     static Range selectionRange(CallHierarchyItem item) {

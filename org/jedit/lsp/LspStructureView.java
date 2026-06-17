@@ -396,9 +396,13 @@ public class LspStructureView extends JPanel
             }
             Object userObject = node.getUserObject();
             if (userObject instanceof LspSymbolHit hit) {
-                setIcon(null);
-                setText(hit.getLabel());
-                setToolTipText(hit.getDetail());
+                setIcon(LspStructureIcons.iconFor(hit.getKind()));
+                setText(hit.getName());
+                String tooltip = hit.getDetail();
+                if (tooltip == null || tooltip.isBlank()) {
+                    tooltip = hit.getLabel();
+                }
+                setToolTipText(tooltip);
             }
         }
     }

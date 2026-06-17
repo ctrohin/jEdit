@@ -16,6 +16,7 @@ import java.util.Objects;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.SymbolKind;
 import org.gjt.sp.jedit.Buffer;
 
 /**
@@ -28,12 +29,14 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
     private final int character;
     private final int endLine;
     private final int endCharacter;
+    private final SymbolKind kind;
+    private final String name;
     private final String label;
     private final String detail;
     private final List<LspSymbolHit> children;
 
-    public LspSymbolHit(String uri, Range range, String label, String detail,
-                        List<LspSymbolHit> children) {
+    public LspSymbolHit(String uri, Range range, SymbolKind kind, String name,
+                        String detail, List<LspSymbolHit> children) {
         this.uri = Objects.requireNonNull(uri, "uri");
         Position start = range != null ? range.getStart() : null;
         Position end = range != null ? range.getEnd() : null;
@@ -41,7 +44,9 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
         this.character = start != null ? start.getCharacter() : 0;
         this.endLine = end != null ? end.getLine() : this.line;
         this.endCharacter = end != null ? end.getCharacter() : this.character;
-        this.label = label != null && !label.isBlank() ? label : "(symbol)";
+        this.kind = kind;
+        this.name = name != null && !name.isBlank() ? name : "(symbol)";
+        this.label = kind != null ? formatKindLabel(kind) + " " + this.name : this.name;
         this.detail = detail;
         this.children = children == null || children.isEmpty()
             ? List.of()
@@ -52,9 +57,15 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
         return new LspSymbolHit(
             location.getUri(),
             location.getRange(),
+            null,
             label,
             null,
             List.of());
+    }
+
+    private static String formatKindLabel(SymbolKind kind) {
+        String kindName = kind.name();
+        return Character.toLowerCase(kindName.charAt(0)) + kindName.substring(1).toLowerCase();
     }
 
     public String getUri() {
@@ -79,6 +90,14 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
 
     public String getLabel() {
         return label;
+    }
+
+    public SymbolKind getKind() {
+        return kind;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getDetail() {
@@ -170,12 +189,13 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
         return line == other.line && character == other.character
             && endLine == other.endLine && endCharacter == other.endCharacter
             && Objects.equals(uri, other.uri)
-            && Objects.equals(label, other.label);
+            && kind == other.kind
+            && Objects.equals(name, other.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri, line, character, label);
+        return Objects.hash(uri, line, character, kind, name);
     }
 
     static List<LspSymbolHit> sortedCopy(List<LspSymbolHit> hits) {
