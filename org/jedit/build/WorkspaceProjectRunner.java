@@ -1,0 +1,311 @@
+/*
+ * jEdit - Programmer's Text Editor
+ * :tabSize=8:indentSize=8:noTabs=false:
+ * :folding=explicit:collapseFolds=1:
+ *
+ * Copyright © 2026 jEdit contributors
+ */
+
+package org.jedit.build;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.jEdit;
+
+/**
+ * Detects runnable project types in the workspace folder and executes the
+ * configured run goal in the Build output view.
+ */
+public final class WorkspaceProjectRunner {
+
+    private WorkspaceProjectRunner() {}
+
+    public static boolean canRun(File projectRoot) {
+        return !detectSupportedKinds(projectRoot).isEmpty();
+    }
+
+    public static List<ProjectKind> detectSupportedKinds(File projectRoot) {
+        List<ProjectKind> kinds = new ArrayList<>();
+        if (projectRoot == null || !projectRoot.isDirectory()) {
+            return kinds;
+        }
+        if (ProjectRoots.findPubspecYaml(projectRoot) != null) {
+            kinds.add(ProjectKind.FLUTTER);
+        }
+        if (ProjectRoots.findPomXml(projectRoot) != null) {
+            kinds.add(ProjectKind.MAVEN);
+        }
+        if (ProjectRoots.findGradleBuild(projectRoot) != null) {
+            kinds.add(ProjectKind.GRADLE);
+        }
+        if (ProjectRoots.findPackageJson(projectRoot) != null) {
+            kinds.add(ProjectKind.NPM);
+        }
+        if (ProjectRoots.findBuildXml(projectRoot) != null) {
+            kinds.add(ProjectKind.ANT);
+        }
+        if (ProjectRoots.findPythonMarker(projectRoot) != null) {
+            kinds.add(ProjectKind.PIP);
+        }
+        return kinds;
+    }
+
+    public static ProjectKind resolveActiveKind(File projectRoot) {
+        List<ProjectKind> supported = detectSupportedKinds(projectRoot);
+        if (supported.isEmpty()) {
+            return null;
+        }
+        WorkspaceRunSettings saved = WorkspaceRunPreferences.load(projectRoot);
+        if (supported.contains(saved.kind)) {
+            return saved.kind;
+        }
+        return supported.get(0);
+    }
+
+    public static String resolveRunGoal(File projectRoot, ProjectKind kind) {
+        if (projectRoot == null || kind == null) {
+            return "";
+        }
+        WorkspaceRunSettings saved = WorkspaceRunPreferences.load(projectRoot);
+        if (kind == saved.kind && saved.runGoal != null && !saved.runGoal.isBlank()) {
+            return saved.runGoal.trim();
+        }
+        return defaultRunGoal(projectRoot, kind);
+    }
+
+    public static List<String> suggestRunGoals(File projectRoot, ProjectKind kind) {
+        Set<String> goals = new LinkedHashSet<>();
+        if (projectRoot == null || kind == null) {
+            return List.of();
+        }
+        String configured = resolveRunGoal(projectRoot, kind);
+        if (!configured.isBlank()) {
+            goals.add(configured);
+        }
+        goals.addAll(defaultRunGoalCandidates(projectRoot, kind));
+        return new ArrayList<>(goals);
+    }
+
+    public static void runProject(View view, File projectRoot) {
+        if (view == null || projectRoot == null) {
+            return;
+        }
+        ProjectKind kind = resolveActiveKind(projectRoot);
+        if (kind == null) {
+            return;
+        }
+        String goal = resolveRunGoal(projectRoot, kind);
+        if (goal == null || goal.isBlank()) {
+            return;
+        }
+        RunInvocation invocation = buildInvocation(projectRoot, kind, goal);
+        if (invocation == null) {
+            return;
+        }
+        BuildOutputView output = BuildOutputView.show(view);
+        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+    }
+
+    public static boolean configureRun(View view, File projectRoot) {
+        if (view == null || projectRoot == null) {
+            return false;
+        }
+        return WorkspaceRunSettingsDialog.show(view, projectRoot);
+    }
+
+    static RunInvocation buildInvocation(File projectRoot, ProjectKind kind, String goal) {
+        if (projectRoot == null || kind == null || goal == null || goal.isBlank()) {
+            return null;
+        }
+        return switch (kind) {
+            case MAVEN -> {
+                File dir = projectDirectory(ProjectRoots.findPomXml(projectRoot));
+                if (dir == null) {
+                    yield null;
+                }
+                MavenCommandBuilder.Invocation inv = MavenCommandBuilder.build(
+                    dir, MavenProjectPreferences.load(projectRoot), goal);
+                yield new RunInvocation(dir, inv.command, inv.environment);
+            }
+            case GRADLE -> {
+                File dir = projectDirectory(ProjectRoots.findGradleBuild(projectRoot));
+                if (dir == null) {
+                    yield null;
+                }
+                GradleCommandBuilder.Invocation inv = GradleCommandBuilder.build(
+                    dir, GradleProjectPreferences.load(projectRoot), goal);
+                yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
+            }
+            case NPM -> {
+                File dir = projectDirectory(ProjectRoots.findPackageJson(projectRoot));
+                if (dir == null) {
+                    yield null;
+                }
+                NpmCommandBuilder.Invocation inv = NpmCommandBuilder.build(
+                    dir, NpmProjectPreferences.load(projectRoot), goal);
+                yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
+            }
+            case FLUTTER -> {
+                File dir = projectDirectory(ProjectRoots.findPubspecYaml(projectRoot));
+                if (dir == null) {
+                    yield null;
+                }
+                FlutterCommandBuilder.Invocation inv = FlutterCommandBuilder.build(
+                    dir, FlutterProjectPreferences.load(projectRoot), goal);
+                yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
+            }
+            case ANT -> {
+                AntProjectSettings settings = AntProjectPreferences.load(projectRoot);
+                File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(projectRoot, settings);
+                if (buildXml == null) {
+                    yield null;
+                }
+                AntCommandBuilder.Invocation inv =
+                    AntCommandBuilder.build(buildXml, settings, goal);
+                yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
+            }
+            case PIP -> buildPythonInvocation(projectRoot, goal);
+        };
+    }
+
+    private static RunInvocation buildPythonInvocation(File projectRoot, String goal) {
+        File marker = ProjectRoots.findPythonMarker(projectRoot);
+        if (marker == null) {
+            return null;
+        }
+        PipProjectSettings settings = PipProjectPreferences.load(projectRoot);
+        File workingDir = projectDirectory(marker);
+        if (!ShellCommands.isBlank(settings.workingDirectory)) {
+            workingDir = new File(settings.workingDirectory.trim());
+        }
+        Map<String, String> environment = new HashMap<>();
+        if (!ShellCommands.isBlank(settings.pythonHome)) {
+            environment.put("PYTHONHOME", settings.pythonHome.trim());
+        }
+        if (!ShellCommands.isBlank(settings.virtualEnv)) {
+            environment.put("VIRTUAL_ENV", settings.virtualEnv.trim());
+        }
+        String python = ShellCommands.isBlank(settings.pythonExecutable)
+            ? "python"
+            : settings.pythonExecutable.trim();
+        List<String> args = new ArrayList<>();
+        ShellCommands.appendTokens(args, goal);
+        ShellCommands.appendTokens(args, settings.additionalArgs);
+        return new RunInvocation(workingDir,
+            ShellCommands.wrapLauncher(python, args), environment);
+    }
+
+    private static File projectDirectory(File markerFile) {
+        return markerFile != null ? markerFile.getParentFile() : null;
+    }
+
+    private static String defaultRunGoal(File projectRoot, ProjectKind kind) {
+        List<String> candidates = defaultRunGoalCandidates(projectRoot, kind);
+        return candidates.isEmpty() ? "" : candidates.get(0);
+    }
+
+    private static List<String> defaultRunGoalCandidates(File projectRoot, ProjectKind kind) {
+        List<String> goals = new ArrayList<>();
+        switch (kind) {
+            case MAVEN -> {
+                File pom = ProjectRoots.findPomXml(projectRoot);
+                if (pom != null) {
+                    MavenPomFile parsed = MavenPomFile.parse(pom);
+                    if (parsed != null) {
+                        for (String custom : parsed.customGoals()) {
+                            if (custom.contains("spring-boot:run")) {
+                                goals.add("spring-boot:run");
+                            }
+                        }
+                        if (parsed.customGoals().contains("exec:java")) {
+                            goals.add("exec:java");
+                        }
+                    }
+                }
+                goals.add("spring-boot:run");
+                goals.add("exec:java");
+                goals.add("package");
+            }
+            case GRADLE -> {
+                goals.add("run");
+                goals.add("bootRun");
+                goals.add("application:run");
+                goals.add("build");
+            }
+            case NPM -> {
+                File json = ProjectRoots.findPackageJson(projectRoot);
+                if (json != null) {
+                    for (String script : PackageJsonFile.scriptNames(json)) {
+                        goals.add("run " + script);
+                    }
+                }
+                goals.add("run start");
+                goals.add("run dev");
+                goals.add("start");
+            }
+            case FLUTTER -> {
+                goals.add("run");
+                goals.add("run -d chrome");
+            }
+            case ANT -> {
+                AntProjectSettings settings = AntProjectPreferences.load(projectRoot);
+                File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(projectRoot, settings);
+                if (buildXml != null) {
+                    AntBuildFile parsed = AntBuildFile.parse(buildXml);
+                    if (parsed != null) {
+                        if (parsed.defaultTarget != null && !parsed.defaultTarget.isBlank()) {
+                            goals.add(parsed.defaultTarget);
+                        }
+                        for (String target : List.of("run", "start", "main")) {
+                            if (parsed.targets.contains(target)) {
+                                goals.add(target);
+                            }
+                        }
+                        goals.addAll(parsed.targets);
+                    }
+                }
+            }
+            case PIP -> {
+                File marker = ProjectRoots.findPythonMarker(projectRoot);
+                File dir = marker != null ? marker.getParentFile() : projectRoot;
+                if (dir != null) {
+                    if (new File(dir, "main.py").isFile()) {
+                        goals.add("main.py");
+                    }
+                    if (new File(dir, "app.py").isFile()) {
+                        goals.add("app.py");
+                    }
+                    if (new File(dir, "manage.py").isFile()) {
+                        goals.add("manage.py runserver");
+                    }
+                }
+                goals.add("-m main");
+            }
+            default -> { }
+        }
+        return goals;
+    }
+
+    public static String kindLabel(ProjectKind kind) {
+        return jEdit.getProperty("workspace-run.kind." + kind.id());
+    }
+
+    static final class RunInvocation {
+        final File workingDir;
+        final List<String> command;
+        final Map<String, String> environment;
+
+        RunInvocation(File workingDir, List<String> command, Map<String, String> environment) {
+            this.workingDir = workingDir;
+            this.command = command;
+            this.environment = environment;
+        }
+    }
+}

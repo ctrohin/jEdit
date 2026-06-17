@@ -37,6 +37,8 @@ import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.search.SearchDialog;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
+import org.jedit.build.ProjectFolderListener;
+import org.jedit.build.WorkspaceProjectRunner;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -68,6 +70,10 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
     private volatile String currentWorkspace;
     private boolean opened = false;
+    private JButton runProjectButton;
+    private JButton runSettingsButton;
+    private final ProjectFolderListener folderListener =
+        new ProjectFolderListener(this::updateRunButtons);
 
     /**
      * Shows the project-folder chooser for the given view (from the File menu, etc.).
@@ -129,6 +135,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         }
         repaint();
         revalidate();
+        updateRunButtons();
     }
 
     private void searchInFolder(final File file) {
@@ -559,6 +566,19 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         recentsSelector.addActionListener(this::showRecents);
         panelWest.add(recentsSelector);
 
+        panelWest.add(Box.createHorizontalStrut(12));
+        runProjectButton = new RolloverButton(
+            IconManager.loadIcon("MatIcons.PLAY_ARROW:22"),
+            jEdit.getProperty("workspace-run.run"));
+        runProjectButton.addActionListener(e -> runCurrentProject());
+        panelWest.add(runProjectButton);
+
+        runSettingsButton = new RolloverButton(
+            IconManager.loadIcon("MatIcons.SETTINGS:22"),
+            jEdit.getProperty("workspace-run.settings"));
+        runSettingsButton.addActionListener(e -> configureRun());
+        panelWest.add(runSettingsButton);
+
         panelWest.add(Box.createHorizontalStrut(20));
         JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
         close.addActionListener(e -> {
@@ -648,6 +668,62 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         if (folder != null && !Objects.equals(folder, previousWorkspace)) {
             WorkspaceOpenFiles.restore(view, folder);
         }
+        updateRunButtons();
+    }
+
+    private void updateRunButtons() {
+        if (runProjectButton == null || runSettingsButton == null) {
+            return;
+        }
+        File root = currentWorkspace != null ? new File(currentWorkspace) : null;
+        boolean canRun = WorkspaceProjectRunner.canRun(root);
+        runProjectButton.setEnabled(canRun);
+        runSettingsButton.setEnabled(canRun);
+        if (canRun && root != null) {
+            var kind = WorkspaceProjectRunner.resolveActiveKind(root);
+            String goal = WorkspaceProjectRunner.resolveRunGoal(root, kind);
+            String kindLabel = kind != null
+                ? WorkspaceProjectRunner.kindLabel(kind)
+                : "";
+            runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run.tooltip",
+                new String[] {kindLabel, goal}));
+        } else {
+            runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run"));
+        }
+    }
+
+    private void runCurrentProject() {
+        if (currentWorkspace == null) {
+            return;
+        }
+        File root = new File(currentWorkspace);
+        if (!WorkspaceProjectRunner.canRun(root)) {
+            return;
+        }
+        WorkspaceProjectRunner.runProject(view, root);
+    }
+
+    private void configureRun() {
+        if (currentWorkspace == null) {
+            return;
+        }
+        File root = new File(currentWorkspace);
+        if (WorkspaceProjectRunner.configureRun(view, root)) {
+            updateRunButtons();
+        }
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        EditBus.addToBus(folderListener);
+        updateRunButtons();
+    }
+
+    @Override
+    public void removeNotify() {
+        EditBus.removeFromBus(folderListener);
+        super.removeNotify();
     }
 
 

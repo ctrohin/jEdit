@@ -26,11 +26,11 @@ import org.gjt.sp.jedit.EBMessage;
 import org.gjt.sp.jedit.msg.ProjectFolderClosed;
 import org.gjt.sp.jedit.msg.ProjectFolderOpened;
 
-final class ProjectFolderListener implements EBComponent {
+public final class ProjectFolderListener implements EBComponent {
 
     private final Runnable onChange;
 
-    ProjectFolderListener(Runnable onChange) {
+    public ProjectFolderListener(Runnable onChange) {
         this.onChange = onChange;
     }
 

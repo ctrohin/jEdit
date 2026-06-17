@@ -2154,6 +2154,25 @@ view-markers.label=Vie$w Markers
 view-markers.title=Markers
 
 build.no-workspace=Open a project folder first (File \u2192 Open Project Folder).
+
+workspace-run.run=Run project
+workspace-run.run.tooltip=Run {0}: {1}
+workspace-run.settings=Run settings...
+workspace-run.settings.title=Run Project
+workspace-run.settings.intro=Choose which build tool to run and the goal, task, or script to execute.<br>Project folder: <b>{0}</b>
+workspace-run.settings.run-section=Run configuration
+workspace-run.settings.kind=Project type:
+workspace-run.settings.goal=Run goal:
+workspace-run.settings.goal-custom=Custom goal (overrides selection above):
+workspace-run.settings.goal-required=Enter a run goal, task, or script.
+workspace-run.settings.tool-settings=Tool settings...
+workspace-run.settings.reset-confirm=Reset run settings for this project folder to defaults?
+workspace-run.kind.maven=Maven
+workspace-run.kind.gradle=Gradle
+workspace-run.kind.npm=npm / Node.js
+workspace-run.kind.flutter=Flutter
+workspace-run.kind.ant=Ant
+workspace-run.kind.pip=Python
 build-output.label=$Build
 build-output.title=Build
 build-output.clear=Clear
