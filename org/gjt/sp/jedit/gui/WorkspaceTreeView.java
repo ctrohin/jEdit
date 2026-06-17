@@ -36,6 +36,7 @@ import org.gjt.sp.jedit.search.DirectoryListSet;
 import org.gjt.sp.jedit.search.SearchAndReplace;
 import org.gjt.sp.jedit.search.SearchDialog;
 import org.gjt.sp.util.Log;
+import org.gjt.sp.util.ThreadUtilities;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -221,14 +222,42 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void expandNode(FileNode node) {
-        if (node.isLoaded()) {
+        expandNode(node, false);
+    }
+
+    private void expandNode(FileNode node, boolean sync) {
+        if (node.isLoaded() || node.isLoading()) {
             return;
         }
 
+        if (sync) {
+            node.removeAllChildren();
+            addChildren(node, false);
+            node.setLoaded(true);
+            ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+            return;
+        }
+
+        node.setLoading(true);
+        File directory = (File) node.getUserObject();
+        ThreadUtilities.runInBackground(() -> {
+            File[] children = getSortedChildren(directory);
+            SwingUtilities.invokeLater(() -> finishExpandNode(node, children));
+        });
+    }
+
+    private void finishExpandNode(FileNode node, File[] children) {
+        if (node.isLoaded()) {
+            node.setLoading(false);
+            return;
+        }
         node.removeAllChildren();
-        addChildren(node, false);
+        addChildNodes(node, children, false);
         node.setLoaded(true);
-        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+        node.setLoading(false);
+        if (tree.getModel() != null) {
+            ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
+        }
     }
 
     private void openFile(final File file) {
@@ -279,7 +308,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
         for (int i = 1; i < breadcrumbs.size(); i++) {
             File crumb = breadcrumbs.get(i);
-            expandNode(node);
+            expandNode(node, true);
             
             boolean found = false;
             for (int j = 0; j < node.getChildCount(); j++) {
@@ -548,9 +577,20 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         }
 
         FileNode root = new FileNode(rootFile);
-        addChildren(root, false);
-        root.setLoaded(true);
+        root.add(new DefaultMutableTreeNode("Loading..."));
         tree.setModel(new DefaultTreeModel(root));
+        ThreadUtilities.runInBackground(() -> {
+            File[] children = getSortedChildren(rootFile);
+            SwingUtilities.invokeLater(() -> {
+                if (!rootFile.getAbsolutePath().equals(currentWorkspace)) {
+                    return;
+                }
+                root.removeAllChildren();
+                addChildNodes(root, children, false);
+                root.setLoaded(true);
+                ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
+            });
+        });
 
         if (folder != null && !Objects.equals(folder, previousWorkspace)) {
             WorkspaceOpenFiles.restore(view, folder);
@@ -569,6 +609,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
     private static class FileNode extends DefaultMutableTreeNode {
         private boolean loaded = false;
+        private boolean loading = false;
 
         public FileNode(File file) {
             super(file);
@@ -580,6 +621,14 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
         public void setLoaded(boolean loaded) {
             this.loaded = loaded;
+        }
+
+        public boolean isLoading() {
+            return loading;
+        }
+
+        public void setLoading(boolean loading) {
+            this.loading = loading;
         }
 
         @Override
@@ -613,13 +662,15 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
 
     private void addChildren(FileNode node, boolean recursive) {
         File file = (File) node.getUserObject();
-        File[] children = getSortedChildren(file);
+        addChildNodes(node, getSortedChildren(file), recursive);
+    }
 
+    private void addChildNodes(FileNode node, File[] children, boolean recursive) {
         if (children != null) {
             for (File child : children) {
                 FileNode childNode = new FileNode(child);
                 node.add(childNode);
-                
+
                 if (child.isDirectory()) {
                     if (recursive) {
                         addChildren(childNode, true);

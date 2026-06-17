@@ -254,20 +254,21 @@ final class LspDiagnosticTooltip {
             return;
         }
 
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
-        if (client == null || client.getServer() == null) {
-            setActions(problem, List.of());
-            return;
-        }
-
         actionsRequested = true;
         final String requestKey = key;
-        LspCodeActions.requestCodeActionsForProblem(view, client, buffer, problem, items -> {
-            if (!requestKey.equals(shownProblemKey) || !window.isVisible()) {
+        LspAsync.runOffEdt(() -> {
+            GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
+            if (client == null || client.getServer() == null) {
+                LspAsync.runOnEdt(() -> setActions(problem, List.of()));
                 return;
             }
-            actionCache.put(requestKey, items);
-            setActions(problem, items);
+            LspCodeActions.requestCodeActionsForProblem(view, client, buffer, problem, items -> {
+                if (!requestKey.equals(shownProblemKey) || !window.isVisible()) {
+                    return;
+                }
+                actionCache.put(requestKey, items);
+                setActions(problem, items);
+            });
         });
     }
 
@@ -310,7 +311,7 @@ final class LspDiagnosticTooltip {
                 return;
             }
             actionCache.clear();
-            GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+            GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
             if (client != null) {
                 LspCodeActions.applyCodeAction(view, client, buffer, problem, item);
             }

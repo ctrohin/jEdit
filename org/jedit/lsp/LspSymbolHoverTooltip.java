@@ -165,7 +165,7 @@ final class LspSymbolHoverTooltip {
             return;
         }
 
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+        GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
         if (client == null || client.getServer() == null || !client.isAlive()) {
             if (window.isVisible()) {
                 hideTooltip();
@@ -211,7 +211,7 @@ final class LspSymbolHoverTooltip {
             return;
         }
 
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+        GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
         if (client == null || client.getServer() == null || !client.isAlive()) {
             return;
         }

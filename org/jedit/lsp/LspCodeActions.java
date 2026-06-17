@@ -24,7 +24,6 @@ package org.jedit.lsp;
 import java.awt.Point;
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import javax.swing.JMenuItem;
@@ -106,17 +105,29 @@ public final class LspCodeActions {
         context.setDiagnostics(List.of(problem.toDiagnostic()));
         params.setContext(context);
 
-        lspClient.getServer().getTextDocumentService().codeAction(params)
-            .thenAccept(result -> {
-                List<LspCodeActionItem> items = parseActions(result);
-                SwingUtilities.invokeLater(() -> onResult.accept(items));
-            })
-            .exceptionally(ex -> {
-                Log.log(Log.ERROR, LspCodeActions.class,
-                    "Error requesting LSP code actions for diagnostic", ex);
-                SwingUtilities.invokeLater(() -> onResult.accept(List.of()));
-                return null;
-            });
+        requestCodeActionsAsync(lspClient, buffer, params, result -> {
+            List<LspCodeActionItem> items = parseActions(result);
+            onResult.accept(items);
+        }, () -> onResult.accept(List.of()));
+    }
+
+    private static void requestCodeActionsAsync(GenericLspClient lspClient, Buffer buffer,
+                                                CodeActionParams params,
+                                                Consumer<List<Either<Command, CodeAction>>> onResult,
+                                                Runnable onFailure) {
+        LspAsync.runOffEdt(() ->
+            LspPlugin.flushBufferChangesAsync(buffer)
+                .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+                .thenComposeAsync(ignored ->
+                    lspClient.getServer().getTextDocumentService().codeAction(params),
+                    LspAsync.EXECUTOR)
+                .thenAccept(result -> LspAsync.runOnEdt(() -> onResult.accept(result)))
+                .exceptionally(ex -> {
+                    Log.log(Log.ERROR, LspCodeActions.class,
+                        "Error requesting LSP code actions", ex);
+                    LspAsync.runOnEdt(onFailure);
+                    return null;
+                }));
     }
 
     static void applyCodeAction(View view, GenericLspClient lspClient, Buffer buffer,
@@ -148,27 +159,14 @@ public final class LspCodeActions {
             }
             params.setContext(context);
 
-            CompletableFuture<List<Either<Command, CodeAction>>> future =
-                lspClient.getServer().getTextDocumentService().codeAction(params);
-
-            future.thenAccept(result -> {
+            requestCodeActionsAsync(lspClient, buffer, params, result -> {
                 List<LspCodeActionItem> items = parseActions(result, onlyKinds);
                 if (items.isEmpty()) {
-                    SwingUtilities.invokeLater(() ->
-                        javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
+                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
                     return;
                 }
-                SwingUtilities.invokeLater(() ->
-                    showActionMenu(view, lspClient, documentUri, requestRange, items));
-            }).exceptionally(ex -> {
-                String logLabel = onlyKinds != null && !onlyKinds.isEmpty()
-                    ? "refactorings" : "code actions";
-                Log.log(Log.ERROR, LspCodeActions.class,
-                    "Error requesting LSP " + logLabel, ex);
-                SwingUtilities.invokeLater(() ->
-                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
-                return null;
-            });
+                showActionMenu(view, lspClient, documentUri, requestRange, items);
+            }, () -> javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null));
         } catch (Exception e) {
             Log.log(Log.ERROR, LspCodeActions.class, "Error in LSP code action request", e);
             javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
@@ -282,14 +280,19 @@ public final class LspCodeActions {
         }
 
         if (action != null && action.getEdit() == null) {
-            lspClient.getServer().getTextDocumentService().resolveCodeAction(action)
-                .thenAccept(resolved -> runOnEdt(() ->
-                    finishResolvedCodeAction(view, lspClient, documentUri, buffer,
-                        resolved != null ? resolved : action)))
-                .exceptionally(ex -> {
-                    reportApplyError(toException(ex));
-                    return null;
-                });
+            LspAsync.runOffEdt(() ->
+                LspPlugin.flushBufferChangesAsync(buffer)
+                    .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+                    .thenComposeAsync(ignored ->
+                        lspClient.getServer().getTextDocumentService().resolveCodeAction(action),
+                        LspAsync.EXECUTOR)
+                    .thenAccept(resolved -> runOnEdt(() ->
+                        finishResolvedCodeAction(view, lspClient, documentUri, buffer,
+                            resolved != null ? resolved : action)))
+                    .exceptionally(ex -> {
+                        reportApplyError(toException(ex));
+                        return null;
+                    }));
             return;
         }
 
@@ -380,17 +383,22 @@ public final class LspCodeActions {
                                             Command command,
                                             Buffer buffer,
                                             Consumer<Exception> onFailure) {
-        lspClient.getServer().getWorkspaceService().executeCommand(params)
-            .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
-            .exceptionally(ex -> {
-                Exception error = toException(ex);
-                if (onFailure != null) {
-                    onFailure.accept(error);
-                } else {
-                    reportApplyError(error);
-                }
-                return null;
-            });
+        LspAsync.runOffEdt(() ->
+            LspPlugin.flushBufferChangesAsync(buffer)
+                .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+                .thenComposeAsync(ignored ->
+                    lspClient.getServer().getWorkspaceService().executeCommand(params),
+                    LspAsync.EXECUTOR)
+                .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
+                .exceptionally(ex -> {
+                    Exception error = toException(ex);
+                    if (onFailure != null) {
+                        onFailure.accept(error);
+                    } else {
+                        reportApplyError(error);
+                    }
+                    return null;
+                }));
     }
 
     /**
@@ -404,25 +412,24 @@ public final class LspCodeActions {
                                                           Buffer buffer) {
         List<Object> oneMapArg = buildSingleMapCommandArguments(command, buffer);
         params.setArguments(oneMapArg);
-        lspClient.getServer().getWorkspaceService().executeCommand(params)
-            .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
-            .exceptionally(ex -> {
-                Exception error = toException(ex);
-                String message = getRootMessage(error);
-                if (message != null && message.contains("requires 3 parameters")) {
-                    params.setArguments(buildThreeArgumentCommandArguments(command, buffer));
-                    lspClient.getServer().getWorkspaceService().executeCommand(params)
-                        .thenAccept(retryResult ->
-                            applyExecuteCommandResult(retryResult, command, buffer))
-                        .exceptionally(retryEx -> {
-                            reportApplyError(toException(retryEx));
-                            return null;
-                        });
-                } else {
-                    reportApplyError(error);
-                }
-                return null;
-            });
+        LspAsync.runOffEdt(() ->
+            LspPlugin.flushBufferChangesAsync(buffer)
+                .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+                .thenComposeAsync(ignored ->
+                    lspClient.getServer().getWorkspaceService().executeCommand(params),
+                    LspAsync.EXECUTOR)
+                .thenAccept(result -> applyExecuteCommandResult(result, command, buffer))
+                .exceptionally(ex -> {
+                    Exception error = toException(ex);
+                    String message = getRootMessage(error);
+                    if (message != null && message.contains("requires 3 parameters")) {
+                        params.setArguments(buildThreeArgumentCommandArguments(command, buffer));
+                        executeCommandAsync(lspClient, params, command, buffer, null);
+                    } else {
+                        reportApplyError(error);
+                    }
+                    return null;
+                }));
     }
 
     /**

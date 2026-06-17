@@ -38,7 +38,6 @@ import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.util.Log;
-import org.gjt.sp.util.ThreadUtilities;
 
 import javax.swing.SwingUtilities;
 
@@ -67,9 +66,11 @@ final class LspHover {
         params.setTextDocument(new TextDocumentIdentifier(documentUri));
         params.setPosition(position);
 
-        ThreadUtilities.runInBackground(() ->
-            client.whenReady().thenCompose(ignored ->
-                client.getServer().getTextDocumentService().hover(params))
+        LspAsync.runOffEdt(() ->
+            client.whenReady()
+                .thenComposeAsync(ignored ->
+                    client.getServer().getTextDocumentService().hover(params),
+                    LspAsync.EXECUTOR)
                 .whenComplete((hover, ex) -> {
                     if (generation != REQUEST_GENERATION.get()) {
                         return;
