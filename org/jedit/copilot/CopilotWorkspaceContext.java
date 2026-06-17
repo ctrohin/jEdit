@@ -96,9 +96,29 @@ final class CopilotWorkspaceContext {
     }
 
     private static void appendDirectoryListing(StringBuilder sb, File root) {
+        String listing = formatDirectoryListing(root);
+        if (listing != null && !listing.isEmpty()) {
+            sb.append(listing);
+        }
+    }
+
+    private static volatile String cachedListingRoot;
+    private static volatile long cachedListingMtime;
+    private static volatile String cachedListing;
+
+    private static String formatDirectoryListing(File root) {
+        String path = root.getAbsolutePath();
+        long mtime = root.lastModified();
+        if (path.equals(cachedListingRoot) && mtime == cachedListingMtime
+            && cachedListing != null) {
+            return cachedListing;
+        }
         File[] children = root.listFiles();
         if (children == null || children.length == 0) {
-            return;
+            cachedListingRoot = path;
+            cachedListingMtime = mtime;
+            cachedListing = "";
+            return "";
         }
         Arrays.sort(children, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
         List<String> names = new ArrayList<>();
@@ -112,9 +132,13 @@ final class CopilotWorkspaceContext {
                 break;
             }
         }
-        if (!names.isEmpty()) {
-            sb.append("Top-level entries: ").append(String.join(", ", names)).append('\n');
-        }
+        String listing = names.isEmpty()
+            ? ""
+            : "Top-level entries: " + String.join(", ", names) + '\n';
+        cachedListingRoot = path;
+        cachedListingMtime = mtime;
+        cachedListing = listing;
+        return listing;
     }
 
     private static boolean shouldSkip(File file) {

@@ -16,7 +16,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.util.ThreadUtilities;
 
 /**
  * Git helpers for the Cursor integration (review and undo local file changes).
@@ -91,6 +94,12 @@ public final class GitCursorBridge {
 
     public static void reviewFile(View view, File repoRoot, String relativePath,
                                   Runnable onRepositoryChanged) {
+        ThreadUtilities.runInBackground(() ->
+            reviewFileBlocking(view, repoRoot, relativePath, onRepositoryChanged));
+    }
+
+    private static void reviewFileBlocking(View view, File repoRoot, String relativePath,
+                                           Runnable onRepositoryChanged) {
         if (view == null || repoRoot == null || relativePath == null || relativePath.isBlank()) {
             return;
         }
@@ -101,12 +110,14 @@ public final class GitCursorBridge {
         }
         for (GitModels.FileChange change : GitModels.parseStatus(result.output)) {
             if (relativePath.equals(change.path)) {
-                GitDiffDialog.show(view, repoRoot, change, runner, onRepositoryChanged);
+                SwingUtilities.invokeLater(() ->
+                    GitDiffDialog.show(view, repoRoot, change, runner, onRepositoryChanged));
                 return;
             }
         }
         GitModels.FileChange untracked = new GitModels.FileChange('?', '?', relativePath);
-        GitDiffDialog.show(view, repoRoot, untracked, runner, onRepositoryChanged);
+        SwingUtilities.invokeLater(() ->
+            GitDiffDialog.show(view, repoRoot, untracked, runner, onRepositoryChanged));
     }
 
     public static void revertFiles(File repoRoot, Map<String, String> baselines,

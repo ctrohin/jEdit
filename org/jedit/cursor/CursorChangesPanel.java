@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.util.ThreadUtilities;
 
 public final class CursorChangesPanel extends JPanel {
 
@@ -145,11 +146,17 @@ public final class CursorChangesPanel extends JPanel {
             return;
         }
         File workspace = CursorWorkspaceContext.workspaceRoot();
-        CursorWorkspaceChanges.undoAll(view, conversation, workspace);
-        refresh();
-        if (onChanged != null) {
-            onChanged.run();
-        }
+        undoAllButton.setEnabled(false);
+        reviewButton.setEnabled(false);
+        ThreadUtilities.runInBackground(() -> {
+            CursorWorkspaceChanges.undoAll(view, conversation, workspace);
+            SwingUtilities.invokeLater(() -> {
+                refresh();
+                if (onChanged != null) {
+                    onChanged.run();
+                }
+            });
+        });
     }
 
     private void reviewSelected() {
@@ -161,13 +168,16 @@ public final class CursorChangesPanel extends JPanel {
             return;
         }
         File workspace = CursorWorkspaceContext.workspaceRoot();
-        CursorWorkspaceChanges.reviewFile(view, conversation, workspace, selected, () -> {
-            CursorWorkspaceChanges.syncRunChanges(conversation, workspace);
-            SwingUtilities.invokeLater(this::refresh);
-            if (onChanged != null) {
-                onChanged.run();
-            }
-        });
+        CursorWorkspaceChanges.reviewFile(view, conversation, workspace, selected, () ->
+            ThreadUtilities.runInBackground(() -> {
+                CursorWorkspaceChanges.syncRunChanges(conversation, workspace);
+                SwingUtilities.invokeLater(() -> {
+                    refresh();
+                    if (onChanged != null) {
+                        onChanged.run();
+                    }
+                });
+            }));
     }
 
     private final class FileCellRenderer extends DefaultListCellRenderer {

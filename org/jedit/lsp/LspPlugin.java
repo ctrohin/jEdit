@@ -400,42 +400,49 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             return;
         }
 
-        final String modeName = resolveLspMode(view.getBuffer());
-        LspPlugin lspPlugin = getInstance();
-        if (lspPlugin == null || lspPlugin.stopped) {
-            return;
-        }
-        GenericLspClient client = lspPlugin.resolveClientForMode(modeName, view.getBuffer());
-        if (client != null && client.hasActiveSession() && client.isAlive()
-            && !client.isShuttingDown()) {
-            feature.run(view, client);
-        } else if (client != null) {
-            Log.log(Log.WARNING, LspPlugin.class,
-                "LSP server for " + modeName + " is not running, attempting restart");
-            if (lspPlugin.restartServer(client)) {
-                if (client.hasActiveSession()) {
-                    feature.run(view, client);
+        LspAsync.runOffEdt(() -> {
+            Buffer buffer = view.getBuffer();
+            if (buffer == null || buffer.isClosed()) {
+                return;
+            }
+
+            final String modeName = resolveLspMode(buffer);
+            LspPlugin lspPlugin = getInstance();
+            if (lspPlugin == null || lspPlugin.stopped) {
+                return;
+            }
+
+            GenericLspClient client = lspPlugin.resolveClientForMode(modeName, buffer);
+            if (client != null && client.hasActiveSession() && client.isAlive()
+                && !client.isShuttingDown()) {
+                LspAsync.runOnEdt(() -> feature.run(view, client));
+            } else if (client != null) {
+                Log.log(Log.WARNING, LspPlugin.class,
+                    "LSP server for " + modeName + " is not running, attempting restart");
+                if (lspPlugin.restartServer(client) && client.hasActiveSession()) {
+                    LspAsync.runOnEdt(() -> feature.run(view, client));
                 } else {
-                    Log.log(Log.ERROR, LspPlugin.class,
-                        "Failed to restart LSP server for " + modeName);
-                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                    LspAsync.runOnEdt(() -> {
+                        Log.log(Log.ERROR, LspPlugin.class,
+                            "Failed to restart LSP server for " + modeName);
+                        javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                    });
                 }
             } else {
-                Log.log(Log.ERROR, LspPlugin.class,
-                    "Failed to restart LSP server for " + modeName);
-                javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                LspAsync.runOnEdt(() -> {
+                    Log.log(Log.WARNING, LspPlugin.class,
+                        "LSP client not available for mode " + modeName);
+                    javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
+                });
             }
-        } else {
-            Log.log(Log.WARNING, LspPlugin.class, "LSP client not available for mode " + modeName);
-            javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
-        }
+        });
     }
 
     @EditBus.EBHandler
     public void handleBufferUpdate(BufferUpdate message) {
         Buffer buffer = message.getBuffer();
         if (message.getWhat() == BufferUpdate.LOADED) {
-            startLspForBuffer(buffer);
+            LspAsync.runOffEdt(() -> startLspForBuffer(buffer));
         } else if (message.getWhat() == BufferUpdate.CLOSED) {
             stopLspForBuffer(buffer);
         } else if (message.getWhat() == BufferUpdate.SAVED) {
@@ -1142,7 +1149,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
         for (Buffer buffer : openBuffers) {
             if (!buffer.isClosed()) {
-                startLspForBuffer(buffer);
+                Buffer openBuffer = buffer;
+                LspAsync.runOffEdt(() -> startLspForBuffer(openBuffer));
             }
         }
     }

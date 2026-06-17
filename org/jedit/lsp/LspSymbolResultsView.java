@@ -270,11 +270,12 @@ public class LspSymbolResultsView extends JPanel implements DefaultFocusComponen
         if (branch == null || branch.isLoaded() || branch.isLoading()) {
             return;
         }
-        GenericLspClient client = LspPlugin.getClientForBuffer(view.getBuffer());
+        GenericLspClient client = LspPlugin.getExistingClientForBuffer(view.getBuffer());
         if (client == null) {
             return;
         }
-        LspSymbolSearches.loadCallHierarchyChildren(view, client, branch.getItem(), branch);
+        LspAsync.runOffEdt(() ->
+            LspSymbolSearches.loadCallHierarchyChildren(view, client, branch.getItem(), branch));
     }
 
     void onCallHierarchyLoaded() {

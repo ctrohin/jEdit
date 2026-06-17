@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,21 @@ import com.google.gson.JsonParser;
  * Collects dependency / package names from the project tree for completion.
  */
 final class BuildConfigDependencyIndex {
+
+    private static final ConcurrentHashMap<String, CachedPackages> PACKAGE_CACHE =
+        new ConcurrentHashMap<>();
+
+    private static final class CachedPackages {
+        final long packageJsonMtime;
+        final long nodeModulesMtime;
+        final List<String> names;
+
+        CachedPackages(long packageJsonMtime, long nodeModulesMtime, List<String> names) {
+            this.packageJsonMtime = packageJsonMtime;
+            this.nodeModulesMtime = nodeModulesMtime;
+            this.names = names;
+        }
+    }
 
     private static final Pattern REQUIREMENTS_PACKAGE = Pattern.compile(
         "^\\s*([A-Za-z0-9][A-Za-z0-9._-]*)");
@@ -78,14 +94,36 @@ final class BuildConfigDependencyIndex {
         if (projectDir == null) {
             return List.of();
         }
+        if (kind == BuildConfigLspSupport.Kind.NPM) {
+            return cachedNpmPackages(projectDir);
+        }
         Set<String> names = new LinkedHashSet<>();
         switch (kind) {
-            case NPM -> collectNpm(projectDir, names);
             case FLUTTER -> collectFlutter(projectDir, documentText, names);
             case PIP -> collectPip(projectDir, documentText, fileName, names);
             default -> { }
         }
         return new ArrayList<>(names);
+    }
+
+    private static List<String> cachedNpmPackages(File projectDir) {
+        File packageJson = new File(projectDir, "package.json");
+        File nodeModules = new File(projectDir, "node_modules");
+        long packageJsonMtime = packageJson.isFile() ? packageJson.lastModified() : 0L;
+        long nodeModulesMtime = nodeModules.isDirectory() ? nodeModules.lastModified() : 0L;
+        String cacheKey = projectDir.getAbsolutePath();
+        CachedPackages cached = PACKAGE_CACHE.get(cacheKey);
+        if (cached != null
+            && cached.packageJsonMtime == packageJsonMtime
+            && cached.nodeModulesMtime == nodeModulesMtime) {
+            return cached.names;
+        }
+        Set<String> names = new LinkedHashSet<>();
+        collectNpm(projectDir, names);
+        List<String> result = new ArrayList<>(names);
+        PACKAGE_CACHE.put(cacheKey,
+            new CachedPackages(packageJsonMtime, nodeModulesMtime, result));
+        return result;
     }
 
     private static void collectNpm(File projectDir, Set<String> names) {

@@ -387,7 +387,7 @@ public final class LspGoToDefinition {
     }
 
     private static boolean hasLspClient(Buffer buffer) {
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+        GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
         return client != null && client.getServer() != null && client.isAlive();
     }
 
@@ -542,7 +542,7 @@ public final class LspGoToDefinition {
                         return;
                     }
 
-                    GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+                    GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
                     if (client == null || client.getServer() == null || !client.isAlive()) {
                         return;
                     }

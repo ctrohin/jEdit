@@ -222,19 +222,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void expandNode(FileNode node) {
-        expandNode(node, false);
-    }
-
-    private void expandNode(FileNode node, boolean sync) {
         if (node.isLoaded() || node.isLoading()) {
-            return;
-        }
-
-        if (sync) {
-            node.removeAllChildren();
-            addChildren(node, false);
-            node.setLoaded(true);
-            ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
             return;
         }
 
@@ -276,21 +264,26 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     public void locateFile() {
-        if (view.getBuffer() == null) return;
-        
+        if (view.getBuffer() == null) {
+            return;
+        }
+
         String path = view.getBuffer().getPath();
-        if (path == null) return;
+        if (path == null) {
+            return;
+        }
 
         File target = new File(path);
-        if (!target.exists()) return;
+        if (!target.exists()) {
+            return;
+        }
 
-        // Verify if it's within current workspace
-        if (currentWorkspace == null || !target.getAbsolutePath().startsWith(new File(currentWorkspace).getAbsolutePath())) {
+        if (currentWorkspace == null
+            || !target.getAbsolutePath().startsWith(new File(currentWorkspace).getAbsolutePath())) {
             Toast.showToast("File is not within current workspace.", this, 3000);
             return;
         }
 
-        // Build list of files from root to target
         ArrayList<File> breadcrumbs = new ArrayList<>();
         File current = target;
         while (current != null) {
@@ -302,27 +295,87 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         }
         Collections.reverse(breadcrumbs);
 
-        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        FileNode node = (FileNode) model.getRoot();
-        TreePath treePath = new TreePath(node);
+        if (breadcrumbs.isEmpty() || !(tree.getModel().getRoot() instanceof FileNode)) {
+            return;
+        }
 
+        final String workspace = currentWorkspace;
+        final List<File> trail = List.copyOf(breadcrumbs);
+        ThreadUtilities.runInBackground(() -> {
+            List<File[]> prefetched = prefetchBreadcrumbChildren(trail);
+            if (prefetched == null) {
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                if (!workspace.equals(currentWorkspace)) {
+                    return;
+                }
+                applyLocatedFile(trail, prefetched);
+            });
+        });
+    }
+
+    private List<File[]> prefetchBreadcrumbChildren(List<File> breadcrumbs) {
+        if (breadcrumbs.isEmpty()) {
+            return null;
+        }
+        List<File[]> levels = new ArrayList<>();
+        File dir = breadcrumbs.get(0);
         for (int i = 1; i < breadcrumbs.size(); i++) {
+            File[] children = getSortedChildren(dir);
+            levels.add(children);
             File crumb = breadcrumbs.get(i);
-            expandNode(node, true);
-            
-            boolean found = false;
-            for (int j = 0; j < node.getChildCount(); j++) {
-                FileNode child = (FileNode) node.getChildAt(j);
-                if (child.getUserObject().equals(crumb)) {
-                    node = child;
-                    treePath = treePath.pathByAddingChild(node);
-                    found = true;
+            File next = null;
+            for (File child : children) {
+                if (child.equals(crumb)) {
+                    next = child;
                     break;
                 }
             }
-            if (!found) return;
+            if (next == null) {
+                return null;
+            }
+            if (next.isDirectory() && i < breadcrumbs.size() - 1) {
+                dir = next;
+            }
+        }
+        return levels;
+    }
+
+    private void applyLocatedFile(List<File> breadcrumbs, List<File[]> prefetched) {
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        if (!(model.getRoot() instanceof FileNode node)) {
+            return;
         }
 
+        TreePath treePath = new TreePath(node);
+        for (int i = 1; i < breadcrumbs.size(); i++) {
+            File crumb = breadcrumbs.get(i);
+            File[] children = prefetched.get(i - 1);
+
+            if (!node.isLoaded()) {
+                node.removeAllChildren();
+                addChildNodes(node, children, false);
+                node.setLoaded(true);
+                node.setLoading(false);
+            }
+
+            FileNode childNode = null;
+            for (int j = 0; j < node.getChildCount(); j++) {
+                if (node.getChildAt(j) instanceof FileNode child
+                    && child.getUserObject().equals(crumb)) {
+                    childNode = child;
+                    break;
+                }
+            }
+            if (childNode == null) {
+                return;
+            }
+            node = childNode;
+            treePath = treePath.pathByAddingChild(node);
+        }
+
+        model.nodeStructureChanged((FileNode) model.getRoot());
         tree.setSelectionPath(treePath);
         tree.scrollPathToVisible(treePath);
     }

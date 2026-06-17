@@ -21,8 +21,6 @@
 
 package org.jedit.lsp;
 
-import javax.swing.SwingUtilities;
-
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.EditPane;
 import org.gjt.sp.jedit.View;
@@ -70,16 +68,18 @@ final class LspCompletionTriggers {
             return;
         }
 
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
-        if (client == null || !client.hasActiveSession() || !client.isAlive()) {
-            return;
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            if (view.getBuffer() != buffer || view.getTextArea().getCaretPosition() != caret) {
+        final String trigger = triggerCharacter;
+        LspAsync.runOffEdt(() -> {
+            GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
+            if (client == null || !client.hasActiveSession() || !client.isAlive()) {
                 return;
             }
-            LspCompletion.completeLspOnTrigger(view, client, triggerCharacter);
+            LspAsync.runOnEdt(() -> {
+                if (view.getBuffer() != buffer || view.getTextArea().getCaretPosition() != caret) {
+                    return;
+                }
+                LspCompletion.completeLspOnTrigger(view, client, trigger);
+            });
         });
     }
 
