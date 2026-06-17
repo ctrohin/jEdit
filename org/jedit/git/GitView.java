@@ -91,7 +91,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         refButton = new JButton(jEdit.getProperty("git.branch.menu"));
         refButton.addActionListener(e -> {
             if (repoRoot != null) {
-                GitRefMenu.show(refButton, view, repoRoot, runner, this::refreshRepository);
+                GitRefMenu.show(refButton, view, repoRoot, runner, lastHead,
+                    currentBranchNames(), this::refreshRepository);
             }
         });
         JButton fetchButton = actionButton("MatIcons.FETCH:22", "git.fetch", () -> runGitAsync("fetch"));
@@ -329,6 +330,14 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
             ? jEdit.getProperty("git.branch.menu")
             : lastHead.statusText());
         refButton.setToolTipText(lastHead.tooltip());
+    }
+
+    private List<String> currentBranchNames() {
+        List<String> names = new java.util.ArrayList<>(branchModel.size());
+        for (int i = 0; i < branchModel.size(); i++) {
+            names.add(branchModel.getElementAt(i).name);
+        }
+        return names;
     }
 
     private void runGitAndRefresh(String... args) {

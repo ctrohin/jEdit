@@ -73,14 +73,12 @@ final class GitHeadState {
 
     static List<String> listBranches(File repoRoot, GitRunner runner) {
         List<String> branches = new ArrayList<>();
-        GitRunner.Result result = runner.run(repoRoot, "branch", "--format=%(refname:short)");
+        GitRunner.Result result = runner.run(repoRoot, "branch", "--list");
         if (!result.success()) {
             return branches;
         }
-        for (String line : result.output.split("\n")) {
-            if (!line.isBlank()) {
-                branches.add(line.trim());
-            }
+        for (GitModels.Branch branch : GitModels.parseBranches(result.output)) {
+            branches.add(branch.name);
         }
         return branches;
     }

@@ -24,6 +24,7 @@ package org.jedit.git;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -58,6 +59,7 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
         private final JLabel label;
         private final GitRunner runner = new GitRunner();
         private String lastText = "";
+        private GitHeadState lastHead = GitHeadState.none();
         private int refreshGeneration;
 
         GitHeadWidget(View view) {
@@ -86,7 +88,8 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
                     if (repoRoot == null) {
                         return;
                     }
-                    GitRefMenu.show(label, view, repoRoot, runner, GitHeadWidget.this::refreshHead);
+                    GitRefMenu.show(label, view, repoRoot, runner, lastHead,
+                        List.of(), GitHeadWidget.this::refreshHead);
                 }
             });
         }
@@ -105,6 +108,7 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
             File repoRoot = GitRepository.resolveRoot(view.getBuffer());
             if (repoRoot == null) {
                 setTextIfChanged("");
+                lastHead = GitHeadState.none();
                 label.setToolTipText(jEdit.getProperty("git.head.tooltip.none"));
                 return;
             }
@@ -121,9 +125,11 @@ public final class GitStatusWidgetFactory implements StatusWidgetFactory {
                     }
                     if (!version.success()) {
                         setTextIfChanged("");
+                        lastHead = GitHeadState.none();
                         label.setToolTipText(jEdit.getProperty("git.git-missing"));
                         return;
                     }
+                    lastHead = head;
                     setTextIfChanged(head.statusText());
                     label.setToolTipText(head.tooltip());
                 });

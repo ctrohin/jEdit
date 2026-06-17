@@ -18,8 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
@@ -28,96 +26,91 @@ import org.gjt.sp.util.ThreadUtilities;
 
 final class GitRefMenu {
 
+    private static final String HEAD_APPLIED_KEY = "git.ref-menu.head-applied";
+
     private GitRefMenu() {}
 
     static void show(Component invoker, View view, File repoRoot, GitRunner runner,
                      Runnable onRepositoryChanged) {
+        show(invoker, view, repoRoot, runner, null, List.of(), onRepositoryChanged);
+    }
+
+    static void show(Component invoker, View view, File repoRoot, GitRunner runner,
+                     GitHeadState cachedHead, List<String> cachedBranches,
+                     Runnable onRepositoryChanged) {
         if (repoRoot == null) {
             return;
         }
-        JPopupMenu menu = build(view, repoRoot, onRepositoryChanged);
-        menu.show(invoker, 0, invoker.getHeight());
-    }
 
-    private static JPopupMenu build(View view, File repoRoot, Runnable onRepositoryChanged) {
         JPopupMenu menu = new JPopupMenu();
         JMenuItem loadingItem = new JMenuItem(jEdit.getProperty("git.loading"));
         loadingItem.setEnabled(false);
         menu.add(loadingItem);
-        JSeparator loadingSeparator = new JSeparator();
-        menu.add(loadingSeparator);
-
-        ThreadUtilities.runInBackground(() -> {
-            GitRunner bgRunner = new GitRunner();
-            GitHeadState head = GitHeadState.query(repoRoot, bgRunner);
-            SwingUtilities.invokeLater(() -> {
-                menu.remove(loadingItem);
-                menu.remove(loadingSeparator);
-                if (head.kind != GitHeadState.Kind.NONE) {
-                    JMenuItem currentItem = new JMenuItem(jEdit.getProperty(
-                        "git.ref-menu.current", new String[] {head.menuLabel()}));
-                    currentItem.setEnabled(false);
-                    menu.insert(currentItem, 0);
-                    menu.insert(new JSeparator(), 1);
-                }
-            });
-        });
 
         JMenu branchesMenu = new JMenu(jEdit.getProperty("git.ref-menu.branches"));
-        branchesMenu.addMenuListener(new MenuListener() {
-            @Override
-            public void menuSelected(MenuEvent e) {
-                populateBranchesAsync(branchesMenu, view, repoRoot, onRepositoryChanged);
-            }
-
-            @Override
-            public void menuDeselected(MenuEvent e) {
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent e) {
-            }
-        });
         menu.add(branchesMenu);
 
         JMenu tagsMenu = new JMenu(jEdit.getProperty("git.ref-menu.tags"));
-        tagsMenu.addMenuListener(new MenuListener() {
-            @Override
-            public void menuSelected(MenuEvent e) {
-                populateTagsAsync(tagsMenu, view, repoRoot, onRepositoryChanged);
-            }
-
-            @Override
-            public void menuDeselected(MenuEvent e) {
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent e) {
-            }
-        });
         menu.add(tagsMenu);
 
         menu.addSeparator();
         JMenuItem createBranch = new JMenuItem(jEdit.getProperty("git.create-branch"));
-        createBranch.addActionListener(e -> promptCreateBranch(view, repoRoot, onRepositoryChanged));
+        createBranch.addActionListener(e ->
+            promptCreateBranch(view, repoRoot, onRepositoryChanged));
         menu.add(createBranch);
-        return menu;
-    }
 
-    private static void populateBranchesAsync(JMenu menu, View view, File repoRoot,
-                                              Runnable onRepositoryChanged) {
-        menu.removeAll();
-        JMenuItem loading = new JMenuItem(jEdit.getProperty("git.loading"));
-        loading.setEnabled(false);
-        menu.add(loading);
+        if (cachedHead != null && cachedHead.kind != GitHeadState.Kind.NONE) {
+            applyHead(menu, loadingItem, cachedHead);
+        }
+        if (cachedBranches != null && !cachedBranches.isEmpty()) {
+            GitHeadState head = cachedHead != null ? cachedHead : GitHeadState.none();
+            populateBranches(branchesMenu, view, repoRoot, head, cachedBranches,
+                onRepositoryChanged);
+        } else {
+            JMenuItem branchLoading = new JMenuItem(jEdit.getProperty("git.loading"));
+            branchLoading.setEnabled(false);
+            branchesMenu.add(branchLoading);
+        }
+
+        JMenuItem tagLoading = new JMenuItem(jEdit.getProperty("git.loading"));
+        tagLoading.setEnabled(false);
+        tagsMenu.add(tagLoading);
+
+        menu.show(invoker, 0, invoker.getHeight());
 
         ThreadUtilities.runInBackground(() -> {
-            GitRunner runner = new GitRunner();
-            GitHeadState head = GitHeadState.query(repoRoot, runner);
-            List<String> branches = GitHeadState.listBranches(repoRoot, runner);
-            SwingUtilities.invokeLater(() -> populateBranches(menu, view, repoRoot, head,
-                branches, onRepositoryChanged));
+            GitRunner bgRunner = new GitRunner();
+            GitHeadState head = GitHeadState.query(repoRoot, bgRunner);
+            List<String> branches = GitHeadState.listBranches(repoRoot, bgRunner);
+            List<String> tags = GitHeadState.listTags(repoRoot, bgRunner);
+            SwingUtilities.invokeLater(() -> {
+                if (!menu.isVisible()) {
+                    return;
+                }
+                applyHead(menu, loadingItem, head);
+                populateBranches(branchesMenu, view, repoRoot, head, branches,
+                    onRepositoryChanged);
+                populateTags(tagsMenu, view, repoRoot, head, tags, onRepositoryChanged);
+            });
         });
+    }
+
+    private static void applyHead(JPopupMenu menu, JMenuItem loadingItem, GitHeadState head) {
+        if (loadingItem.getParent() == menu) {
+            menu.remove(loadingItem);
+        }
+        if (head.kind == GitHeadState.Kind.NONE) {
+            return;
+        }
+        if (Boolean.TRUE.equals(menu.getClientProperty(HEAD_APPLIED_KEY))) {
+            return;
+        }
+        menu.putClientProperty(HEAD_APPLIED_KEY, Boolean.TRUE);
+        JMenuItem currentItem = new JMenuItem(jEdit.getProperty(
+            "git.ref-menu.current", new String[] {head.menuLabel()}));
+        currentItem.setEnabled(false);
+        menu.insert(currentItem, 0);
+        menu.insert(new JSeparator(), 1);
     }
 
     private static void populateBranches(JMenu menu, View view, File repoRoot,
@@ -141,22 +134,6 @@ final class GitRefMenu {
             }
             menu.add(item);
         }
-    }
-
-    private static void populateTagsAsync(JMenu menu, View view, File repoRoot,
-                                          Runnable onRepositoryChanged) {
-        menu.removeAll();
-        JMenuItem loading = new JMenuItem(jEdit.getProperty("git.loading"));
-        loading.setEnabled(false);
-        menu.add(loading);
-
-        ThreadUtilities.runInBackground(() -> {
-            GitRunner runner = new GitRunner();
-            GitHeadState head = GitHeadState.query(repoRoot, runner);
-            List<String> tags = GitHeadState.listTags(repoRoot, runner);
-            SwingUtilities.invokeLater(() -> populateTags(menu, view, repoRoot, head,
-                tags, onRepositoryChanged));
-        });
     }
 
     private static void populateTags(JMenu menu, View view, File repoRoot,
