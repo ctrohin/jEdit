@@ -294,6 +294,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="show-structure-lsp">
+	<CODE>
+		org.jedit.lsp.LspPlugin.showStructure(view);
+	</CODE>
+</ACTION>
+
 <ACTION NAME="cursor-login">
 	<CODE>
 		org.jedit.cursor.CursorPlugin.login(view);

@@ -173,6 +173,46 @@ public abstract class DockableWindowManager extends JPanel
 	public static final String RIGHT = "right";
 	//}}}
 
+	//{{{ normalizeDockPosition() method
+	/**
+	 * Returns a supported docking position, mapping legacy or unknown values
+	 * to a valid one.
+	 * @since jEdit 5.8
+	 */
+	public static String normalizeDockPosition(String position)
+	{
+		if (position == null || position.isEmpty())
+			return FLOATING;
+		if (FLOATING.equals(position)
+			|| TOP.equals(position)
+			|| LEFT.equals(position)
+			|| BOTTOM.equals(position)
+			|| RIGHT.equals(position))
+		{
+			return position;
+		}
+		// Legacy side sub-slots from removed split-side docking experiment
+		if (position.startsWith("left"))
+			return LEFT;
+		if (position.startsWith("right"))
+			return RIGHT;
+		Log.log(Log.WARNING, DockableWindowManager.class,
+			"Unknown dock position '" + position + "', using floating");
+		return FLOATING;
+	}
+
+	/**
+	 * @return true if the position docks into one of the four view edges.
+	 */
+	public static boolean isDockedPosition(String position)
+	{
+		return TOP.equals(position)
+			|| LEFT.equals(position)
+			|| BOTTOM.equals(position)
+			|| RIGHT.equals(position);
+	}
+	//}}}
+
 	// {{{ data members
 	private final Map<PluginJAR, Set<String>> plugins = new HashMap<PluginJAR, Set<String>>();
 	private final Map<String, String> positions = new HashMap<String, String>();
@@ -603,7 +643,8 @@ public abstract class DockableWindowManager extends JPanel
 	// {{{ getDockablePosition()
 	protected String getDockablePosition(String name)
 	{
-		return jEdit.getProperty(name + ".dock-position", FLOATING);
+		return normalizeDockPosition(
+			jEdit.getProperty(name + ".dock-position", FLOATING));
 	} // }}}
 
 	// {{{ focusDockable

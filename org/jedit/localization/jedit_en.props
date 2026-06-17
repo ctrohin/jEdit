@@ -169,6 +169,7 @@ document-symbols-lsp.label=$Document Symbols (LSP)
 workspace-symbol-lsp.label=$Workspace Symbol Search (LSP)
 call-hierarchy-lsp.label=$Call Hierarchy (LSP)
 show-symbol-results-lsp.label=Show LSP Symbol $Results
+show-structure-lsp.label=Show LSP $Structure
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 
@@ -2540,6 +2541,16 @@ lsp-symbol-results.kind.declaration=Declaration
 lsp-symbol-results.kind.document-symbols=Document Symbols
 lsp-symbol-results.kind.workspace-symbols=Workspace Symbols
 lsp-symbol-results.kind.call-hierarchy=Call Hierarchy
+
+lsp-structure.label=$Structure
+lsp-structure.title=Structure
+lsp-structure.empty=No symbols in this file
+lsp-structure.loading=Loading structure...
+lsp-structure.refresh=Refresh structure
+lsp-structure.caption={0} — {1,number,integer} symbol(s)
+lsp-structure.no-server=No LSP server for this file
+lsp-structure.unsupported=Document symbols not supported by this language server
+lsp-structure.error=Could not load structure
 #}}}
 
 #{{{ I/O progress monitor

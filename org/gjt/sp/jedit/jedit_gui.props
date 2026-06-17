@@ -131,7 +131,7 @@ view.context=cut copy paste paste-previous paste-deleted - \
 	select-block to-upper to-lower - hypersearch-word goto-definition-lsp \
 	find-references-lsp find-implementations-lsp type-definition-lsp \
 	find-declaration-lsp call-hierarchy-lsp document-symbols-lsp \
-	workspace-symbol-lsp show-symbol-results-lsp - \
+	workspace-symbol-lsp show-symbol-results-lsp show-structure-lsp - \
 	add-marker - collapse-fold expand-fold narrow-to-fold
 #}}}
 
@@ -461,6 +461,7 @@ utils=vfs.browser \
 	  workspace \
 	  lsp-problems \
 	  lsp-symbol-results \
+	  lsp-structure \
 	  build-output \
 	  ant-project \
 	  maven-project \
@@ -1070,6 +1071,11 @@ lsp-symbol-results.title=Symbol Results
 lsp-symbol-results.label=Symbol Results
 lsp-symbol-results.dock-position=bottom
 lsp-symbol-results.icon=MatIcons.ACCOUNT_TREE:22
+
+lsp-structure.title=Structure
+lsp-structure.label=Structure
+lsp-structure.dock-position=left
+lsp-structure.icon=MatIcons.ACCOUNT_TREE:22
 
 build-output.title=Build
 build-output.label=Build

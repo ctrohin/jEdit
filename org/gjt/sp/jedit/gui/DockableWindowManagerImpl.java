@@ -341,14 +341,9 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 
 		if(lastEntry.win != null)
 		{
-			if(lastEntry.position.equals(FLOATING)
-				&& lastEntry.container == null)
-			{
-				DockableWindowContainer fwc = new FloatingWindowContainer(
-					this,view.isPlainView());
-				lastEntry.container = fwc;
-				lastEntry.container.register(lastEntry);
-			}
+			ensureEntryContainer(lastEntry);
+			if (lastEntry.container == null)
+				return;
 			showStack.push(name);
 			lastEntry.container.show(lastEntry);
 			Object reason = DockableWindowUpdate.ACTIVATED;
@@ -375,7 +370,10 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		}
 		if(entry.win == null)
 			return;
-		entry.container.show(null);
+		if(entry.container == null)
+			ensureEntryContainer(entry);
+		if(entry.container != null)
+			entry.container.show(null);
 	} //}}}
 
 	//{{{ getDockable() method
@@ -819,7 +817,8 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 				// is not yet created if the plugin has some jars.
 				continue;
 			}
-			String newPosition = jEdit.getProperty(dockable + ".dock-position", FLOATING);
+			String newPosition = normalizeDockPosition(
+				jEdit.getProperty(dockable + ".dock-position", FLOATING));
 			if (newPosition.equals(entry.position))
 				continue;
 
@@ -835,22 +834,10 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 				} else entry.win = null;
 			}
 
-			if (newPosition.equals(FLOATING))
-			{
-			} else
-			{
-				if (newPosition.equals(TOP)) entry.container = top;
-				else if (newPosition.equals(LEFT)) entry.container = left;
-				else if (newPosition.equals(BOTTOM)) entry.container = bottom;
-				else if (newPosition.equals(RIGHT)) entry.container = right;
-				else
-				{
-					Log.log(Log.WARNING, this, "Unknown position: " + newPosition);
-					continue;
-				}
+			assignEntryContainer(entry);
 
+			if (entry.container != null)
 				entry.container.register(entry);
-			}
 		}
 
 		top.sortDockables();
@@ -875,22 +862,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		else
 		{
 			e = new Entry(factory);
-			if(e.position.equals(FLOATING))
-				/* nothing to do */;
-			else if(e.position.equals(TOP))
-				e.container = top;
-			else if(e.position.equals(LEFT))
-				e.container = left;
-			else if(e.position.equals(BOTTOM))
-				e.container = bottom;
-			else if(e.position.equals(RIGHT))
-				e.container = right;
-			else
-			{
-				Log.log(Log.WARNING,this,
-					"Unknown position: "
-					+ e.position);
-			}
+			assignEntryContainer(e);
 
 			if(e.container != null)
 				e.container.register(e);
@@ -932,6 +904,53 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		return returnValue.iterator();
 	} //}}}
 
+	private void assignEntryContainer(Entry entry)
+	{
+		if (entry.position.equals(FLOATING))
+			entry.container = null;
+		else if (entry.position.equals(TOP))
+			entry.container = top;
+		else if (entry.position.equals(LEFT))
+			entry.container = left;
+		else if (entry.position.equals(BOTTOM))
+			entry.container = bottom;
+		else if (entry.position.equals(RIGHT))
+			entry.container = right;
+		else
+		{
+			Log.log(Log.WARNING, this,
+				"Unknown position after normalization: " + entry.position);
+			entry.position = FLOATING;
+			entry.container = null;
+		}
+	}
+
+	private void ensureEntryContainer(Entry entry)
+	{
+		if (entry.container != null)
+			return;
+
+		entry.position = normalizeDockPosition(entry.position);
+		if (entry.position.equals(FLOATING))
+		{
+			DockableWindowContainer fwc = new FloatingWindowContainer(
+				this, view.isPlainView());
+			entry.container = fwc;
+			entry.container.register(entry);
+			return;
+		}
+
+		assignEntryContainer(entry);
+		if (entry.container == null)
+		{
+			Log.log(Log.ERROR, this,
+				"Could not resolve container for dockable "
+				+ entry.factory.name + " at " + entry.position);
+			return;
+		}
+		entry.container.register(entry);
+	}
+
 	private boolean continuousLayout;
 
 	//{{{ Entry class
@@ -952,8 +971,8 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		//{{{ Entry constructor
 		Entry(DockableWindowFactory.Window factory)
 		{
-			this(factory,jEdit.getProperty(factory.name
-				+ ".dock-position",FLOATING));
+			this(factory, normalizeDockPosition(jEdit.getProperty(factory.name
+				+ ".dock-position", FLOATING)));
 		} //}}}
 
 
@@ -995,7 +1014,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		Entry(DockableWindowFactory.Window factory, String position)
 		{
 			this.factory = factory;
-			this.position = position;
+			this.position = normalizeDockPosition(position);
 
 			// get the title here, not in the factory constructor,
 			// since the factory might be created before a plugin's

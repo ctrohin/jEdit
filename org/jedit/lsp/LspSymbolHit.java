@@ -115,6 +115,28 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
         }
     }
 
+    public boolean containsOffset(Buffer buffer, int offset) {
+        if (buffer == null) {
+            return false;
+        }
+        try {
+            int caretLine = buffer.getLineOfOffset(offset);
+            int caretColumn = offset - buffer.getLineStartOffset(caretLine);
+            if (caretLine < line || caretLine > endLine) {
+                return false;
+            }
+            if (caretLine == line && caretColumn < character) {
+                return false;
+            }
+            if (caretLine == endLine && caretColumn > endCharacter) {
+                return false;
+            }
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     public String formatLineColumn() {
         return (line + 1) + ":" + (character + 1);
     }

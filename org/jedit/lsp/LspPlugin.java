@@ -287,6 +287,10 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
     }
 
+    public static void showStructure(View view) {
+        LspStructureView.show(view);
+    }
+
     /**
      * Show method parameter info when the caret is inside a method call's parentheses.
      */
@@ -722,6 +726,8 @@ public class LspPlugin extends EditPlugin implements EBComponent {
             pendingChanges.clear();
             LspDiagnosticsHub.getInstance().setDiagnostics(
                 LspDocumentUri.pathToUri(buffer.getPath()), List.of());
+            LspStructureHub.getInstance().clear(
+                LspDocumentUri.pathToUri(buffer.getPath()));
 
             if (!wasOpenOnServer) {
                 return;
@@ -1008,6 +1014,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
 
     private static void clearAllDiagnostics() {
         LspDiagnosticsHub.getInstance().clearAll();
+        LspStructureHub.getInstance().clearAll();
     }
 
     private void clearDiagnosticsForClient(GenericLspClient client) {

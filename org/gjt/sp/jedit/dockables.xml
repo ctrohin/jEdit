@@ -30,6 +30,9 @@
 	<DOCKABLE NAME="lsp-symbol-results" MOVABLE="TRUE">
 		new org.jedit.lsp.LspSymbolResultsView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="lsp-structure" MOVABLE="TRUE">
+		new org.jedit.lsp.LspStructureView(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="build-output" MOVABLE="TRUE">
 		new org.jedit.build.BuildOutputView(view);
 	</DOCKABLE>
