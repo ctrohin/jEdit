@@ -76,6 +76,7 @@ public class LspStructureView extends JPanel
     private Buffer trackedBuffer;
     private LspStructureHub.StructureSnapshot lastRenderedSnapshot;
     private Timer caretSyncTimer;
+    private Timer bufferSwitchTimer;
 
     public LspStructureView(View view) {
         super(new BorderLayout(0, 4));
@@ -159,6 +160,10 @@ public class LspStructureView extends JPanel
             caretSyncTimer.stop();
             caretSyncTimer = null;
         }
+        if (bufferSwitchTimer != null) {
+            bufferSwitchTimer.stop();
+            bufferSwitchTimer = null;
+        }
         super.removeNotify();
     }
 
@@ -171,9 +176,7 @@ public class LspStructureView extends JPanel
     public void handleEditPaneUpdate(EditPaneUpdate message) {
         if (message.getEditPane().getView().equals(view)
             && EditPaneUpdate.BUFFER_CHANGED.equals(message.getWhat())) {
-            lastRenderedSnapshot = null;
-            trackBuffer(view.getBuffer());
-            LspStructureHub.getInstance().requestRefresh(view.getBuffer());
+            onActiveBufferChanged();
         }
     }
 
@@ -181,9 +184,7 @@ public class LspStructureView extends JPanel
     public void handleViewUpdate(ViewUpdate message) {
         if (message.getView().equals(view)
             && ViewUpdate.EDIT_PANE_CHANGED.equals(message.getWhat())) {
-            lastRenderedSnapshot = null;
-            trackBuffer(view.getBuffer());
-            LspStructureHub.getInstance().requestRefresh(view.getBuffer());
+            onActiveBufferChanged();
         }
     }
 
@@ -201,6 +202,18 @@ public class LspStructureView extends JPanel
             && EditPaneUpdate.POSITION_CHANGING.equals(message.getWhat())) {
             scheduleCaretSync();
         }
+    }
+
+    private void onActiveBufferChanged() {
+        lastRenderedSnapshot = null;
+        trackBuffer(view.getBuffer());
+        javax.swing.SwingUtilities.invokeLater(this::refreshTree);
+        if (bufferSwitchTimer == null) {
+            bufferSwitchTimer = new Timer(200, e ->
+                LspStructureHub.getInstance().requestRefresh(view.getBuffer()));
+            bufferSwitchTimer.setRepeats(false);
+        }
+        bufferSwitchTimer.restart();
     }
 
     private void trackBuffer(Buffer buffer) {
@@ -249,7 +262,7 @@ public class LspStructureView extends JPanel
             }
         }
         treeModel.reload();
-        expandStructureNodes();
+        javax.swing.SwingUtilities.invokeLater(this::expandStructureNodes);
         lastRenderedSnapshot = snapshot;
         updateCaption(buffer, snapshot);
         scheduleCaretSync();

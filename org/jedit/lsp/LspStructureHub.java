@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.SwingUtilities;
@@ -19,7 +20,6 @@ import javax.swing.Timer;
 
 import org.eclipse.lsp4j.DocumentSymbolParams;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
-import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.util.Log;
 
@@ -123,7 +123,10 @@ public final class LspStructureHub {
         if (buffer == null) {
             return;
         }
+        LspAsync.runOffEdt(() -> fetchDocumentSymbols(buffer));
+    }
 
+    private void fetchDocumentSymbols(Buffer buffer) {
         String uri = LspDocumentUri.pathToUri(buffer.getPath());
         int generation = ++fetchGeneration;
         StructureSnapshot existing;
@@ -136,37 +139,43 @@ public final class LspStructureHub {
             setSnapshot(uri, StructureSnapshot.loading(uri));
         }
 
-        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
-        if (client == null || !client.hasActiveSession() || !client.isAlive()
-            || client.isShuttingDown()) {
+        GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
+        if (client == null || !client.hasActiveSession() || client.isShuttingDown()) {
             setSnapshot(uri, StructureSnapshot.unavailable(uri,
                 "lsp-structure.no-server"));
             return;
         }
 
         LspPlugin.flushBufferChangesAsync(buffer)
-            .thenCompose(ignored -> client.whenReady())
-            .thenCompose(ignored -> client.getServer().getTextDocumentService()
-                .documentSymbol(documentSymbolParams(uri)))
-            .thenAccept(symbols -> {
+            .thenComposeAsync(ignored -> client.whenReady(), LspAsync.EXECUTOR)
+            .thenComposeAsync(ignored -> {
+                if (client.shouldSkipDocumentSymbolRequest()) {
+                    return CompletableFuture.failedFuture(
+                        new UnsupportedOperationException("documentSymbol"));
+                }
+                return client.getServer().getTextDocumentService()
+                    .documentSymbol(documentSymbolParams(uri));
+            }, LspAsync.EXECUTOR)
+            .thenAcceptAsync(symbols -> {
                 if (generation != fetchGeneration) {
                     return;
                 }
                 List<LspSymbolHit> hits = LspLocations.fromDocumentSymbols(uri, symbols);
-                setSnapshot(uri, StructureSnapshot.ready(uri, hits));
-            })
+                LspAsync.runOnEdt(() ->
+                    setSnapshot(uri, StructureSnapshot.ready(uri, hits)));
+            }, LspAsync.EXECUTOR)
             .exceptionally(ex -> {
                 if (generation != fetchGeneration) {
                     return null;
                 }
-                if (isUnsupportedMethod(ex)) {
-                    setSnapshot(uri, StructureSnapshot.unavailable(uri,
-                        "lsp-structure.unsupported"));
+                if (LspRpcSupport.isUnsupportedMethod(ex)) {
+                    LspAsync.runOnEdt(() -> setSnapshot(uri,
+                        StructureSnapshot.unavailable(uri, "lsp-structure.unsupported")));
                 } else {
                     Log.log(Log.ERROR, LspStructureHub.class,
                         "Error fetching document symbols for " + buffer.getPath(), ex);
-                    setSnapshot(uri, StructureSnapshot.unavailable(uri,
-                        "lsp-structure.error"));
+                    LspAsync.runOnEdt(() -> setSnapshot(uri,
+                        StructureSnapshot.unavailable(uri, "lsp-structure.error")));
                 }
                 return null;
             });
@@ -203,17 +212,6 @@ public final class LspStructureHub {
         DocumentSymbolParams params = new DocumentSymbolParams();
         params.setTextDocument(new TextDocumentIdentifier(uri));
         return params;
-    }
-
-    private static boolean isUnsupportedMethod(Throwable ex) {
-        Throwable current = ex;
-        while (current != null) {
-            if (current instanceof ResponseErrorException responseError) {
-                return responseError.getResponseError().getCode() == -32601;
-            }
-            current = current.getCause();
-        }
-        return false;
     }
 
     public static final class StructureSnapshot {

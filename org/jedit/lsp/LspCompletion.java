@@ -221,7 +221,7 @@ public class LspCompletion extends CompletionPopup {
             Buffer buffer = view.getBuffer();
 
             LspPlugin.flushBufferChangesAsync(buffer)
-                .thenCompose(ignored -> requestCompletion(client, request))
+                .thenComposeAsync(ignored -> requestCompletion(client, request), LspAsync.EXECUTOR)
                 .whenComplete((result, ex) ->
                     handleCompletionResult(client, request, result, ex));
         }

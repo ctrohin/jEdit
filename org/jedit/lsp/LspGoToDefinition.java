@@ -129,8 +129,10 @@ public final class LspGoToDefinition {
         params.setTextDocument(new TextDocumentIdentifier(documentUri));
         params.setPosition(position);
 
-        lspClient.whenReady().thenCompose(ignored ->
-            lspClient.getServer().getTextDocumentService().definition(params))
+        lspClient.whenReady()
+            .thenComposeAsync(ignored ->
+                lspClient.getServer().getTextDocumentService().definition(params),
+                LspAsync.EXECUTOR)
             .thenAccept(result -> SwingUtilities.invokeLater(() ->
                 handleDefinitionResult(view, result, origin)))
             .exceptionally(ex -> {

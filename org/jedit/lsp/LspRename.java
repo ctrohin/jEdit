@@ -79,8 +79,10 @@ public final class LspRename {
         prepareParams.setTextDocument(versionedDocument(buffer, documentUri));
         prepareParams.setPosition(position);
 
-        lspClient.whenReady().thenCompose(ignored ->
-            prepareRenameWithRetry(lspClient, prepareParams, ANALYSIS_RETRY_COUNT))
+        lspClient.whenReady()
+            .thenComposeAsync(ignored ->
+                prepareRenameWithRetry(lspClient, prepareParams, ANALYSIS_RETRY_COUNT),
+                LspAsync.EXECUTOR)
             .thenAccept(result -> SwingUtilities.invokeLater(() ->
                 handlePrepareRename(view, lspClient, buffer, documentUri, position, caret, result)))
             .exceptionally(ex -> {
@@ -128,14 +130,15 @@ public final class LspRename {
         }
 
         LspPlugin.republishBufferToServerAsync(buffer)
-            .thenCompose(ignored -> scheduleRetry(() -> {
+            .thenComposeAsync(ignored -> scheduleRetry(() -> {
                 RenameParams renameParams = new RenameParams();
                 renameParams.setTextDocument(versionedDocument(buffer, documentUri));
                 renameParams.setPosition(position);
                 renameParams.setNewName(trimmedName);
-                return lspClient.whenReady().thenCompose(ready ->
-                    renameWithRetry(lspClient, renameParams, ANALYSIS_RETRY_COUNT));
-            }))
+                return lspClient.whenReady().thenComposeAsync(ready ->
+                    renameWithRetry(lspClient, renameParams, ANALYSIS_RETRY_COUNT),
+                    LspAsync.EXECUTOR);
+            }), LspAsync.EXECUTOR)
             .thenAccept(edit -> SwingUtilities.invokeLater(() -> applyRenameEdit(edit)))
             .exceptionally(ex -> {
                 Log.log(Log.ERROR, LspRename.class, "Error in LSP rename", ex);

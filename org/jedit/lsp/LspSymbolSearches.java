@@ -115,8 +115,8 @@ public final class LspSymbolSearches {
         String title = buffer.getName();
 
         LspPlugin.flushBufferChangesAsync(buffer)
-            .thenCompose(ignored -> lspClient.whenReady())
-            .thenCompose(ignored ->
+            .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+            .thenComposeAsync(ignored ->
                 lspClient.getServer().getTextDocumentService().documentSymbol(
                     documentSymbolParams(uri)))
             .thenAccept(symbols -> SwingUtilities.invokeLater(() -> {
@@ -150,8 +150,8 @@ public final class LspSymbolSearches {
         final String finalQuery = query;
         Buffer buffer = view.getBuffer();
         LspPlugin.flushBufferChangesAsync(buffer)
-            .thenCompose(ignored -> lspClient.whenReady())
-            .thenCompose(ignored -> {
+            .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+            .thenComposeAsync(ignored -> {
                 WorkspaceSymbolParams params = new WorkspaceSymbolParams();
                 params.setQuery(finalQuery);
                 return lspClient.getServer().getWorkspaceService().symbol(params);
@@ -181,8 +181,8 @@ public final class LspSymbolSearches {
         String query = symbolNameAtCaret(buffer, caret);
 
         LspPlugin.flushBufferChangesAsync(buffer)
-            .thenCompose(ignored -> lspClient.whenReady())
-            .thenCompose(ignored -> {
+            .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+            .thenComposeAsync(ignored -> {
                 CallHierarchyPrepareParams params = new CallHierarchyPrepareParams();
                 params.setTextDocument(new TextDocumentIdentifier(uri));
                 params.setPosition(position);
@@ -214,21 +214,21 @@ public final class LspSymbolSearches {
         LspSymbolSearchHub.getInstance().fireStructureChanged();
 
         CompletableFuture<List<LspSymbolHit>> incomingFuture =
-            lspClient.whenReady().thenCompose(ignored -> {
+            lspClient.whenReady().thenComposeAsync(ignored -> {
                 CallHierarchyIncomingCallsParams params = new CallHierarchyIncomingCallsParams();
                 params.setItem(item);
                 return lspClient.getServer().getTextDocumentService()
                     .callHierarchyIncomingCalls(params)
                     .thenApply(LspLocations::fromIncomingCalls);
-            });
+            }, LspAsync.EXECUTOR);
         CompletableFuture<List<LspSymbolHit>> outgoingFuture =
-            lspClient.whenReady().thenCompose(ignored -> {
+            lspClient.whenReady().thenComposeAsync(ignored -> {
                 CallHierarchyOutgoingCallsParams params = new CallHierarchyOutgoingCallsParams();
                 params.setItem(item);
                 return lspClient.getServer().getTextDocumentService()
                     .callHierarchyOutgoingCalls(params)
                     .thenApply(LspLocations::fromOutgoingCalls);
-            });
+            }, LspAsync.EXECUTOR);
 
         incomingFuture.thenCombine(outgoingFuture, (incoming, outgoing) -> {
             branch.setIncoming(LspSymbolHit.sortedCopy(incoming));
@@ -287,15 +287,15 @@ public final class LspSymbolSearches {
         String query = symbolNameAtCaret(buffer, caret);
 
         LspPlugin.flushBufferChangesAsync(buffer)
-            .thenCompose(ignored -> lspClient.whenReady())
-            .thenCompose(ignored ->
+            .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
+            .thenComposeAsync(ignored ->
                 search.search(lspClient.getServer().getTextDocumentService(), uri, position))
             .thenAccept(locations -> SwingUtilities.invokeLater(() ->
                 publishOrFeedback(view,
                     LspSymbolSearchResult.forLocations(kind, query, locations),
                     query)))
             .exceptionally(ex -> {
-                if (unsupportedFallback != null && isUnsupportedMethod(ex)) {
+                if (unsupportedFallback != null && LspRpcSupport.isUnsupportedMethod(ex)) {
                     unsupportedFallback.run();
                     return null;
                 }
@@ -334,7 +334,7 @@ public final class LspSymbolSearches {
     }
 
     private static void logAndFeedback(View view, String feature, Throwable ex) {
-        if (isUnsupportedMethod(ex)) {
+        if (LspRpcSupport.isUnsupportedMethod(ex)) {
             Log.log(Log.WARNING, LspSymbolSearches.class,
                 "LSP " + feature + " is not supported by this language server");
             SwingUtilities.invokeLater(() ->
@@ -345,24 +345,6 @@ public final class LspSymbolSearches {
             "Error requesting LSP " + feature, ex);
         SwingUtilities.invokeLater(() ->
             UIManager.getLookAndFeel().provideErrorFeedback(view));
-    }
-
-    private static boolean isUnsupportedMethod(Throwable ex) {
-        Throwable cause = ex;
-        while (cause != null) {
-            if (cause instanceof ResponseErrorException responseError) {
-                String message = responseError.getMessage();
-                if (message != null && message.contains("Unknown method")) {
-                    return true;
-                }
-            }
-            String message = cause.getMessage();
-            if (message != null && message.contains("Unknown method")) {
-                return true;
-            }
-            cause = cause.getCause();
-        }
-        return false;
     }
 
     private static List<LspSymbolHit> parseWorkspaceSymbols(

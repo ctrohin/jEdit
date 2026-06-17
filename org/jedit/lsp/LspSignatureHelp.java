@@ -141,8 +141,10 @@ final class LspSignatureHelp {
         params.setContext(context);
 
         int generation = REQUEST_GENERATION.incrementAndGet();
-        lspClient.whenReady().thenCompose(ignored ->
-            lspClient.getServer().getTextDocumentService().signatureHelp(params))
+        lspClient.whenReady()
+            .thenComposeAsync(ignored ->
+                lspClient.getServer().getTextDocumentService().signatureHelp(params),
+                LspAsync.EXECUTOR)
             .whenComplete((help, ex) -> {
                 if (generation != REQUEST_GENERATION.get()) {
                     return;

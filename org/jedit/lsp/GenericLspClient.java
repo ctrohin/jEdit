@@ -203,6 +203,23 @@ public class GenericLspClient {
             serverCapabilities != null ? serverCapabilities.getDeclarationProvider() : null);
     }
 
+    boolean supportsDocumentSymbol() {
+        return supportsProvider(
+            serverCapabilities != null ? serverCapabilities.getDocumentSymbolProvider() : null);
+    }
+
+    boolean isBuiltinServer() {
+        return BuildConfigLspSupport.isBuiltinMode(mode);
+    }
+
+    /**
+     * Built-in servers omit {@code documentSymbolProvider}; external servers such as
+     * Dart may handle the request without advertising it.
+     */
+    boolean shouldSkipDocumentSymbolRequest() {
+        return isBuiltinServer() && !supportsDocumentSymbol();
+    }
+
     private static boolean supportsProvider(Object provider) {
         if (provider == null) {
             return false;
