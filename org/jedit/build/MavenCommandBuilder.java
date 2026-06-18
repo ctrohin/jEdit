@@ -45,14 +45,24 @@ final class MavenCommandBuilder {
     private MavenCommandBuilder() {}
 
     static Invocation build(File pomDirectory, MavenProjectSettings settings, String goal) {
+        return build(pomDirectory, settings, goal, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File pomDirectory, MavenProjectSettings settings, String goal,
+                            RunConfigurationOverrides overrides) {
         MavenProjectSettings effective = settings != null
             ? settings
             : new MavenProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
         Map<String, String> environment = new HashMap<>();
         applyEnvironment(effective, environment);
+        runOverrides.mergeVmOptions(environment, "MAVEN_OPTS", effective.mavenOpts);
 
         List<String> mavenArgs = new ArrayList<>();
         appendMavenOptions(mavenArgs, effective);
+        runOverrides.appendSystemProperties(mavenArgs);
         appendTokens(mavenArgs, goal);
 
         String launcher = resolveLauncher(pomDirectory, effective);
@@ -74,9 +84,6 @@ final class MavenCommandBuilder {
         }
         if (!isBlank(settings.jdkHome)) {
             env.put("JAVA_HOME", settings.jdkHome.trim());
-        }
-        if (!isBlank(settings.mavenOpts)) {
-            env.put("MAVEN_OPTS", settings.mavenOpts.trim());
         }
     }
 

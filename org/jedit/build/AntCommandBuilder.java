@@ -47,19 +47,28 @@ final class AntCommandBuilder {
     private AntCommandBuilder() {}
 
     static Invocation build(File defaultBuildXml, AntProjectSettings settings, String target) {
+        return build(defaultBuildXml, settings, target, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File defaultBuildXml, AntProjectSettings settings, String target,
+                            RunConfigurationOverrides overrides) {
         AntProjectSettings effective = settings != null
             ? settings
             : new AntProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
 
         File buildXml = resolveBuildFile(defaultBuildXml, effective);
         File workingDir = resolveWorkingDirectory(buildXml, effective);
 
         Map<String, String> environment = new HashMap<>();
-        applyEnvironment(effective, environment);
+        applyEnvironment(effective, environment, runOverrides);
 
         List<String> antArgs = new ArrayList<>();
         appendAntOptions(antArgs, buildXml, effective);
         appendProperties(antArgs, effective.properties);
+        runOverrides.appendSystemProperties(antArgs);
         appendTokens(antArgs, effective.additionalArgs);
         if (target != null && !target.isBlank()) {
             antArgs.add(target.trim());
@@ -109,16 +118,15 @@ final class AntCommandBuilder {
         return null;
     }
 
-    private static void applyEnvironment(AntProjectSettings settings, Map<String, String> env) {
+    private static void applyEnvironment(AntProjectSettings settings, Map<String, String> env,
+                                         RunConfigurationOverrides overrides) {
         if (!isBlank(settings.antHome)) {
             env.put("ANT_HOME", settings.antHome.trim());
         }
         if (!isBlank(settings.jdkHome)) {
             env.put("JAVA_HOME", settings.jdkHome.trim());
         }
-        if (!isBlank(settings.antOpts)) {
-            env.put("ANT_OPTS", settings.antOpts.trim());
-        }
+        overrides.mergeVmOptions(env, "ANT_OPTS", settings.antOpts);
     }
 
     private static void appendAntOptions(List<String> args, File buildXml,
@@ -140,24 +148,7 @@ final class AntCommandBuilder {
     }
 
     private static void appendProperties(List<String> args, String properties) {
-        if (isBlank(properties)) {
-            return;
-        }
-        for (String line : properties.split("\\R")) {
-            line = line.trim();
-            if (line.isEmpty() || line.startsWith("#")) {
-                continue;
-            }
-            int equals = line.indexOf('=');
-            if (equals <= 0) {
-                continue;
-            }
-            String key = line.substring(0, equals).trim();
-            String value = line.substring(equals + 1).trim();
-            if (!key.isEmpty()) {
-                args.add("-D" + key + "=" + value);
-            }
-        }
+        ShellCommands.appendPropertyLines(args, properties);
     }
 
     private static String resolveLauncher(AntProjectSettings settings) {

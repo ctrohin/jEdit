@@ -57,74 +57,122 @@ public final class WorkspaceProjectRunner {
         return kinds;
     }
 
-    public static ProjectKind resolveActiveKind(File projectRoot) {
-        List<ProjectKind> supported = detectSupportedKinds(projectRoot);
-        if (supported.isEmpty()) {
+    public static WorkspaceRunConfiguration resolveDefaultConfiguration(File projectRoot) {
+        if (projectRoot == null) {
             return null;
         }
-        WorkspaceRunSettings saved = WorkspaceRunPreferences.load(projectRoot);
-        if (supported.contains(saved.kind)) {
-            return saved.kind;
-        }
-        return supported.get(0);
+        return WorkspaceRunConfigurationPreferences.load(projectRoot).getDefault();
+    }
+
+    public static ProjectKind resolveActiveKind(File projectRoot) {
+        WorkspaceRunConfiguration cfg = resolveDefaultConfiguration(projectRoot);
+        return cfg != null ? cfg.kind : null;
     }
 
     public static String resolveRunGoal(File projectRoot, ProjectKind kind) {
         if (projectRoot == null || kind == null) {
             return "";
         }
-        WorkspaceRunSettings saved = WorkspaceRunPreferences.load(projectRoot);
-        if (kind == saved.kind && saved.runGoal != null && !saved.runGoal.isBlank()) {
-            return saved.runGoal.trim();
+        WorkspaceRunConfiguration cfg = resolveDefaultConfiguration(projectRoot);
+        if (cfg != null && kind == cfg.kind && cfg.runGoal != null && !cfg.runGoal.isBlank()) {
+            return cfg.runGoal.trim();
         }
         return defaultRunGoal(projectRoot, kind);
     }
 
     public static List<String> suggestRunGoals(File projectRoot, ProjectKind kind) {
+        return suggestRunGoals(projectRoot, kind, null);
+    }
+
+    public static List<String> suggestRunGoals(File projectRoot, ProjectKind kind,
+                                               String currentGoal) {
         Set<String> goals = new LinkedHashSet<>();
         if (projectRoot == null || kind == null) {
             return List.of();
         }
-        String configured = resolveRunGoal(projectRoot, kind);
-        if (!configured.isBlank()) {
-            goals.add(configured);
+        if (currentGoal != null && !currentGoal.isBlank()) {
+            goals.add(currentGoal.trim());
         }
         goals.addAll(defaultRunGoalCandidates(projectRoot, kind));
         return new ArrayList<>(goals);
     }
 
+    public static String defaultRunGoalForKind(File projectRoot, ProjectKind kind) {
+        return defaultRunGoal(projectRoot, kind);
+    }
+
     public static void runProject(View view, File projectRoot) {
+        runConfiguration(view, projectRoot, null);
+    }
+
+    public static void runConfiguration(View view, File projectRoot,
+                                        WorkspaceRunConfiguration configuration) {
         if (view == null || projectRoot == null) {
             return;
         }
-        ProjectKind kind = resolveActiveKind(projectRoot);
-        if (kind == null) {
+        WorkspaceRunConfiguration cfg = configuration;
+        if (cfg == null) {
+            cfg = resolveDefaultConfiguration(projectRoot);
+        }
+        if (cfg == null || cfg.runGoal == null || cfg.runGoal.isBlank()) {
             return;
         }
-        String goal = resolveRunGoal(projectRoot, kind);
-        if (goal == null || goal.isBlank()) {
-            return;
-        }
-        RunInvocation invocation = buildInvocation(projectRoot, kind, goal);
+        RunInvocation invocation = buildInvocation(projectRoot, cfg);
         if (invocation == null) {
             return;
         }
         BuildOutputView output = BuildOutputView.show(view);
-        String title = kindLabel(kind) + ": " + goal;
-        output.runBuild(title, invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(formatRunTitle(cfg), invocation.workingDir,
+            invocation.command, invocation.environment);
     }
 
     public static boolean configureRun(View view, File projectRoot) {
         if (view == null || projectRoot == null) {
             return false;
         }
-        return WorkspaceRunSettingsDialog.show(view, projectRoot);
+        return WorkspaceRunConfigurationsDialog.showManager(view, projectRoot)
+            != WorkspaceRunConfigurationsDialog.Result.NONE;
     }
 
-    static RunInvocation buildInvocation(File projectRoot, ProjectKind kind, String goal) {
-        if (projectRoot == null || kind == null || goal == null || goal.isBlank()) {
+    public static String configurationLabel(WorkspaceRunConfiguration cfg) {
+        if (cfg == null) {
+            return "";
+        }
+        String label = cfg.displayName();
+        if (!label.isEmpty()) {
+            return label;
+        }
+        return kindLabel(cfg.kind) + ": " + cfg.runGoal;
+    }
+
+    public static void showRunConfigurationMenu(java.awt.event.ActionEvent event, View view,
+                                              File projectRoot, Runnable onChanged) {
+        WorkspaceRunConfigurationPopup.show(event, view, projectRoot, onChanged);
+    }
+
+    public static boolean createRunConfiguration(View view, File projectRoot) {
+        if (view == null || projectRoot == null) {
+            return false;
+        }
+        return WorkspaceRunConfigurationsDialog.showNew(view, projectRoot)
+            != WorkspaceRunConfigurationsDialog.Result.NONE;
+    }
+
+    private static String formatRunTitle(WorkspaceRunConfiguration cfg) {
+        if (cfg.name != null && !cfg.name.isBlank()) {
+            return cfg.name.trim();
+        }
+        return kindLabel(cfg.kind) + ": " + cfg.runGoal;
+    }
+
+    static RunInvocation buildInvocation(File projectRoot, WorkspaceRunConfiguration cfg) {
+        if (projectRoot == null || cfg == null || cfg.kind == null
+            || cfg.runGoal == null || cfg.runGoal.isBlank()) {
             return null;
         }
+        RunConfigurationOverrides overrides = RunConfigurationOverrides.from(cfg);
+        ProjectKind kind = cfg.kind;
+        String goal = cfg.runGoal;
         return switch (kind) {
             case MAVEN -> {
                 File dir = projectDirectory(ProjectRoots.findPomXml(projectRoot));
@@ -132,7 +180,7 @@ public final class WorkspaceProjectRunner {
                     yield null;
                 }
                 MavenCommandBuilder.Invocation inv = MavenCommandBuilder.build(
-                    dir, MavenProjectPreferences.load(projectRoot), goal);
+                    dir, MavenProjectPreferences.load(projectRoot), goal, overrides);
                 yield new RunInvocation(dir, inv.command, inv.environment);
             }
             case GRADLE -> {
@@ -141,7 +189,7 @@ public final class WorkspaceProjectRunner {
                     yield null;
                 }
                 GradleCommandBuilder.Invocation inv = GradleCommandBuilder.build(
-                    dir, GradleProjectPreferences.load(projectRoot), goal);
+                    dir, GradleProjectPreferences.load(projectRoot), goal, overrides);
                 yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
             }
             case NPM -> {
@@ -150,7 +198,7 @@ public final class WorkspaceProjectRunner {
                     yield null;
                 }
                 NpmCommandBuilder.Invocation inv = NpmCommandBuilder.build(
-                    dir, NpmProjectPreferences.load(projectRoot), goal);
+                    dir, NpmProjectPreferences.load(projectRoot), goal, overrides);
                 yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
             }
             case FLUTTER -> {
@@ -159,7 +207,7 @@ public final class WorkspaceProjectRunner {
                     yield null;
                 }
                 FlutterCommandBuilder.Invocation inv = FlutterCommandBuilder.build(
-                    dir, FlutterProjectPreferences.load(projectRoot), goal);
+                    dir, FlutterProjectPreferences.load(projectRoot), goal, overrides);
                 yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
             }
             case ANT -> {
@@ -169,14 +217,15 @@ public final class WorkspaceProjectRunner {
                     yield null;
                 }
                 AntCommandBuilder.Invocation inv =
-                    AntCommandBuilder.build(buildXml, settings, goal);
+                    AntCommandBuilder.build(buildXml, settings, goal, overrides);
                 yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
             }
-            case PIP -> buildPythonInvocation(projectRoot, goal);
+            case PIP -> buildPythonInvocation(projectRoot, goal, overrides);
         };
     }
 
-    private static RunInvocation buildPythonInvocation(File projectRoot, String goal) {
+    private static RunInvocation buildPythonInvocation(File projectRoot, String goal,
+                                                       RunConfigurationOverrides overrides) {
         File marker = ProjectRoots.findPythonMarker(projectRoot);
         if (marker == null) {
             return null;
@@ -193,10 +242,16 @@ public final class WorkspaceProjectRunner {
         if (!ShellCommands.isBlank(settings.virtualEnv)) {
             environment.put("VIRTUAL_ENV", settings.virtualEnv.trim());
         }
+        if (overrides != null) {
+            overrides.appendEnvironmentVariables(environment);
+        }
         String python = ShellCommands.isBlank(settings.pythonExecutable)
             ? "python"
             : settings.pythonExecutable.trim();
         List<String> args = new ArrayList<>();
+        if (overrides != null) {
+            overrides.appendVmOptionTokens(args);
+        }
         ShellCommands.appendTokens(args, goal);
         ShellCommands.appendTokens(args, settings.additionalArgs);
         return new RunInvocation(workingDir,

@@ -31,9 +31,17 @@ final class FlutterCommandBuilder {
     private FlutterCommandBuilder() {}
 
     static Invocation build(File projectDirectory, FlutterProjectSettings settings, String goal) {
+        return build(projectDirectory, settings, goal, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File projectDirectory, FlutterProjectSettings settings, String goal,
+                            RunConfigurationOverrides overrides) {
         FlutterProjectSettings effective = settings != null
             ? settings
             : new FlutterProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
         File workingDir = resolveWorkingDir(projectDirectory, effective);
         Map<String, String> environment = new HashMap<>();
         if (!ShellCommands.isBlank(effective.flutterSdk)) {
@@ -42,8 +50,10 @@ final class FlutterCommandBuilder {
         if (!ShellCommands.isBlank(effective.dartSdk)) {
             environment.put("DART_SDK", effective.dartSdk.trim());
         }
+        runOverrides.appendEnvironmentVariables(environment);
 
         List<String> args = buildArgs(effective, goal);
+        runOverrides.appendVmOptionTokens(args);
         ShellCommands.appendTokens(args, effective.additionalArgs);
         String launcher = resolveLauncher(effective, goal);
         return new Invocation(workingDir,

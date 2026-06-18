@@ -2157,6 +2157,38 @@ build.no-workspace=Open a project folder first (File \u2192 Open Project Folder)
 
 workspace-run.run=Run project
 workspace-run.run.tooltip=Run {0}: {1}
+workspace-run.run.tooltip.named=Run {0}
+workspace-run.configurations=Run configurations...
+workspace-run.popup.new=New...
+workspace-run.popup.settings=Settings...
+workspace-run.config.title=Run Configurations
+workspace-run.config.intro=Manage named run configurations for this project folder.<br>Project folder: <b>{0}</b>
+workspace-run.config.name=Name:
+workspace-run.config.add=Add
+workspace-run.config.remove=Remove
+workspace-run.config.duplicate=Duplicate
+workspace-run.config.set-default=Set as default
+workspace-run.config.save=Save
+workspace-run.config.run=Run
+workspace-run.config.default-marker=default
+workspace-run.config.default-name=Default
+workspace-run.config.untitled=Run configuration ({0})
+workspace-run.config.remove-last=At least one run configuration is required.
+workspace-run.config.overrides-section=Environment and properties
+workspace-run.config.vm-options=Environment / VM options:
+workspace-run.config.additional-properties=Additional properties:
+workspace-run.config.vm-options-hint.maven=Appended to MAVEN_OPTS for this configuration (e.g. -Xmx1024m).
+workspace-run.config.vm-options-hint.gradle=Appended to GRADLE_OPTS for this configuration.
+workspace-run.config.vm-options-hint.ant=Appended to ANT_OPTS for this configuration.
+workspace-run.config.vm-options-hint.npm=Appended to NODE_OPTIONS for this configuration.
+workspace-run.config.vm-options-hint.pip=Passed as extra Python interpreter options before the run goal.
+workspace-run.config.vm-options-hint.flutter=Passed as extra command-line arguments before the run goal.
+workspace-run.config.additional-properties-hint.maven=One property per line: name=value (passed as -Dname=value).
+workspace-run.config.additional-properties-hint.gradle=One property per line: name=value (passed as -Dname=value).
+workspace-run.config.additional-properties-hint.ant=One property per line: name=value (passed as -Dname=value).
+workspace-run.config.additional-properties-hint.npm=One variable per line: NAME=value (added to the process environment).
+workspace-run.config.additional-properties-hint.pip=One variable per line: NAME=value (added to the process environment).
+workspace-run.config.additional-properties-hint.flutter=One variable per line: NAME=value (added to the process environment).
 workspace-run.settings=Run settings...
 workspace-run.settings.title=Run Project
 workspace-run.settings.intro=Choose which build tool to run and the goal, task, or script to execute.<br>Project folder: <b>{0}</b>

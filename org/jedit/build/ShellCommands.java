@@ -24,6 +24,7 @@ package org.jedit.build;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.gjt.sp.jedit.OperatingSystem;
 
@@ -40,6 +41,58 @@ final class ShellCommands {
             return;
         }
         Collections.addAll(args, text.trim().split("\\s+"));
+    }
+
+    static String mergeSpaceSeparated(String base, String extra) {
+        if (isBlank(base)) {
+            return isBlank(extra) ? "" : extra.trim();
+        }
+        if (isBlank(extra)) {
+            return base.trim();
+        }
+        return base.trim() + " " + extra.trim();
+    }
+
+    static void appendPropertyLines(List<String> args, String properties) {
+        if (isBlank(properties)) {
+            return;
+        }
+        for (String line : properties.split("\\R")) {
+            line = line.trim();
+            if (line.isEmpty() || line.startsWith("#")) {
+                continue;
+            }
+            int equals = line.indexOf('=');
+            if (equals <= 0) {
+                continue;
+            }
+            String key = line.substring(0, equals).trim();
+            String value = line.substring(equals + 1).trim();
+            if (!key.isEmpty()) {
+                args.add("-D" + key + "=" + value);
+            }
+        }
+    }
+
+    static void appendEnvironmentLines(Map<String, String> environment, String variables) {
+        if (isBlank(variables)) {
+            return;
+        }
+        for (String line : variables.split("\\R")) {
+            line = line.trim();
+            if (line.isEmpty() || line.startsWith("#")) {
+                continue;
+            }
+            int equals = line.indexOf('=');
+            if (equals <= 0) {
+                continue;
+            }
+            String key = line.substring(0, equals).trim();
+            String value = line.substring(equals + 1).trim();
+            if (!key.isEmpty()) {
+                environment.put(key, value);
+            }
+        }
     }
 
     static List<String> wrapLauncher(String launcher, List<String> toolArgs) {

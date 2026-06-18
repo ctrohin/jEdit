@@ -33,9 +33,17 @@ final class GradleCommandBuilder {
     private GradleCommandBuilder() {}
 
     static Invocation build(File projectDirectory, GradleProjectSettings settings, String task) {
+        return build(projectDirectory, settings, task, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File projectDirectory, GradleProjectSettings settings, String task,
+                            RunConfigurationOverrides overrides) {
         GradleProjectSettings effective = settings != null
             ? settings
             : new GradleProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
         File workingDir = resolveWorkingDir(projectDirectory, effective);
         Map<String, String> environment = new HashMap<>();
         if (!ShellCommands.isBlank(effective.gradleHome)) {
@@ -47,12 +55,11 @@ final class GradleCommandBuilder {
         if (!ShellCommands.isBlank(effective.gradleUserHome)) {
             environment.put("GRADLE_USER_HOME", effective.gradleUserHome.trim());
         }
-        if (!ShellCommands.isBlank(effective.gradleOpts)) {
-            environment.put("GRADLE_OPTS", effective.gradleOpts.trim());
-        }
+        runOverrides.mergeVmOptions(environment, "GRADLE_OPTS", effective.gradleOpts);
 
         List<String> args = new ArrayList<>();
         ShellCommands.appendTokens(args, effective.additionalArgs);
+        runOverrides.appendSystemProperties(args);
         ShellCommands.appendTokens(args, task);
 
         String launcher = resolveLauncher(workingDir, effective);

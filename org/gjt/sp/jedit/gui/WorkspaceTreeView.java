@@ -71,7 +71,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     private volatile String currentWorkspace;
     private boolean opened = false;
     private JButton runProjectButton;
-    private JButton runSettingsButton;
+    private JButton runConfigMenuButton;
     private final ProjectFolderListener folderListener =
         new ProjectFolderListener(this::updateRunButtons);
 
@@ -567,17 +567,19 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         panelWest.add(recentsSelector);
 
         panelWest.add(Box.createHorizontalStrut(12));
+        JPanel runPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         runProjectButton = new RolloverButton(
             IconManager.loadIcon("MatIcons.PLAY_ARROW:22"),
             jEdit.getProperty("workspace-run.run"));
         runProjectButton.addActionListener(e -> runCurrentProject());
-        panelWest.add(runProjectButton);
+        runPanel.add(runProjectButton);
 
-        runSettingsButton = new RolloverButton(
-            IconManager.loadIcon("MatIcons.SETTINGS:22"),
-            jEdit.getProperty("workspace-run.settings"));
-        runSettingsButton.addActionListener(e -> configureRun());
-        panelWest.add(runSettingsButton);
+        runConfigMenuButton = new RolloverButton(
+            IconManager.loadIcon("MatIcons.ARROW_DROP_DOWN:22"),
+            jEdit.getProperty("workspace-run.configurations"));
+        runConfigMenuButton.addActionListener(this::showRunConfigurationsMenu);
+        runPanel.add(runConfigMenuButton);
+        panelWest.add(runPanel);
 
         panelWest.add(Box.createHorizontalStrut(20));
         JButton close = new RolloverButton(IconManager.loadIcon("MatIcons.CLOSE:22"), "Close project folder");
@@ -675,21 +677,22 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     }
 
     private void updateRunButtons() {
-        if (runProjectButton == null || runSettingsButton == null) {
+        if (runProjectButton == null || runConfigMenuButton == null) {
             return;
         }
         File root = currentWorkspace != null ? new File(currentWorkspace) : null;
         boolean canRun = WorkspaceProjectRunner.canRun(root);
         runProjectButton.setEnabled(canRun);
-        runSettingsButton.setEnabled(canRun);
+        runConfigMenuButton.setEnabled(canRun);
         if (canRun && root != null) {
-            var kind = WorkspaceProjectRunner.resolveActiveKind(root);
-            String goal = WorkspaceProjectRunner.resolveRunGoal(root, kind);
-            String kindLabel = kind != null
-                ? WorkspaceProjectRunner.kindLabel(kind)
-                : "";
-            runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run.tooltip",
-                new String[] {kindLabel, goal}));
+            var cfg = WorkspaceProjectRunner.resolveDefaultConfiguration(root);
+            if (cfg != null) {
+                runProjectButton.setToolTipText(jEdit.getProperty(
+                    "workspace-run.run.tooltip.named",
+                    new String[] {WorkspaceProjectRunner.configurationLabel(cfg)}));
+            } else {
+                runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run"));
+            }
         } else {
             runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run"));
         }
@@ -706,14 +709,15 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         WorkspaceProjectRunner.runProject(view, root);
     }
 
-    private void configureRun() {
+    private void showRunConfigurationsMenu(ActionEvent event) {
         if (currentWorkspace == null) {
             return;
         }
         File root = new File(currentWorkspace);
-        if (WorkspaceProjectRunner.configureRun(view, root)) {
-            updateRunButtons();
+        if (!WorkspaceProjectRunner.canRun(root)) {
+            return;
         }
+        WorkspaceProjectRunner.showRunConfigurationMenu(event, view, root, this::updateRunButtons);
     }
 
     @Override

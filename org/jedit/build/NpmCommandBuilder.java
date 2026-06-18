@@ -31,15 +31,22 @@ final class NpmCommandBuilder {
     private NpmCommandBuilder() {}
 
     static Invocation build(File packageDirectory, NpmProjectSettings settings, String goal) {
+        return build(packageDirectory, settings, goal, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File packageDirectory, NpmProjectSettings settings, String goal,
+                            RunConfigurationOverrides overrides) {
         NpmProjectSettings effective = settings != null ? settings : new NpmProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
         File workingDir = resolveWorkingDir(packageDirectory, effective);
         Map<String, String> environment = new HashMap<>();
         if (!ShellCommands.isBlank(effective.nodeHome)) {
             environment.put("NODE_HOME", effective.nodeHome.trim());
         }
-        if (!ShellCommands.isBlank(effective.nodeOptions)) {
-            environment.put("NODE_OPTIONS", effective.nodeOptions.trim());
-        }
+        runOverrides.mergeVmOptions(environment, "NODE_OPTIONS", effective.nodeOptions);
+        runOverrides.appendEnvironmentVariables(environment);
 
         List<String> args = buildToolArgs(effective, goal);
         ShellCommands.appendTokens(args, effective.additionalArgs);

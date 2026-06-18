@@ -31,7 +31,15 @@ final class PipCommandBuilder {
     private PipCommandBuilder() {}
 
     static Invocation build(File projectDirectory, PipProjectSettings settings, String goal) {
+        return build(projectDirectory, settings, goal, RunConfigurationOverrides.NONE);
+    }
+
+    static Invocation build(File projectDirectory, PipProjectSettings settings, String goal,
+                            RunConfigurationOverrides overrides) {
         PipProjectSettings effective = settings != null ? settings : new PipProjectSettings();
+        RunConfigurationOverrides runOverrides = overrides != null
+            ? overrides
+            : RunConfigurationOverrides.NONE;
         File workingDir = resolveWorkingDir(projectDirectory, effective);
         Map<String, String> environment = new HashMap<>();
         if (!ShellCommands.isBlank(effective.pythonHome)) {
@@ -40,8 +48,10 @@ final class PipCommandBuilder {
         if (!ShellCommands.isBlank(effective.virtualEnv)) {
             environment.put("VIRTUAL_ENV", effective.virtualEnv.trim());
         }
+        runOverrides.appendEnvironmentVariables(environment);
 
         List<String> args = buildPipArgs(effective, goal);
+        runOverrides.appendVmOptionTokens(args);
         ShellCommands.appendTokens(args, effective.additionalArgs);
         String launcher = resolveLauncher(effective);
         return new Invocation(workingDir,
