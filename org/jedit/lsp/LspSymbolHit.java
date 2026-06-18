@@ -8,6 +8,10 @@
 
 package org.jedit.lsp;
 
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +22,7 @@ import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.SymbolKind;
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.jEdit;
 
 /**
  * One navigable symbol location shown in the LSP Symbol Results view.
@@ -179,6 +184,108 @@ public final class LspSymbolHit implements Comparable<LspSymbolHit> {
             sb.append(" — ").append(detail);
         }
         return sb.toString();
+    }
+
+    /**
+     * Plain-text tree label: line number and full source line.
+     */
+    public String formatLineDisplayPlain() {
+        LineDisplay display = buildLineDisplay();
+        return display != null ? display.plainText() : formatDisplayText();
+    }
+
+    /**
+     * HTML tree label: full source line with the symbol span in bold.
+     */
+    public String formatLineDisplayHtml() {
+        LineDisplay display = buildLineDisplay();
+        return display != null ? display.htmlText() : null;
+    }
+
+    private LineDisplay buildLineDisplay() {
+        String lineText = resolveLineText();
+        if (lineText == null) {
+            return null;
+        }
+        lineText = lineText.replace('\t', ' ');
+        int startCol = Math.max(0, Math.min(character, lineText.length()));
+        int endCol;
+        if (line < endLine) {
+            endCol = lineText.length();
+        } else {
+            endCol = Math.max(startCol, Math.min(endCharacter, lineText.length()));
+        }
+        if (endCol == startCol && name != null && !"(symbol)".equals(name)) {
+            int searchFrom = Math.max(0, startCol - name.length());
+            int idx = lineText.indexOf(name, searchFrom);
+            if (idx >= 0) {
+                startCol = idx;
+                endCol = Math.min(idx + name.length(), lineText.length());
+            }
+        }
+        return new LineDisplay(line, lineText, startCol, endCol);
+    }
+
+    private String resolveLineText() {
+        String path = LspDocumentUri.uriToPath(uri);
+        if (path == null) {
+            return null;
+        }
+        Buffer buffer = jEdit.getBuffer(path);
+        if (buffer != null && buffer.isLoaded()) {
+            try {
+                if (line >= 0 && line < buffer.getLineCount()) {
+                    return buffer.getLineText(line);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return readLineFromFile(path, line);
+    }
+
+    private static String readLineFromFile(String path, int lineIndex) {
+        if (lineIndex < 0) {
+            return null;
+        }
+        String encoding = jEdit.getProperty("buffer.encoding", "UTF-8");
+        Charset charset;
+        try {
+            charset = Charset.forName(encoding);
+        } catch (Exception e) {
+            charset = Charset.defaultCharset();
+        }
+        try (BufferedReader reader = Files.newBufferedReader(Path.of(path), charset)) {
+            String text = null;
+            for (int i = 0; i <= lineIndex; i++) {
+                text = reader.readLine();
+                if (text == null) {
+                    return null;
+                }
+            }
+            return text;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private record LineDisplay(int line, String lineText, int startCol, int endCol) {
+        String plainText() {
+            return (line + 1) + ": " + lineText;
+        }
+
+        String htmlText() {
+            String prefix = (line + 1) + ": ";
+            String before = LspHover.escapeHtml(lineText.substring(0, startCol));
+            String match = LspHover.escapeHtml(lineText.substring(startCol, endCol));
+            String after = LspHover.escapeHtml(lineText.substring(endCol));
+            return "<html>" + LspHover.escapeHtml(prefix) + before
+                + "<b>" + match + "</b>" + after + "</html>";
+        }
+    }
+
+    @Override
+    public String toString() {
+        return formatLineDisplayPlain();
     }
 
     @Override

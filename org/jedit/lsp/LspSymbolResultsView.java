@@ -434,7 +434,8 @@ public class LspSymbolResultsView extends JPanel implements DefaultFocusComponen
             }
             if (userObject instanceof LspSymbolHit hit) {
                 setIcon(null);
-                setText(hit.formatDisplayText());
+                String html = hit.formatLineDisplayHtml();
+                setText(html != null ? html : hit.formatDisplayText());
                 setToolTipText(hit.getDetail());
             }
         }
