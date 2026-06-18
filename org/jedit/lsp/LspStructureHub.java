@@ -127,6 +127,9 @@ public final class LspStructureHub {
     }
 
     private void fetchDocumentSymbols(Buffer buffer) {
+        if (buffer == null || buffer.isClosed()) {
+            return;
+        }
         String uri = LspDocumentUri.pathToUri(buffer.getPath());
         int generation = ++fetchGeneration;
         StructureSnapshot existing;
@@ -135,14 +138,27 @@ public final class LspStructureHub {
         }
         boolean keepStaleTree = existing != null
             && existing.getState() == StructureSnapshot.State.READY;
+
+        String modeName = LspPlugin.resolveLspMode(buffer);
+        if (!LspConfig.isServerConfigured(modeName)) {
+            setSnapshot(uri, StructureSnapshot.unavailable(uri,
+                "lsp-structure.no-server"));
+            return;
+        }
+
+        GenericLspClient client = LspPlugin.getClientForBuffer(buffer);
+        if (client == null || client.isShuttingDown()) {
+            setSnapshot(uri, StructureSnapshot.unavailable(uri,
+                "lsp-structure.no-server"));
+            return;
+        }
+
         if (!keepStaleTree) {
             setSnapshot(uri, StructureSnapshot.loading(uri));
         }
 
-        GenericLspClient client = LspPlugin.getExistingClientForBuffer(buffer);
-        if (client == null || !client.hasActiveSession() || client.isShuttingDown()) {
-            setSnapshot(uri, StructureSnapshot.unavailable(uri,
-                "lsp-structure.no-server"));
+        if (!client.hasActiveSession() || !client.isReadyForDocumentSync()) {
+            waitForServerThenRefresh(buffer, client, generation);
             return;
         }
 
@@ -179,6 +195,46 @@ public final class LspStructureHub {
                 }
                 return null;
             });
+    }
+
+    private void waitForServerThenRefresh(Buffer buffer, GenericLspClient client,
+                                          int generation) {
+        client.whenReady()
+            .thenRunAsync(() -> {
+                if (generation == fetchGeneration && !buffer.isClosed()) {
+                    LspAsync.runOnEdt(() -> requestRefresh(buffer));
+                }
+            }, LspAsync.EXECUTOR)
+            .exceptionally(ex -> {
+                if (generation != fetchGeneration || buffer.isClosed()) {
+                    return null;
+                }
+                if (isClientNotInitialized(ex)) {
+                    LspAsync.runOnEdt(() -> requestRefresh(buffer));
+                } else {
+                    Log.log(Log.ERROR, LspStructureHub.class,
+                        "LSP server not ready for document symbols: "
+                            + buffer.getPath(), ex);
+                    LspAsync.runOnEdt(() -> setSnapshot(
+                        LspDocumentUri.pathToUri(buffer.getPath()),
+                        StructureSnapshot.unavailable(
+                            LspDocumentUri.pathToUri(buffer.getPath()),
+                            "lsp-structure.no-server")));
+                }
+                return null;
+            });
+    }
+
+    private static boolean isClientNotInitialized(Throwable ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof java.util.concurrent.CancellationException
+                && "LSP client not initialized".equals(cause.getMessage())) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     private void setSnapshot(String uri, StructureSnapshot snapshot) {

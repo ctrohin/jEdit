@@ -759,6 +759,7 @@ public class LspPlugin extends EditPlugin implements EBComponent {
                 documentOpenOnServer = true;
                 pendingChanges.clear();
                 needsSync = false;
+                LspStructureHub.getInstance().requestRefresh(buffer);
             } catch (RuntimeException ex) {
                 if (!shouldSkipLspSync() && !isTransportClosed(ex)) {
                     Log.log(Log.ERROR, this,
