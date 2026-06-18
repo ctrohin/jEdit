@@ -146,8 +146,9 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		button.setMargin(new Insets(4,4,4,4));
 		GenericGUIUtilities.setButtonContentMargin(button, new Insets(6,6,6,6));
 		button.setRequestFocusEnabled(false);
-		button.setIcon(new RotatedTextIcon(rotation,button.getFont(),
-			entry.shortTitle()));
+		entry.buttonRotation = rotation;
+		button.setIcon(DockableTitleIcon.create(rotation, button.getFont(),
+			entry.shortTitle(), entry.notificationErrors, entry.notificationWarnings));
 		button.setActionCommand(entry.factory.name);
 		button.addActionListener(new ActionHandler());
 		button.addMouseListener(new MenuMouseHandler());

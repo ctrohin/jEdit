@@ -42,6 +42,7 @@ import javax.swing.tree.TreePath;
 
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
@@ -112,18 +113,33 @@ public class LspProblemsView extends JPanel implements DefaultFocusComponent {
         List<LspDiagnosticsHub.FileProblems> fileGroups =
             LspDiagnosticsHub.getInstance().getFileProblems();
         int problemCount = 0;
+        int errorCount = 0;
+        int warningCount = 0;
         for (LspDiagnosticsHub.FileProblems group : fileGroups) {
             DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(
                 new FileNode(group.getUri()));
             for (LspDiagnosticProblem problem : group.getProblems()) {
                 fileNode.add(new DefaultMutableTreeNode(problem));
                 problemCount++;
+                switch (problem.getSeverity()) {
+                    case ERROR -> errorCount++;
+                    case WARNING -> warningCount++;
+                    default -> { }
+                }
             }
             rootNode.add(fileNode);
         }
         treeModel.reload();
         expandAll();
         updateCaption(problemCount, fileGroups.size());
+        updateDockNotifications(errorCount, warningCount);
+    }
+
+    private void updateDockNotifications(int errorCount, int warningCount) {
+        DockableWindowManager manager = view.getDockableWindowManager();
+        if (manager != null) {
+            manager.setDockableNotifications(NAME, errorCount, warningCount);
+        }
     }
 
     private void expandAll() {

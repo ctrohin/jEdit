@@ -796,6 +796,42 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 
 	//}}}
 
+	//{{{ setDockableNotifications() method
+	@Override
+	public void setDockableNotifications(String name, int errorCount, int warningCount)
+	{
+		if(!SwingUtilities.isEventDispatchThread())
+		{
+			SwingUtilities.invokeLater(() ->
+				setDockableNotifications(name, errorCount, warningCount));
+			return;
+		}
+
+		Entry entry = windows.get(name);
+		if(entry == null)
+			return;
+
+		entry.notificationErrors = Math.max(0, errorCount);
+		entry.notificationWarnings = Math.max(0, warningCount);
+		refreshDockableButton(entry);
+	}
+
+	void refreshDockableButton(Entry entry)
+	{
+		if(entry == null || entry.btn == null)
+			return;
+
+		entry.btn.setIcon(DockableTitleIcon.create(
+			entry.buttonRotation,
+			entry.btn.getFont(),
+			entry.shortTitle(),
+			entry.notificationErrors,
+			entry.notificationWarnings));
+		entry.btn.revalidate();
+		entry.btn.repaint();
+	}
+	//}}}
+
 	//{{{ propertiesChanged() method
 	@Override
 	protected void propertiesChanged()
@@ -967,6 +1003,10 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 
 		// only for docked
         public AbstractButton btn;
+
+		int notificationErrors;
+		int notificationWarnings;
+		int buttonRotation = PanelWindowContainer.RotatedTextIcon.NONE;
 
 		//{{{ Entry constructor
 		Entry(DockableWindowFactory.Window factory)

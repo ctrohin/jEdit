@@ -254,6 +254,27 @@ public abstract class DockableWindowManager extends JPanel
 	public abstract DockingArea getRightDockingArea();
 	public abstract DockingArea getTopDockingArea();
 	public abstract DockingArea getBottomDockingArea();
+
+	/**
+	 * Updates warning/error notification badges on the dock button for a dockable.
+	 * Safe to call from any thread; UI updates are scheduled on the EDT.
+	 * @param name dockable name
+	 * @param errorCount number of errors; shown in red when greater than zero
+	 * @param warningCount number of warnings; shown in orange when there are no errors
+	 * @since jEdit 5.8
+	 */
+	public void setDockableNotifications(String name, int errorCount, int warningCount)
+	{
+	}
+
+	/**
+	 * Clears notification badges for a dockable.
+	 * @since jEdit 5.8
+	 */
+	public void clearDockableNotifications(String name)
+	{
+		setDockableNotifications(name, 0, 0);
+	}
 	// }}}
 
 	// {{{ public methods
