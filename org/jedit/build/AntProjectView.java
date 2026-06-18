@@ -162,7 +162,7 @@ public final class AntProjectView extends JPanel implements DefaultFocusComponen
         AntCommandBuilder.Invocation invocation = AntCommandBuilder.build(
             buildFile.file, projectSettings, target);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(target, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override

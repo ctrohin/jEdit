@@ -628,6 +628,11 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         if (saveToRecents) {
             saveRecents(currentWorkspace);
         }
+        if (folder == null) {
+            jEdit.unsetProperty(FOLDER_KEY);
+        } else {
+            jEdit.setProperty(FOLDER_KEY, folder);
+        }
         if (emitEvent) {
             final var event = Optional.ofNullable(currentWorkspace)
                 .map(ws -> new ProjectFolderOpened(this, ws))
@@ -639,10 +644,8 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             loadLayout();
         }
         if (folder == null) {
-            jEdit.unsetProperty(FOLDER_KEY);
             return;
         }
-        jEdit.setProperty(FOLDER_KEY, folder);
 
         File rootFile = new File(folder);
         if (!rootFile.exists() || !rootFile.isDirectory()) {

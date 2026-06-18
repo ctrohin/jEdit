@@ -164,7 +164,7 @@ public final class NpmProjectView extends JPanel implements DefaultFocusComponen
         NpmCommandBuilder.Invocation invocation =
             NpmCommandBuilder.build(packageDirectory, projectSettings, goal);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(goal, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override

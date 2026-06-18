@@ -186,7 +186,7 @@ public final class MavenProjectView extends JPanel implements DefaultFocusCompon
         MavenCommandBuilder.Invocation invocation =
             MavenCommandBuilder.build(pomDirectory, projectSettings, goal);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(pomDirectory, invocation.command, invocation.environment);
+        output.runBuild(goal, pomDirectory, invocation.command, invocation.environment);
     }
 
     @Override

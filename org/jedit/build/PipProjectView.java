@@ -166,7 +166,7 @@ public final class PipProjectView extends JPanel implements DefaultFocusComponen
         PipCommandBuilder.Invocation invocation =
             PipCommandBuilder.build(projectDirectory, projectSettings, goal);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(goal, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override

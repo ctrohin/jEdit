@@ -1077,10 +1077,10 @@ lsp-structure.label=Structure
 lsp-structure.dock-position=left
 lsp-structure.icon=MatIcons.ACCOUNT_TREE:22
 
-build-output.title=Build
-build-output.label=Build
+build-output.title=Output
+build-output.label=Output
 build-output.dock-position=bottom
-build-output.icon=MatIcons.BUILD:22
+build-output.icon=MatIcons.TEXT_FIELDS:22
 
 ant-project.title=Ant
 ant-project.label=Ant

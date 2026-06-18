@@ -151,7 +151,7 @@ public final class GradleProjectView extends JPanel implements DefaultFocusCompo
         GradleCommandBuilder.Invocation invocation =
             GradleCommandBuilder.build(projectDirectory, projectSettings, task);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(task, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override

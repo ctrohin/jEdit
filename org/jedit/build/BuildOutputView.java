@@ -22,15 +22,19 @@
 package org.jedit.build;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+
+import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
@@ -39,92 +43,179 @@ import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.jEdit;
 
 /**
- * Build output console for Ant/Maven tasks.
+ * Output console with tabbed build/task runs.
  */
 public final class BuildOutputView extends JPanel implements DefaultFocusComponent {
 
     public static final String NAME = "build-output";
+    private static final String EMPTY_CARD = "empty";
+    private static final String TABS_CARD = "tabs";
 
     private final View view;
-    private final LinkAwareTextArea output;
-    private final JLabel statusLabel;
-    private final BuildProcessRunner runner = new BuildProcessRunner();
+    private final FlatTabbedPane tabbedPane;
+    private final CardLayout contentLayout;
+    private final JPanel contentPanel;
+    private final Map<String, BuildOutputTab> tabsByKey = new LinkedHashMap<>();
     private final ProjectFolderListener folderListener =
-        new ProjectFolderListener(this::updateProjectRoot);
+        new ProjectFolderListener(this::updateProjectRoots);
 
     public BuildOutputView(View view) {
         super(new BorderLayout());
         this.view = view;
 
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
-        JButton clear = new JButton(jEdit.getProperty("build-output.clear"));
-        clear.addActionListener(e -> clearOutput());
-        JButton stop = new JButton(jEdit.getProperty("build-output.stop"));
-        stop.addActionListener(e -> stopBuild());
-        toolbar.add(clear);
-        toolbar.add(stop);
-        statusLabel = new JLabel(" ");
-        toolbar.add(statusLabel);
-        add(toolbar, BorderLayout.NORTH);
+        tabbedPane = new FlatTabbedPane();
+        tabbedPane.setTabsClosable(true);
+        tabbedPane.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
+        tabbedPane.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
+        tabbedPane.setTabCloseToolTipText(jEdit.getProperty("build-output.close-tab"));
+        tabbedPane.setTabCloseCallback((pane, tabIndex) -> closeTabAt(tabIndex));
 
-        output = new LinkAwareTextArea(view);
-        add(new JScrollPane(output), BorderLayout.CENTER);
+        JPanel emptyPanel = new JPanel(new GridBagLayout());
+        JLabel emptyLabel = new JLabel(jEdit.getProperty("build-output.empty"));
+        emptyPanel.add(emptyLabel, new GridBagConstraints());
+
+        contentLayout = new CardLayout();
+        contentPanel = new JPanel(contentLayout);
+        contentPanel.add(emptyPanel, EMPTY_CARD);
+        contentPanel.add(tabbedPane, TABS_CARD);
+        add(contentPanel, BorderLayout.CENTER);
+        updateEmptyState();
     }
 
     public static BuildOutputView show(View view) {
         DockableWindowManager dwm = view.getDockableWindowManager();
         dwm.addDockableWindow(NAME);
-        BuildOutputView panel = (BuildOutputView) dwm.getDockableWindow(NAME);
-        if (panel != null) {
-            panel.prepareForBuild();
-        }
-        return panel;
-    }
-
-    void prepareForBuild() {
-        updateProjectRoot();
-        statusLabel.setText(jEdit.getProperty("build-output.running"));
-    }
-
-    private void updateProjectRoot() {
-        output.setProjectRoot(ProjectRoots.workspaceRoot());
-    }
-
-    void clearOutput() {
-        output.clearOutput();
-        statusLabel.setText(" ");
-    }
-
-    void stopBuild() {
-        runner.stop();
-        statusLabel.setText(jEdit.getProperty("build-output.stopped"));
-    }
-
-    void appendLine(String line) {
-        output.appendLine(line);
+        return (BuildOutputView) dwm.getDockableWindow(NAME);
     }
 
     void runBuild(File workingDir, List<String> command) {
-        runBuild(workingDir, command, null);
+        runBuild(null, workingDir, command, null);
     }
 
     void runBuild(File workingDir, List<String> command, Map<String, String> environment) {
-        prepareForBuild();
-        output.clearOutput();
-        output.appendLine("$ " + String.join(" ", command));
-        runner.run(workingDir, command, environment, this::appendLine, () ->
-            statusLabel.setText(jEdit.getProperty("build-output.finished")));
+        runBuild(null, workingDir, command, environment);
     }
 
-    boolean isRunning() {
-        return runner.isRunning();
+    void runBuild(String taskTitle, File workingDir, List<String> command,
+                  Map<String, String> environment) {
+        String taskKey = BuildOutputTasks.taskKey(workingDir, command);
+        String title = taskTitle != null && !taskTitle.isBlank()
+            ? taskTitle.trim()
+            : BuildOutputTasks.defaultTitle(command);
+        BuildOutputTab tab = findOrCreateTab(taskKey, title);
+        tab.runner.stop();
+        tab.output.clearOutput();
+        tab.output.appendLine("$ " + String.join(" ", command));
+        setTabStatus(tab, jEdit.getProperty("build-output.running"));
+        tab.runner.run(workingDir, command, environment, tab.output::appendLine,
+            () -> setTabStatus(tab, jEdit.getProperty("build-output.finished")));
+        updateTabHeader(tab);
+        tabbedPane.setSelectedComponent(tab.panel);
+    }
+
+    private BuildOutputTab findOrCreateTab(String taskKey, String title) {
+        BuildOutputTab existing = tabsByKey.get(taskKey);
+        if (existing != null) {
+            existing.setTitle(title);
+            tabbedPane.setSelectedComponent(existing.panel);
+            updateTabHeader(existing);
+            return existing;
+        }
+
+        BuildOutputTab tab = new BuildOutputTab(
+            view, taskKey, title, currentMaxLines(), this::openSettings);
+        tabsByKey.put(taskKey, tab);
+        tabbedPane.addTab(title, tab.panel);
+        updateProjectRoot(tab);
+        updateEmptyState();
+        return tab;
+    }
+
+    private void openSettings() {
+        if (BuildOutputSettingsDialog.show(view)) {
+            applyMaxLines(currentMaxLines());
+        }
+    }
+
+    private void updateTabHeader(BuildOutputTab tab) {
+        int index = tabbedPane.indexOfComponent(tab.panel);
+        if (index < 0) {
+            return;
+        }
+        tabbedPane.setTitleAt(index, tab.getTitle());
+    }
+
+    private void closeTabAt(int tabIndex) {
+        if (tabIndex < 0 || tabIndex >= tabbedPane.getTabCount()) {
+            return;
+        }
+        Component component = tabbedPane.getComponentAt(tabIndex);
+        for (BuildOutputTab tab : tabsByKey.values()) {
+            if (tab.panel == component) {
+                closeTab(tab);
+                return;
+            }
+        }
+    }
+
+    private void closeTab(BuildOutputTab tab) {
+        tab.runner.stop();
+        tabsByKey.remove(tab.taskKey);
+        tabbedPane.remove(tab.panel);
+        updateEmptyState();
+    }
+
+    private void updateEmptyState() {
+        contentLayout.show(contentPanel,
+            tabbedPane.getTabCount() == 0 ? EMPTY_CARD : TABS_CARD);
+    }
+
+    private BuildOutputTab selectedTab() {
+        var selected = tabbedPane.getSelectedComponent();
+        if (selected == null) {
+            return null;
+        }
+        for (BuildOutputTab tab : tabsByKey.values()) {
+            if (tab.panel == selected) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    private void setTabStatus(BuildOutputTab tab, String status) {
+        tab.setStatus(status);
+        updateTabHeader(tab);
+    }
+
+    private void applyMaxLines(int value) {
+        for (BuildOutputTab tab : tabsByKey.values()) {
+            tab.output.setMaxLines(value);
+        }
+    }
+
+    private int currentMaxLines() {
+        return jEdit.getIntegerProperty(
+            BuildOutputSettingsDialog.MAX_LINES_PROPERTY,
+            BuildOutputSettingsDialog.DEFAULT_MAX_LINES);
+    }
+
+    private void updateProjectRoots() {
+        File root = ProjectRoots.workspaceRoot();
+        for (BuildOutputTab tab : tabsByKey.values()) {
+            tab.output.setProjectRoot(root);
+        }
+    }
+
+    private void updateProjectRoot(BuildOutputTab tab) {
+        tab.output.setProjectRoot(ProjectRoots.workspaceRoot());
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
         EditBus.addToBus(folderListener);
-        updateProjectRoot();
+        updateProjectRoots();
     }
 
     @Override
@@ -135,6 +226,11 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
 
     @Override
     public void focusOnDefaultComponent() {
-        output.requestFocus();
+        BuildOutputTab tab = selectedTab();
+        if (tab != null) {
+            tab.output.requestFocus();
+        } else if (tabbedPane.getTabCount() > 0) {
+            tabbedPane.requestFocus();
+        }
     }
 }

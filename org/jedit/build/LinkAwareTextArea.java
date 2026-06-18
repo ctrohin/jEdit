@@ -45,6 +45,8 @@ final class LinkAwareTextArea extends JTextArea {
     private final List<FileLink> links = new ArrayList<>();
     private File projectRoot;
     private FileLink hoveredLink;
+    private int maxLines = 200;
+    private int lineCount;
 
     LinkAwareTextArea(View view) {
         super();
@@ -79,10 +81,20 @@ final class LinkAwareTextArea extends JTextArea {
         this.projectRoot = projectRoot;
     }
 
+    void setMaxLines(int maxLines) {
+        this.maxLines = Math.max(1, maxLines);
+        trimExcessLines();
+    }
+
+    int getMaxLines() {
+        return maxLines;
+    }
+
     void clearOutput() {
         setText("");
         links.clear();
         hoveredLink = null;
+        lineCount = 0;
         setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
     }
 
@@ -94,6 +106,42 @@ final class LinkAwareTextArea extends JTextArea {
         append(line);
         append("\n");
         links.addAll(FileLinkParser.parseLine(line, lineStart));
+        lineCount++;
+        trimExcessLines();
+    }
+
+    private void trimExcessLines() {
+        while (lineCount > maxLines && lineCount > 0) {
+            trimFirstLine();
+        }
+    }
+
+    private void trimFirstLine() {
+        if (lineCount <= 0) {
+            return;
+        }
+        try {
+            int removeEnd = getLineEndOffset(0);
+            if (removeEnd < getDocument().getLength()) {
+                removeEnd++;
+            }
+            replaceRange("", 0, removeEnd);
+            List<FileLink> adjusted = new ArrayList<>();
+            for (FileLink link : links) {
+                if (link.end <= removeEnd) {
+                    continue;
+                }
+                int newStart = Math.max(0, link.start - removeEnd);
+                adjusted.add(new FileLink(newStart, link.end - removeEnd,
+                    link.path, link.line, link.column));
+            }
+            links.clear();
+            links.addAll(adjusted);
+            lineCount--;
+        } catch (Exception ignored) {
+            lineCount = 0;
+            links.clear();
+        }
     }
 
     private void updateHover(MouseEvent e) {

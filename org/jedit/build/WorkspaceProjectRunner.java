@@ -110,7 +110,8 @@ public final class WorkspaceProjectRunner {
             return;
         }
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        String title = kindLabel(kind) + ": " + goal;
+        output.runBuild(title, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     public static boolean configureRun(View view, File projectRoot) {

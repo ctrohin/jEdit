@@ -152,7 +152,7 @@ public final class FlutterProjectView extends JPanel implements DefaultFocusComp
         FlutterCommandBuilder.Invocation invocation =
             FlutterCommandBuilder.build(projectDirectory, projectSettings, goal);
         BuildOutputView output = BuildOutputView.show(view);
-        output.runBuild(invocation.workingDir, invocation.command, invocation.environment);
+        output.runBuild(goal, invocation.workingDir, invocation.command, invocation.environment);
     }
 
     @Override
