@@ -288,6 +288,18 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="search-project-files" NO_RECORD="TRUE">
+	<CODE>
+		org.gjt.sp.jedit.project.ProjectFileSearchDialog.showDialog(view);
+	</CODE>
+</ACTION>
+
+<ACTION NAME="quick-open-project-file" NO_RECORD="TRUE">
+	<CODE>
+		org.gjt.sp.jedit.project.ProjectQuickOpenDialog.showDialog(view);
+	</CODE>
+</ACTION>
+
 <ACTION NAME="show-symbol-results-lsp">
 	<CODE>
 		org.jedit.lsp.LspPlugin.showSymbolResults(view);

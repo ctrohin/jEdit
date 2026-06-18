@@ -43,8 +43,8 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 
 /**
- * Dockable view for LSP symbol search results (references, implementations,
- * call hierarchy, workspace symbols, etc.) with search history.
+ * Dockable view for find results (LSP symbol searches, project search, etc.)
+ * with search history.
  */
 public class LspSymbolResultsView extends JPanel implements DefaultFocusComponent {
 

@@ -14,6 +14,8 @@ copy.shortcut=C+c
 delete-line.shortcut=C+d
 # C+e is a prefix
 find.shortcut=C+f
+search-project-files.shortcut=CS+f
+quick-open-project-file.shortcut=CS+o
 find-next.shortcut=F3
 # C+h is not usable on macOS
 indent-lines.shortcut=C+i

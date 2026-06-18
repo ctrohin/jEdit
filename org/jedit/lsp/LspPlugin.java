@@ -287,6 +287,42 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         }
     }
 
+    public static void publishProjectSearchResults(View view, String query,
+                                                   List<LspSymbolHit> hits) {
+        if (view == null || hits == null || hits.isEmpty()) {
+            return;
+        }
+        LspSymbolSearchResult result = LspSymbolSearchResult.forHits(
+            LspSymbolSearchResult.Kind.PROJECT_SEARCH, query, hits);
+        LspSymbolSearchHub.getInstance().publish(result);
+        showSymbolResults(view);
+    }
+
+    public static void openSymbolHit(View view, LspSymbolHit hit) {
+        if (view == null || hit == null) {
+            return;
+        }
+        String path = LspDocumentUri.uriToPath(hit.getUri());
+        if (path == null) {
+            return;
+        }
+        Hashtable<String, Object> props = new Hashtable<>();
+        props.put(Buffer.CARET, Integer.valueOf(0));
+        props.put(Buffer.CARET_POSITIONED, Boolean.TRUE);
+        Buffer buffer = jEdit.openFile(view, null, path, false, props);
+        if (buffer == null) {
+            return;
+        }
+        int offset = hit.getStartOffset(buffer);
+        buffer.setIntegerProperty(Buffer.CARET, offset);
+        buffer.setBooleanProperty(Buffer.CARET_POSITIONED, true);
+        buffer.unsetProperty(Buffer.SCROLL_VERT);
+        LspGoToDefinition.openLocation(view, hit.toLocation(),
+            LspNavigationHistory.capture(view));
+        view.toFront();
+        view.requestFocus();
+    }
+
     public static void showStructure(View view) {
         LspStructureView.show(view);
     }

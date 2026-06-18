@@ -168,10 +168,13 @@ find-declaration-lsp.label=Go to $Declaration (LSP)
 document-symbols-lsp.label=$Document Symbols (LSP)
 workspace-symbol-lsp.label=$Workspace Symbol Search (LSP)
 call-hierarchy-lsp.label=$Call Hierarchy (LSP)
-show-symbol-results-lsp.label=Show LSP Symbol $Results
+show-symbol-results-lsp.label=Show $Find Results
 show-structure-lsp.label=Show LSP $Structure
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
+
+search-project-files.label=Search in $Project Files
+quick-open-project-file.label=$Quick Open Project File
 
 #{{{ More Clipboard menu
 clipboard.label=More Clip$board
@@ -2583,9 +2586,9 @@ lsp-problems.title=Problems
 lsp-problems.empty=No problems reported
 lsp-problems.caption={0,choice,0#No problems|1#1 problem in {1,number,integer} file|1<{0,number,integer} problems in {1,number,integer} files}
 
-lsp-symbol-results.label=Symbol Results
-lsp-symbol-results.title=Symbol Results
-lsp-symbol-results.empty=No symbol search results
+lsp-symbol-results.label=Find Results
+lsp-symbol-results.title=Find Results
+lsp-symbol-results.empty=No find results
 lsp-symbol-results.caption={0}: {1} — {2,number,integer} result(s) in {3,number,integer} file(s)
 lsp-symbol-results.workspace-query-title=Workspace Symbol Search
 lsp-symbol-results.workspace-query-prompt=Enter symbol name to search:
@@ -2600,6 +2603,26 @@ lsp-symbol-results.kind.declaration=Declaration
 lsp-symbol-results.kind.document-symbols=Document Symbols
 lsp-symbol-results.kind.workspace-symbols=Workspace Symbols
 lsp-symbol-results.kind.call-hierarchy=Call Hierarchy
+
+lsp-symbol-results.kind.call-hierarchy=Call Hierarchy
+lsp-symbol-results.kind.project-search=Project Search
+
+project-file-search.title=Search in Project Files
+project-file-search.mode.plain=Plain text
+project-file-search.mode.regexp=Regular expression
+project-file-search.extensions.exclude=Exclude
+project-file-search.extensions.include=Include
+project-file-search.extensions.label=extensions:
+project-file-search.extensions.tooltip=Comma-separated extensions, e.g. java, dart, xml
+project-file-search.open-in-find-results=Open in find results
+project-file-search.searching=Searching...
+project-file-search.status={0,number,integer} result(s)
+project-file-search.no-project=Open a project folder first (Workspace tree).
+
+project-quick-open.title=Quick Open Project File
+project-quick-open.loading=Loading project files...
+project-quick-open.status={0,number,integer} file(s)
+project-quick-open.no-project=Open a project folder first (Workspace tree).
 
 lsp-structure.label=$Structure
 lsp-structure.title=Structure

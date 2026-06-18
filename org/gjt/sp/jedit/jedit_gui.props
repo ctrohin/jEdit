@@ -300,6 +300,9 @@ search=find \
 	   find-next \
 	   find-prev \
 	   - \
+	   search-project-files \
+	   quick-open-project-file \
+	   - \
 	   search-in-open-buffers \
 	   search-in-directory \
 	   - \
@@ -1067,8 +1070,8 @@ lsp-problems.label=Problems
 lsp-problems.dock-position=bottom
 lsp-problems.icon=MatIcons.ERROR_OUTLINE:22
 
-lsp-symbol-results.title=Symbol Results
-lsp-symbol-results.label=Symbol Results
+lsp-symbol-results.title=Find Results
+lsp-symbol-results.label=Find Results
 lsp-symbol-results.dock-position=bottom
 lsp-symbol-results.icon=MatIcons.ACCOUNT_TREE:22
 

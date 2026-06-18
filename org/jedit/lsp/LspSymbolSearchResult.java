@@ -30,7 +30,8 @@ public final class LspSymbolSearchResult {
         DECLARATION("lsp-symbol-results.kind.declaration"),
         DOCUMENT_SYMBOLS("lsp-symbol-results.kind.document-symbols"),
         WORKSPACE_SYMBOLS("lsp-symbol-results.kind.workspace-symbols"),
-        CALL_HIERARCHY("lsp-symbol-results.kind.call-hierarchy");
+        CALL_HIERARCHY("lsp-symbol-results.kind.call-hierarchy"),
+        PROJECT_SEARCH("lsp-symbol-results.kind.project-search");
 
         private final String propertyKey;
 
