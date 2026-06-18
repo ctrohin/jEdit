@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.gui.RolloverButton;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 
 final class BuildOutputTab {
@@ -40,9 +42,9 @@ final class BuildOutputTab {
 
         JPanel toolbar = new JPanel(new BorderLayout());
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
-        JButton clear = new JButton(jEdit.getProperty("build-output.clear"));
+        JButton clear = new RolloverButton(IconManager.loadIcon("MatIcons.CLEAR:22"), jEdit.getProperty("build-output.clear"));
         clear.addActionListener(e -> clearOutput());
-        JButton stop = new JButton(jEdit.getProperty("build-output.stop"));
+        JButton stop = new RolloverButton(IconManager.loadIcon("MatIcons.STOP:22"), jEdit.getProperty("build-output.stop"));
         stop.addActionListener(e -> stopRun());
         statusLabel = new JLabel(" ");
         left.add(clear);
@@ -51,7 +53,7 @@ final class BuildOutputTab {
         toolbar.add(left, BorderLayout.CENTER);
 
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
-        JButton settings = new JButton(jEdit.getProperty("build-output.settings"));
+        JButton settings = new RolloverButton(IconManager.loadIcon("MatIcons.SETTINGS:22"), jEdit.getProperty("build-output.settings"));
         settings.addActionListener(e -> onSettings.run());
         right.add(settings);
         toolbar.add(right, BorderLayout.EAST);
