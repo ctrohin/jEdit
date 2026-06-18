@@ -2185,6 +2185,9 @@ build-output.max-lines=Max lines:
 build-output.running=Running...
 build-output.finished=Finished
 build-output.stopped=Stopped
+build-output.already-running.title=Already running
+build-output.already-running.message=Already running. What do you wish to do?
+build-output.already-running.restart=Stop current build and run again
 
 ant-project.label=$Ant
 ant-project.title=Ant

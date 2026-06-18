@@ -104,7 +104,9 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         File root = ProjectRoots.workspaceRoot();
         output.appendLine("$ " + commandLine);
         List<String> command = shellCommand(commandLine);
-        runner.run(root, command, output::appendLine, null);
+        runner.run(root, command,
+            (line, error) -> output.appendLine(line, error ? LinkAwareTextArea.errorColor() : null),
+            null);
         commandField.setText("");
     }
 

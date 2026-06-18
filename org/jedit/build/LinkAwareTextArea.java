@@ -21,6 +21,7 @@
 
 package org.jedit.build;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.geom.Point2D;
@@ -32,6 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
@@ -51,6 +58,7 @@ final class LinkAwareTextArea extends JTextArea {
     LinkAwareTextArea(View view) {
         super();
         this.view = view;
+        setDocument(new DefaultStyledDocument());
         setEditable(false);
         setLineWrap(false);
         Font mono = new Font(Font.MONOSPACED, Font.PLAIN,
@@ -98,16 +106,31 @@ final class LinkAwareTextArea extends JTextArea {
         setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
     }
 
+    static Color errorColor() {
+        Color error = UIManager.getColor("Component.error.focusedBorderColor");
+        return error != null ? error : new Color(0xc62828);
+    }
+
     void appendLine(String line) {
+        appendLine(line, null);
+    }
+
+    void appendLine(String line, Color color) {
         if (line == null) {
             line = "";
         }
-        int lineStart = getDocument().getLength();
-        append(line);
-        append("\n");
-        links.addAll(FileLinkParser.parseLine(line, lineStart));
-        lineCount++;
-        trimExcessLines();
+        try {
+            int lineStart = getDocument().getLength();
+            SimpleAttributeSet attrs = new SimpleAttributeSet();
+            if (color != null) {
+                StyleConstants.setForeground(attrs, color);
+            }
+            ((StyledDocument) getDocument()).insertString(lineStart, line + "\n", attrs);
+            links.addAll(FileLinkParser.parseLine(line, lineStart));
+            lineCount++;
+            trimExcessLines();
+        } catch (BadLocationException ignored) {
+        }
     }
 
     private void trimExcessLines() {

@@ -23,10 +23,12 @@ package org.jedit.build;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.swing.SwingUtilities;
@@ -56,8 +58,18 @@ final class BuildProcessRunner {
         run(workingDir, command, null, onLine, onFinished);
     }
 
+    void run(File workingDir, List<String> command,
+             BiConsumer<String, Boolean> onLine, Runnable onFinished) {
+        run(workingDir, command, null, onLine, onFinished);
+    }
+
     void run(File workingDir, List<String> command, Map<String, String> environment,
              Consumer<String> onLine, Runnable onFinished) {
+        run(workingDir, command, environment, (line, error) -> onLine.accept(line), onFinished);
+    }
+
+    void run(File workingDir, List<String> command, Map<String, String> environment,
+             BiConsumer<String, Boolean> onLine, Runnable onFinished) {
         stop();
         running = true;
         ThreadUtilities.runInBackground(() -> {
@@ -70,32 +82,48 @@ final class BuildProcessRunner {
                 if (environment != null && !environment.isEmpty()) {
                     builder.environment().putAll(environment);
                 }
-                builder.redirectErrorStream(true);
+                builder.redirectErrorStream(false);
                 process = builder.start();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    process.getInputStream(), Charset.defaultCharset()))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        String captured = line;
-                        SwingUtilities.invokeLater(() -> onLine.accept(captured));
-                    }
-                }
+                Thread stdout = new Thread(
+                    () -> readLines(process.getInputStream(), false, onLine),
+                    "build-stdout");
+                Thread stderr = new Thread(
+                    () -> readLines(process.getErrorStream(), true, onLine),
+                    "build-stderr");
+                stdout.start();
+                stderr.start();
+                stdout.join();
+                stderr.join();
                 exitCode = process.waitFor();
             } catch (Exception ex) {
                 Log.log(Log.ERROR, BuildProcessRunner.class, "Build command failed", ex);
                 String message = ex.getMessage() != null ? ex.getMessage() : ex.toString();
-                SwingUtilities.invokeLater(() -> onLine.accept("Error: " + message));
+                SwingUtilities.invokeLater(() -> onLine.accept("Error: " + message, true));
             } finally {
                 process = null;
                 running = false;
                 int code = exitCode;
                 SwingUtilities.invokeLater(() -> {
-                    onLine.accept("--- exit code " + code + " ---");
+                    onLine.accept("--- exit code " + code + " ---", false);
                     if (onFinished != null) {
                         onFinished.run();
                     }
                 });
             }
         });
+    }
+
+    private static void readLines(InputStream stream, boolean error,
+                                  BiConsumer<String, Boolean> onLine) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+            stream, Charset.defaultCharset()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String captured = line;
+                SwingUtilities.invokeLater(() -> onLine.accept(captured, error));
+            }
+        } catch (Exception ex) {
+            Log.log(Log.ERROR, BuildProcessRunner.class, "Failed to read process output", ex);
+        }
     }
 }

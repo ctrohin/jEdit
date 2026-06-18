@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
@@ -99,6 +100,10 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
     void runBuild(String taskTitle, File workingDir, List<String> command,
                   Map<String, String> environment) {
         String taskKey = BuildOutputTasks.taskKey(workingDir, command);
+        BuildOutputTab existing = tabsByKey.get(taskKey);
+        if (existing != null && existing.isRunning() && !confirmRestart()) {
+            return;
+        }
         String title = taskTitle != null && !taskTitle.isBlank()
             ? taskTitle.trim()
             : BuildOutputTasks.defaultTitle(command);
@@ -107,10 +112,26 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
         tab.output.clearOutput();
         tab.output.appendLine("$ " + String.join(" ", command));
         setTabStatus(tab, jEdit.getProperty("build-output.running"));
-        tab.runner.run(workingDir, command, environment, tab.output::appendLine,
+        tab.runner.run(workingDir, command, environment,
+            (line, error) -> tab.output.appendLine(line, error ? LinkAwareTextArea.errorColor() : null),
             () -> setTabStatus(tab, jEdit.getProperty("build-output.finished")));
         updateTabHeader(tab);
         tabbedPane.setSelectedComponent(tab.panel);
+    }
+
+    private boolean confirmRestart() {
+        String cancel = jEdit.getProperty("common.cancel");
+        String restart = jEdit.getProperty("build-output.already-running.restart");
+        int choice = JOptionPane.showOptionDialog(
+            view,
+            jEdit.getProperty("build-output.already-running.message"),
+            jEdit.getProperty("build-output.already-running.title"),
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            new String[] {cancel, restart},
+            cancel);
+        return choice == 1;
     }
 
     private BuildOutputTab findOrCreateTab(String taskKey, String title) {
