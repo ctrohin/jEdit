@@ -58,7 +58,7 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
     private final JPanel contentPanel;
     private final Map<String, BuildOutputTab> tabsByKey = new LinkedHashMap<>();
     private final ProjectFolderListener folderListener =
-        new ProjectFolderListener(this::updateProjectRoots);
+        new ProjectFolderListener(this::onProjectFolderChanged);
 
     public BuildOutputView(View view) {
         super(new BorderLayout());
@@ -219,6 +219,16 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
         return jEdit.getIntegerProperty(
             BuildOutputSettingsDialog.MAX_LINES_PROPERTY,
             BuildOutputSettingsDialog.DEFAULT_MAX_LINES);
+    }
+
+    private void onProjectFolderChanged() {
+        clearAllTabs();
+    }
+
+    private void clearAllTabs() {
+        for (BuildOutputTab tab : List.copyOf(tabsByKey.values())) {
+            closeTab(tab);
+        }
     }
 
     private void updateProjectRoots() {
