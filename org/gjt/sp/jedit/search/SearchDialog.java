@@ -194,6 +194,11 @@ public class SearchDialog extends EnhancedDialog
 				searchSubDirectories.setSelected(((DirectoryListSet)fileset)
 					.isRecursive());
 			}
+			else
+			{
+				directoryField.setText(
+					SearchDirectoryPreferences.defaultDirectory(view));
+			}
 
 			hyperSearch.setSelected(true);
 			searchDirectory.setSelected(true);
@@ -840,6 +845,7 @@ public class SearchDialog extends EnhancedDialog
 				this.directoryField.addCurrentToHistory();
 				directory = MiscUtilities.constructPath(
 					view.getBuffer().getDirectory(), directory);
+				SearchDirectoryPreferences.saveDirectory(directory);
 
 				if((VFSManager.getVFSForPath(directory).getCapabilities()
 					& VFS.LOW_LATENCY_CAP) == 0)
@@ -964,12 +970,6 @@ public class SearchDialog extends EnhancedDialog
 				.getFileExtension(view.getBuffer()
 				.getName()));
 		}
-		model = directoryField.getModel();
-		if(model.getSize() != 0)
-			directoryField.setText(model.getItem(0));
-		else
-			directoryField.setText(view.getBuffer().getDirectory());
-
 		searchSubDirectories.setSelected(jEdit.getBooleanProperty(
 			"search.subdirs.toggle"));
 
@@ -982,10 +982,15 @@ public class SearchDialog extends EnhancedDialog
 			searchSubDirectories.setSelected(((DirectoryListSet)fileset)
 				.isRecursive());
 		}
-		else if(fileset instanceof AllBufferSet)
+		else
 		{
-			filter.setText(((AllBufferSet)fileset)
-				.getFileFilter());
+			directoryField.setText(
+				SearchDirectoryPreferences.defaultDirectory(view));
+			if(fileset instanceof AllBufferSet)
+			{
+				filter.setText(((AllBufferSet)fileset)
+					.getFileFilter());
+			}
 		}
 
 		directoryField.addCurrentToHistory();
@@ -1049,7 +1054,10 @@ public class SearchDialog extends EnhancedDialog
 					VFSBrowser.CHOOSE_DIRECTORY_DIALOG,
 					false);
 				if(dirs.length > 0)
+				{
 					directoryField.setText(dirs[0]);
+					SearchDirectoryPreferences.saveDirectory(dirs[0]);
+				}
 			}
 			else if(evt.getSource() == synchronize)
 			{

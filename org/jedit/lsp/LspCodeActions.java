@@ -105,22 +105,25 @@ public final class LspCodeActions {
         context.setDiagnostics(List.of(problem.toDiagnostic()));
         params.setContext(context);
 
-        requestCodeActionsAsync(lspClient, buffer, params, result -> {
+        requestCodeActionsAsync(view, lspClient, buffer, params, result -> {
             List<LspCodeActionItem> items = parseActions(result);
             onResult.accept(items);
         }, () -> onResult.accept(List.of()));
     }
 
-    private static void requestCodeActionsAsync(GenericLspClient lspClient, Buffer buffer,
+    private static void requestCodeActionsAsync(View view, GenericLspClient lspClient,
+                                                Buffer buffer,
                                                 CodeActionParams params,
                                                 Consumer<List<Either<Command, CodeAction>>> onResult,
                                                 Runnable onFailure) {
+        LspBusyCursor.show(view);
         LspAsync.runOffEdt(() ->
             LspPlugin.flushBufferChangesAsync(buffer)
                 .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
                 .thenComposeAsync(ignored ->
                     lspClient.getServer().getTextDocumentService().codeAction(params),
                     LspAsync.EXECUTOR)
+                .whenComplete((result, ex) -> LspBusyCursor.hide(view))
                 .thenAccept(result -> LspAsync.runOnEdt(() -> onResult.accept(result)))
                 .exceptionally(ex -> {
                     Log.log(Log.ERROR, LspCodeActions.class,
@@ -159,7 +162,7 @@ public final class LspCodeActions {
             }
             params.setContext(context);
 
-            requestCodeActionsAsync(lspClient, buffer, params, result -> {
+        requestCodeActionsAsync(view, lspClient, buffer, params, result -> {
                 List<LspCodeActionItem> items = parseActions(result, onlyKinds);
                 if (items.isEmpty()) {
                     javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);

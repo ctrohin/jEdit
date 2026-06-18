@@ -133,6 +133,10 @@ public final class LspSymbolSearches {
         if (!prepare(view, lspClient)) {
             return;
         }
+        LspAsync.runOnEdt(() -> promptWorkspaceSymbols(view, lspClient));
+    }
+
+    private static void promptWorkspaceSymbols(View view, GenericLspClient lspClient) {
         String query = JOptionPane.showInputDialog(
             view,
             jEdit.getProperty("lsp-symbol-results.workspace-query-prompt"),
@@ -149,6 +153,7 @@ public final class LspSymbolSearches {
 
         final String finalQuery = query;
         Buffer buffer = view.getBuffer();
+        LspBusyCursor.show(view);
         LspPlugin.flushBufferChangesAsync(buffer)
             .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
             .thenComposeAsync(ignored -> {
@@ -156,6 +161,7 @@ public final class LspSymbolSearches {
                 params.setQuery(finalQuery);
                 return lspClient.getServer().getWorkspaceService().symbol(params);
             })
+            .whenComplete((ignored, ex) -> LspBusyCursor.hide(view))
             .thenAccept(symbols -> SwingUtilities.invokeLater(() -> {
                 List<LspSymbolHit> hits = parseWorkspaceSymbols(symbols);
                 publishOrFeedback(view,
@@ -286,10 +292,12 @@ public final class LspSymbolSearches {
         Position position = offsetToPosition(buffer, caret);
         String query = symbolNameAtCaret(buffer, caret);
 
+        LspBusyCursor.show(view);
         LspPlugin.flushBufferChangesAsync(buffer)
             .thenComposeAsync(ignored -> lspClient.whenReady(), LspAsync.EXECUTOR)
             .thenComposeAsync(ignored ->
                 search.search(lspClient.getServer().getTextDocumentService(), uri, position))
+            .whenComplete((ignored, ex) -> LspBusyCursor.hide(view))
             .thenAccept(locations -> SwingUtilities.invokeLater(() ->
                 publishOrFeedback(view,
                     LspSymbolSearchResult.forLocations(kind, query, locations),

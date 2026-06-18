@@ -35,7 +35,6 @@ import javax.swing.SwingUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
-import org.gjt.sp.util.ThreadUtilities;
 
 public class MyLspClient implements LanguageClient {
 
@@ -156,21 +155,10 @@ public class MyLspClient implements LanguageClient {
     public CompletableFuture<ApplyWorkspaceEditResponse> applyEdit(ApplyWorkspaceEditParams params) {
         CompletableFuture<ApplyWorkspaceEditResponse> result = new CompletableFuture<>();
         WorkspaceEdit edit = params != null ? params.getEdit() : null;
-        Runnable applyTask = () -> {
-            try {
-                boolean applied = LspWorkspaceEdits.apply(edit);
-                result.complete(new ApplyWorkspaceEditResponse(applied));
-            } catch (Exception e) {
-                Log.log(Log.ERROR, MyLspClient.class, "workspace/applyEdit failed", e);
-                result.complete(new ApplyWorkspaceEditResponse(false));
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            applyTask.run();
-        } else {
-            ThreadUtilities.runInBackground(() ->
-                ThreadUtilities.runInDispatchThreadAndWait(applyTask));
-        }
+        runOnEdtCompleting(result, () -> {
+            boolean applied = LspWorkspaceEdits.apply(edit);
+            return new ApplyWorkspaceEditResponse(applied);
+        });
         return result;
     }
 
