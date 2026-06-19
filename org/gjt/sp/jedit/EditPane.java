@@ -1141,12 +1141,10 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 		else if(msg.getWhat() == BufferUpdate.DIRTY_CHANGED)
 		{
-			if(_buffer == buffer && bufferSwitcher != null)
+			if(bufferSwitcher != null
+				&& getBufferSet().indexOf(buffer) != -1)
 			{
-				if(buffer.isDirty())
-					bufferSwitcher.repaint();
-				else
-					bufferSwitcher.updateBufferList();
+				bufferSwitcher.updateTabTitles();
 			}
 		}
 		else if(msg.getWhat() == BufferUpdate.MARKERS_CHANGED)

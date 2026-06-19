@@ -52,6 +52,8 @@ import org.gjt.sp.jedit.gui.components.CustomTabHeader;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
+import org.jedit.git.GitBufferTabLabels;
+import org.jedit.git.GitBufferTabStatus;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
 //}}}
@@ -158,6 +160,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		defaultColor   = getForeground();
 		defaultBGColor = getBackground();
 
+		GitBufferTabStatus.getInstance().addListener(this::updateTabTitles);
 		updateStyle(editPane.getBuffer());
 	}
 
@@ -241,6 +244,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			Buffer[] buffers = getSortedBuffers();
 			setModel(new DefaultComboBoxModel<>(buffers));
 			buildTabs(buffers);
+			GitBufferTabStatus.getInstance().requestRefresh(buffers);
 			// FIXME: editPane.getBuffer() returns wrong buffer (old buffer) after last non-untitled buffer close.
 			// When the only non-untitled (last) buffer is closed a new untitled buffer is added to BufferSet
 			// directly from BufferSetManager (@see BufferSetManager.bufferRemoved() and BufferSetManager.addBuffer())
@@ -259,8 +263,8 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		tabsListenerEnabled = false;
 		tabs.removeAll();
 		for (Buffer buffer : buffers) {
-			tabs.addTab(buffer.getName(), tabIcon(buffer), null,
-				makeToolTipText(buffer.getPath(), buffer.isBackup()));
+			tabs.addTab(GitBufferTabLabels.formatTabTitle(buffer), tabIcon(buffer), null,
+				GitBufferTabLabels.formatTabToolTip(buffer));
 		}
 		var idx = 0;
 		for (int i = 0; i < buffers.length; i++) {
@@ -271,6 +275,23 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		}
 		tabsListenerEnabled = true;
 		tabs.setSelectedIndex(idx);
+	}
+
+	public void updateTabTitles() {
+		Runnable runnable = () ->
+		{
+			if (tabs.getTabCount() == 0) {
+				return;
+			}
+			Buffer[] buffers = getSortedBuffers();
+			int count = Math.min(buffers.length, tabs.getTabCount());
+			for (int i = 0; i < count; i++) {
+				Buffer buffer = buffers[i];
+				tabs.setTitleAt(i, GitBufferTabLabels.formatTabTitle(buffer));
+				tabs.setToolTipTextAt(i, GitBufferTabLabels.formatTabToolTip(buffer));
+			}
+		};
+		ThreadUtilities.runInDispatchThread(runnable);
 	}
 
 	private static Icon tabIcon(Buffer buffer) {

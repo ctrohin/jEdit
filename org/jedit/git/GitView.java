@@ -47,6 +47,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.EditBus;
+import org.jedit.git.GitStatusChanged;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
@@ -309,6 +310,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         for (GitModels.Branch branch : snapshot.branches) {
             branchModel.addElement(branch);
         }
+        EditBus.send(new GitStatusChanged(snapshot.repoRoot));
     }
 
     private void setControlsEnabled(boolean enabled) {
