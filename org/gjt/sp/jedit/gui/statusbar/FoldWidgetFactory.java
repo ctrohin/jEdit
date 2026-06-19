@@ -92,6 +92,10 @@ public class FoldWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			if (buffer.isLoaded())
 				label.setText("Fold: " + view.getBuffer().getProperty("folding"));

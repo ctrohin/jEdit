@@ -84,6 +84,10 @@ public class WrapWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			WordWrap wrap = buffer.getWordWrap();
 			if (largeBufferDeactivateWrap() && wrap == soft)

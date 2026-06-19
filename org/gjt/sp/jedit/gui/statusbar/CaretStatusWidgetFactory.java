@@ -83,6 +83,10 @@ public class CaretStatusWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 
 			if(!buffer.isLoaded() ||

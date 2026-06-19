@@ -95,6 +95,10 @@ public class LockedWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			boolean locked = buffer.isLocked();
 			label.setIcon(locked ? lockClosed : lockOpened);

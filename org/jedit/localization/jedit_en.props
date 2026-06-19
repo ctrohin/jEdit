@@ -534,6 +534,7 @@ whitespace-home.label=Go to Start of White Space
 # Title
 view.title=jEdit -\u0020
 view.title.dirty=\ (modified)
+no-buffer-panel.text=No file is open.<br>Use the project tree or <b>File &gt; Open</b> to open a file.
 
 view.docking.close-tooltip=Hides the current docked window
 view.docking.menu-tooltip=Docking options

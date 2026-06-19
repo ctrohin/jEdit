@@ -61,6 +61,10 @@ public class IndentWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			String indent = buffer.getStringProperty("autoIndent");
 			label.setToolTipText(jEdit.getProperty("view.status.indent-tooltip"));

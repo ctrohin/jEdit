@@ -1281,8 +1281,9 @@ public class View extends JFrame implements InputHandlerProvider
 		for (EditPane ep : editPanes)
 		{
 			Buffer buffer = ep.getBuffer();
-			if (!buffers.contains(buffer))
-				buffers.add(buffer);
+			if (buffer == null || buffers.contains(buffer))
+				continue;
+			buffers.add(buffer);
 		}
 
 		StringBuilder title = new StringBuilder();
@@ -2145,10 +2146,13 @@ loop:		while (true)
 		EditPane editPane = msg.getEditPane();
 		if(editPane !=  null &&
 			editPane.getView() == this
-			&& msg.getWhat() == EditPaneUpdate.BUFFER_CHANGED
-			&& editPane.getBuffer().isLoaded())
+			&& msg.getWhat() == EditPaneUpdate.BUFFER_CHANGED)
 		{
-			closeDuplicateBuffers(msg);
+			Buffer currentBuffer = editPane.getBuffer();
+			if (currentBuffer != null && currentBuffer.isLoaded())
+			{
+				closeDuplicateBuffers(msg);
+			}
 			status.updateCaretStatus();
 			status.updateBufferStatus();
 			status.updateMiscStatus();

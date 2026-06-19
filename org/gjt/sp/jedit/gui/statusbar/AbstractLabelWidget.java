@@ -28,6 +28,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Optional;
 //}}}
 
 /**
@@ -61,6 +62,21 @@ abstract class AbstractLabelWidget implements Widget
 	public JComponent getComponent()
 	{
 		return label;
+	}
+
+	/**
+	 * Clears the label when no buffer is active.
+	 * @return true if there is no active buffer
+	 */
+	protected boolean clearWhenNoBuffer()
+	{
+		if (view.getBuffer() != null)
+		{
+			return false;
+		}
+		label.setText(" ");
+		label.setIcon(null);
+		return true;
 	}
 
 	protected void singleClick(MouseEvent e)

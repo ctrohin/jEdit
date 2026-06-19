@@ -235,7 +235,17 @@ public class BufferSwitcher extends JComboBox<Buffer>
 		// become 1 very soon, so don't do anything in that case.
 		final BufferSet bufferSet = editPane.getBufferSet();
 		if(bufferSet.size() == 0)
+		{
+			Runnable runnable = () ->
+			{
+				updating = true;
+				setModel(new DefaultComboBoxModel<>());
+				buildTabs(new Buffer[0]);
+				updating = false;
+			};
+			ThreadUtilities.runInDispatchThread(runnable);
 			return;
+		}
 
 		Runnable runnable = () ->
 		{
@@ -274,7 +284,9 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			}
 		}
 		tabsListenerEnabled = true;
-		tabs.setSelectedIndex(idx);
+		if (tabs.getTabCount() > 0) {
+			tabs.setSelectedIndex(idx);
+		}
 	}
 
 	public void updateTabTitles() {

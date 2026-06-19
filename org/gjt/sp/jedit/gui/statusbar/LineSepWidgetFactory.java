@@ -111,6 +111,10 @@ public class LineSepWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			String lineSep = buffer.getStringProperty(JEditBuffer.LINESEP);
 			LineSepType lineSepType = LineSepType.fromSeparator(lineSep);

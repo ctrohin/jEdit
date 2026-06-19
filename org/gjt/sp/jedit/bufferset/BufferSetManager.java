@@ -27,6 +27,7 @@ import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSManager;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
+import org.gjt.sp.jedit.gui.WorkspaceTreeView;
 import org.gjt.sp.jedit.visitors.JEditVisitorAdapter;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.jedit.EditBus.EBHandler;
@@ -272,11 +273,21 @@ public class BufferSetManager
 	{
 		if (bufferSet.size() == 0)
 		{
+			if (isWorkspaceOpen())
+			{
+				return;
+			}
 			Buffer newEmptyBuffer = createUntitledBuffer();
 			EditPane editPaneOwner = getOwner(bufferSet);
 			addBuffer(editPaneOwner, newEmptyBuffer);
 		}
 	} //}}}
+
+	private static boolean isWorkspaceOpen()
+	{
+		String folder = jEdit.getProperty(WorkspaceTreeView.FOLDER_KEY);
+		return folder != null && !folder.isBlank();
+	}
 
 	//{{{ _removeBuffer() method
 	/**
@@ -314,7 +325,10 @@ public class BufferSetManager
 		if (view != null)
 		{
 			Buffer buffer = view.getBuffer();
-			parent = buffer.getDirectory();
+			if (buffer != null)
+			{
+				parent = buffer.getDirectory();
+			}
 		}
 		if (parent == null)
 		{

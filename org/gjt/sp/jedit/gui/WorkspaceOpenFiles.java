@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.gjt.sp.jedit.Buffer;
+import org.gjt.sp.jedit.EditPane;
 import org.gjt.sp.jedit.EBComponent;
 import org.gjt.sp.jedit.EBMessage;
 import org.gjt.sp.jedit.EditBus;
@@ -108,6 +109,11 @@ final class WorkspaceOpenFiles implements EBComponent {
         }
         SavedOpenFiles saved = load(canonical);
         if (saved == null) {
+            saved = new SavedOpenFiles(List.of(), null);
+        }
+        if (saved.paths.isEmpty()) {
+            restoreEmpty(view);
+            activeRestoreFolder = canonical;
             return;
         }
         if (view == null) {
@@ -158,6 +164,35 @@ final class WorkspaceOpenFiles implements EBComponent {
                 .ifPresent(view::setBuffer);
         }
         activeRestoreFolder = canonical;
+    }
+
+    private static void restoreEmpty(View view) {
+        if (view == null) {
+            view = jEdit.getActiveView();
+        }
+        if (view == null) {
+            return;
+        }
+        List<Buffer> toClose = new ArrayList<>();
+        for (Buffer buffer : jEdit.getBufferManager().getBuffers()) {
+            toClose.add(buffer);
+        }
+        for (Buffer buffer : toClose) {
+            if (buffer.isTemporary()) {
+                jEdit._closeBuffer(view, buffer);
+            } else if (!jEdit.closeBuffer(view, buffer)) {
+                break;
+            }
+        }
+        for (EditPane editPane : view.getEditPanes()) {
+            if (editPane.getBufferSet().size() == 0) {
+                editPane.clearBuffer();
+            }
+        }
+        view.updateTitle();
+        view.getStatus().updateCaretStatus();
+        view.getStatus().updateBufferStatus();
+        view.getStatus().updateMiscStatus();
     }
 
     private static List<String> collectOpenPaths() {

@@ -90,6 +90,11 @@ public class LastModifiedWidgetFactory implements StatusWidgetFactory
 		public void update()
 		{
 			Buffer buffer = view.getBuffer();
+			if (buffer == null)
+			{
+				label.setText("");
+				return;
+			}
 			String path = buffer.getPath();
 			VFS vfs = VFSManager.getVFSForPath(path);
 			Object session = vfs.createVFSSession(path, view);

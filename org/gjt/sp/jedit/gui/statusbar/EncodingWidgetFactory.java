@@ -104,6 +104,10 @@ public class EncodingWidgetFactory implements StatusWidgetFactory
 		@Override
 		public void update()
 		{
+			if (clearWhenNoBuffer())
+			{
+				return;
+			}
 			Buffer buffer = view.getBuffer();
 			if (buffer.isLoaded())
 				label.setText(buffer.getStringProperty("encoding"));

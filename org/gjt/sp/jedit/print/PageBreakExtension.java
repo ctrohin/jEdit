@@ -98,9 +98,9 @@ public class PageBreakExtension extends TextAreaExtension implements EBComponent
             EditPaneUpdate epu = ( EditPaneUpdate )msg;
             if ( EditPaneUpdate.BUFFER_CHANGED.equals( epu.getWhat() ) )
             {
-
+                Buffer buffer = epu.getEditPane().getBuffer();
                 // prevent NPE in Buffer#markToken() when edit mode is not loaded
-                if ( epu.getEditPane().getBuffer().isLoaded() )
+                if ( buffer != null && buffer.isLoaded() )
                 {
                     loadPageRanges();
                 }

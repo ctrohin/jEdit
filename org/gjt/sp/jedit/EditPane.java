@@ -24,9 +24,12 @@ package org.gjt.sp.jedit;
 
 //{{{ Imports
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -148,6 +151,14 @@ public class EditPane extends JPanel implements BufferSetListener
 		if(this.buffer == buffer)
 			return;
 
+		if (buffer == null)
+		{
+			clearBuffer();
+			return;
+		}
+
+		showEditorPanel();
+
 		if (!bufferSet.contains(buffer))
 		{
 			jEdit.getBufferSetManager().addBuffer(this, buffer);
@@ -223,8 +234,10 @@ public class EditPane extends JPanel implements BufferSetListener
 	 */
 	public void prevBuffer()
 	{
-		Buffer buffer = bufferSet.getPreviousBuffer(bufferSet.indexOf(this.buffer));
-		setBuffer(buffer);
+		if (buffer == null || bufferSet.size() == 0)
+			return;
+		Buffer previous = bufferSet.getPreviousBuffer(bufferSet.indexOf(this.buffer));
+		setBuffer(previous);
 	} //}}}
 
 	//{{{ nextBuffer() method
@@ -234,6 +247,8 @@ public class EditPane extends JPanel implements BufferSetListener
 	 */
 	public void nextBuffer()
 	{
+		if (buffer == null || bufferSet.size() == 0)
+			return;
 		Buffer buffer = bufferSet.getNextBuffer(bufferSet.indexOf(this.buffer));
 		setBuffer(buffer);
 	} //}}}
@@ -310,7 +325,7 @@ public class EditPane extends JPanel implements BufferSetListener
 	 */
 	public void saveCaretInfo()
 	{
-		if(!buffer.isLoaded())
+		if(buffer == null || !buffer.isLoaded())
 			return;
 
 		buffer.setIntegerProperty(Buffer.CARET,
@@ -358,6 +373,8 @@ public class EditPane extends JPanel implements BufferSetListener
 	 */
 	public void loadCaretInfo()
 	{
+		if (buffer == null)
+			return;
 		// get our internal map of buffer -> CaretInfo since there might
 		// be current info already
 		CaretInfo caretInfo = caretsForPath.get(buffer.getPath());
@@ -668,11 +685,43 @@ public class EditPane extends JPanel implements BufferSetListener
 			return;
 		if (bufferSwitcher != null)
 			bufferSwitcher.updateBufferList();
-		if (!bufferSet.contains(this.buffer))
+		if (this.buffer == null || !bufferSet.contains(this.buffer))
 		{
 			// it happens when having 1 untitled buffer if I open a file. The untitled buffer
 			// is closed but the new buffer is not yet opened
 			setBuffer(buffer);
+		}
+	} //}}}
+
+	//{{{ clearBuffer() method
+	/**
+	 * Clears the current buffer and shows the empty editor panel.
+	 */
+	public void clearBuffer()
+	{
+		if (buffer != null)
+		{
+			saveCaretInfo();
+			recentBuffer = buffer;
+			buffer = null;
+		}
+		showEmptyPanel();
+		if (!init)
+		{
+			view.updateTitle();
+			if (bufferSwitcher != null)
+			{
+				bufferSwitcher.setSelectedItem(null);
+				bufferSwitcher.updateBufferList();
+			}
+			EditBus.send(new EditPaneUpdate(this, EditPaneUpdate.BUFFER_CHANGED));
+			if (view.getEditPane() == this)
+			{
+				StatusBar status = view.getStatus();
+				status.updateCaretStatus();
+				status.updateBufferStatus();
+				status.updateMiscStatus();
+			}
 		}
 	} //}}}
 
@@ -709,6 +758,10 @@ public class EditPane extends JPanel implements BufferSetListener
 			{
 				setBuffer(bufferSet.getBuffer(0));
 				recentBuffer = null;
+			}
+			else
+			{
+				clearBuffer();
 			}
 		}
 		if(buffer == recentBuffer)
@@ -814,16 +867,27 @@ public class EditPane extends JPanel implements BufferSetListener
 			});
 
 		textArea.addStatusListener(new StatusHandler());
-		add(BorderLayout.CENTER,textArea);
+		emptyPanel = createEmptyPanel();
+		editorCard = new JPanel(new CardLayout());
+		editorCard.add(textArea, CARD_EDITOR);
+		editorCard.add(emptyPanel, CARD_EMPTY);
+		add(BorderLayout.CENTER, editorCard);
 
 		propertiesChanged();
-		setBuffer(buffer);
+		if (buffer != null)
+		{
+			setBuffer(buffer);
 
-		// need to add the buffer to the bufferSet.
-		// It may not have been done by the setBuffer() because the EditPane is not yet known by jEdit, and for
-		// view and global scope it is added through this list
-		if (!bufferSet.contains(buffer))
-			bufferSet.addBuffer(buffer);
+			// need to add the buffer to the bufferSet.
+			// It may not have been done by the setBuffer() because the EditPane is not yet known by jEdit, and for
+			// view and global scope it is added through this list
+			if (!bufferSet.contains(buffer))
+				bufferSet.addBuffer(buffer);
+		}
+		else
+		{
+			showEmptyPanel();
+		}
 
 		loadBufferSwitcher();
 
@@ -846,6 +910,9 @@ public class EditPane extends JPanel implements BufferSetListener
 	//{{{ Private members
 
 	//{{{ Instance variables
+	private static final String CARD_EDITOR = "editor";
+	private static final String CARD_EMPTY = "empty";
+
 	private boolean init;
 	/** The View where the edit pane is. */
 	private final View view;
@@ -859,6 +926,8 @@ public class EditPane extends JPanel implements BufferSetListener
 
 	/** The textArea inside the edit pane. */
 	private final JEditTextArea textArea;
+	private final JPanel editorCard;
+	private final JPanel emptyPanel;
 	private final MarkerHighlight markerHighlight;
 
 	// A map of buffer.getPath() -> CaretInfo. This is necessary for
@@ -867,6 +936,36 @@ public class EditPane extends JPanel implements BufferSetListener
 	// right position in each EditPane, which won't be the case if we
 	// just use the buffer caret property.
 	private final Map<String, CaretInfo> caretsForPath = new HashMap<>();
+
+	private static JPanel createEmptyPanel()
+	{
+		JPanel panel = new JPanel(new GridBagLayout());
+		JLabel label = new JLabel("<html><center>"
+			+ jEdit.getProperty("no-buffer-panel.text")
+			+ "</center></html>");
+		Color disabled = UIManager.getColor("Label.disabledForeground");
+		if (disabled != null)
+		{
+			label.setForeground(disabled);
+		}
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		panel.add(label, constraints);
+		return panel;
+	}
+
+	private void showEmptyPanel()
+	{
+		CardLayout layout = (CardLayout) editorCard.getLayout();
+		layout.show(editorCard, CARD_EMPTY);
+	}
+
+	private void showEditorPanel()
+	{
+		CardLayout layout = (CardLayout) editorCard.getLayout();
+		layout.show(editorCard, CARD_EDITOR);
+	}
 
 	//}}}
 
@@ -1073,10 +1172,8 @@ public class EditPane extends JPanel implements BufferSetListener
 			if(bufferSwitcher != null)
 				bufferSwitcher.updateBufferList();
 
-			/* When closing the last buffer, the BufferUpdate.CLOSED
-			 * handler doesn't call setBuffer(), because null buffers
-			 * are not supported. Instead, it waits for the subsequent
-			 * 'Untitled' file creation. */
+			/* When closing the last buffer, clearBuffer() shows the empty panel
+			 * instead of waiting for a new untitled buffer. */
 			if(buffer.isClosed())
 			{
 				// since recentBuffer will be set to the one that
@@ -1091,14 +1188,21 @@ public class EditPane extends JPanel implements BufferSetListener
 
 			if(_buffer == buffer)
 			{
-				// The closed buffer is the current buffer
-				Buffer newBuffer = recentBuffer != null ?
-					recentBuffer : _buffer.getPrev();
-
-				if(newBuffer != null && !newBuffer.isClosed())
+				if (bufferSet.size() == 0)
 				{
-					setBuffer(newBuffer);
-					recentBuffer = newBuffer.getPrev();
+					clearBuffer();
+				}
+				else
+				{
+					// The closed buffer is the current buffer
+					Buffer newBuffer = recentBuffer != null ?
+						recentBuffer : _buffer.getPrev();
+
+					if(newBuffer != null && !newBuffer.isClosed())
+					{
+						setBuffer(newBuffer);
+						recentBuffer = newBuffer.getPrev();
+					}
 				}
 			}
 			else if(_buffer == recentBuffer)
