@@ -74,7 +74,27 @@ public class ProjectFileSearchDialog extends EnhancedDialog implements ActionLis
 
         JPanel top = new JPanel(new BorderLayout(6, 6));
         searchField = new JTextField();
-        searchField.addActionListener(this);
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_DOWN -> {
+                        moveSelection(1);
+                        e.consume();
+                    }
+                    case KeyEvent.VK_UP -> {
+                        moveSelection(-1);
+                        e.consume();
+                    }
+                    case KeyEvent.VK_ENTER -> {
+                        openSelectedMatch();
+                        e.consume();
+                    }
+                    default -> {
+                    }
+                }
+            }
+        });
         searchField.getDocument().addDocumentListener(
             new javax.swing.event.DocumentListener() {
                 @Override
@@ -215,7 +235,7 @@ public class ProjectFileSearchDialog extends EnhancedDialog implements ActionLis
 
     @Override
     public void ok() {
-        runSearch();
+        openSelectedMatch();
     }
 
     @Override
@@ -227,9 +247,7 @@ public class ProjectFileSearchDialog extends EnhancedDialog implements ActionLis
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == searchField) {
-            runSearch();
-        } else if (source == searchModeCombo || source == extensionModeCombo) {
+        if (source == searchModeCombo || source == extensionModeCombo) {
             scheduleSearch();
         } else if (source == openInFindResultsButton) {
             openInFindResults();
@@ -295,9 +313,28 @@ public class ProjectFileSearchDialog extends EnhancedDialog implements ActionLis
 
     private void openSelectedMatch() {
         ProjectSearchMatch match = resultsList.getSelectedValue();
+        if (match == null && resultsModel.getSize() > 0) {
+            match = resultsModel.getElementAt(0);
+        }
         if (match != null) {
             ProjectFindResults.openMatch(view, match);
+            setVisible(false);
         }
+    }
+
+    private void moveSelection(int delta) {
+        int size = resultsModel.getSize();
+        if (size == 0) {
+            return;
+        }
+        int index = resultsList.getSelectedIndex();
+        if (index < 0) {
+            index = 0;
+        } else {
+            index = Math.max(0, Math.min(size - 1, index + delta));
+        }
+        resultsList.setSelectedIndex(index);
+        resultsList.ensureIndexIsVisible(index);
     }
 
     private void openInFindResults() {

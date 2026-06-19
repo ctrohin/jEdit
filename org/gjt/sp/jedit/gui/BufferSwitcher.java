@@ -165,31 +165,45 @@ public class BufferSwitcher extends JComboBox<Buffer>
 	}
 
 	public void updateLayout() {
+		updateChromeVisibility(editPane.getBufferSet().size());
+	}
+
+	private void updateChromeVisibility(int bufferCount) {
 		if (fullPane == null) {
 			return;
 		}
-		if (jEdit.getBooleanProperty("view.showBufferSwitcher")) {
-			fullPane.add(this, BorderLayout.CENTER);
+		boolean hasBuffers = bufferCount > 0;
+		boolean showSwitcher = hasBuffers
+			&& jEdit.getBooleanProperty("view.showBufferSwitcher");
+		boolean showTabs = hasBuffers
+			&& jEdit.getBooleanProperty("view.showBufferTabs");
+
+		if (showSwitcher) {
+			if (getParent() != fullPane) {
+				fullPane.add(this, BorderLayout.CENTER);
+			}
 		} else {
 			fullPane.remove(this);
 		}
-		if (jEdit.getBooleanProperty("view.showBufferTabs")) {
-			fullPane.add(tabs, BorderLayout.NORTH);
+
+		if (showTabs) {
+			if (tabs.getParent() != fullPane) {
+				fullPane.add(tabs, BorderLayout.NORTH);
+			}
 		} else {
 			fullPane.remove(tabs);
 		}
+
+		fullPane.setVisible(showSwitcher || showTabs);
+		fullPane.revalidate();
 	}
+
 	public JComponent getFullPane() {
 		if (fullPane != null) {
 			return fullPane;
 		}
 		fullPane = new JPanel(new BorderLayout());
-		if (jEdit.getBooleanProperty("view.showBufferSwitcher")) {
-			fullPane.add(this, BorderLayout.CENTER);
-		}
-		if (jEdit.getBooleanProperty("view.showBufferTabs")) {
-			fullPane.add(tabs, BorderLayout.NORTH);
-		}
+		updateChromeVisibility(editPane.getBufferSet().size());
 		return fullPane;
 	}
 
@@ -223,6 +237,9 @@ public class BufferSwitcher extends JComboBox<Buffer>
 
 	public void updateStyle(Buffer buffer)
 	{
+		if (buffer == null) {
+			return;
+		}
 		String path = buffer.getPath();
 		boolean isBackup = buffer.isBackup();
 
@@ -241,6 +258,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 				updating = true;
 				setModel(new DefaultComboBoxModel<>());
 				buildTabs(new Buffer[0]);
+				updateChromeVisibility(0);
 				updating = false;
 			};
 			ThreadUtilities.runInDispatchThread(runnable);
@@ -254,6 +272,7 @@ public class BufferSwitcher extends JComboBox<Buffer>
 			Buffer[] buffers = getSortedBuffers();
 			setModel(new DefaultComboBoxModel<>(buffers));
 			buildTabs(buffers);
+			updateChromeVisibility(buffers.length);
 			GitBufferTabStatus.getInstance().requestRefresh(buffers);
 			// FIXME: editPane.getBuffer() returns wrong buffer (old buffer) after last non-untitled buffer close.
 			// When the only non-untitled (last) buffer is closed a new untitled buffer is added to BufferSet
