@@ -153,28 +153,29 @@ paste.label=$Paste
 select-all.label=Select $All
 word-count.label=$Word Count...
 complete-word.label=Co$mplete Word
-complete-lsp.label=Comp$lete from LSP
-code-actions-lsp.label=LSP Code $Actions
-refactor-lsp.label=LSP $Refactor
-rename-lsp.label=LSP $Rename
-signature-help-lsp.label=Method $Parameters (LSP)
-goto-definition-lsp.label=Go to $Definition (LSP)
-goto-back-lsp.label=Go $Back (LSP)
-goto-forward-lsp.label=Go $Forward (LSP)
-find-references-lsp.label=Find $References (LSP)
-find-implementations-lsp.label=Find $Implementations (LSP)
-type-definition-lsp.label=Go to $Type Definition (LSP)
-find-declaration-lsp.label=Go to $Declaration (LSP)
-document-symbols-lsp.label=$Document Symbols (LSP)
-workspace-symbol-lsp.label=$Workspace Symbol Search (LSP)
-call-hierarchy-lsp.label=$Call Hierarchy (LSP)
+complete-lsp.label=Comp$lete code
+code-actions-lsp.label=Code $Actions
+refactor-lsp.label=$Refactor
+rename-lsp.label=$Rename
+signature-help-lsp.label=Method $Parameters
+goto-definition-lsp.label=Go to $Definition
+goto-back-lsp.label=Go $Back
+goto-forward-lsp.label=Go $Forward
+find-references-lsp.label=Find $References
+find-implementations-lsp.label=Find $Implementations
+type-definition-lsp.label=Go to $Type Definition
+find-declaration-lsp.label=Go to $Declaration
+document-symbols-lsp.label=$Document Symbols
+workspace-symbol-lsp.label=$Workspace Symbol Search
+call-hierarchy-lsp.label=$Call Hierarchy
 show-symbol-results-lsp.label=Show $Find Results
-show-structure-lsp.label=Show LSP $Structure
+show-structure-lsp.label=Show $Structure
 expand-abbrev.label=E$xpand Abbreviation
 goto-line.label=$Go to Line...
 
 search-project-files.label=Search in $Project Files
 quick-open-project-file.label=$Quick Open Project File
+command-palette.label=Command $Palette
 
 #{{{ More Clipboard menu
 clipboard.label=More Clip$board
@@ -2623,6 +2624,10 @@ project-quick-open.title=Quick Open Project File
 project-quick-open.loading=Loading project files...
 project-quick-open.status={0,number,integer} file(s)
 project-quick-open.no-project=Open a project folder first (Workspace tree).
+
+command-palette.title=Command Palette
+command-palette.loading=Loading commands...
+command-palette.status={0,number,integer} command(s)
 
 lsp-structure.label=$Structure
 lsp-structure.title=Structure

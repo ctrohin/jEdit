@@ -16,6 +16,7 @@ delete-line.shortcut=C+d
 find.shortcut=C+f
 search-project-files.shortcut=CS+f
 quick-open-project-file.shortcut=CS+o
+command-palette.shortcut=CS+A
 find-next.shortcut=F3
 # C+h is not usable on macOS
 indent-lines.shortcut=C+i

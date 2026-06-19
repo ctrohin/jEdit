@@ -302,6 +302,7 @@ search=find \
 	   - \
 	   search-project-files \
 	   quick-open-project-file \
+	   command-palette \
 	   - \
 	   search-in-open-buffers \
 	   search-in-directory \

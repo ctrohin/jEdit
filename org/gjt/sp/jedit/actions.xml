@@ -300,6 +300,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="command-palette" NO_RECORD="TRUE" NO_REPEAT="TRUE">
+	<CODE>
+		org.gjt.sp.jedit.gui.CommandPaletteDialog.showDialog(view);
+	</CODE>
+</ACTION>
+
 <ACTION NAME="show-symbol-results-lsp">
 	<CODE>
 		org.jedit.lsp.LspPlugin.showSymbolResults(view);
