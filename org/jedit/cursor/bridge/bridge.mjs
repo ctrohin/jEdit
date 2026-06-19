@@ -128,6 +128,42 @@ async function handleSend(cmd) {
   }
 }
 
+async function handleComplete(cmd) {
+  await disposeAgent();
+  const options = buildAgentOptions({ ...cmd, mode: "plan" });
+  const ephemeral = await Agent.create(options);
+  const sendOpts = { mode: "plan" };
+  if (cmd.modelId && cmd.modelId !== "auto") {
+    sendOpts.model = { id: cmd.modelId };
+  }
+  const run = await ephemeral.send(cmd.prompt, sendOpts);
+  let streamed = "";
+  try {
+    for await (const event of run.stream()) {
+      if (event.type === "assistant") {
+        const text = assistantText(event);
+        if (text) {
+          streamed += text;
+        }
+      }
+    }
+    const result = await run.wait();
+    const text = streamed || result.result || "";
+    emit({
+      type: "result",
+      requestId: cmd.id,
+      status: result.status,
+      text,
+    });
+  } finally {
+    if (typeof ephemeral[Symbol.asyncDispose] === "function") {
+      await ephemeral[Symbol.asyncDispose]();
+    } else if (typeof ephemeral.close === "function") {
+      await ephemeral.close();
+    }
+  }
+}
+
 async function handleCancel(cmd) {
   if (activeRun) {
     try {
@@ -172,6 +208,9 @@ rl.on("line", (line) => {
       switch (cmd.cmd) {
         case "send":
           await handleSend(cmd);
+          break;
+        case "complete":
+          await handleComplete(cmd);
           break;
         case "cancel":
           await handleCancel(cmd);

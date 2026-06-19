@@ -78,6 +78,7 @@ final class CopilotLocalBridge implements AutoCloseable {
     private volatile RunOutcome activeOutcome;
     private volatile List<CopilotModelInfo> activeModels;
     private volatile String activeError;
+    private volatile String activeCompleteText;
     private volatile boolean closed;
 
     CopilotLocalBridge(String conversationId) {
@@ -118,6 +119,42 @@ final class CopilotLocalBridge implements AutoCloseable {
         }
         awaitActiveRun();
         return outcome;
+    }
+
+    String complete(String gitHubToken, String cwd, String modelId, String prompt) throws IOException {
+        synchronized (lock) {
+            if (closed) {
+                throw new IOException(jEdit.getProperty("copilot.error.bridge-closed"));
+            }
+            ensureProcess();
+            activeRequestId = nextRequestId.getAndIncrement();
+            activeListener = null;
+            activeOutcome = null;
+            activeModels = null;
+            activeError = null;
+            activeCompleteText = null;
+            activeLatch = new CountDownLatch(1);
+            JsonObject command = new JsonObject();
+            command.addProperty("id", activeRequestId);
+            command.addProperty("cmd", "complete");
+            if (gitHubToken != null && !gitHubToken.isBlank()) {
+                command.addProperty("gitHubToken", gitHubToken);
+            }
+            command.addProperty("cwd", cwd);
+            if (modelId != null && !modelId.isBlank()) {
+                command.addProperty("modelId", modelId);
+            } else {
+                command.addProperty("modelId", "auto");
+            }
+            command.addProperty("prompt", prompt);
+            writeLine(command.toString());
+        }
+        awaitActiveRun();
+        if (activeError != null) {
+            throw new IOException(activeError);
+        }
+        String text = activeCompleteText;
+        return text != null ? text : "";
     }
 
     void validate(String gitHubToken, String cwd) throws IOException {
@@ -290,6 +327,30 @@ final class CopilotLocalBridge implements AutoCloseable {
             return;
         }
         CursorRunListener listener = activeListener;
+        if (listener == null) {
+            switch (type) {
+                case "result" -> {
+                    activeCompleteText = stringOrNull(event, "text");
+                    completeActiveRun();
+                }
+                case "models" -> {
+                    activeModels = parseModels(event);
+                    completeActiveRun();
+                }
+                case "validated" -> completeActiveRun();
+                case "error" -> {
+                    activeError = stringOrNull(event, "message");
+                    if (activeError == null) {
+                        activeError = jEdit.getProperty("copilot.error.generic");
+                    }
+                    activeCompleteText = "";
+                    completeActiveRun();
+                }
+                default -> {
+                }
+            }
+            return;
+        }
         switch (type) {
             case "session", "run" -> noteOutcome(event);
             case "assistant" -> {
@@ -323,9 +384,7 @@ final class CopilotLocalBridge implements AutoCloseable {
             }
             case "result" -> {
                 noteOutcome(event);
-                if (listener != null) {
-                    listener.onResult(stringOrNull(event, "text"), stringOrNull(event, "status"));
-                }
+                listener.onResult(stringOrNull(event, "text"), stringOrNull(event, "status"));
                 completeActiveRun();
             }
             case "models" -> {
@@ -334,13 +393,7 @@ final class CopilotLocalBridge implements AutoCloseable {
             }
             case "validated" -> completeActiveRun();
             case "error" -> {
-                String message = stringOrNull(event, "message");
-                if (listener != null) {
-                    listener.onError(message);
-                } else {
-                    activeError = message != null ? message
-                        : jEdit.getProperty("copilot.error.generic");
-                }
+                listener.onError(stringOrNull(event, "message"));
                 completeActiveRun();
             }
             case "cancelled" -> {

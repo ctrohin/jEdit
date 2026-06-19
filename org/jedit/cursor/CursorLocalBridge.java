@@ -72,6 +72,7 @@ final class CursorLocalBridge implements AutoCloseable {
     private volatile CountDownLatch activeLatch;
     private volatile CursorRunListener activeListener;
     private volatile RunOutcome activeOutcome;
+    private volatile String activeCompleteText;
     private volatile boolean closed;
 
     CursorLocalBridge(String conversationId) {
@@ -109,6 +110,35 @@ final class CursorLocalBridge implements AutoCloseable {
         }
         awaitActiveRun();
         return outcome;
+    }
+
+    String complete(String apiKey, String cwd, String modelId, String prompt) throws IOException {
+        synchronized (lock) {
+            if (closed) {
+                throw new IOException(jEdit.getProperty("cursor.error.bridge-closed"));
+            }
+            ensureProcess();
+            activeRequestId = nextRequestId.getAndIncrement();
+            activeListener = null;
+            activeOutcome = null;
+            activeCompleteText = null;
+            activeLatch = new CountDownLatch(1);
+            JsonObject command = new JsonObject();
+            command.addProperty("id", activeRequestId);
+            command.addProperty("cmd", "complete");
+            command.addProperty("apiKey", apiKey);
+            command.addProperty("cwd", cwd);
+            if (modelId != null && !modelId.isBlank()) {
+                command.addProperty("modelId", modelId);
+            } else {
+                command.addProperty("modelId", "auto");
+            }
+            command.addProperty("prompt", prompt);
+            writeLine(command.toString());
+        }
+        awaitActiveRun();
+        String text = activeCompleteText;
+        return text != null ? text : "";
     }
 
     void cancelActiveRun() {
@@ -242,6 +272,18 @@ final class CursorLocalBridge implements AutoCloseable {
         }
         CursorRunListener listener = activeListener;
         if (listener == null) {
+            switch (type) {
+                case "result" -> {
+                    activeCompleteText = stringOrNull(event, "text");
+                    completeActiveRun();
+                }
+                case "error" -> {
+                    activeCompleteText = "";
+                    completeActiveRun();
+                }
+                default -> {
+                }
+            }
             return;
         }
         switch (type) {

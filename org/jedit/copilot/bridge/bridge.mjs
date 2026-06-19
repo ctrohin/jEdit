@@ -254,6 +254,44 @@ async function handleSend(cmd) {
   }
 }
 
+async function handleComplete(cmd) {
+  const session = await ensureSession({ ...cmd, sessionId: null });
+  clearActiveHandlers();
+
+  let streamed = "";
+  activeUnsubscribers.push(
+    session.on("assistant.message_delta", (event) => {
+      const text = extractAssistantText(event);
+      if (text) {
+        streamed += text;
+      }
+    })
+  );
+  activeUnsubscribers.push(
+    session.on("assistant.message", (event) => {
+      const text = extractAssistantText(event);
+      if (text && !streamed) {
+        streamed = text;
+      }
+    })
+  );
+
+  try {
+    const finalEvent = await session.sendAndWait({ prompt: cmd.prompt });
+    const finalText = extractAssistantText(finalEvent);
+    const text = longestText(finalText, streamed);
+    emit({
+      type: "result",
+      requestId: cmd.id,
+      status: "completed",
+      text: text || "",
+      sessionId: session.sessionId,
+    });
+  } finally {
+    clearActiveHandlers();
+  }
+}
+
 async function handleListModels(cmd) {
   await ensureClient(cmd);
   const models = await client.listModels();
@@ -314,6 +352,9 @@ rl.on("line", (line) => {
       switch (cmd.cmd) {
         case "send":
           await handleSend(cmd);
+          break;
+        case "complete":
+          await handleComplete(cmd);
           break;
         case "listModels":
           await handleListModels(cmd);

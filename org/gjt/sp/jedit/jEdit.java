@@ -40,6 +40,7 @@ import org.jedit.keymap.KeymapManagerImpl;
 import org.jedit.lsp.LspPlugin;
 import org.jedit.cursor.CursorPlugin;
 import org.jedit.copilot.CopilotPlugin;
+import org.jedit.aiassist.AiAssistPlugin;
 import org.gjt.sp.jedit.visitors.JEditVisitor;
 
 import java.awt.*;
@@ -607,6 +608,10 @@ public class jEdit
 		// GitHub Copilot integration
 		CopilotPlugin copilotPlugin = new CopilotPlugin();
 		copilotPlugin.start();
+
+		// AI assist inline completion
+		AiAssistPlugin aiAssistPlugin = new AiAssistPlugin();
+		aiAssistPlugin.start();
 
 		String[] serviceNames = ServiceManager.getServiceNames(JEditTransferableService.class);
 		for (String serviceName : serviceNames)

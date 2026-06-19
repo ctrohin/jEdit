@@ -55,4 +55,21 @@ public class CopilotPlugin extends EditPlugin {
             CopilotAuth.clear();
         }
     }
+
+    public static boolean isSignedIn() {
+        return CopilotAuth.isSignedIn();
+    }
+
+    public static String completeInline(String prompt) throws java.io.IOException {
+        if (!CopilotAuth.isSignedIn()) {
+            return "";
+        }
+        CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor("__inline__");
+        String raw = bridge.complete(
+            CopilotConfig.gitHubToken(),
+            CopilotWorkspaceContext.defaultCwd(),
+            CopilotConfig.modelId(),
+            prompt);
+        return raw != null ? raw : "";
+    }
 }

@@ -59,9 +59,19 @@ public class DirectoryProvider implements DynamicMenuProvider
 		final View view = GUIUtilities.getView(menu);
 
 		String path;
+		Buffer buffer = null;
 		if(dir == null)
 		{
-			path = view.getBuffer().getDirectory();
+			buffer = view.getBuffer();
+			if(buffer == null)
+			{
+				JMenuItem mi = new JMenuItem(jEdit.getProperty(
+					"directory.no-buffer"));
+				mi.setEnabled(false);
+				menu.add(mi);
+				return;
+			}
+			path = buffer.getDirectory();
 		}
 		else
 			path = dir;
@@ -75,7 +85,7 @@ public class DirectoryProvider implements DynamicMenuProvider
 		menu.add(mi);
 		menu.addSeparator();
 
-		if(dir == null && !(view.getBuffer().getVFS() instanceof FileVFS))
+		if(dir == null && !(buffer.getVFS() instanceof FileVFS))
 		{
 			mi = new JMenuItem(jEdit.getProperty(
 				"directory.not-local"));
