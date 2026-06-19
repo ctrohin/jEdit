@@ -1715,7 +1715,7 @@ options.plugin-manager.no-plugin-uptodate=All plugins are up to date
 
 #{{{ AI Assist pane
 options.ai-assist.label=AI Assist
-options.ai-assist.intro=Configure inline AI code suggestions and sign in to Cursor or GitHub Copilot. \
+options.ai-assist.intro=Configure inline AI code suggestions and sign in to GitHub Copilot. \
 	When enabled, jEdit shows a tooltip with a suggested completion after a short idle period \
 	or on an empty line. Press Tab to accept the suggestion.
 options.ai-assist.provider=Preferred assistant:
@@ -1729,8 +1729,7 @@ options.ai-assist.cursor.signed-in=Status: signed in to Cursor.
 options.ai-assist.cursor.signed-out=Status: not signed in to Cursor.
 options.ai-assist.copilot.signed-in=Status: signed in to GitHub Copilot.
 options.ai-assist.copilot.signed-out=Status: not signed in to GitHub Copilot.
-ai-assist.provider.auto=Automatic (Cursor, then Copilot)
-ai-assist.provider.cursor=Cursor only
+ai-assist.provider.auto=Automatic (GitHub Copilot)
 ai-assist.provider.copilot=GitHub Copilot only
 ai-assist.provider.off=Disabled
 ai-assist.inline.accept-hint=Tap TAB to complete

@@ -13,15 +13,10 @@ import java.io.IOException;
 import org.gjt.sp.jedit.Buffer;
 import org.jedit.copilot.CopilotGhostInlineResult;
 import org.jedit.copilot.CopilotPlugin;
-import org.jedit.cursor.CursorPlugin;
 
 final class AiInlineCompletionService {
 
     private AiInlineCompletionService() {}
-
-    static boolean isCursorAvailable() {
-        return CursorPlugin.isSignedIn();
-    }
 
     static boolean isCopilotAvailable() {
         return CopilotPlugin.isSignedIn();
@@ -48,24 +43,6 @@ final class AiInlineCompletionService {
             + ", ghost=" + context.ghostCapable
             + (context.ghostCapable ? "" : ", promptChars=" + context.prompt.length())
             + ")");
-        if (provider == AiAssistProvider.CURSOR || provider == AiAssistProvider.AUTO) {
-            if (isCursorAvailable()) {
-                AiAssistLog.message("trying Cursor inline completion");
-                long start = System.nanoTime();
-                String suggestion = sanitize(CursorPlugin.completeInline(context.prompt));
-                AiAssistLog.message("Cursor returned " + suggestion.length() + " characters in "
-                    + elapsedMs(start) + "ms");
-                if (!suggestion.isBlank() || provider == AiAssistProvider.CURSOR) {
-                    return AiInlineCompletionSuggestion.fromRaw(
-                        buffer, context.caret, suggestion);
-                }
-            } else {
-                AiAssistLog.message("Cursor not available (not signed in)");
-                if (provider == AiAssistProvider.CURSOR) {
-                    return null;
-                }
-            }
-        }
         if (provider == AiAssistProvider.COPILOT || provider == AiAssistProvider.AUTO) {
             if (isCopilotAvailable()) {
                 if (context.ghostCapable) {

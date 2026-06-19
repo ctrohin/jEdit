@@ -13,7 +13,6 @@ import org.gjt.sp.jedit.jEdit;
 public enum AiAssistProvider {
 
     AUTO,
-    CURSOR,
     COPILOT,
     OFF;
 
@@ -26,8 +25,12 @@ public enum AiAssistProvider {
         if (value == null || value.isBlank()) {
             return AUTO;
         }
+        String normalized = value.trim().toUpperCase();
+        if ("CURSOR".equals(normalized)) {
+            return COPILOT;
+        }
         try {
-            return valueOf(value.trim().toUpperCase());
+            return valueOf(normalized);
         } catch (IllegalArgumentException e) {
             return AUTO;
         }

@@ -24,6 +24,10 @@ final class AiInlineCompletionContext {
     final String filePath;
     final String language;
     final String prompt;
+    final String prefix;
+    final String suffix;
+    final String linePrefix;
+    final String lineSuffix;
     final int caret;
     final boolean emptyLine;
     final boolean ghostCapable;
@@ -37,12 +41,17 @@ final class AiInlineCompletionContext {
     final boolean insertSpaces;
 
     private AiInlineCompletionContext(String filePath, String language, String prompt,
+            String prefix, String suffix, String linePrefix, String lineSuffix,
             int caret, boolean emptyLine, boolean ghostCapable, String documentUri,
             String workspaceUri, String languageId, String documentText, int line,
             int character, int tabSize, boolean insertSpaces) {
         this.filePath = filePath;
         this.language = language;
         this.prompt = prompt;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.linePrefix = linePrefix;
+        this.lineSuffix = lineSuffix;
         this.caret = caret;
         this.emptyLine = emptyLine;
         this.ghostCapable = ghostCapable;
@@ -70,6 +79,9 @@ final class AiInlineCompletionContext {
         boolean emptyLine = lineText.trim().isEmpty();
         int character = caret - lineStart;
 
+        String linePrefix = buffer.getText(lineStart, caret - lineStart);
+        String lineSuffix = buffer.getText(caret, lineEnd - caret);
+
         int prefixStart = Math.max(0, caret - CONTEXT_CHARS);
         int suffixEnd = Math.min(buffer.getLength(), caret + CONTEXT_CHARS);
         String prefix = buffer.getText(prefixStart, caret - prefixStart);
@@ -92,9 +104,10 @@ final class AiInlineCompletionContext {
         int tabSize = buffer.getTabSize();
         boolean insertSpaces = !buffer.getBooleanProperty("noTabs");
 
-        return new AiInlineCompletionContext(path, language, prompt, caret, emptyLine,
-            ghostCapable, documentUri, workspaceUri, languageId, documentText, line,
-            character, tabSize, insertSpaces);
+        return new AiInlineCompletionContext(path, language, prompt, prefix, suffix,
+            linePrefix, lineSuffix, caret, emptyLine, ghostCapable, documentUri,
+            workspaceUri, languageId, documentText, line, character, tabSize,
+            insertSpaces);
     }
 
     private static String documentUriFor(Buffer buffer) {

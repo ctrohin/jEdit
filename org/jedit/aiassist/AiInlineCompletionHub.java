@@ -133,7 +133,6 @@ final class AiInlineCompletionHub implements EBComponent {
             + AiAssistConfig.provider()
             + ", enabled=" + AiAssistConfig.inlineEnabled()
             + ", idleMs=" + AiAssistConfig.idleDelayMs()
-            + ", cursor=" + AiInlineCompletionService.isCursorAvailable()
             + ", copilot=" + AiInlineCompletionService.isCopilotAvailable() + ")");
         EditBus.addToBus(this);
         Toolkit.getDefaultToolkit().addAWTEventListener(
@@ -490,7 +489,6 @@ final class AiInlineCompletionHub implements EBComponent {
         if (!isProviderReady()) {
             AiAssistLog.message("idle skipped: no signed-in AI provider (provider="
                 + AiAssistConfig.provider()
-                + ", cursor=" + AiInlineCompletionService.isCursorAvailable()
                 + ", copilot=" + AiInlineCompletionService.isCopilotAvailable() + ")");
             return;
         }
@@ -505,14 +503,7 @@ final class AiInlineCompletionHub implements EBComponent {
         if (provider == AiAssistProvider.OFF) {
             return false;
         }
-        if (provider == AiAssistProvider.CURSOR) {
-            return AiInlineCompletionService.isCursorAvailable();
-        }
-        if (provider == AiAssistProvider.COPILOT) {
-            return AiInlineCompletionService.isCopilotAvailable();
-        }
-        return AiInlineCompletionService.isCursorAvailable()
-            || AiInlineCompletionService.isCopilotAvailable();
+        return AiInlineCompletionService.isCopilotAvailable();
     }
 
     private void fetchAndShow(int generation, TextArea textArea,

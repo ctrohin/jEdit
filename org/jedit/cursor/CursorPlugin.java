@@ -73,17 +73,6 @@ public class CursorPlugin extends EditPlugin {
         return CursorConfig.apiKey() != null;
     }
 
-    public static String completeInline(String prompt) throws java.io.IOException {
-        String apiKey = CursorConfig.apiKey();
-        if (apiKey == null) {
-            return "";
-        }
-        String cwd = workspaceCwd();
-        CursorLocalBridge bridge = CursorLocalBridgePool.bridgeFor("__inline__");
-        String raw = bridge.complete(apiKey, cwd, CursorConfig.modelId(), prompt);
-        return raw != null ? raw : "";
-    }
-
     private static String workspaceCwd() {
         java.io.File root = CursorWorkspaceContext.workspaceRoot();
         if (root != null) {

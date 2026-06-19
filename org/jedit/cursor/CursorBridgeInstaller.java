@@ -40,19 +40,19 @@ final class CursorBridgeInstaller {
     static void ensureInstalled() throws IOException {
         Path bridgeDir = bridgeDirectory();
         Files.createDirectories(bridgeDir);
-        copyResourceIfNeeded(PACKAGE_JSON, bridgeDir.resolve(PACKAGE_JSON));
-        copyResourceIfNeeded(BRIDGE_SCRIPT, bridgeDir.resolve(BRIDGE_SCRIPT));
+        copyResource(PACKAGE_JSON, bridgeDir.resolve(PACKAGE_JSON), false);
+        copyResource(BRIDGE_SCRIPT, bridgeDir.resolve(BRIDGE_SCRIPT), true);
         if (!Files.isRegularFile(bridgeDir.resolve(SDK_MARKER))) {
             installDependencies(bridgeDir);
         }
     }
 
-    private static void copyResourceIfNeeded(String name, Path target) throws IOException {
+    private static void copyResource(String name, Path target, boolean always) throws IOException {
         try (InputStream in = CursorBridgeInstaller.class.getResourceAsStream(RESOURCE_PREFIX + name)) {
             if (in == null) {
                 throw new IOException("Missing bridge resource: " + name);
             }
-            if (Files.exists(target)) {
+            if (!always && Files.exists(target)) {
                 return;
             }
             Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);

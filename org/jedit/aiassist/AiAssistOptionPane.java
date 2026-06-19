@@ -14,7 +14,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,17 +28,13 @@ import org.gjt.sp.jedit.AbstractOptionPane;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.jedit.copilot.CopilotPlugin;
-import org.jedit.cursor.CursorPlugin;
 
 public class AiAssistOptionPane extends AbstractOptionPane {
 
     private JComboBox<AiAssistProvider> providerCombo;
     private JCheckBox inlineEnabledCheck;
     private JSpinner idleSpinner;
-    private JLabel cursorStatusLabel;
     private JLabel copilotStatusLabel;
-    private JButton cursorLoginButton;
-    private JButton cursorLogoutButton;
     private JButton copilotLoginButton;
     private JButton copilotLogoutButton;
 
@@ -82,7 +77,6 @@ public class AiAssistOptionPane extends AbstractOptionPane {
             AiAssistConfig.idleDelayMs(), 300, 10000, 100));
         addField(jEdit.getProperty("options.ai-assist.idle-delay"), idleSpinner, c);
 
-        add(createCursorPanel(), c);
         add(createCopilotPanel(), c);
 
         providerCombo.setSelectedItem(AiAssistConfig.provider());
@@ -91,35 +85,9 @@ public class AiAssistOptionPane extends AbstractOptionPane {
         refreshAuthLabels();
     }
 
-    private JPanel createCursorPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(
-            jEdit.getProperty("options.ai-assist.cursor.title")));
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;
-        c.insets = new Insets(0, 0, 4, 0);
-
-        cursorStatusLabel = new JLabel();
-        panel.add(cursorStatusLabel, c);
-
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        cursorLoginButton = new JButton(jEdit.getProperty("options.ai-assist.login"));
-        cursorLogoutButton = new JButton(jEdit.getProperty("options.ai-assist.logout"));
-        buttons.add(cursorLoginButton);
-        buttons.add(cursorLogoutButton);
-        panel.add(buttons, c);
-
-        cursorLoginButton.addActionListener(this::cursorLogin);
-        cursorLogoutButton.addActionListener(this::cursorLogout);
-        return panel;
-    }
-
     private JPanel createCopilotPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(
+        panel.setBorder(javax.swing.BorderFactory.createTitledBorder(
             jEdit.getProperty("options.ai-assist.copilot.title")));
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -160,35 +128,12 @@ public class AiAssistOptionPane extends AbstractOptionPane {
     }
 
     private void refreshAuthLabels() {
-        boolean cursorSignedIn = CursorPlugin.isSignedIn();
-        cursorStatusLabel.setText(jEdit.getProperty(cursorSignedIn
-            ? "options.ai-assist.cursor.signed-in"
-            : "options.ai-assist.cursor.signed-out"));
-        cursorLoginButton.setEnabled(!cursorSignedIn);
-        cursorLogoutButton.setEnabled(cursorSignedIn);
-
         boolean copilotSignedIn = CopilotPlugin.isSignedIn();
         copilotStatusLabel.setText(jEdit.getProperty(copilotSignedIn
             ? "options.ai-assist.copilot.signed-in"
             : "options.ai-assist.copilot.signed-out"));
         copilotLoginButton.setEnabled(!copilotSignedIn);
         copilotLogoutButton.setEnabled(copilotSignedIn);
-    }
-
-    private void cursorLogin(ActionEvent event) {
-        View view = jEdit.getActiveView();
-        if (view != null) {
-            CursorPlugin.login(view);
-        }
-        SwingUtilities.invokeLater(this::refreshAuthLabels);
-    }
-
-    private void cursorLogout(ActionEvent event) {
-        View view = jEdit.getActiveView();
-        if (view != null) {
-            CursorPlugin.logout(view);
-        }
-        refreshAuthLabels();
     }
 
     private void copilotLogin(ActionEvent event) {

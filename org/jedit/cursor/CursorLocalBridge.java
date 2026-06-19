@@ -112,35 +112,6 @@ final class CursorLocalBridge implements AutoCloseable {
         return outcome;
     }
 
-    String complete(String apiKey, String cwd, String modelId, String prompt) throws IOException {
-        synchronized (lock) {
-            if (closed) {
-                throw new IOException(jEdit.getProperty("cursor.error.bridge-closed"));
-            }
-            ensureProcess();
-            activeRequestId = nextRequestId.getAndIncrement();
-            activeListener = null;
-            activeOutcome = null;
-            activeCompleteText = null;
-            activeLatch = new CountDownLatch(1);
-            JsonObject command = new JsonObject();
-            command.addProperty("id", activeRequestId);
-            command.addProperty("cmd", "complete");
-            command.addProperty("apiKey", apiKey);
-            command.addProperty("cwd", cwd);
-            if (modelId != null && !modelId.isBlank()) {
-                command.addProperty("modelId", modelId);
-            } else {
-                command.addProperty("modelId", "auto");
-            }
-            command.addProperty("prompt", prompt);
-            writeLine(command.toString());
-        }
-        awaitActiveRun();
-        String text = activeCompleteText;
-        return text != null ? text : "";
-    }
-
     void cancelActiveRun() {
         synchronized (lock) {
             if (process == null || !process.isAlive() || activeLatch == null) {

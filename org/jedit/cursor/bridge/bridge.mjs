@@ -4,7 +4,6 @@ import { Agent } from "@cursor/sdk";
 const rl = createInterface({ input: process.stdin, terminal: false });
 
 let agent = null;
-let inlineAgent = null;
 let activeRun = null;
 
 function emit(event) {
@@ -129,60 +128,6 @@ async function handleSend(cmd) {
   }
 }
 
-async function disposeInlineAgent() {
-  if (!inlineAgent) {
-    return;
-  }
-  const current = inlineAgent;
-  inlineAgent = null;
-  if (typeof current[Symbol.asyncDispose] === "function") {
-    await current[Symbol.asyncDispose]();
-  } else if (typeof current.close === "function") {
-    await current.close();
-  }
-}
-
-async function ensureInlineAgent(cmd) {
-  if (inlineAgent) {
-    return inlineAgent;
-  }
-  const options = buildAgentOptions({ ...cmd, mode: "plan" });
-  inlineAgent = await Agent.create(options);
-  return inlineAgent;
-}
-
-async function handleComplete(cmd) {
-  const ephemeral = await ensureInlineAgent(cmd);
-  const sendOpts = { mode: "plan" };
-  if (cmd.modelId && cmd.modelId !== "auto") {
-    sendOpts.model = { id: cmd.modelId };
-  }
-  const run = await ephemeral.send(cmd.prompt, sendOpts);
-  let streamed = "";
-  try {
-    for await (const event of run.stream()) {
-      if (event.type === "assistant") {
-        const text = assistantText(event);
-        if (text) {
-          streamed += text;
-        }
-      }
-    }
-    const result = await run.wait();
-    const text = streamed || result.result || "";
-    emit({
-      type: "result",
-      requestId: cmd.id,
-      status: result.status,
-      text,
-    });
-  } finally {
-    if (activeRun === run) {
-      activeRun = null;
-    }
-  }
-}
-
 async function handleCancel(cmd) {
   if (activeRun) {
     try {
@@ -207,7 +152,6 @@ async function handleShutdown(cmd) {
     activeRun = null;
   }
   await disposeAgent();
-  await disposeInlineAgent();
   emit({ type: "shutdown", requestId: cmd.id });
   process.exit(0);
 }
@@ -228,9 +172,6 @@ rl.on("line", (line) => {
       switch (cmd.cmd) {
         case "send":
           await handleSend(cmd);
-          break;
-        case "complete":
-          await handleComplete(cmd);
           break;
         case "cancel":
           await handleCancel(cmd);
