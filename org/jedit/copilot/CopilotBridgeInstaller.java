@@ -25,7 +25,9 @@ final class CopilotBridgeInstaller {
     private static final String RESOURCE_PREFIX = "/org/jedit/copilot/bridge/";
     private static final String PACKAGE_JSON = "package.json";
     private static final String BRIDGE_SCRIPT = "bridge.mjs";
+    private static final String GHOST_LSP_SCRIPT = "ghost-lsp.mjs";
     private static final String SDK_MARKER = "node_modules/@github/copilot-sdk/package.json";
+    private static final String LS_MARKER = "node_modules/@github/copilot-language-server/package.json";
 
     private CopilotBridgeInstaller() {}
 
@@ -40,9 +42,11 @@ final class CopilotBridgeInstaller {
     static void ensureInstalled() throws IOException {
         Path bridgeDir = bridgeDirectory();
         Files.createDirectories(bridgeDir);
-        copyResource(PACKAGE_JSON, bridgeDir.resolve(PACKAGE_JSON), false);
+        copyResource(PACKAGE_JSON, bridgeDir.resolve(PACKAGE_JSON), true);
         copyResource(BRIDGE_SCRIPT, bridgeDir.resolve(BRIDGE_SCRIPT), true);
-        if (!Files.isRegularFile(bridgeDir.resolve(SDK_MARKER))) {
+        copyResource(GHOST_LSP_SCRIPT, bridgeDir.resolve(GHOST_LSP_SCRIPT), true);
+        if (!Files.isRegularFile(bridgeDir.resolve(SDK_MARKER))
+            || !Files.isRegularFile(bridgeDir.resolve(LS_MARKER))) {
             installDependencies(bridgeDir);
         }
     }

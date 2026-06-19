@@ -39,6 +39,7 @@ import org.gjt.sp.jedit.msg.PositionChanging;
 import org.gjt.sp.jedit.msg.ViewUpdate;
 import org.gjt.sp.jedit.textarea.TextArea;
 import org.gjt.sp.util.ThreadUtilities;
+import org.jedit.copilot.CopilotPlugin;
 
 final class AiInlineCompletionHub implements EBComponent {
 
@@ -138,6 +139,9 @@ final class AiInlineCompletionHub implements EBComponent {
         Toolkit.getDefaultToolkit().addAWTEventListener(
             mouseMotionListener, AWTEvent.MOUSE_MOTION_EVENT_MASK);
         refreshActiveTextArea();
+        if (AiInlineCompletionService.isCopilotAvailable()) {
+            CopilotPlugin.warmInlineBridge();
+        }
     }
 
     void uninstall() {

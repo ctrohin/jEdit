@@ -11,6 +11,7 @@ package org.jedit.copilot;
 import org.gjt.sp.jedit.EditPlugin;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.util.Log;
+import org.gjt.sp.util.ThreadUtilities;
 
 /**
  * Built-in GitHub Copilot integration.
@@ -71,5 +72,66 @@ public class CopilotPlugin extends EditPlugin {
             CopilotConfig.modelId(),
             prompt);
         return raw != null ? raw : "";
+    }
+
+    public static String ghostInline(String documentUri, String workspaceUri,
+            String languageId, String documentText, int line, int character,
+            int tabSize, boolean insertSpaces) throws java.io.IOException {
+        if (!CopilotAuth.isSignedIn()) {
+            return "";
+        }
+        CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor("__inline__");
+        String raw = bridge.ghostComplete(
+            CopilotWorkspaceContext.defaultCwd(),
+            documentUri,
+            workspaceUri,
+            languageId,
+            documentText,
+            line,
+            character,
+            tabSize,
+            insertSpaces);
+        return raw != null ? raw : "";
+    }
+
+    public static void authenticateGhostLsp() {
+        if (!CopilotAuth.isSignedIn()) {
+            return;
+        }
+        ThreadUtilities.runInBackground(() -> {
+            long start = System.nanoTime();
+            try {
+                CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor("__inline__");
+                bridge.ghostAuth(CopilotWorkspaceContext.defaultCwd());
+                Log.log(Log.MESSAGE, CopilotPlugin.class,
+                    "Copilot ghost LSP authenticated in "
+                        + (System.nanoTime() - start) / 1_000_000L + "ms");
+            } catch (Exception e) {
+                Log.log(Log.DEBUG, CopilotPlugin.class,
+                    "Copilot ghost LSP authentication failed: " + e.getMessage());
+            }
+        });
+    }
+
+    public static void warmInlineBridge() {
+        if (!CopilotAuth.isSignedIn()) {
+            return;
+        }
+        ThreadUtilities.runInBackground(() -> {
+            long start = System.nanoTime();
+            try {
+                CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor("__inline__");
+                bridge.validate(
+                    CopilotConfig.gitHubToken(),
+                    CopilotWorkspaceContext.defaultCwd());
+                Log.log(Log.MESSAGE, CopilotPlugin.class,
+                    "Copilot inline bridge warmed in "
+                        + (System.nanoTime() - start) / 1_000_000L + "ms");
+                authenticateGhostLsp();
+            } catch (Exception e) {
+                Log.log(Log.DEBUG, CopilotPlugin.class,
+                    "Copilot inline bridge warm-up failed: " + e.getMessage());
+            }
+        });
     }
 }

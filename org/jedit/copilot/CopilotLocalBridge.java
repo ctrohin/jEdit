@@ -157,6 +157,89 @@ final class CopilotLocalBridge implements AutoCloseable {
         return text != null ? text : "";
     }
 
+    String ghostComplete(String cwd, String documentUri,
+            String workspaceUri, String languageId, String documentText, int line,
+            int character, int tabSize, boolean insertSpaces) throws IOException {
+        synchronized (lock) {
+            if (closed) {
+                throw new IOException(jEdit.getProperty("copilot.error.bridge-closed"));
+            }
+            ensureProcess();
+            activeRequestId = nextRequestId.getAndIncrement();
+            activeListener = null;
+            activeOutcome = null;
+            activeModels = null;
+            activeError = null;
+            activeCompleteText = null;
+            activeLatch = new CountDownLatch(1);
+            JsonObject command = buildGhostCommand("ghostComplete", cwd, documentUri,
+                workspaceUri, languageId, documentText, line, character, tabSize,
+                insertSpaces);
+            command.addProperty("id", activeRequestId);
+            writeLine(command.toString());
+        }
+        awaitActiveRun();
+        if (activeError != null) {
+            throw new IOException(activeError);
+        }
+        String text = activeCompleteText;
+        return text != null ? text : "";
+    }
+
+    void ghostAuth(String cwd) throws IOException {
+        synchronized (lock) {
+            if (closed) {
+                throw new IOException(jEdit.getProperty("copilot.error.bridge-closed"));
+            }
+            ensureProcess();
+            activeRequestId = nextRequestId.getAndIncrement();
+            activeListener = null;
+            activeOutcome = null;
+            activeModels = null;
+            activeError = null;
+            activeCompleteText = null;
+            activeLatch = new CountDownLatch(1);
+            JsonObject command = buildGhostCommand("ghostAuth", cwd, null, null,
+                null, null, 0, 0, 4, true);
+            command.addProperty("id", activeRequestId);
+            writeLine(command.toString());
+        }
+        awaitActiveRun();
+        if (activeError != null) {
+            throw new IOException(activeError);
+        }
+    }
+
+    private JsonObject buildGhostCommand(String cmdName, String cwd, String documentUri,
+            String workspaceUri, String languageId, String documentText, int line,
+            int character, int tabSize, boolean insertSpaces) {
+        JsonObject command = new JsonObject();
+        command.addProperty("cmd", cmdName);
+        command.addProperty("cwd", cwd);
+        String lspToken = CopilotConfig.copilotLspToken();
+        if (lspToken != null && !lspToken.isBlank()) {
+            command.addProperty("copilotLspToken", lspToken);
+        }
+        command.addProperty("node", CopilotConfig.nodeExecutable());
+        if (documentUri != null) {
+            command.addProperty("documentUri", documentUri);
+        }
+        if (workspaceUri != null && !workspaceUri.isBlank()) {
+            command.addProperty("workspaceUri", workspaceUri);
+        }
+        if (languageId != null) {
+            command.addProperty("languageId", languageId);
+        }
+        if (documentText != null) {
+            command.addProperty("documentText", documentText);
+        }
+        command.addProperty("line", line);
+        command.addProperty("character", character);
+        command.addProperty("tabSize", tabSize);
+        command.addProperty("insertSpaces", insertSpaces);
+        return command;
+    }
+
     void validate(String gitHubToken, String cwd) throws IOException {
         runSimpleCommand(gitHubToken, cwd, "validate");
         if (activeError != null) {
@@ -338,6 +421,7 @@ final class CopilotLocalBridge implements AutoCloseable {
                     completeActiveRun();
                 }
                 case "validated" -> completeActiveRun();
+                case "ghost_authenticated" -> completeActiveRun();
                 case "error" -> {
                     activeError = stringOrNull(event, "message");
                     if (activeError == null) {
@@ -392,6 +476,7 @@ final class CopilotLocalBridge implements AutoCloseable {
                 completeActiveRun();
             }
             case "validated" -> completeActiveRun();
+            case "ghost_authenticated" -> completeActiveRun();
             case "error" -> {
                 listener.onError(stringOrNull(event, "message"));
                 completeActiveRun();

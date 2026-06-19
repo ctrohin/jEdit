@@ -4,6 +4,7 @@ import { Agent } from "@cursor/sdk";
 const rl = createInterface({ input: process.stdin, terminal: false });
 
 let agent = null;
+let inlineAgent = null;
 let activeRun = null;
 
 function emit(event) {
@@ -128,10 +129,30 @@ async function handleSend(cmd) {
   }
 }
 
-async function handleComplete(cmd) {
-  await disposeAgent();
+async function disposeInlineAgent() {
+  if (!inlineAgent) {
+    return;
+  }
+  const current = inlineAgent;
+  inlineAgent = null;
+  if (typeof current[Symbol.asyncDispose] === "function") {
+    await current[Symbol.asyncDispose]();
+  } else if (typeof current.close === "function") {
+    await current.close();
+  }
+}
+
+async function ensureInlineAgent(cmd) {
+  if (inlineAgent) {
+    return inlineAgent;
+  }
   const options = buildAgentOptions({ ...cmd, mode: "plan" });
-  const ephemeral = await Agent.create(options);
+  inlineAgent = await Agent.create(options);
+  return inlineAgent;
+}
+
+async function handleComplete(cmd) {
+  const ephemeral = await ensureInlineAgent(cmd);
   const sendOpts = { mode: "plan" };
   if (cmd.modelId && cmd.modelId !== "auto") {
     sendOpts.model = { id: cmd.modelId };
@@ -156,10 +177,8 @@ async function handleComplete(cmd) {
       text,
     });
   } finally {
-    if (typeof ephemeral[Symbol.asyncDispose] === "function") {
-      await ephemeral[Symbol.asyncDispose]();
-    } else if (typeof ephemeral.close === "function") {
-      await ephemeral.close();
+    if (activeRun === run) {
+      activeRun = null;
     }
   }
 }
@@ -188,6 +207,7 @@ async function handleShutdown(cmd) {
     activeRun = null;
   }
   await disposeAgent();
+  await disposeInlineAgent();
   emit({ type: "shutdown", requestId: cmd.id });
   process.exit(0);
 }

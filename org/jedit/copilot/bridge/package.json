@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@github/copilot-language-server": "^1.0.0",
     "@github/copilot-sdk": "^1.0.0"
   }
 }

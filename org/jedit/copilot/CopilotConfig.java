@@ -13,6 +13,7 @@ import org.gjt.sp.jedit.jEdit;
 final class CopilotConfig {
 
     static final String TOKEN_PROPERTY = "copilot.github-token";
+    static final String LSP_TOKEN_PROPERTY = "copilot.lsp-token";
     static final String MODE_PROPERTY = "copilot.selected-mode";
     static final String MODEL_PROPERTY = "copilot.selected-model-id";
     static final String NODE_PROPERTY = "copilot.node-executable";
@@ -25,6 +26,19 @@ final class CopilotConfig {
         return token == null || token.isBlank() ? null : token.trim();
     }
 
+    static String copilotLspToken() {
+        String token = jEdit.getProperty(LSP_TOKEN_PROPERTY);
+        return token == null || token.isBlank() ? null : token.trim();
+    }
+
+    static void setCopilotLspToken(String token) {
+        if (token == null || token.isBlank()) {
+            jEdit.unsetProperty(LSP_TOKEN_PROPERTY);
+        } else {
+            jEdit.setProperty(LSP_TOKEN_PROPERTY, token.trim());
+        }
+    }
+
     static void setGitHubToken(String token) {
         if (token == null || token.isBlank()) {
             jEdit.unsetProperty(TOKEN_PROPERTY);
@@ -35,6 +49,7 @@ final class CopilotConfig {
 
     static void clearSession() {
         jEdit.unsetProperty(TOKEN_PROPERTY);
+        jEdit.unsetProperty(LSP_TOKEN_PROPERTY);
     }
 
     static String modelId() {

@@ -517,6 +517,7 @@ public final class CopilotView extends JPanel implements DefaultFocusComponent {
                     CopilotConfig.setGitHubToken(token);
                 }
                 CopilotAuth.setSignedIn(true);
+                CopilotPlugin.authenticateGhostLsp();
                 SwingUtilities.invokeLater(() -> {
                     refreshAuthState();
                     refreshModelsAsync();

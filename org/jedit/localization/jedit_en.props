@@ -1733,6 +1733,7 @@ ai-assist.provider.auto=Automatic (Cursor, then Copilot)
 ai-assist.provider.cursor=Cursor only
 ai-assist.provider.copilot=GitHub Copilot only
 ai-assist.provider.off=Disabled
+ai-assist.inline.accept-hint=Tap TAB to complete
 #}}}
 
 #{{{ LSP Servers pane

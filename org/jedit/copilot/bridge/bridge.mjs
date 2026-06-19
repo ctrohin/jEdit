@@ -1,10 +1,12 @@
 import { createInterface } from "node:readline";
 import { CopilotClient, approveAll } from "@github/copilot-sdk";
+import { ghostComplete, ghostAuth, shutdownGhostLsp } from "./ghost-lsp.mjs";
 
 const rl = createInterface({ input: process.stdin, terminal: false });
 
 let client = null;
 let activeSession = null;
+let inlineSession = null;
 let activeUnsubscribers = [];
 let lastAuthKey = null;
 
@@ -42,6 +44,26 @@ function sessionConfig(cmd) {
     config.model = cmd.modelId;
   }
   return config;
+}
+
+function inlineSessionConfig(cmd) {
+  const config = {
+    streaming: true,
+    onPermissionRequest: approveAll,
+  };
+  if (cmd.modelId && cmd.modelId !== "auto") {
+    config.model = cmd.modelId;
+  }
+  return config;
+}
+
+async function ensureInlineSession(cmd) {
+  await ensureClient(cmd);
+  if (inlineSession) {
+    return inlineSession;
+  }
+  inlineSession = await client.createSession(inlineSessionConfig(cmd));
+  return inlineSession;
 }
 
 async function ensureClient(cmd) {
@@ -254,8 +276,26 @@ async function handleSend(cmd) {
   }
 }
 
+async function handleGhostComplete(cmd) {
+  const text = await ghostComplete(cmd);
+  emit({
+    type: "result",
+    requestId: cmd.id,
+    status: "completed",
+    text: text || "",
+  });
+}
+
+async function handleGhostAuth(cmd) {
+  await ghostAuth(cmd);
+  emit({
+    type: "ghost_authenticated",
+    requestId: cmd.id,
+  });
+}
+
 async function handleComplete(cmd) {
-  const session = await ensureSession({ ...cmd, sessionId: null });
+  const session = await ensureInlineSession(cmd);
   clearActiveHandlers();
 
   let streamed = "";
@@ -324,6 +364,17 @@ async function handleCancel(cmd) {
 
 async function handleShutdown(cmd) {
   clearActiveHandlers();
+  try {
+    await shutdownGhostLsp();
+  } catch (_) {
+  }
+  if (inlineSession) {
+    try {
+      await inlineSession.disconnect();
+    } catch (_) {
+    }
+    inlineSession = null;
+  }
   if (activeSession) {
     try {
       await activeSession.disconnect();
@@ -355,6 +406,12 @@ rl.on("line", (line) => {
           break;
         case "complete":
           await handleComplete(cmd);
+          break;
+        case "ghostComplete":
+          await handleGhostComplete(cmd);
+          break;
+        case "ghostAuth":
+          await handleGhostAuth(cmd);
           break;
         case "listModels":
           await handleListModels(cmd);

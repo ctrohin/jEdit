@@ -18,22 +18,42 @@ import org.gjt.sp.jedit.jEdit;
 
 final class AiInlineCompletionContext {
 
-    private static final int CONTEXT_CHARS = 4000;
-    private static final int SURROUNDING_LINES = 30;
+    private static final int CONTEXT_CHARS = 1500;
+    private static final int SURROUNDING_LINES = 12;
 
     final String filePath;
     final String language;
     final String prompt;
     final int caret;
     final boolean emptyLine;
+    final boolean ghostCapable;
+    final String documentUri;
+    final String workspaceUri;
+    final String languageId;
+    final String documentText;
+    final int line;
+    final int character;
+    final int tabSize;
+    final boolean insertSpaces;
 
     private AiInlineCompletionContext(String filePath, String language, String prompt,
-            int caret, boolean emptyLine) {
+            int caret, boolean emptyLine, boolean ghostCapable, String documentUri,
+            String workspaceUri, String languageId, String documentText, int line,
+            int character, int tabSize, boolean insertSpaces) {
         this.filePath = filePath;
         this.language = language;
         this.prompt = prompt;
         this.caret = caret;
         this.emptyLine = emptyLine;
+        this.ghostCapable = ghostCapable;
+        this.documentUri = documentUri;
+        this.workspaceUri = workspaceUri;
+        this.languageId = languageId;
+        this.documentText = documentText;
+        this.line = line;
+        this.character = character;
+        this.tabSize = tabSize;
+        this.insertSpaces = insertSpaces;
     }
 
     static AiInlineCompletionContext forBuffer(View view, Buffer buffer, int caret) {
@@ -48,6 +68,7 @@ final class AiInlineCompletionContext {
         }
         String lineText = buffer.getText(lineStart, lineEnd - lineStart);
         boolean emptyLine = lineText.trim().isEmpty();
+        int character = caret - lineStart;
 
         int prefixStart = Math.max(0, caret - CONTEXT_CHARS);
         int suffixEnd = Math.min(buffer.getLength(), caret + CONTEXT_CHARS);
@@ -60,7 +81,55 @@ final class AiInlineCompletionContext {
         String surrounding = buildSurroundingLines(buffer, line);
         String prompt = workspacePrefix
             + buildPrompt(path, language, line + 1, surrounding, prefix, suffix, emptyLine);
-        return new AiInlineCompletionContext(path, language, prompt, caret, emptyLine);
+
+        String documentUri = documentUriFor(buffer);
+        boolean ghostCapable = documentUri != null;
+        String documentText = ghostCapable
+            ? buffer.getText(0, buffer.getLength())
+            : "";
+        String languageId = mapLanguageId(buffer);
+        String workspaceUri = workspaceUriFor(view);
+        int tabSize = buffer.getTabSize();
+        boolean insertSpaces = !buffer.getBooleanProperty("noTabs");
+
+        return new AiInlineCompletionContext(path, language, prompt, caret, emptyLine,
+            ghostCapable, documentUri, workspaceUri, languageId, documentText, line,
+            character, tabSize, insertSpaces);
+    }
+
+    private static String documentUriFor(Buffer buffer) {
+        if (buffer == null || buffer.isUntitled()) {
+            return null;
+        }
+        String path = buffer.getPath();
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+        return new File(MiscUtilities.resolveSymlinks(path)).toURI().toString();
+    }
+
+    private static String workspaceUriFor(View view) {
+        String folder = jEdit.getProperty(WorkspaceTreeView.FOLDER_KEY);
+        if (folder == null || folder.isBlank()) {
+            return null;
+        }
+        File root = new File(MiscUtilities.resolveSymlinks(folder));
+        if (!root.isDirectory()) {
+            return null;
+        }
+        return root.toURI().toString();
+    }
+
+    private static String mapLanguageId(Buffer buffer) {
+        if (buffer.getMode() == null) {
+            return "plaintext";
+        }
+        return switch (buffer.getMode().getName()) {
+            case "c++" -> "cpp";
+            case "c#" -> "csharp";
+            case "text" -> "plaintext";
+            default -> buffer.getMode().getName();
+        };
     }
 
     private static String buildWorkspacePrefix(View view, Buffer buffer) {
@@ -154,5 +223,15 @@ final class AiInlineCompletionContext {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
         }
         return trimmed;
+    }
+
+    static String sanitizeGhostSuggestion(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        while (text.endsWith("\n") || text.endsWith("\r")) {
+            text = text.substring(0, text.length() - 1);
+        }
+        return text;
     }
 }
