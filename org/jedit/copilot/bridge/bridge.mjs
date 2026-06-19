@@ -277,13 +277,21 @@ async function handleSend(cmd) {
 }
 
 async function handleGhostComplete(cmd) {
-  const text = await ghostComplete(cmd);
-  emit({
+  const completion = await ghostComplete(cmd);
+  const event = {
     type: "result",
     requestId: cmd.id,
     status: "completed",
-    text: text || "",
-  });
+    text: completion?.text || "",
+  };
+  if (completion?.hasRange) {
+    event.hasRange = true;
+    event.rangeStartLine = completion.rangeStartLine;
+    event.rangeStartCharacter = completion.rangeStartCharacter;
+    event.rangeEndLine = completion.rangeEndLine;
+    event.rangeEndCharacter = completion.rangeEndCharacter;
+  }
+  emit(event);
 }
 
 async function handleGhostAuth(cmd) {

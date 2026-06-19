@@ -79,6 +79,11 @@ final class CopilotLocalBridge implements AutoCloseable {
     private volatile List<CopilotModelInfo> activeModels;
     private volatile String activeError;
     private volatile String activeCompleteText;
+    private volatile boolean activeGhostHasRange;
+    private volatile int activeGhostRangeStartLine;
+    private volatile int activeGhostRangeStartCharacter;
+    private volatile int activeGhostRangeEndLine;
+    private volatile int activeGhostRangeEndCharacter;
     private volatile boolean closed;
 
     CopilotLocalBridge(String conversationId) {
@@ -157,7 +162,7 @@ final class CopilotLocalBridge implements AutoCloseable {
         return text != null ? text : "";
     }
 
-    String ghostComplete(String cwd, String documentUri,
+    CopilotGhostInlineResult ghostComplete(String cwd, String documentUri,
             String workspaceUri, String languageId, String documentText, int line,
             int character, int tabSize, boolean insertSpaces) throws IOException {
         synchronized (lock) {
@@ -171,6 +176,7 @@ final class CopilotLocalBridge implements AutoCloseable {
             activeModels = null;
             activeError = null;
             activeCompleteText = null;
+            clearGhostRange();
             activeLatch = new CountDownLatch(1);
             JsonObject command = buildGhostCommand("ghostComplete", cwd, documentUri,
                 workspaceUri, languageId, documentText, line, character, tabSize,
@@ -183,7 +189,44 @@ final class CopilotLocalBridge implements AutoCloseable {
             throw new IOException(activeError);
         }
         String text = activeCompleteText;
-        return text != null ? text : "";
+        if (activeGhostHasRange) {
+            return new CopilotGhostInlineResult(
+                text != null ? text : "",
+                true,
+                activeGhostRangeStartLine,
+                activeGhostRangeStartCharacter,
+                activeGhostRangeEndLine,
+                activeGhostRangeEndCharacter);
+        }
+        return CopilotGhostInlineResult.textOnly(text);
+    }
+
+    private void clearGhostRange() {
+        activeGhostHasRange = false;
+        activeGhostRangeStartLine = 0;
+        activeGhostRangeStartCharacter = 0;
+        activeGhostRangeEndLine = 0;
+        activeGhostRangeEndCharacter = 0;
+    }
+
+    private void noteGhostRange(JsonObject event) {
+        if (event.has("hasRange") && event.get("hasRange").getAsBoolean()) {
+            activeGhostHasRange = true;
+            activeGhostRangeStartLine = intOrZero(event, "rangeStartLine");
+            activeGhostRangeStartCharacter = intOrZero(event, "rangeStartCharacter");
+            activeGhostRangeEndLine = intOrZero(event, "rangeEndLine");
+            activeGhostRangeEndCharacter = intOrZero(event, "rangeEndCharacter");
+        } else {
+            clearGhostRange();
+        }
+    }
+
+    private static int intOrZero(JsonObject json, String key) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return 0;
+        }
+        JsonElement value = json.get(key);
+        return value.isJsonPrimitive() ? value.getAsInt() : 0;
     }
 
     void ghostAuth(String cwd) throws IOException {
@@ -414,6 +457,7 @@ final class CopilotLocalBridge implements AutoCloseable {
             switch (type) {
                 case "result" -> {
                     activeCompleteText = stringOrNull(event, "text");
+                    noteGhostRange(event);
                     completeActiveRun();
                 }
                 case "models" -> {

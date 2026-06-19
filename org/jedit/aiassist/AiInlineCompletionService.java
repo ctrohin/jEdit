@@ -10,6 +10,8 @@ package org.jedit.aiassist;
 
 import java.io.IOException;
 
+import org.gjt.sp.jedit.Buffer;
+import org.jedit.copilot.CopilotGhostInlineResult;
 import org.jedit.copilot.CopilotPlugin;
 import org.jedit.cursor.CursorPlugin;
 
@@ -25,19 +27,20 @@ final class AiInlineCompletionService {
         return CopilotPlugin.isSignedIn();
     }
 
-    static String fetchSuggestion(AiInlineCompletionContext context) throws IOException {
-        if (context == null) {
+    static AiInlineCompletionSuggestion fetchSuggestion(Buffer buffer,
+            AiInlineCompletionContext context) throws IOException {
+        if (context == null || buffer == null) {
             AiAssistLog.message("fetch skipped: empty context");
-            return "";
+            return null;
         }
         if (!context.ghostCapable && context.prompt.isBlank()) {
             AiAssistLog.message("fetch skipped: empty context");
-            return "";
+            return null;
         }
         AiAssistProvider provider = AiAssistConfig.provider();
         if (provider == AiAssistProvider.OFF) {
             AiAssistLog.message("fetch skipped: provider is off");
-            return "";
+            return null;
         }
         AiAssistLog.message("fetching suggestion (provider="
             + provider + ", emptyLine=" + context.emptyLine
@@ -53,12 +56,13 @@ final class AiInlineCompletionService {
                 AiAssistLog.message("Cursor returned " + suggestion.length() + " characters in "
                     + elapsedMs(start) + "ms");
                 if (!suggestion.isBlank() || provider == AiAssistProvider.CURSOR) {
-                    return suggestion;
+                    return AiInlineCompletionSuggestion.fromRaw(
+                        buffer, context.caret, suggestion);
                 }
             } else {
                 AiAssistLog.message("Cursor not available (not signed in)");
                 if (provider == AiAssistProvider.CURSOR) {
-                    return "";
+                    return null;
                 }
             }
         }
@@ -68,9 +72,9 @@ final class AiInlineCompletionService {
                     AiAssistLog.message("trying GitHub Copilot ghost inline completion at "
                         + context.line + ":" + context.character);
                     long start = System.nanoTime();
-                    String suggestion = "";
+                    AiInlineCompletionSuggestion suggestion = null;
                     try {
-                        suggestion = sanitizeGhost(CopilotPlugin.ghostInline(
+                        CopilotGhostInlineResult ghost = CopilotPlugin.ghostInline(
                             context.documentUri,
                             context.workspaceUri,
                             context.languageId,
@@ -78,7 +82,16 @@ final class AiInlineCompletionService {
                             context.line,
                             context.character,
                             context.tabSize,
-                            context.insertSpaces));
+                            context.insertSpaces);
+                        suggestion = AiInlineCompletionSuggestion.fromGhost(
+                            buffer,
+                            context.caret,
+                            sanitizeGhost(ghost.text),
+                            ghost.hasRange,
+                            ghost.rangeStartLine,
+                            ghost.rangeStartCharacter,
+                            ghost.rangeEndLine,
+                            ghost.rangeEndCharacter);
                     } catch (IOException e) {
                         if (isGhostAuthError(e)) {
                             AiAssistLog.message("Copilot ghost auth required, using chat fallback");
@@ -87,13 +100,14 @@ final class AiInlineCompletionService {
                             throw e;
                         }
                     }
-                    AiAssistLog.message("Copilot ghost returned " + suggestion.length()
-                        + " characters in " + elapsedMs(start) + "ms");
-                    if (!suggestion.isBlank()) {
+                    if (suggestion != null && !suggestion.insertText.isBlank()) {
+                        AiAssistLog.message("Copilot ghost returned "
+                            + suggestion.insertText.length() + " characters in "
+                            + elapsedMs(start) + "ms");
                         return suggestion;
                     }
                     if (provider == AiAssistProvider.COPILOT && context.prompt.isBlank()) {
-                        return "";
+                        return null;
                     }
                 }
                 if (!context.prompt.isBlank()) {
@@ -102,14 +116,15 @@ final class AiInlineCompletionService {
                     String suggestion = sanitize(CopilotPlugin.completeInline(context.prompt));
                     AiAssistLog.message("Copilot chat returned " + suggestion.length()
                         + " characters in " + elapsedMs(start) + "ms");
-                    return suggestion;
+                    return AiInlineCompletionSuggestion.fromRaw(
+                        buffer, context.caret, suggestion);
                 }
-                return "";
+                return null;
             }
             AiAssistLog.message("GitHub Copilot not available (not signed in)");
         }
         AiAssistLog.message("no suggestion from any provider");
-        return "";
+        return null;
     }
 
     private static String sanitize(String text) {

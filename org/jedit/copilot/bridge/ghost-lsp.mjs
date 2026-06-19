@@ -145,8 +145,20 @@ class CopilotGhostLspClient {
     });
 
     const items = result?.items ?? [];
-    const insertText = items[0]?.insertText ?? "";
-    return typeof insertText === "string" ? insertText : "";
+    const item = items[0];
+    const insertText = typeof item?.insertText === "string" ? item.insertText : "";
+    const range = item?.range;
+    if (!range?.start || !range?.end) {
+      return { text: insertText, hasRange: false };
+    }
+    return {
+      text: insertText,
+      hasRange: true,
+      rangeStartLine: range.start.line,
+      rangeStartCharacter: range.start.character,
+      rangeEndLine: range.end.line,
+      rangeEndCharacter: range.end.character,
+    };
   }
 
   async ensure(cmd) {

@@ -116,7 +116,7 @@ final class AiInlineCompletionHub implements EBComponent {
 
     private volatile TextArea activeTextArea;
     private volatile JEditBuffer watchedBuffer;
-    private volatile String currentSuggestion;
+    private volatile AiInlineCompletionSuggestion currentSuggestion;
     private volatile AiInlineCompletionContext currentContext;
     private volatile int requestGeneration;
     private volatile boolean acceptingSuggestion;
@@ -310,8 +310,8 @@ final class AiInlineCompletionHub implements EBComponent {
     }
 
     private boolean hasActiveSuggestion() {
-        String suggestion = currentSuggestion;
-        return suggestion != null && !suggestion.isBlank() && currentContext != null;
+        AiInlineCompletionSuggestion suggestion = currentSuggestion;
+        return suggestion != null && !suggestion.insertText.isBlank() && currentContext != null;
     }
 
     private void handleMouseMotion(AWTEvent event) {
@@ -357,7 +357,7 @@ final class AiInlineCompletionHub implements EBComponent {
             AiAssistLog.debug("tab accept skipped: no active suggestion");
             return false;
         }
-        String suggestion = currentSuggestion;
+        AiInlineCompletionSuggestion suggestion = currentSuggestion;
         AiInlineCompletionContext context = currentContext;
         TextArea textArea = activeTextArea;
         if (textArea == null) {
@@ -374,11 +374,16 @@ final class AiInlineCompletionHub implements EBComponent {
                 + context.caret + " to " + caret);
             return false;
         }
-        AiAssistLog.message("accepting inline suggestion (" + suggestion.length() + " chars)");
+        AiAssistLog.message("accepting inline suggestion (" + suggestion.insertText.length()
+            + " chars, replace " + suggestion.replaceStart + "-" + suggestion.replaceEnd + ")");
         removeTabInterceptor();
         acceptingSuggestion = true;
         try {
-            buffer.insert(caret, suggestion);
+            if (suggestion.replaceEnd > suggestion.replaceStart) {
+                buffer.remove(suggestion.replaceStart,
+                    suggestion.replaceEnd - suggestion.replaceStart);
+            }
+            buffer.insert(suggestion.replaceStart, suggestion.insertText);
         } finally {
             acceptingSuggestion = false;
         }
@@ -512,9 +517,14 @@ final class AiInlineCompletionHub implements EBComponent {
 
     private void fetchAndShow(int generation, TextArea textArea,
             AiInlineCompletionContext context) {
+        Buffer buffer = editBuffer(textArea);
+        if (buffer == null) {
+            return;
+        }
         try {
-            String suggestion = AiInlineCompletionService.fetchSuggestion(context);
-            if (suggestion == null || suggestion.isBlank()) {
+            AiInlineCompletionSuggestion suggestion = AiInlineCompletionService.fetchSuggestion(
+                buffer, context);
+            if (suggestion == null || suggestion.insertText.isBlank()) {
                 AiAssistLog.message("request #" + generation + " returned no suggestion");
                 return;
             }
@@ -526,7 +536,7 @@ final class AiInlineCompletionHub implements EBComponent {
     }
 
     private void showSuggestionIfValid(int generation, TextArea textArea,
-            AiInlineCompletionContext context, String suggestion) {
+            AiInlineCompletionContext context, AiInlineCompletionSuggestion suggestion) {
         if (generation != requestGeneration) {
             AiAssistLog.debug("request #" + generation + " stale (generation mismatch)");
             return;
@@ -547,10 +557,10 @@ final class AiInlineCompletionHub implements EBComponent {
         }
         currentSuggestion = suggestion;
         currentContext = context;
-        popup.show(textArea, suggestion);
+        popup.show(textArea, suggestion.displayText);
         installTabInterceptor();
         AiAssistLog.message("showing inline suggestion #" + generation + " ("
-            + suggestion.length() + " chars)");
+            + suggestion.insertText.length() + " chars)");
     }
 
     private void dismissSuggestion(String reason) {

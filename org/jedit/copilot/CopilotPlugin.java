@@ -74,14 +74,14 @@ public class CopilotPlugin extends EditPlugin {
         return raw != null ? raw : "";
     }
 
-    public static String ghostInline(String documentUri, String workspaceUri,
+    public static CopilotGhostInlineResult ghostInline(String documentUri, String workspaceUri,
             String languageId, String documentText, int line, int character,
             int tabSize, boolean insertSpaces) throws java.io.IOException {
         if (!CopilotAuth.isSignedIn()) {
-            return "";
+            return CopilotGhostInlineResult.textOnly("");
         }
         CopilotLocalBridge bridge = CopilotLocalBridgePool.bridgeFor("__inline__");
-        String raw = bridge.ghostComplete(
+        return bridge.ghostComplete(
             CopilotWorkspaceContext.defaultCwd(),
             documentUri,
             workspaceUri,
@@ -91,7 +91,6 @@ public class CopilotPlugin extends EditPlugin {
             character,
             tabSize,
             insertSpaces);
-        return raw != null ? raw : "";
     }
 
     public static void authenticateGhostLsp() {
