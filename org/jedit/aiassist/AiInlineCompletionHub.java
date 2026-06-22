@@ -45,7 +45,8 @@ final class AiInlineCompletionHub implements EBComponent {
 
     private static final int EMPTY_LINE_DELAY_MS = 400;
 
-    private final AiInlineCompletionPopup popup = new AiInlineCompletionPopup();
+    private final AiInlineCompletionGhostRenderer ghostRenderer =
+        new AiInlineCompletionGhostRenderer();
     private final Timer idleTimer;
     private final BufferAdapter bufferAdapter = new BufferAdapter() {
         @Override
@@ -86,6 +87,11 @@ final class AiInlineCompletionHub implements EBComponent {
                 return;
             }
             if (e.getKeyCode() == KeyEvent.VK_TAB && !e.isShiftDown() && acceptSuggestion(e)) {
+                e.consume();
+                return;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE && hasActiveSuggestion()) {
+                dismissSuggestion("escape");
                 e.consume();
                 return;
             }
@@ -153,7 +159,7 @@ final class AiInlineCompletionHub implements EBComponent {
         detachFocusListener();
         removeTabInterceptor();
         dismissSuggestion("uninstall");
-        popup.dispose();
+        ghostRenderer.dispose();
     }
 
     @Override
@@ -548,7 +554,7 @@ final class AiInlineCompletionHub implements EBComponent {
         }
         currentSuggestion = suggestion;
         currentContext = context;
-        popup.show(textArea, suggestion.displayText);
+        ghostRenderer.show(textArea, buffer, suggestion, context.caret);
         installTabInterceptor();
         AiAssistLog.message("showing inline suggestion #" + generation + " ("
             + suggestion.insertText.length() + " chars)");
@@ -562,7 +568,7 @@ final class AiInlineCompletionHub implements EBComponent {
         requestGeneration++;
         currentSuggestion = null;
         currentContext = null;
-        popup.hide();
+        ghostRenderer.hide();
     }
 
     private static Buffer editBuffer(TextArea textArea) {

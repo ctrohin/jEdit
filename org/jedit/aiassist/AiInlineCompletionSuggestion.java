@@ -56,6 +56,28 @@ final class AiInlineCompletionSuggestion {
             replaceEnd);
     }
 
+    String[] ghostLines(Buffer buffer) {
+        String suffix = ghostSuffix(buffer);
+        if (suffix.isEmpty()) {
+            return new String[0];
+        }
+        return suffix.split("\n", -1);
+    }
+
+    private String ghostSuffix(Buffer buffer) {
+        if (insertText.isEmpty()) {
+            return "";
+        }
+        int replacedLength = Math.max(0, replaceEnd - replaceStart);
+        String replaced = replacedLength > 0
+            ? buffer.getText(replaceStart, replacedLength)
+            : "";
+        if (!replaced.isEmpty() && insertText.startsWith(replaced)) {
+            return insertText.substring(replaced.length());
+        }
+        return insertText;
+    }
+
     static AiInlineCompletionSuggestion fromGhost(Buffer buffer, int caret, String text,
             boolean hasRange, int rangeStartLine, int rangeStartCharacter,
             int rangeEndLine, int rangeEndCharacter) {

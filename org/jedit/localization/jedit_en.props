@@ -1716,7 +1716,7 @@ options.plugin-manager.no-plugin-uptodate=All plugins are up to date
 #{{{ AI Assist pane
 options.ai-assist.label=AI Assist
 options.ai-assist.intro=Configure inline AI code suggestions and sign in to GitHub Copilot. \
-	When enabled, jEdit shows a tooltip with a suggested completion after a short idle period \
+	When enabled, jEdit shows gray ghost text at the cursor after a short idle period \
 	or on an empty line. Press Tab to accept the suggestion.
 options.ai-assist.provider=Preferred assistant:
 options.ai-assist.inline-enabled=Show inline completion suggestions
