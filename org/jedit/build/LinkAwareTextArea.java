@@ -24,13 +24,17 @@ package org.jedit.build;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
@@ -54,6 +58,8 @@ final class LinkAwareTextArea extends JTextArea {
     private FileLink hoveredLink;
     private int maxLines = 200;
     private int lineCount;
+    private Consumer<byte[]> processInput;
+    private Runnable processInterrupt;
 
     LinkAwareTextArea(View view) {
         super();
@@ -83,6 +89,27 @@ final class LinkAwareTextArea extends JTextArea {
                 }
             }
         });
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleProcessKeyPressed(e);
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                handleProcessKeyTyped(e);
+            }
+        });
+    }
+
+    void setProcessInput(Consumer<byte[]> onInput, Runnable onInterrupt) {
+        processInput = onInput;
+        processInterrupt = onInterrupt;
+        setFocusTraversalKeysEnabled(onInput == null);
+    }
+
+    void clearProcessInput() {
+        setProcessInput(null, null);
     }
 
     void setProjectRoot(File projectRoot) {
@@ -199,5 +226,52 @@ final class LinkAwareTextArea extends JTextArea {
 
     private static boolean isNavigateModifier(MouseEvent e) {
         return OperatingSystem.isMacOS() ? e.isMetaDown() : e.isControlDown();
+    }
+
+    private void handleProcessKeyPressed(KeyEvent e) {
+        if (processInput == null && processInterrupt == null) {
+            return;
+        }
+        if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C) {
+            if (processInterrupt != null) {
+                processInterrupt.run();
+                e.consume();
+            }
+            return;
+        }
+        if (processInput == null) {
+            return;
+        }
+        byte[] data = specialKeyBytes(e);
+        if (data != null) {
+            processInput.accept(data);
+            e.consume();
+        }
+    }
+
+    private void handleProcessKeyTyped(KeyEvent e) {
+        if (processInput == null || e.isConsumed()) {
+            return;
+        }
+        char ch = e.getKeyChar();
+        if (ch == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(ch)) {
+            return;
+        }
+        processInput.accept(Character.toString(ch).getBytes(StandardCharsets.UTF_8));
+        e.consume();
+    }
+
+    private static byte[] specialKeyBytes(KeyEvent e) {
+        if (e.isControlDown() || e.isAltDown() || e.isMetaDown()) {
+            return null;
+        }
+        return switch (e.getKeyCode()) {
+            case KeyEvent.VK_ENTER -> new byte[] {'\n'};
+            case KeyEvent.VK_TAB -> new byte[] {'\t'};
+            case KeyEvent.VK_BACK_SPACE -> new byte[] {0x08};
+            case KeyEvent.VK_DELETE -> new byte[] {0x7f};
+            case KeyEvent.VK_ESCAPE -> new byte[] {0x1b};
+            default -> null;
+        };
     }
 }

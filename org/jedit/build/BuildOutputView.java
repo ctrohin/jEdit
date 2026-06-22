@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 
@@ -112,11 +113,16 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
         tab.output.clearOutput();
         tab.output.appendLine("$ " + String.join(" ", command));
         setTabStatus(tab, jEdit.getProperty("build-output.running"));
+        tab.enableProcessInput();
         tab.runner.run(workingDir, command, environment,
             (line, error) -> tab.output.appendLine(line, error ? LinkAwareTextArea.errorColor() : null),
-            () -> setTabStatus(tab, jEdit.getProperty("build-output.finished")));
+            () -> {
+                tab.disableProcessInput();
+                setTabStatus(tab, jEdit.getProperty("build-output.finished"));
+            });
         updateTabHeader(tab);
         tabbedPane.setSelectedComponent(tab.panel);
+        SwingUtilities.invokeLater(tab.output::requestFocus);
     }
 
     private boolean confirmRestart() {
@@ -180,6 +186,7 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
     }
 
     private void closeTab(BuildOutputTab tab) {
+        tab.disableProcessInput();
         tab.runner.stop();
         tabsByKey.remove(tab.taskKey);
         tabbedPane.remove(tab.panel);

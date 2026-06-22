@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,23 @@ final class BuildProcessRunner {
         Process active = process;
         if (active != null) {
             ThreadUtilities.runInBackground(() -> terminateProcessSync(active));
+        }
+    }
+
+    void sendInput(byte[] data) {
+        if (data == null || data.length == 0) {
+            return;
+        }
+        Process active = process;
+        if (active == null || !active.isAlive()) {
+            return;
+        }
+        try {
+            OutputStream stdin = active.getOutputStream();
+            stdin.write(data);
+            stdin.flush();
+        } catch (IOException ex) {
+            Log.log(Log.DEBUG, BuildProcessRunner.class, "Failed to write process input", ex);
         }
     }
 

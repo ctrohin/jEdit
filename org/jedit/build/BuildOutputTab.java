@@ -93,6 +93,15 @@ final class BuildOutputTab {
 
     void stopRun() {
         runner.stop();
+        output.clearProcessInput();
         setStatus(jEdit.getProperty("build-output.stopped"));
+    }
+
+    void enableProcessInput() {
+        output.setProcessInput(runner::sendInput, this::stopRun);
+    }
+
+    void disableProcessInput() {
+        output.clearProcessInput();
     }
 }
