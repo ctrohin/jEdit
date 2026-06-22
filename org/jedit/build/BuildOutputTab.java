@@ -10,14 +10,17 @@ package org.jedit.build;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.RolloverButton;
+import org.gjt.sp.jedit.gui.RolloverToggleButton;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 
@@ -29,6 +32,8 @@ final class BuildOutputTab {
     final JScrollPane scrollPane;
     final BuildProcessRunner runner = new BuildProcessRunner();
     private final JLabel statusLabel;
+    private final RolloverToggleButton pinButton;
+    private boolean scrollPinned;
     private String title;
     private String status = "";
 
@@ -39,6 +44,7 @@ final class BuildOutputTab {
         output = new LinkAwareTextArea(view);
         output.setMaxLines(maxLines);
         scrollPane = new JScrollPane(output);
+        output.configureScrolling(() -> scrollPinned, this::scrollToEnd);
 
         JPanel toolbar = new JPanel(new BorderLayout());
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
@@ -53,8 +59,18 @@ final class BuildOutputTab {
         toolbar.add(left, BorderLayout.CENTER);
 
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
+        pinButton = new RolloverToggleButton(IconManager.loadIcon("MatIcons.KEEP_DOWN:22"));
+        updatePinTooltip();
+        pinButton.addActionListener(e -> {
+            scrollPinned = pinButton.isSelected();
+            updatePinTooltip();
+            if (!scrollPinned) {
+                scrollToEnd();
+            }
+        });
         JButton settings = new RolloverButton(IconManager.loadIcon("MatIcons.SETTINGS:22"), jEdit.getProperty("build-output.settings"));
         settings.addActionListener(e -> onSettings.run());
+        right.add(pinButton);
         right.add(settings);
         toolbar.add(right, BorderLayout.EAST);
 
@@ -103,5 +119,25 @@ final class BuildOutputTab {
 
     void disableProcessInput() {
         output.clearProcessInput();
+    }
+
+    private void scrollToEnd() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                int length = output.getDocument().getLength();
+                output.setCaretPosition(length);
+                Rectangle rect = output.modelToView2D(length).getBounds();
+                if (rect != null) {
+                    output.scrollRectToVisible(rect);
+                }
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
+    private void updatePinTooltip() {
+        pinButton.setToolTipText(jEdit.getProperty(scrollPinned
+            ? "build-output.scroll-pin"
+            : "build-output.scroll-unpin"));
     }
 }

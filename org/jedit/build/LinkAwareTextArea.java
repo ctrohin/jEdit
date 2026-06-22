@@ -34,6 +34,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import javax.swing.JTextArea;
@@ -60,6 +61,8 @@ final class LinkAwareTextArea extends JTextArea {
     private int lineCount;
     private Consumer<byte[]> processInput;
     private Runnable processInterrupt;
+    private BooleanSupplier scrollPinned = () -> false;
+    private Runnable scrollToEnd;
 
     LinkAwareTextArea(View view) {
         super();
@@ -112,6 +115,11 @@ final class LinkAwareTextArea extends JTextArea {
         setProcessInput(null, null);
     }
 
+    void configureScrolling(BooleanSupplier scrollPinned, Runnable scrollToEnd) {
+        this.scrollPinned = scrollPinned != null ? scrollPinned : () -> false;
+        this.scrollToEnd = scrollToEnd;
+    }
+
     void setProjectRoot(File projectRoot) {
         this.projectRoot = projectRoot;
     }
@@ -156,7 +164,14 @@ final class LinkAwareTextArea extends JTextArea {
             links.addAll(FileLinkParser.parseLine(line, lineStart));
             lineCount++;
             trimExcessLines();
+            maybeScrollToEnd();
         } catch (BadLocationException ignored) {
+        }
+    }
+
+    private void maybeScrollToEnd() {
+        if (!scrollPinned.getAsBoolean() && scrollToEnd != null) {
+            scrollToEnd.run();
         }
     }
 
