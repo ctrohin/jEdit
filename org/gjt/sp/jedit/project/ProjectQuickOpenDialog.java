@@ -37,6 +37,7 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.EnhancedDialog;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.ThreadUtilities;
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 
 /**
  * Quick-open dialog for files in the project folder.
@@ -119,14 +120,11 @@ public class ProjectQuickOpenDialog extends EnhancedDialog {
             }
             return label;
         });
-        fileList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    openSelectedFile();
-                }
+        fileList.addMouseListener(mouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                openSelectedFile();
             }
-        });
+        }));
         fileList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

@@ -34,7 +34,7 @@ import javax.swing.event.DocumentListener;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.ThreadUtilities;
-
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 /**
  * Quick-open style dialog for invoking jEdit actions.
  */
@@ -119,14 +119,11 @@ public class CommandPaletteDialog extends EnhancedDialog {
             }
             return label;
         });
-        commandList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    invokeSelectedCommand();
-                }
+        commandList.addMouseListener(mouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                invokeSelectedCommand();
             }
-        });
+        }));
         commandList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

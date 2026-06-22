@@ -32,6 +32,8 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.bufferset.BufferSetManager;
 import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
+
 //}}}
 
 /**
@@ -76,31 +78,28 @@ public class BufferSetWidgetFactory implements StatusWidgetFactory
 				}
 			};
 			update();
-			bufferSetLabel.addMouseListener(new MouseAdapter()
+			bufferSetLabel.addMouseListener(mouseClicked(this::bufferSetLabelClicked));
+		}
+
+		private void bufferSetLabelClicked(final MouseEvent evt) {
+			if (evt.getClickCount() == 2)
 			{
-				@Override
-				public void mouseClicked(MouseEvent evt)
+				BufferSetManager bufferSetManager = jEdit.getBufferSetManager();
+				BufferSet.Scope scope = bufferSetManager.getScope();
+				switch (scope)
 				{
-					if (evt.getClickCount() == 2)
-					{
-						BufferSetManager bufferSetManager = jEdit.getBufferSetManager();
-						BufferSet.Scope scope = bufferSetManager.getScope();
-						switch (scope)
-						{
-							case global:
-								scope = BufferSet.Scope.view;
-								break;
-							case view:
-								scope = BufferSet.Scope.editpane;
-								break;
-							case editpane:
-								scope = BufferSet.Scope.global;
-								break;
-						}
-						bufferSetManager.setScope(scope);
-					}
+					case global:
+						scope = BufferSet.Scope.view;
+						break;
+					case view:
+						scope = BufferSet.Scope.editpane;
+						break;
+					case editpane:
+						scope = BufferSet.Scope.global;
+						break;
 				}
-			});
+				bufferSetManager.setScope(scope);
+			}
 		}
 
 		//{{{ getComponent() method

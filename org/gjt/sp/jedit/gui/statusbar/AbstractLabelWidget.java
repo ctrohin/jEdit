@@ -26,9 +26,10 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.util.GenericGUIUtilities;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Optional;
+
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
+
 //}}}
 
 /**
@@ -43,19 +44,14 @@ abstract class AbstractLabelWidget implements Widget
 	{
 		this.view = view;
 		label = new ToolTipLabel();
-		label.addMouseListener(new MouseAdapter()
-		{
-			@Override
-			public void mouseClicked(MouseEvent evt)
-			{
-				if (GenericGUIUtilities.isRightButton(evt))
-					rightClick(evt);
-				else if (evt.getClickCount() == 1)
-					singleClick(evt);
-				else if (evt.getClickCount() == 2)
-					doubleClick(evt);
-			}
-		});
+		label.addMouseListener(mouseClicked(evt -> {
+			if (GenericGUIUtilities.isRightButton(evt))
+				rightClick(evt);
+			else if (evt.getClickCount() == 1)
+				singleClick(evt);
+			else if (evt.getClickCount() == 2)
+				doubleClick(evt);
+		}));
 	}
 
 	@Override

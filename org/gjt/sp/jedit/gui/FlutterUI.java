@@ -24,10 +24,9 @@ package org.gjt.sp.jedit.gui;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 
 public class FlutterUI {
     private final JComponent component;
@@ -69,9 +68,7 @@ public class FlutterUI {
             }
             if (onTap != null) {
                 label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                label.addMouseListener(new MouseAdapter() {
-                    @Override public void mouseClicked(MouseEvent e) { onTap.run(); }
-                });
+                label.addMouseListener(mouseClicked(e -> onTap.run()));
             }
             return new FlutterUI(label);
         }

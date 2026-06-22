@@ -43,6 +43,7 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.EnhancedDialog;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.ThreadUtilities;
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 
 /**
  * Searches for text in all files under the project folder.
@@ -170,14 +171,11 @@ public class ProjectFileSearchDialog extends EnhancedDialog implements ActionLis
             }
             return label;
         });
-        resultsList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    openSelectedMatch();
-                }
+        resultsList.addMouseListener(mouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                openSelectedMatch();
             }
-        });
+        }));
         JScrollPane scrollPane = new JScrollPane(resultsList);
         scrollPane.setPreferredSize(new Dimension(700, 360));
         center.add(scrollPane, BorderLayout.CENTER);

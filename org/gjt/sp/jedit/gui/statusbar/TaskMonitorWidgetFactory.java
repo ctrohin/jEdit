@@ -33,6 +33,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
+import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 //}}}
 
 /**
@@ -68,17 +69,12 @@ public class TaskMonitorWidgetFactory implements StatusWidgetFactory
 			args = new Object[1];
 			messageFormat = new MessageFormat(property);
 			fieldPosition = new FieldPosition(0);
-			addMouseListener(new MouseAdapter()
-			{
-				@Override
-				public void mouseClicked(MouseEvent e)
+			addMouseListener(mouseClicked(e -> {
+				if (SwingUtilities.isLeftMouseButton(e))
 				{
-					if (SwingUtilities.isLeftMouseButton(e))
-					{
-						view.getDockableWindowManager().showDockableWindow("task-monitor");
-					}
+					view.getDockableWindowManager().showDockableWindow("task-monitor");
 				}
-			});
+			}));
 			stringBuffer = new StringBuffer();
 		}
 
