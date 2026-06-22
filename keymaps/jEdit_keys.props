@@ -7,6 +7,7 @@ show-context-menu.shortcut=CONTEXT_MENU
 select-all.shortcut=C+a
 complete-word.shortcut=C+b
 complete-lsp.shortcut=C+\
+ai-inline-suggestion.shortcut=CA+SPACE
 signature-help-lsp.shortcut=CS+p
 goto-back-lsp.shortcut=CA+LEFT
 goto-forward-lsp.shortcut=CA+RIGHT

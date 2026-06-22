@@ -137,7 +137,7 @@ final class AiInlineCompletionHub implements EBComponent {
     void install() {
         AiAssistLog.message("inline assist hub installing (provider="
             + AiAssistConfig.provider()
-            + ", enabled=" + AiAssistConfig.inlineEnabled()
+            + ", automatic=" + AiAssistConfig.inlineAutomatic()
             + ", idleMs=" + AiAssistConfig.idleDelayMs()
             + ", copilot=" + AiInlineCompletionService.isCopilotAvailable() + ")");
         EditBus.addToBus(this);
@@ -402,7 +402,11 @@ final class AiInlineCompletionHub implements EBComponent {
         if (!acceptingSuggestion) {
             dismissSuggestion(reason);
         }
-        scheduleSuggestion();
+        if (AiAssistConfig.inlineAutomatic()) {
+            scheduleSuggestion();
+        } else {
+            idleTimer.stop();
+        }
     }
 
     private void scheduleSuggestion() {
@@ -410,8 +414,8 @@ final class AiInlineCompletionHub implements EBComponent {
             SwingUtilities.invokeLater(this::scheduleSuggestion);
             return;
         }
-        if (!AiAssistConfig.inlineEnabled() || AiAssistConfig.provider() == AiAssistProvider.OFF) {
-            AiAssistLog.debug("schedule skipped: inline disabled");
+        if (!AiAssistConfig.inlineAutomatic() || AiAssistConfig.provider() == AiAssistProvider.OFF) {
+            AiAssistLog.debug("schedule skipped: automatic inline disabled");
             idleTimer.stop();
             return;
         }
@@ -455,8 +459,8 @@ final class AiInlineCompletionHub implements EBComponent {
 
     private void onIdleTimer() {
         AiAssistLog.message("idle timer fired");
-        if (!AiAssistConfig.inlineEnabled() || AiAssistConfig.provider() == AiAssistProvider.OFF) {
-            AiAssistLog.message("idle skipped: inline disabled");
+        if (!AiAssistConfig.inlineAutomatic() || AiAssistConfig.provider() == AiAssistProvider.OFF) {
+            AiAssistLog.message("idle skipped: automatic inline disabled");
             return;
         }
         TextArea textArea = activeTextArea;
@@ -510,6 +514,45 @@ final class AiInlineCompletionHub implements EBComponent {
             return false;
         }
         return AiInlineCompletionService.isCopilotAvailable();
+    }
+
+    void requestInlineSuggestion(View view) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> requestInlineSuggestion(view));
+            return;
+        }
+        if (AiAssistConfig.provider() == AiAssistProvider.OFF) {
+            AiAssistLog.message("manual inline request skipped: provider is off");
+            return;
+        }
+        if (!isProviderReady()) {
+            AiAssistLog.message("manual inline request skipped: no signed-in AI provider");
+            return;
+        }
+        TextArea textArea = view != null ? view.getTextArea() : activeTextArea;
+        if (textArea == null) {
+            AiAssistLog.message("manual inline request skipped: no text area");
+            return;
+        }
+        Buffer buffer = editBuffer(textArea);
+        if (buffer == null) {
+            AiAssistLog.message("manual inline request skipped: no edit buffer");
+            return;
+        }
+        if (buffer.isClosed() || !buffer.isLoaded()) {
+            AiAssistLog.message("manual inline request skipped: buffer closed or not loaded");
+            return;
+        }
+        int caret = textArea.getCaretPosition();
+        AiInlineCompletionContext context = AiInlineCompletionContext.forBuffer(view, buffer, caret);
+        if (context == null) {
+            AiAssistLog.message("manual inline request skipped: could not build completion context");
+            return;
+        }
+        int generation = ++requestGeneration;
+        AiAssistLog.message("requesting manual inline suggestion #" + generation
+            + " (caret=" + caret + ")");
+        ThreadUtilities.runInBackground(() -> fetchAndShow(generation, textArea, context));
     }
 
     private void fetchAndShow(int generation, TextArea textArea,

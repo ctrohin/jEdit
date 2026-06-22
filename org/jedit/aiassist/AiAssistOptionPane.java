@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 
 import org.gjt.sp.jedit.AbstractOptionPane;
 import org.gjt.sp.jedit.View;
@@ -32,8 +33,9 @@ import org.jedit.copilot.CopilotPlugin;
 public class AiAssistOptionPane extends AbstractOptionPane {
 
     private JComboBox<AiAssistProvider> providerCombo;
-    private JCheckBox inlineEnabledCheck;
+    private JCheckBox inlineAutomaticCheck;
     private JSpinner idleSpinner;
+    private JLabel idleDelayLabel;
     private JLabel copilotStatusLabel;
     private JButton copilotLoginButton;
     private JButton copilotLogoutButton;
@@ -70,18 +72,27 @@ public class AiAssistOptionPane extends AbstractOptionPane {
         });
         addField(jEdit.getProperty("options.ai-assist.provider"), providerCombo, c);
 
-        inlineEnabledCheck = new JCheckBox(jEdit.getProperty("options.ai-assist.inline-enabled"));
-        add(inlineEnabledCheck, c);
+        inlineAutomaticCheck = new JCheckBox(
+            jEdit.getProperty("options.ai-assist.inline-automatic"));
+        add(inlineAutomaticCheck, c);
 
+        JPanel idleRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        idleDelayLabel = new JLabel(jEdit.getProperty("options.ai-assist.idle-delay"));
         idleSpinner = new JSpinner(new SpinnerNumberModel(
             AiAssistConfig.idleDelayMs(), 300, 10000, 100));
-        addField(jEdit.getProperty("options.ai-assist.idle-delay"), idleSpinner, c);
+        idleRow.add(idleDelayLabel);
+        idleRow.add(idleSpinner);
+        add(idleRow, c);
+
+        ChangeListener automaticListener = e -> updateAutomaticControls();
+        inlineAutomaticCheck.addChangeListener(automaticListener);
 
         add(createCopilotPanel(), c);
 
         providerCombo.setSelectedItem(AiAssistConfig.provider());
-        inlineEnabledCheck.setSelected(AiAssistConfig.inlineEnabled());
+        inlineAutomaticCheck.setSelected(AiAssistConfig.inlineAutomatic());
         idleSpinner.setValue(AiAssistConfig.idleDelayMs());
+        updateAutomaticControls();
         refreshAuthLabels();
     }
 
@@ -118,11 +129,17 @@ public class AiAssistOptionPane extends AbstractOptionPane {
         add(row, c);
     }
 
+    private void updateAutomaticControls() {
+        boolean automatic = inlineAutomaticCheck.isSelected();
+        idleSpinner.setEnabled(automatic);
+        idleDelayLabel.setEnabled(automatic);
+    }
+
     @Override
     protected void _save() {
         AiAssistProvider provider = (AiAssistProvider) providerCombo.getSelectedItem();
         AiAssistConfig.setProvider(provider);
-        AiAssistConfig.setInlineEnabled(inlineEnabledCheck.isSelected());
+        AiAssistConfig.setInlineAutomatic(inlineAutomaticCheck.isSelected());
         AiAssistConfig.setIdleDelayMs((Integer) idleSpinner.getValue());
         AiAssistPlugin.restartHub();
     }

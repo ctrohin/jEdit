@@ -9,6 +9,7 @@
 package org.jedit.aiassist;
 
 import org.gjt.sp.jedit.EditPlugin;
+import org.gjt.sp.jedit.View;
 import org.gjt.sp.util.Log;
 
 /**
@@ -51,5 +52,13 @@ public class AiAssistPlugin extends EditPlugin {
         plugin.hub.uninstall();
         plugin.hub = new AiInlineCompletionHub();
         plugin.hub.install();
+    }
+
+    public static void requestInlineSuggestion(View view) {
+        AiAssistPlugin plugin = getInstance();
+        if (plugin == null || plugin.hub == null) {
+            return;
+        }
+        plugin.hub.requestInlineSuggestion(view);
     }
 }

@@ -342,6 +342,12 @@
 	</CODE>
 </ACTION>
 
+<ACTION NAME="ai-inline-suggestion">
+	<CODE>
+		org.jedit.aiassist.AiAssistPlugin.requestInlineSuggestion(view);
+	</CODE>
+</ACTION>
+
 
 	<ACTION NAME="copy">
 	<CODE>

@@ -1716,10 +1716,11 @@ options.plugin-manager.no-plugin-uptodate=All plugins are up to date
 #{{{ AI Assist pane
 options.ai-assist.label=AI Assist
 options.ai-assist.intro=Configure inline AI code suggestions and sign in to GitHub Copilot. \
-	When enabled, jEdit shows gray ghost text at the cursor after a short idle period \
-	or on an empty line. Press Tab to accept the suggestion.
+	By default, suggestions are requested manually with the AI Inline Suggestion action. \
+	Enable automatic suggestions to show gray ghost text at the cursor after a short idle pause. \
+	Press Tab to accept a suggestion.
 options.ai-assist.provider=Preferred assistant:
-options.ai-assist.inline-enabled=Show inline completion suggestions
+options.ai-assist.inline-automatic=Automatically suggest completions after idle pause
 options.ai-assist.idle-delay=Idle delay before suggesting (ms):
 options.ai-assist.login=Sign in
 options.ai-assist.logout=Sign out
@@ -2607,6 +2608,8 @@ copilot.prompt.user-header=User request:
 
 copilot-login.label=GitHub Copilot $Sign in
 copilot-logout.label=GitHub Copilot $Sign out
+
+ai-inline-suggestion.label=AI inline suggestion
 
 lsp-problems.label=$Problems
 lsp-problems.title=Problems

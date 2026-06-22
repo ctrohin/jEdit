@@ -13,19 +13,19 @@ import org.gjt.sp.jedit.jEdit;
 public final class AiAssistConfig {
 
     static final String PROVIDER_PROPERTY = "ai-assist.provider";
-    static final String ENABLED_PROPERTY = "ai-assist.inline.enabled";
+    static final String AUTOMATIC_PROPERTY = "ai-assist.inline.automatic";
     static final String IDLE_DELAY_PROPERTY = "ai-assist.inline.idle-ms";
 
     private static final int DEFAULT_IDLE_MS = 1200;
 
     private AiAssistConfig() {}
 
-    public static boolean inlineEnabled() {
-        return jEdit.getBooleanProperty(ENABLED_PROPERTY, true);
+    public static boolean inlineAutomatic() {
+        return jEdit.getBooleanProperty(AUTOMATIC_PROPERTY, false);
     }
 
-    public static void setInlineEnabled(boolean enabled) {
-        jEdit.setBooleanProperty(ENABLED_PROPERTY, enabled);
+    public static void setInlineAutomatic(boolean automatic) {
+        jEdit.setBooleanProperty(AUTOMATIC_PROPERTY, automatic);
     }
 
     public static AiAssistProvider provider() {
