@@ -4,19 +4,6 @@
  * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package org.jedit.build;
@@ -34,6 +21,7 @@ import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 
 import org.gjt.sp.jedit.OperatingSystem;
+import org.gjt.sp.jedit.View;
 
 final class PtyTerminalSession {
 
@@ -45,15 +33,18 @@ final class PtyTerminalSession {
     private boolean started;
     private boolean ended;
 
-    PtyTerminalSession(File workingDir, Consumer<PtyTerminalSession> onSessionEnded)
+    PtyTerminalSession(View view, TerminalSessionConfig config,
+                       Consumer<PtyTerminalSession> onSessionEnded)
         throws IOException
     {
-        this.workingDir = workingDir;
+        this.workingDir = config.workingDir;
         this.onSessionEnded = onSessionEnded;
         widget = new JediTermWidget(new LookAndFeelTerminalSettingsProvider());
+        widget.addHyperlinkFilter(new TerminalHyperlinkFilter(
+            view, ProjectRoots.workspaceRoot()));
 
         String[] command = TerminalShell.defaultCommand();
-        Map<String, String> environment = TerminalShell.environment();
+        Map<String, String> environment = config.environment;
         PtyProcessBuilder builder = new PtyProcessBuilder()
             .setCommand(command)
             .setEnvironment(environment);

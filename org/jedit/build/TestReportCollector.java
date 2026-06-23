@@ -18,6 +18,10 @@ final class TestReportCollector {
 
     private TestReportCollector() {}
 
+    static File jeditTestReportsDir(File projectRoot) {
+        return new File(projectRoot, ".jedit-test-reports");
+    }
+
     static TestRunResult collect(File projectRoot, ProjectKind kind, String title, int exitCode) {
         if (projectRoot == null || !projectRoot.isDirectory()) {
             return TestRunResult.empty(title, projectRoot, kind, exitCode);
@@ -26,7 +30,29 @@ final class TestReportCollector {
         for (File xmlFile : findReportFiles(projectRoot)) {
             cases.addAll(SurefireXmlParser.parseFile(xmlFile, projectRoot));
         }
+        File jestJson = new File(jeditTestReportsDir(projectRoot), "jest-results.json");
+        cases.addAll(JestReportParser.parseJsonFile(jestJson, projectRoot));
+        File vitestXml = new File(jeditTestReportsDir(projectRoot), "junit.xml");
+        cases.addAll(SurefireXmlParser.parseFile(vitestXml, projectRoot));
+        addJsonReports(projectRoot, cases);
         return new TestRunResult(title, projectRoot, kind, exitCode, cases);
+    }
+
+    private static void addJsonReports(File projectRoot, List<TestCaseResult> cases) {
+        File reports = jeditTestReportsDir(projectRoot);
+        if (!reports.isDirectory()) {
+            return;
+        }
+        File[] jsonFiles = reports.listFiles((d, name) -> name.endsWith(".json"));
+        if (jsonFiles == null) {
+            return;
+        }
+        for (File jsonFile : jsonFiles) {
+            if ("jest-results.json".equals(jsonFile.getName())) {
+                continue;
+            }
+            cases.addAll(JestReportParser.parseJsonFile(jsonFile, projectRoot));
+        }
     }
 
     private static List<File> findReportFiles(File root) {
@@ -42,6 +68,8 @@ final class TestReportCollector {
         addReportsFrom(new File(dir, "target" + File.separator + "surefire-reports"), files);
         addReportsFrom(new File(dir, "build" + File.separator + "test-results" + File.separator + "test"), files);
         addReportsFrom(new File(dir, "build" + File.separator + "test" + File.separator + "raw-reports"), files);
+        addReportsFrom(jeditTestReportsDir(dir), files);
+        addJestVitestReports(dir, files);
         File[] children = dir.listFiles(File::isDirectory);
         if (children == null) {
             return;
@@ -54,12 +82,26 @@ final class TestReportCollector {
         }
     }
 
+    private static void addJestVitestReports(File dir, Set<File> files) {
+        File[] candidates = {
+            new File(dir, "junit.xml"),
+            new File(dir, "test-results" + File.separator + "junit.xml"),
+            new File(dir, "coverage" + File.separator + "junit.xml")
+        };
+        for (File candidate : candidates) {
+            if (candidate.isFile()) {
+                files.add(candidate);
+            }
+        }
+    }
+
     private static void addReportsFrom(File reportDir, Set<File> files) {
         if (!reportDir.isDirectory()) {
             return;
         }
         File[] xmlFiles = reportDir.listFiles((d, name) ->
-            name.startsWith("TEST-") && name.endsWith(".xml"));
+            (name.startsWith("TEST-") && name.endsWith(".xml"))
+                || name.equals("junit.xml"));
         if (xmlFiles == null) {
             return;
         }

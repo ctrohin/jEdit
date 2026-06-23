@@ -89,4 +89,14 @@ final class TestRunResult {
         }
         return suiteCases;
     }
+
+    List<TestCaseResult> casesForClass(String className) {
+        List<TestCaseResult> suiteCases = new ArrayList<>();
+        for (TestCaseResult testCase : cases) {
+            if (className.equals(testCase.className) || className.equals(testCase.suiteName())) {
+                suiteCases.add(testCase);
+            }
+        }
+        return suiteCases;
+    }
 }

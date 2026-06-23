@@ -40,6 +40,16 @@ final class TestCaseResult {
         return methodName;
     }
 
+    String qualifiedName() {
+        if (className == null || className.isBlank()) {
+            return displayName();
+        }
+        if (methodName == null || methodName.isBlank()) {
+            return className;
+        }
+        return className + "." + methodName;
+    }
+
     String suiteName() {
         if (className == null || className.isBlank()) {
             return jEdit.getProperty("test-results.unknown-suite");

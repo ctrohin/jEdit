@@ -10,16 +10,18 @@ package org.jedit.build;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -30,6 +32,7 @@ import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
+import org.gjt.sp.jedit.gui.RolloverButton;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
@@ -57,6 +60,21 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         caption = new JLabel();
         north.add(caption, BorderLayout.CENTER);
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
+        JButton discover = new RolloverButton(
+            IconManager.loadIcon("MatIcons.SEARCH:22"),
+            jEdit.getProperty("test-results.discover"));
+        discover.addActionListener(e -> discoverTests());
+        buttons.add(discover);
+        JButton rerunFailed = new RolloverButton(
+            IconManager.loadIcon("MatIcons.REPLAY:22"),
+            jEdit.getProperty("test-results.rerun-failed"));
+        rerunFailed.addActionListener(e -> rerunFailed());
+        buttons.add(rerunFailed);
+        JButton debugTests = new RolloverButton(
+            IconManager.loadIcon("MatIcons.BUG_REPORT:22"),
+            jEdit.getProperty("test-results.debug"));
+        debugTests.addActionListener(e -> debugAllTests());
+        buttons.add(debugTests);
         JButton runTests = new JButton(jEdit.getProperty("test-results.run"));
         runTests.addActionListener(e -> runWorkspaceTests());
         buttons.add(runTests);
@@ -77,8 +95,18 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
                 if (path != null) {
                     tree.setSelectionPath(path);
                 }
+                if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+                    showContextMenu(e);
+                }
                 if (e.getClickCount() == 2) {
                     goToSelectedTest();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showContextMenu(e);
                 }
             }
         });
@@ -101,12 +129,44 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         return (TestResultsView) dwm.getDockableWindow(NAME);
     }
 
+    private File projectRoot() {
+        TestRunResult result = TestResultsHub.getInstance().getResult();
+        if (result.projectRoot != null) {
+            return result.projectRoot;
+        }
+        return ProjectRoots.workspaceRoot();
+    }
+
     private void runWorkspaceTests() {
-        var root = ProjectRoots.workspaceRoot();
+        File root = projectRoot();
         if (root == null) {
             return;
         }
         WorkspaceTestRunner.runTests(view, root);
+    }
+
+    private void rerunFailed() {
+        File root = projectRoot();
+        if (root == null) {
+            return;
+        }
+        WorkspaceTestRunner.rerunFailed(view, root);
+    }
+
+    private void discoverTests() {
+        File root = projectRoot();
+        if (root == null) {
+            return;
+        }
+        WorkspaceTestRunner.discoverTests(view, root);
+    }
+
+    private void debugAllTests() {
+        File root = projectRoot();
+        if (root == null) {
+            return;
+        }
+        WorkspaceTestRunner.runTests(view, root, TestRunOptions.debugAll());
     }
 
     private void clearResults() {
@@ -118,6 +178,7 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         super.addNotify();
         TestResultsHub.getInstance().addListener(resultsListener);
         EditBus.addToBus(folderListener);
+        TestGutterSupport.getInstance();
         refreshTree();
     }
 
@@ -137,8 +198,9 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         rootNode.removeAllChildren();
         TestRunResult result = TestResultsHub.getInstance().getResult();
         for (String suiteName : result.suiteNames()) {
+            String className = resolveSuiteClassName(result, suiteName);
             DefaultMutableTreeNode suiteNode = new DefaultMutableTreeNode(
-                new SuiteNode(suiteName));
+                new SuiteNode(suiteName, className));
             for (TestCaseResult testCase : result.casesForSuite(suiteName)) {
                 suiteNode.add(new DefaultMutableTreeNode(testCase));
             }
@@ -150,6 +212,15 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         }
         updateCaption(result);
         updateDockNotifications(result);
+    }
+
+    private static String resolveSuiteClassName(TestRunResult result, String suiteName) {
+        for (TestCaseResult testCase : result.casesForSuite(suiteName)) {
+            if (testCase.className != null && !testCase.className.isBlank()) {
+                return testCase.className;
+            }
+        }
+        return suiteName;
     }
 
     private void updateCaption(TestRunResult result) {
@@ -178,6 +249,49 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
             int failures = result.count(TestCaseStatus.FAILED) + result.count(TestCaseStatus.ERROR);
             manager.setDockableNotifications(NAME, failures, 0);
         }
+    }
+
+    private void showContextMenu(MouseEvent event) {
+        TreePath path = tree.getPathForLocation(event.getX(), event.getY());
+        if (path == null) {
+            return;
+        }
+        Object last = path.getLastPathComponent();
+        if (!(last instanceof DefaultMutableTreeNode node)) {
+            return;
+        }
+        Object userObject = node.getUserObject();
+        File root = projectRoot();
+        if (root == null) {
+            return;
+        }
+        JPopupMenu menu = new JPopupMenu();
+        if (userObject instanceof SuiteNode suiteNode) {
+            menu.add(createItem("test-results.run-suite", () ->
+                WorkspaceTestRunner.runTests(view, root,
+                    TestRunOptions.suite(suiteNode.className))));
+            menu.add(createItem("test-results.debug-suite", () ->
+                WorkspaceTestRunner.runTests(view, root,
+                    TestRunOptions.debugSuite(suiteNode.className))));
+        } else if (userObject instanceof TestCaseResult testCase) {
+            menu.add(createItem("test-results.run-test", () ->
+                WorkspaceTestRunner.runTests(view, root,
+                    TestRunOptions.single(testCase.className, testCase.methodName))));
+            menu.add(createItem("test-results.debug-test", () ->
+                WorkspaceTestRunner.runTests(view, root,
+                    TestRunOptions.single(testCase.className, testCase.methodName, true))));
+            menu.addSeparator();
+            menu.add(createItem("test-results.go-to-test", () -> openTestCase(testCase)));
+        }
+        if (menu.getComponentCount() > 0) {
+            menu.show(tree, event.getX(), event.getY());
+        }
+    }
+
+    private static JMenuItem createItem(String property, Runnable action) {
+        JMenuItem item = new JMenuItem(jEdit.getProperty(property));
+        item.addActionListener(e -> action.run());
+        return item;
     }
 
     private void goToSelectedTest() {
@@ -210,9 +324,11 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
 
     private static final class SuiteNode {
         private final String name;
+        private final String className;
 
-        SuiteNode(String name) {
+        SuiteNode(String name, String className) {
             this.name = name;
+            this.className = className;
         }
 
         @Override

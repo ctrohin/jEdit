@@ -2265,6 +2265,21 @@ test-results.status.failed=Failed
 test-results.status.error=Error
 test-results.status.skipped=Skipped
 test-results.unknown-suite=(unknown suite)
+test-results.discover=Discover Tests
+test-results.discover-title=Discovered tests
+test-results.debug=Debug All Tests
+test-results.debug-test=Debug Test
+test-results.debug-suite=Debug Suite
+test-results.run-test=Run Test
+test-results.run-suite=Run Suite
+test-results.go-to-test=Go to Test
+test-results.rerun-failed-title={0} (failed only)
+test-results.status.discovered=Discovered
+
+test-debug.caption-suffix= [debug]
+test-debug.vm-options=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005
+
+test-gutter.tooltip=Run test: {0} (Shift+click to debug)
 
 workspace-test.run=Run tests in the workspace project
 workspace-test.run-disabled=Open a Maven, Gradle, Ant, npm, or Flutter project with tests to run them
@@ -2423,6 +2438,14 @@ terminal.start-failed=Could not start the terminal shell:\n{0}
 terminal.start-failed.title=Terminal Error
 terminal.no-workspace=No project folder open. New terminals start in your home directory.
 terminal.caption=New terminals start in: {0}
+terminal.profile=Profile
+terminal.profiles=Default,Node,Java
+terminal.profile.Default.environment=
+terminal.profile.Node.environment=NODE_ENV=development
+terminal.profile.Java.environment=
+terminal.rename.prompt=Terminal session name:
+terminal.new-workspace=Workspace root
+terminal.new-module=Module: {0}
 
 git.label=$Git
 git.title=Git

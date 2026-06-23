@@ -57,6 +57,10 @@ final class TerminalShell {
     }
 
     static Map<String, String> environment() {
+        return baseEnvironment();
+    }
+
+    static Map<String, String> baseEnvironment() {
         Map<String, String> env = new HashMap<>(System.getenv());
         if (!OperatingSystem.isWindows()) {
             env.putIfAbsent("TERM", "xterm-256color");

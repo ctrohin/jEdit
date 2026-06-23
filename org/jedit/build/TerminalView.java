@@ -34,10 +34,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
@@ -62,6 +65,7 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
     private final FlatTabbedPane tabbedPane;
     private final CardLayout contentLayout;
     private final JPanel contentPanel;
+    private final JComboBox<String> profileCombo;
     private final Map<String, TerminalTab> tabsByKey = new LinkedHashMap<>();
     private final AtomicInteger tabCounter = new AtomicInteger();
     private final ProjectFolderListener folderListener =
@@ -74,12 +78,7 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         caption = new JLabel();
         updateCaption();
 
-        tabbedPane = new FlatTabbedPane();
-        tabbedPane.setTabsClosable(true);
-        tabbedPane.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
-        tabbedPane.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
-        tabbedPane.setTabCloseToolTipText(jEdit.getProperty("terminal.close-tab"));
-        tabbedPane.setTabCloseCallback((pane, tabIndex) -> closeTabAt(tabIndex));
+        tabbedPane = createTabbedPane();
 
         JPanel emptyPanel = new JPanel(new GridBagLayout());
         JLabel emptyLabel = new JLabel(jEdit.getProperty("terminal.empty"));
@@ -90,11 +89,16 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         contentPanel.add(emptyPanel, EMPTY_CARD);
         contentPanel.add(tabbedPane, TABS_CARD);
 
+        profileCombo = new JComboBox<>(TerminalEnvProfiles.profileNames().toArray(new String[0]));
+        profileCombo.setSelectedItem("Default");
+
         JPanel north = new JPanel(new BorderLayout(4, 0));
         north.add(caption, BorderLayout.CENTER);
         JPanel northButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
+        northButtons.add(new JLabel(jEdit.getProperty("terminal.profile")));
+        northButtons.add(profileCombo);
         JButton newTerminal = new JButton(jEdit.getProperty("terminal.new"));
-        newTerminal.addActionListener(e -> openNewTab());
+        newTerminal.addActionListener(e -> showNewTerminalMenu(newTerminal));
         northButtons.add(newTerminal);
         north.add(northButtons, BorderLayout.EAST);
 
@@ -109,16 +113,67 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         return (TerminalView) dwm.getDockableWindow(NAME);
     }
 
-    private File workingDirectory() {
+    private FlatTabbedPane createTabbedPane() {
+        FlatTabbedPane pane = new FlatTabbedPane();
+        pane.setTabsClosable(true);
+        pane.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
+        pane.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
+        pane.setTabCloseToolTipText(jEdit.getProperty("terminal.close-tab"));
+        pane.setTabCloseCallback((p, tabIndex) -> closeTabAt(tabIndex));
+        pane.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = pane.indexAtLocation(e.getX(), e.getY());
+                    if (index >= 0) {
+                        renameTabAt(index);
+                    }
+                }
+            }
+        });
+        return pane;
+    }
+
+    private String selectedProfile() {
+        Object selected = profileCombo.getSelectedItem();
+        return selected != null ? selected.toString() : "Default";
+    }
+
+    private void showNewTerminalMenu(JComponent invoker) {
+        JPopupMenu menu = new JPopupMenu();
+        menu.add(item("terminal.new-workspace", () ->
+            openNewTab(TerminalSessionConfig.workspaceDefault(selectedProfile()))));
         File root = ProjectRoots.workspaceRoot();
-        return root != null ? root : new File(System.getProperty("user.home"));
+        if (root != null) {
+            for (File module : ProjectModuleRoots.listModuleDirectories(root)) {
+                if (module.equals(root)) {
+                    continue;
+                }
+                String label = root.toPath().relativize(module.toPath()).toString();
+                menu.add(item(jEdit.getProperty("terminal.new-module",
+                    new Object[] {label}), () -> openNewTab(
+                    TerminalSessionConfig.forDirectory(
+                        module, selectedProfile(), label))));
+            }
+        }
+        menu.show(invoker, 0, invoker.getHeight());
+    }
+
+    private static JMenuItem item(String property, Runnable action) {
+        JMenuItem menuItem = new JMenuItem(jEdit.getProperty(property));
+        menuItem.addActionListener(e -> action.run());
+        return menuItem;
     }
 
     private void openNewTab() {
+        openNewTab(TerminalSessionConfig.workspaceDefault(selectedProfile()));
+    }
+
+    private void openNewTab(TerminalSessionConfig config) {
         String tabKey = "terminal-" + tabCounter.incrementAndGet();
         try {
             final TerminalTab[] holder = new TerminalTab[1];
-            holder[0] = new TerminalTab(tabKey, workingDirectory(), () -> updateTabHeader(holder[0]));
+            holder[0] = new TerminalTab(view, tabKey, config, () -> updateTabHeader(holder[0]));
             TerminalTab tab = holder[0];
             assignUniqueTitle(tab);
             tabsByKey.put(tabKey, tab);
@@ -164,17 +219,41 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         }
     }
 
+    private void renameTabAt(int tabIndex) {
+        TerminalTab tab = tabForComponent(tabbedPane.getComponentAt(tabIndex));
+        if (tab == null) {
+            return;
+        }
+        String name = JOptionPane.showInputDialog(
+            view,
+            jEdit.getProperty("terminal.rename.prompt"),
+            tab.getTitle());
+        if (name != null && !name.isBlank()) {
+            tab.setCustomName(name.trim());
+            updateTabHeader(tab);
+        }
+    }
+
     private void closeTabAt(int tabIndex) {
         if (tabIndex < 0 || tabIndex >= tabbedPane.getTabCount()) {
             return;
         }
-        JComponent component = (JComponent) tabbedPane.getComponentAt(tabIndex);
+        TerminalTab tab = tabForComponent(tabbedPane.getComponentAt(tabIndex));
+        if (tab != null) {
+            closeTab(tab);
+        }
+    }
+
+    private TerminalTab tabForComponent(java.awt.Component component) {
+        if (!(component instanceof JComponent jComponent)) {
+            return null;
+        }
         for (TerminalTab tab : tabsByKey.values()) {
-            if (tab.panel == component) {
-                closeTab(tab);
-                return;
+            if (tab.panel == jComponent) {
+                return tab;
             }
         }
+        return null;
     }
 
     private void closeTab(TerminalTab tab) {
@@ -186,7 +265,7 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
 
     private void updateEmptyState() {
         contentLayout.show(contentPanel,
-            tabbedPane.getTabCount() == 0 ? EMPTY_CARD : TABS_CARD);
+            tabbedPane.getTabCount() > 0 ? TABS_CARD : EMPTY_CARD);
     }
 
     private TerminalTab selectedTab() {
@@ -194,12 +273,7 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         if (selected == null) {
             return null;
         }
-        for (TerminalTab tab : tabsByKey.values()) {
-            if (tab.panel == selected) {
-                return tab;
-            }
-        }
-        return null;
+        return tabForComponent(selected);
     }
 
     private void updateCaption() {
@@ -226,8 +300,10 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
     public void removeNotify() {
         EditBus.removeFromBus(folderListener);
         for (TerminalTab tab : List.copyOf(tabsByKey.values())) {
-            closeTab(tab);
+            tab.close();
         }
+        tabsByKey.clear();
+        tabbedPane.removeAll();
         super.removeNotify();
     }
 
