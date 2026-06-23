@@ -41,6 +41,7 @@ final class TestReportCollector {
         }
         addReportsFrom(new File(dir, "target" + File.separator + "surefire-reports"), files);
         addReportsFrom(new File(dir, "build" + File.separator + "test-results" + File.separator + "test"), files);
+        addReportsFrom(new File(dir, "build" + File.separator + "test" + File.separator + "raw-reports"), files);
         File[] children = dir.listFiles(File::isDirectory);
         if (children == null) {
             return;

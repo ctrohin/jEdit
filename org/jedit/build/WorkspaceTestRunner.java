@@ -39,6 +39,9 @@ public final class WorkspaceTestRunner {
         if (ProjectRoots.findGradleBuild(projectRoot) != null) {
             kinds.add(ProjectKind.GRADLE);
         }
+        if (hasAntTestTarget(projectRoot)) {
+            kinds.add(ProjectKind.ANT);
+        }
         if (ProjectRoots.findPackageJson(projectRoot) != null) {
             kinds.add(ProjectKind.NPM);
         }
@@ -88,7 +91,7 @@ public final class WorkspaceTestRunner {
 
     static boolean supportsStructuredResults(ProjectKind kind) {
         return switch (kind) {
-            case MAVEN, GRADLE -> true;
+            case MAVEN, GRADLE, ANT -> true;
             default -> false;
         };
     }
@@ -97,6 +100,7 @@ public final class WorkspaceTestRunner {
         return switch (kind) {
             case MAVEN -> buildMavenTests(projectRoot);
             case GRADLE -> buildGradleTests(projectRoot);
+            case ANT -> buildAntTests(projectRoot);
             case NPM -> buildNpmTests(projectRoot);
             case FLUTTER -> buildFlutterTests(projectRoot);
             default -> null;
@@ -122,6 +126,39 @@ public final class WorkspaceTestRunner {
         GradleCommandBuilder.Invocation inv = GradleCommandBuilder.build(
             dir, GradleProjectPreferences.load(projectRoot), "test");
         return new TestInvocation(inv.workingDir, inv.command, inv.environment);
+    }
+
+    private static TestInvocation buildAntTests(File projectRoot) {
+        AntProjectSettings settings = AntProjectPreferences.load(projectRoot);
+        File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(projectRoot, settings);
+        if (buildXml == null) {
+            return null;
+        }
+        String target = resolveAntTestTarget(buildXml);
+        if (target == null) {
+            return null;
+        }
+        AntCommandBuilder.Invocation inv = AntCommandBuilder.build(buildXml, settings, target);
+        return new TestInvocation(inv.workingDir, inv.command, inv.environment);
+    }
+
+    private static boolean hasAntTestTarget(File projectRoot) {
+        AntProjectSettings settings = AntProjectPreferences.load(projectRoot);
+        File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(projectRoot, settings);
+        return buildXml != null && resolveAntTestTarget(buildXml) != null;
+    }
+
+    private static String resolveAntTestTarget(File buildXml) {
+        AntBuildFile parsed = AntBuildFile.parse(buildXml);
+        if (parsed == null) {
+            return null;
+        }
+        for (String candidate : List.of("test", "junit", "unittest", "run-tests")) {
+            if (parsed.targets.contains(candidate)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     private static TestInvocation buildNpmTests(File projectRoot) {

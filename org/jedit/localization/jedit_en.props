@@ -2267,7 +2267,7 @@ test-results.status.skipped=Skipped
 test-results.unknown-suite=(unknown suite)
 
 workspace-test.run=Run tests in the workspace project
-workspace-test.run-disabled=Open a Maven, Gradle, npm, or Flutter project to run tests
+workspace-test.run-disabled=Open a Maven, Gradle, Ant, npm, or Flutter project with tests to run them
 
 ant-project.label=$Ant
 ant-project.title=Ant

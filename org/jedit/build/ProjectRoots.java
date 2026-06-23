@@ -48,8 +48,8 @@ final class ProjectRoots {
         if (root == null) {
             return null;
         }
-        File pom = new File(root, "pom.xml");
-        return pom.isFile() ? pom : null;
+        File direct = new File(root, "pom.xml");
+        return direct.isFile() ? direct : findNamedFile(root, "pom.xml");
     }
 
     static File findGradleBuild(File root) {
