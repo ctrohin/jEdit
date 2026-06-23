@@ -22,36 +22,48 @@
 package org.jedit.build;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.formdev.flatlaf.extras.components.FlatTabbedPane;
+
 import org.gjt.sp.jedit.EditBus;
-import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.DefaultFocusComponent;
+import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.jedit.jEdit;
 
 /**
- * Simple project shell: each command runs in the workspace folder.
+ * Integrated terminal with persistent PTY shell sessions.
  */
 public final class TerminalView extends JPanel implements DefaultFocusComponent {
 
     public static final String NAME = "terminal";
+    private static final String EMPTY_CARD = "empty";
+    private static final String TABS_CARD = "tabs";
 
     private final View view;
-    private final LinkAwareTextArea output;
-    private final JTextField commandField;
     private final JLabel caption;
-    private final BuildProcessRunner runner = new BuildProcessRunner();
+    private final FlatTabbedPane tabbedPane;
+    private final CardLayout contentLayout;
+    private final JPanel contentPanel;
+    private final Map<String, TerminalTab> tabsByKey = new LinkedHashMap<>();
+    private final AtomicInteger tabCounter = new AtomicInteger();
     private final ProjectFolderListener folderListener =
         new ProjectFolderListener(this::updateCaption);
 
@@ -60,28 +72,134 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         this.view = view;
 
         caption = new JLabel();
-        output = new LinkAwareTextArea(view);
         updateCaption();
-        add(caption, BorderLayout.NORTH);
-        add(new JScrollPane(output), BorderLayout.CENTER);
 
-        JPanel south = new JPanel(new BorderLayout(4, 4));
-        commandField = new JTextField();
-        commandField.addActionListener(e -> runCommand());
-        south.add(commandField, BorderLayout.CENTER);
+        tabbedPane = new FlatTabbedPane();
+        tabbedPane.setTabsClosable(true);
+        tabbedPane.setTabLayoutPolicy(FlatTabbedPane.SCROLL_TAB_LAYOUT);
+        tabbedPane.setScrollButtonsPlacement(FlatTabbedPane.ScrollButtonsPlacement.trailing);
+        tabbedPane.setTabCloseToolTipText(jEdit.getProperty("terminal.close-tab"));
+        tabbedPane.setTabCloseCallback((pane, tabIndex) -> closeTabAt(tabIndex));
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
-        JButton run = new JButton(jEdit.getProperty("terminal.run"));
-        run.addActionListener(e -> runCommand());
-        JButton clear = new JButton(jEdit.getProperty("terminal.clear"));
-        clear.addActionListener(e -> output.clearOutput());
-        JButton stop = new JButton(jEdit.getProperty("terminal.stop"));
-        stop.addActionListener(e -> runner.stop());
-        buttons.add(clear);
-        buttons.add(stop);
-        buttons.add(run);
-        south.add(buttons, BorderLayout.EAST);
-        add(south, BorderLayout.SOUTH);
+        JPanel emptyPanel = new JPanel(new GridBagLayout());
+        JLabel emptyLabel = new JLabel(jEdit.getProperty("terminal.empty"));
+        emptyPanel.add(emptyLabel, new GridBagConstraints());
+
+        contentLayout = new CardLayout();
+        contentPanel = new JPanel(contentLayout);
+        contentPanel.add(emptyPanel, EMPTY_CARD);
+        contentPanel.add(tabbedPane, TABS_CARD);
+
+        JPanel north = new JPanel(new BorderLayout(4, 0));
+        north.add(caption, BorderLayout.CENTER);
+        JPanel northButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
+        JButton newTerminal = new JButton(jEdit.getProperty("terminal.new"));
+        newTerminal.addActionListener(e -> openNewTab());
+        northButtons.add(newTerminal);
+        north.add(northButtons, BorderLayout.EAST);
+
+        add(north, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
+        updateEmptyState();
+    }
+
+    public static TerminalView show(View view) {
+        DockableWindowManager dwm = view.getDockableWindowManager();
+        dwm.addDockableWindow(NAME);
+        return (TerminalView) dwm.getDockableWindow(NAME);
+    }
+
+    private File workingDirectory() {
+        File root = ProjectRoots.workspaceRoot();
+        return root != null ? root : new File(System.getProperty("user.home"));
+    }
+
+    private void openNewTab() {
+        String tabKey = "terminal-" + tabCounter.incrementAndGet();
+        try {
+            final TerminalTab[] holder = new TerminalTab[1];
+            holder[0] = new TerminalTab(tabKey, workingDirectory(), () -> updateTabHeader(holder[0]));
+            TerminalTab tab = holder[0];
+            assignUniqueTitle(tab);
+            tabsByKey.put(tabKey, tab);
+            tabbedPane.addTab(tab.getTitle(), tab.panel);
+            updateEmptyState();
+            tabbedPane.setSelectedComponent(tab.panel);
+            SwingUtilities.invokeLater(tab::requestFocus);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                view,
+                jEdit.getProperty("terminal.start-failed", new Object[] {e.getMessage()}),
+                jEdit.getProperty("terminal.start-failed.title"),
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void assignUniqueTitle(TerminalTab tab) {
+        String base = tab.getTitle();
+        int suffix = 1;
+        String candidate = base;
+        while (titleInUse(candidate, tab)) {
+            suffix++;
+            candidate = base + " (" + suffix + ")";
+        }
+        if (!candidate.equals(base)) {
+            tab.setTitleSuffix(" (" + suffix + ")");
+        }
+    }
+
+    private boolean titleInUse(String title, TerminalTab except) {
+        for (TerminalTab other : tabsByKey.values()) {
+            if (other != except && title.equals(other.getTitle())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateTabHeader(TerminalTab tab) {
+        int index = tabbedPane.indexOfComponent(tab.panel);
+        if (index >= 0) {
+            tabbedPane.setTitleAt(index, tab.getTitle());
+        }
+    }
+
+    private void closeTabAt(int tabIndex) {
+        if (tabIndex < 0 || tabIndex >= tabbedPane.getTabCount()) {
+            return;
+        }
+        JComponent component = (JComponent) tabbedPane.getComponentAt(tabIndex);
+        for (TerminalTab tab : tabsByKey.values()) {
+            if (tab.panel == component) {
+                closeTab(tab);
+                return;
+            }
+        }
+    }
+
+    private void closeTab(TerminalTab tab) {
+        tab.close();
+        tabsByKey.entrySet().removeIf(entry -> entry.getValue() == tab);
+        tabbedPane.remove(tab.panel);
+        updateEmptyState();
+    }
+
+    private void updateEmptyState() {
+        contentLayout.show(contentPanel,
+            tabbedPane.getTabCount() == 0 ? EMPTY_CARD : TABS_CARD);
+    }
+
+    private TerminalTab selectedTab() {
+        var selected = tabbedPane.getSelectedComponent();
+        if (selected == null) {
+            return null;
+        }
+        for (TerminalTab tab : tabsByKey.values()) {
+            if (tab.panel == selected) {
+                return tab;
+            }
+        }
+        return null;
     }
 
     private void updateCaption() {
@@ -90,31 +208,8 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
             caption.setText(jEdit.getProperty("terminal.no-workspace"));
         } else {
             caption.setText(jEdit.getProperty("terminal.caption",
-                new Object[] { root.getAbsolutePath() }));
+                new Object[] {root.getAbsolutePath()}));
         }
-        output.setProjectRoot(root);
-    }
-
-    private void runCommand() {
-        String commandLine = commandField.getText().trim();
-        if (commandLine.isEmpty()) {
-            return;
-        }
-        updateCaption();
-        File root = ProjectRoots.workspaceRoot();
-        output.appendLine("$ " + commandLine);
-        List<String> command = shellCommand(commandLine);
-        runner.run(root, command,
-            (line, error) -> output.appendLine(line, error ? LinkAwareTextArea.errorColor() : null),
-            null);
-        commandField.setText("");
-    }
-
-    private static List<String> shellCommand(String commandLine) {
-        if (OperatingSystem.isWindows()) {
-            return Arrays.asList("cmd.exe", "/c", commandLine);
-        }
-        return Arrays.asList("/bin/sh", "-lc", commandLine);
     }
 
     @Override
@@ -122,17 +217,27 @@ public final class TerminalView extends JPanel implements DefaultFocusComponent 
         super.addNotify();
         EditBus.addToBus(folderListener);
         updateCaption();
-        SwingUtilities.invokeLater(commandField::requestFocus);
+        if (tabbedPane.getTabCount() == 0) {
+            SwingUtilities.invokeLater(this::openNewTab);
+        }
     }
 
     @Override
     public void removeNotify() {
         EditBus.removeFromBus(folderListener);
+        for (TerminalTab tab : List.copyOf(tabsByKey.values())) {
+            closeTab(tab);
+        }
         super.removeNotify();
     }
 
     @Override
     public void focusOnDefaultComponent() {
-        commandField.requestFocus();
+        TerminalTab tab = selectedTab();
+        if (tab != null) {
+            tab.requestFocus();
+        } else {
+            openNewTab();
+        }
     }
 }

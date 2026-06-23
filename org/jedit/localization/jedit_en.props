@@ -2395,11 +2395,17 @@ pip-project.settings.reset-confirm=Reset Pip settings for this project folder to
 
 terminal.label=$Terminal
 terminal.title=Terminal
-terminal.run=Run
+terminal.new=New Terminal
+terminal.kill=Kill
 terminal.clear=Clear
 terminal.stop=Stop
-terminal.no-workspace=Open a project folder to run commands in its directory.
-terminal.caption=Working directory: {0}
+terminal.ended=ended
+terminal.empty=Click "New Terminal" to open an interactive shell.
+terminal.close-tab=Close terminal
+terminal.start-failed=Could not start the terminal shell:\n{0}
+terminal.start-failed.title=Terminal Error
+terminal.no-workspace=No project folder open. New terminals start in your home directory.
+terminal.caption=New terminals start in: {0}
 
 git.label=$Git
 git.title=Git

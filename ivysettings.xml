@@ -25,12 +25,16 @@
 
 	<resolvers>
 		<ibiblio name="public" root="https://repo.maven.apache.org/maven2/" m2compatible="true"/>
+		<ibiblio name="jetbrains-deps"
+			root="https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+			m2compatible="true"/>
 		<url name="jedit-plugins">
 			<artifact pattern="jar:https://sourceforge.net/projects/jedit-plugins/files/[artifact]/[revision]/[artifact]-[revision]-bin.zip/download!/[artifact].jar" />
 		</url>
 	</resolvers>
 	<modules>
 		<module organisation="org.jedit.plugins" resolver="jedit-plugins" />
+		<module organisation="org.jetbrains.jediterm" resolver="jetbrains-deps" />
 	</modules>
 
 
