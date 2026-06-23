@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.swing.SwingUtilities;
 
@@ -80,22 +81,22 @@ final class BuildProcessRunner {
     }
 
     void run(File workingDir, List<String> command, Consumer<String> onLine,
-             Runnable onFinished) {
+             IntConsumer onFinished) {
         run(workingDir, command, null, onLine, onFinished);
     }
 
     void run(File workingDir, List<String> command,
-             BiConsumer<String, Boolean> onLine, Runnable onFinished) {
+             BiConsumer<String, Boolean> onLine, IntConsumer onFinished) {
         run(workingDir, command, null, onLine, onFinished);
     }
 
     void run(File workingDir, List<String> command, Map<String, String> environment,
-             Consumer<String> onLine, Runnable onFinished) {
+             Consumer<String> onLine, IntConsumer onFinished) {
         run(workingDir, command, environment, (line, error) -> onLine.accept(line), onFinished);
     }
 
     void run(File workingDir, List<String> command, Map<String, String> environment,
-             BiConsumer<String, Boolean> onLine, Runnable onFinished) {
+             BiConsumer<String, Boolean> onLine, IntConsumer onFinished) {
         userStopped = false;
         long runId = ++activeRunId;
         running = true;
@@ -110,7 +111,7 @@ final class BuildProcessRunner {
 
     private void executeRun(long runId, File workingDir, List<String> command,
                             Map<String, String> environment,
-                            BiConsumer<String, Boolean> onLine, Runnable onFinished) {
+                            BiConsumer<String, Boolean> onLine, IntConsumer onFinished) {
         Process localProcess = null;
         int exitCode = -1;
         try {
@@ -159,7 +160,7 @@ final class BuildProcessRunner {
             SwingUtilities.invokeLater(() -> {
                 onLine.accept("--- exit code " + code + " ---", false);
                 if (!stopped && onFinished != null) {
-                    onFinished.run();
+                    onFinished.accept(code);
                 }
             });
         }

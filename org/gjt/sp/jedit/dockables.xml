@@ -36,6 +36,9 @@
 	<DOCKABLE NAME="build-output" MOVABLE="TRUE">
 		new org.jedit.build.BuildOutputView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="test-results" MOVABLE="TRUE">
+		new org.jedit.build.TestResultsView(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="ant-project" MOVABLE="TRUE">
 		new org.jedit.build.AntProjectView(view);
 	</DOCKABLE>

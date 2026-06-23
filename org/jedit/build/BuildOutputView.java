@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -100,6 +101,11 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
 
     void runBuild(String taskTitle, File workingDir, List<String> command,
                   Map<String, String> environment) {
+        runBuild(taskTitle, workingDir, command, environment, null);
+    }
+
+    void runBuild(String taskTitle, File workingDir, List<String> command,
+                  Map<String, String> environment, IntConsumer onFinishedWithExitCode) {
         String taskKey = BuildOutputTasks.taskKey(workingDir, command);
         BuildOutputTab existing = tabsByKey.get(taskKey);
         if (existing != null && existing.isRunning() && !confirmRestart()) {
@@ -116,9 +122,12 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
         tab.enableProcessInput();
         tab.runner.run(workingDir, command, environment,
             (line, error) -> tab.output.appendLine(line, error ? LinkAwareTextArea.errorColor() : null),
-            () -> {
+            exitCode -> {
                 tab.disableProcessInput();
                 setTabStatus(tab, jEdit.getProperty("build-output.finished"));
+                if (onFinishedWithExitCode != null) {
+                    onFinishedWithExitCode.accept(exitCode);
+                }
             });
         updateTabHeader(tab);
         tabbedPane.setSelectedComponent(tab.panel);

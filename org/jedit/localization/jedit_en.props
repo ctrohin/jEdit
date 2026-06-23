@@ -2252,6 +2252,23 @@ build-output.already-running.title=Already running
 build-output.already-running.message=Already running. What do you wish to do?
 build-output.already-running.restart=Stop current build and run again
 
+test-results.label=$Tests
+test-results.title=Tests
+test-results.run=Run Tests
+test-results.rerun-failed=Rerun failed tests
+test-results.empty=No test results yet. Run tests from the workspace toolbar or click Run Tests above.
+test-results.no-reports=Tests finished (exit {0}) but no Surefire/Gradle XML reports were found.
+test-results.caption={0} tests: {1} passed, {2} failed, {3} skipped ({4,number,0.0}s)
+test-results.run-title=Tests ({0})
+test-results.status.passed=Passed
+test-results.status.failed=Failed
+test-results.status.error=Error
+test-results.status.skipped=Skipped
+test-results.unknown-suite=(unknown suite)
+
+workspace-test.run=Run tests in the workspace project
+workspace-test.run-disabled=Open a Maven, Gradle, npm, or Flutter project to run tests
+
 ant-project.label=$Ant
 ant-project.title=Ant
 ant-project.refresh=Refresh

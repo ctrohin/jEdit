@@ -441,6 +441,7 @@ docking=left-docking-area \
 	- \
 	workspace \
 	build-output \
+	test-results \
 	ant-project \
 	maven-project \
 	gradle-project \
@@ -467,6 +468,7 @@ utils=vfs.browser \
 	  lsp-symbol-results \
 	  lsp-structure \
 	  build-output \
+	  test-results \
 	  ant-project \
 	  maven-project \
 	  gradle-project \
@@ -1089,6 +1091,11 @@ build-output.title=Output
 build-output.label=Output
 build-output.dock-position=bottom
 build-output.icon=MatIcons.TEXT_FIELDS:22
+
+test-results.title=Tests
+test-results.label=Tests
+test-results.dock-position=bottom
+test-results.icon=MatIcons.SCIENCE:22
 
 ant-project.title=Ant
 ant-project.label=Ant

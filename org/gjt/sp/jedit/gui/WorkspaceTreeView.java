@@ -39,6 +39,7 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
 import org.jedit.build.ProjectFolderListener;
 import org.jedit.build.WorkspaceProjectRunner;
+import org.jedit.build.WorkspaceTestRunner;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -71,6 +72,7 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     private volatile String currentWorkspace;
     private boolean opened = false;
     private JButton runProjectButton;
+    private JButton runTestsButton;
     private JButton runConfigMenuButton;
     private final ProjectFolderListener folderListener =
         new ProjectFolderListener(this::updateRunButtons);
@@ -574,6 +576,12 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         runProjectButton.addActionListener(e -> runCurrentProject());
         runPanel.add(runProjectButton);
 
+        runTestsButton = new RolloverButton(
+            IconManager.loadIcon("MatIcons.SCIENCE:22"),
+            jEdit.getProperty("workspace-test.run"));
+        runTestsButton.addActionListener(e -> runCurrentTests());
+        runPanel.add(runTestsButton);
+
         runConfigMenuButton = new RolloverButton(
             IconManager.loadIcon("MatIcons.ARROW_DROP_DOWN:22"),
             jEdit.getProperty("workspace-run.configurations"));
@@ -696,6 +704,13 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         } else {
             runProjectButton.setToolTipText(jEdit.getProperty("workspace-run.run"));
         }
+        if (runTestsButton != null) {
+            boolean canTest = WorkspaceTestRunner.canRunTests(root);
+            runTestsButton.setEnabled(canTest);
+            runTestsButton.setToolTipText(canTest
+                ? jEdit.getProperty("workspace-test.run")
+                : jEdit.getProperty("workspace-test.run-disabled"));
+        }
     }
 
     private void runCurrentProject() {
@@ -707,6 +722,17 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             return;
         }
         WorkspaceProjectRunner.runProject(view, root);
+    }
+
+    private void runCurrentTests() {
+        if (currentWorkspace == null) {
+            return;
+        }
+        File root = new File(currentWorkspace);
+        if (!WorkspaceTestRunner.canRunTests(root)) {
+            return;
+        }
+        WorkspaceTestRunner.runTests(view, root);
     }
 
     private void showRunConfigurationsMenu(ActionEvent event) {
