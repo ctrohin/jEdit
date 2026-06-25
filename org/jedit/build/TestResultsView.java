@@ -70,11 +70,6 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
             jEdit.getProperty("test-results.rerun-failed"));
         rerunFailed.addActionListener(e -> rerunFailed());
         buttons.add(rerunFailed);
-        JButton debugTests = new RolloverButton(
-            IconManager.loadIcon("MatIcons.BUG_REPORT:22"),
-            jEdit.getProperty("test-results.debug"));
-        debugTests.addActionListener(e -> debugAllTests());
-        buttons.add(debugTests);
         JButton runTests = new JButton(jEdit.getProperty("test-results.run"));
         runTests.addActionListener(e -> runWorkspaceTests());
         buttons.add(runTests);
@@ -159,14 +154,6 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
             return;
         }
         WorkspaceTestRunner.discoverTests(view, root);
-    }
-
-    private void debugAllTests() {
-        File root = projectRoot();
-        if (root == null) {
-            return;
-        }
-        WorkspaceTestRunner.runTests(view, root, TestRunOptions.debugAll());
     }
 
     private void clearResults() {
@@ -270,16 +257,10 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
             menu.add(createItem("test-results.run-suite", () ->
                 WorkspaceTestRunner.runTests(view, root,
                     TestRunOptions.suite(suiteNode.className))));
-            menu.add(createItem("test-results.debug-suite", () ->
-                WorkspaceTestRunner.runTests(view, root,
-                    TestRunOptions.debugSuite(suiteNode.className))));
         } else if (userObject instanceof TestCaseResult testCase) {
             menu.add(createItem("test-results.run-test", () ->
                 WorkspaceTestRunner.runTests(view, root,
                     TestRunOptions.single(testCase.className, testCase.methodName))));
-            menu.add(createItem("test-results.debug-test", () ->
-                WorkspaceTestRunner.runTests(view, root,
-                    TestRunOptions.single(testCase.className, testCase.methodName, true))));
             menu.addSeparator();
             menu.add(createItem("test-results.go-to-test", () -> openTestCase(testCase)));
         }

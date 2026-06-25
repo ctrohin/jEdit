@@ -308,6 +308,7 @@ focus-buffer-switcher.label=Focus on Buffer S$witcher
 toggle-line-numbers.label=Toggle $Line Numbers
 toggle-statusbar.label=Toggle S$tatus Bar
 toggle-gutter.label=Toggle $Gutter
+toggle-git-blame.label=Toggle Git Blame
 show-context-menu.label=Show Context Menu
 set-view-title.label=Set view title...
 set-view-title.tooltip=Set the title of the main window for easy identification from your desktop.
@@ -2270,19 +2271,13 @@ test-results.status.skipped=Skipped
 test-results.unknown-suite=(unknown suite)
 test-results.discover=Discover Tests
 test-results.discover-title=Discovered tests
-test-results.debug=Debug All Tests
-test-results.debug-test=Debug Test
-test-results.debug-suite=Debug Suite
 test-results.run-test=Run Test
 test-results.run-suite=Run Suite
 test-results.go-to-test=Go to Test
 test-results.rerun-failed-title={0} (failed only)
 test-results.status.discovered=Discovered
 
-test-debug.caption-suffix= [debug]
-test-debug.vm-options=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005
-
-test-gutter.tooltip=Run test: {0} (Shift+click to debug)
+test-gutter.tooltip=Run test: {0}
 
 workspace-test.run=Run tests in the workspace project
 workspace-test.run-disabled=Open a Maven, Gradle, Ant, npm, Python, Dart, or Flutter project with tests to run them
@@ -2664,6 +2659,37 @@ lsp-problems.label=$Problems
 lsp-problems.title=Problems
 lsp-problems.empty=No problems reported
 lsp-problems.caption={0,choice,0#No problems|1#1 problem in {1,number,integer} file|1<{0,number,integer} problems in {1,number,integer} files}
+lsp-problems.filter.label=Show:
+lsp-problems.filter.all=All
+lsp-problems.filter.errors=Errors
+lsp-problems.filter.warnings=Warnings
+lsp-problems.source.lsp=LSP
+lsp-problems.source.build=Build
+lsp-problems.source.test=Test
+lsp-problems.severity.error=Error
+lsp-problems.severity.warning=Warning
+lsp-problems.severity.info=Info
+
+lsp-format.format-document=Format Document
+lsp-format.format-selection=Format Selection
+lsp-format.organize-imports=Organize Imports
+
+local-history.label=Timeline
+local-history.title=Timeline
+local-history.empty=No local history for this file
+local-history.caption={0} — {1,number,integer} snapshot(s)
+
+workspace.add-folder=Add folder to workspace
+workspace.remove-folder=Remove from workspace
+workspace.remove-primary-root.denied=The primary project folder cannot be removed here. Use Open folder to switch projects.
+
+git.blame.tooltip=Blame: {0}
+git.blame.enabled=false
+git.blame.columnWidth=96
+git.ref-menu.stash=Stash
+git.ref-menu.no-stashes=(no stashes)
+git.stash.push=Stash changes…
+git.stash.pop.confirm=Apply and remove stash {0}?
 
 lsp-symbol-results.label=Find Results
 lsp-symbol-results.title=Find Results

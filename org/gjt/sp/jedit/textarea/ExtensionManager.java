@@ -92,6 +92,15 @@ class ExtensionManager
 	void paintScreenLineRange(TextArea textArea, Graphics2D gfx,
 		int firstLine, int lastLine, int y, int lineHeight)
 	{
+		paintScreenLineRange(textArea, gfx, firstLine, lastLine, y, lineHeight,
+			Integer.MIN_VALUE, Integer.MAX_VALUE);
+	} //}}}
+
+	//{{{ paintScreenLineRange() method
+	void paintScreenLineRange(TextArea textArea, Graphics2D gfx,
+		int firstLine, int lastLine, int y, int lineHeight,
+		int minLayer, int maxLayer)
+	{
 		try
 		{
 			int[] physicalLines = new int[lastLine - firstLine + 1];
@@ -115,7 +124,7 @@ class ExtensionManager
 			}
 
 			paintScreenLineRange(gfx,firstLine,lastLine,physicalLines,
-				start,end,y,lineHeight);
+				start,end,y,lineHeight,minLayer,maxLayer);
 		}
 		catch(Exception e)
 		{
@@ -146,12 +155,17 @@ class ExtensionManager
 	//{{{ paintScreenLineRange() method
 	private void paintScreenLineRange(Graphics2D gfx, int firstLine,
 		int lastLine, int[] physicalLines, int[] start, int[] end,
-		int y, int lineHeight)
+		int y, int lineHeight, int minLayer, int maxLayer)
 	{
 		Iterator<Entry> iter = extensions.iterator();
 		while(iter.hasNext())
 		{
-			TextAreaExtension ext = iter.next().ext;
+			Entry entry = iter.next();
+			if (entry.layer < minLayer || entry.layer > maxLayer)
+			{
+				continue;
+			}
+			TextAreaExtension ext = entry.ext;
 			try
 			{
 				ext.paintScreenLineRange(gfx,firstLine,lastLine,

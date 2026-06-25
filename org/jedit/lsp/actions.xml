@@ -142,5 +142,23 @@
             org.jedit.lsp.LspPlugin.showStructure(view);
         </CODE>
     </ACTION>
+
+    <ACTION NAME="format-document-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.formatDocumentLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="format-selection-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.formatSelectionLsp(view);
+        </CODE>
+    </ACTION>
+
+    <ACTION NAME="organize-imports-lsp">
+        <CODE>
+            org.jedit.lsp.LspPlugin.organizeImportsLsp(view);
+        </CODE>
+    </ACTION>
 </ACTIONS>
 

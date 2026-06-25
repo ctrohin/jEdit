@@ -1708,6 +1708,15 @@
 	</IS_SELECTED>
 </ACTION>
 
+<ACTION NAME="toggle-git-blame">
+	<CODE>
+		org.jedit.git.GitBlameSupport.toggle();
+	</CODE>
+	<IS_SELECTED>
+		return org.jedit.git.GitBlameSupport.isEnabled();
+	</IS_SELECTED>
+</ACTION>
+
 <ACTION NAME="toggle-line-numbers">
 	<CODE>
 		boolean shown = jEdit.getBooleanProperty("view.gutter.lineNumbers");

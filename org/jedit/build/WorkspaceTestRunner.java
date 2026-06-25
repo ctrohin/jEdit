@@ -139,9 +139,6 @@ public final class WorkspaceTestRunner {
     private static String formatTitle(ProjectKind kind, TestRunOptions options) {
         String base = jEdit.getProperty("test-results.run-title",
             new Object[] {WorkspaceProjectRunner.kindLabel(kind)});
-        if (options.debug) {
-            base += TestDebugSupport.debugCaptionSuffix();
-        }
         return switch (options.scope) {
             case SINGLE -> base + " - " + options.displayName();
             case SUITE -> base + " - " + options.className;
@@ -173,10 +170,6 @@ public final class WorkspaceTestRunner {
         settings.skipTests = false;
         String goal = buildMavenGoal(options);
         MavenCommandBuilder.Invocation inv = MavenCommandBuilder.build(dir, settings, goal);
-        if (options.debug) {
-            TestDebugSupport.applyDebugOptions(
-                inv.environment, ProjectKind.MAVEN, settings.mavenOpts, "MAVEN_OPTS");
-        }
         return new TestInvocation(dir, inv.command, inv.environment);
     }
 
@@ -196,10 +189,6 @@ public final class WorkspaceTestRunner {
         GradleProjectSettings settings = GradleProjectPreferences.load(projectRoot);
         String task = buildGradleTask(options);
         GradleCommandBuilder.Invocation inv = GradleCommandBuilder.build(dir, settings, task);
-        if (options.debug) {
-            TestDebugSupport.applyDebugOptions(
-                inv.environment, ProjectKind.GRADLE, settings.gradleOpts, "GRADLE_OPTS");
-        }
         return new TestInvocation(inv.workingDir, inv.command, inv.environment);
     }
 
@@ -225,10 +214,6 @@ public final class WorkspaceTestRunner {
             return null;
         }
         AntCommandBuilder.Invocation inv = AntCommandBuilder.build(buildXml, settings, target);
-        if (options.debug) {
-            TestDebugSupport.applyDebugOptions(
-                inv.environment, ProjectKind.ANT, settings.antOpts, "ANT_OPTS");
-        }
         return new TestInvocation(inv.workingDir, inv.command, inv.environment);
     }
 

@@ -1034,6 +1034,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			jEdit.getColorProperty("view.gutter.noFocusBorderColor"),
 			textArea.getPainter().getBackground());
 		gutter.setFoldPainter(textArea.getFoldPainter());
+		org.jedit.git.GitBlameSupport.applyGutterState(gutter);
 
 		textArea.setCaretBlinkEnabled(jEdit.getBooleanProperty(
 			"view.caretBlink"));
@@ -1371,7 +1372,13 @@ public class EditPane extends JPanel implements BufferSetListener
 				{
 					gfx.setColor(getMarkerHighlightColor());
 					int height = textArea.getPainter().getLineHeight();
-					gfx.fillRect(FOLD_MARKER_SIZE, y, textArea.getGutter().getWidth(), height);
+					Gutter gutter = textArea.getGutter();
+					int x = FOLD_MARKER_SIZE;
+					int width = gutter.getWidth() - x;
+					if (gutter.isBlameAreaEnabled()) {
+						width = gutter.getBlameAreaLeft() - x;
+					}
+					gfx.fillRect(x, y, width, height);
 				}
 			}
 		} //}}}

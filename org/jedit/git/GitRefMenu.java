@@ -10,6 +10,7 @@ package org.jedit.git;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenu;
@@ -54,6 +55,15 @@ final class GitRefMenu {
         menu.add(tagsMenu);
 
         menu.addSeparator();
+        JMenu stashMenu = new JMenu(jEdit.getProperty("git.ref-menu.stash"));
+        menu.add(stashMenu);
+        JMenuItem stashPush = new JMenuItem(jEdit.getProperty("git.stash.push"));
+        stashPush.addActionListener(e -> stashPush(view, repoRoot, onRepositoryChanged));
+        stashMenu.add(stashPush);
+        JMenuItem stashLoading = new JMenuItem(jEdit.getProperty("git.loading"));
+        stashLoading.setEnabled(false);
+        stashMenu.add(stashLoading);
+
         JMenuItem createBranch = new JMenuItem(jEdit.getProperty("git.create-branch"));
         createBranch.addActionListener(e ->
             promptCreateBranch(view, repoRoot, onRepositoryChanged));
@@ -91,6 +101,86 @@ final class GitRefMenu {
                 populateBranches(branchesMenu, view, repoRoot, head, branches,
                     onRepositoryChanged);
                 populateTags(tagsMenu, view, repoRoot, head, tags, onRepositoryChanged);
+                populateStashes(stashMenu, stashLoading, view, repoRoot, onRepositoryChanged);
+            });
+        });
+    }
+
+    private static void populateStashes(JMenu menu, JMenuItem loadingItem, View view,
+                                      File repoRoot, Runnable onRepositoryChanged) {
+        if (loadingItem.getParent() == menu) {
+            menu.remove(loadingItem);
+        }
+        GitAsync.run(repoRoot, runner -> {
+            GitRunner.Result result = runner.run(repoRoot, "stash", "list");
+            List<String> entries = parseStashList(result.output);
+            SwingUtilities.invokeLater(() -> {
+                if (!menu.isVisible()) {
+                    return;
+                }
+                while (menu.getItemCount() > 1) {
+                    menu.remove(1);
+                }
+                if (entries.isEmpty()) {
+                    JMenuItem empty = new JMenuItem(jEdit.getProperty("git.ref-menu.no-stashes"));
+                    empty.setEnabled(false);
+                    menu.add(empty);
+                    return;
+                }
+                for (String entry : entries) {
+                    JMenuItem item = new JMenuItem(entry);
+                    item.addActionListener(e -> stashPop(view, repoRoot, entry, onRepositoryChanged));
+                    menu.add(item);
+                }
+            });
+        });
+    }
+
+    private static List<String> parseStashList(String output) {
+        if (output == null || output.isBlank()) {
+            return List.of();
+        }
+        List<String> entries = new ArrayList<>();
+        for (String line : output.split("\\R")) {
+            if (!line.isBlank()) {
+                entries.add(line.trim());
+            }
+        }
+        return entries;
+    }
+
+    private static void stashPush(View view, File repoRoot, Runnable onRepositoryChanged) {
+        GitAsync.run(repoRoot, runner -> {
+            GitRunner.Result result = runner.run(repoRoot, "stash", "push", "-m", "jEdit stash");
+            SwingUtilities.invokeLater(() -> {
+                if (!result.success()) {
+                    JOptionPane.showMessageDialog(view, result.output,
+                        jEdit.getProperty("git.title"), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                notifyHeadChanged(onRepositoryChanged);
+            });
+        });
+    }
+
+    private static void stashPop(View view, File repoRoot, String entry,
+                                 Runnable onRepositoryChanged) {
+        String ref = entry.contains(":") ? entry.substring(0, entry.indexOf(':')).trim() : entry;
+        if (JOptionPane.showConfirmDialog(view,
+            jEdit.getProperty("git.stash.pop.confirm", new String[] {entry}),
+            jEdit.getProperty("git.title"),
+            JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+        }
+        GitAsync.run(repoRoot, runner -> {
+            GitRunner.Result result = runner.run(repoRoot, "stash", "pop", ref);
+            SwingUtilities.invokeLater(() -> {
+                if (!result.success()) {
+                    JOptionPane.showMessageDialog(view, result.output,
+                        jEdit.getProperty("git.title"), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                notifyHeadChanged(onRepositoryChanged);
             });
         });
     }

@@ -996,7 +996,8 @@ public enum MatIcons implements IconCode {
     PULL('\ueba1'),
     PUSH('\ueb9a'),
     DIFF('\uf1b9'),
-    KEEP_DOWN('\uf090');
+    KEEP_DOWN('\uf090'),
+    SCIENCE('\ueb90');
 
 
     private final char character;

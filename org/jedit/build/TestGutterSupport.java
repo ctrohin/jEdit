@@ -32,7 +32,7 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
 
 /**
- * Run/debug icons in the gutter for discovered {@code @Test} and JS test methods.
+ * Run icons in the gutter for discovered {@code @Test} and JS test methods.
  */
 public final class TestGutterSupport implements EBComponent {
 
@@ -137,7 +137,7 @@ public final class TestGutterSupport implements EBComponent {
                 if (hit == null) {
                     return;
                 }
-                runTest(hit, e.isShiftDown());
+                runTest(hit);
                 e.consume();
             }
         };
@@ -192,16 +192,14 @@ public final class TestGutterSupport implements EBComponent {
             return null;
         }
 
-        private void runTest(TestDiscovery.DiscoveredTest test, boolean debug) {
+        private void runTest(TestDiscovery.DiscoveredTest test) {
             File root = ProjectRoots.workspaceRoot();
             View view = editPane.getView();
             if (root == null || view == null) {
                 return;
             }
-            TestRunOptions options = debug
-                ? TestRunOptions.single(test.className, test.methodName, true)
-                : TestRunOptions.single(test.className, test.methodName);
-            WorkspaceTestRunner.runTests(view, root, options);
+            WorkspaceTestRunner.runTests(view, root,
+                TestRunOptions.single(test.className, test.methodName));
         }
     }
 }

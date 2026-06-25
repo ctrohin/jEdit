@@ -426,6 +426,13 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             search.addActionListener(ev -> searchInFolder(file));
             menu.add(search);
         }
+        if (node.isWorkspaceRoot()) {
+            menu.addSeparator();
+            JMenuItem removeRoot = new JMenuItem(jEdit.getProperty("workspace.remove-folder"));
+            removeRoot.addActionListener(ev -> removeWorkspaceRoot(file));
+            removeRoot.setEnabled(!file.getAbsolutePath().equals(currentWorkspace));
+            menu.add(removeRoot);
+        }
         menu.addSeparator();
 
         if (file.isDirectory()) {
@@ -437,12 +444,12 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             newFile.addActionListener(ev -> createNewFile(file));
             menu.add(newFile);
 
-            if (!node.isRoot()) {
+            if (!node.isDeletableNode()) {
                 menu.addSeparator();
             }
         }
 
-        if (!node.isRoot()) {
+        if (!node.isDeletableNode()) {
             JMenuItem rename = new JMenuItem("Rename");
             rename.addActionListener(ev -> renameFile(file));
             menu.add(rename);
@@ -560,6 +567,11 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         openFolder.addActionListener(e -> chooseWorkspace());
         panelWest.add(openFolder);
 
+        JButton addFolder = new RolloverButton(IconManager.loadIcon("MatIcons.CREATE_NEW_FOLDER:22"),
+            jEdit.getProperty("workspace.add-folder"));
+        addFolder.addActionListener(e -> addWorkspaceFolder());
+        panelWest.add(addFolder);
+
         JButton locate = new RolloverButton(IconManager.loadIcon("MatIcons.TARGET:22"), "Locate current file");
         locate.addActionListener(e -> locateFile());
         panelWest.add(locate);
@@ -662,7 +674,40 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
             return;
         }
 
+        rebuildWorkspaceTree();
+
+        if (folder != null && !Objects.equals(folder, previousWorkspace)) {
+            WorkspaceOpenFiles.restore(view, folder);
+        }
+        updateRunButtons();
+    }
+
+    private void rebuildWorkspaceTree() {
+        List<File> roots = org.gjt.sp.jedit.project.ProjectRoots.workspaceRoots();
+        if (roots.isEmpty()) {
+            return;
+        }
+        if (roots.size() == 1) {
+            loadSingleRoot(roots.get(0));
+            return;
+        }
+        DefaultMutableTreeNode synthetic = new DefaultMutableTreeNode("workspace-roots");
+        for (File rootFile : roots) {
+            FileNode root = new FileNode(rootFile);
+            root.setWorkspaceRoot(true);
+            root.add(new DefaultMutableTreeNode("Loading..."));
+            synthetic.add(root);
+        }
+        tree.setModel(new DefaultTreeModel(synthetic));
+        tree.setRootVisible(false);
+        for (int i = 0; i < synthetic.getChildCount(); i++) {
+            expandNode((FileNode) synthetic.getChildAt(i));
+        }
+    }
+
+    private void loadSingleRoot(File rootFile) {
         FileNode root = new FileNode(rootFile);
+        root.setWorkspaceRoot(true);
         root.add(new DefaultMutableTreeNode("Loading..."));
         tree.setModel(new DefaultTreeModel(root));
         ThreadUtilities.runInBackground(() -> {
@@ -677,11 +722,38 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
                 ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
             });
         });
+    }
 
-        if (folder != null && !Objects.equals(folder, previousWorkspace)) {
-            WorkspaceOpenFiles.restore(view, folder);
+    private void addWorkspaceFolder() {
+        final var chooser = new SystemFileChooser(currentWorkspace);
+        chooser.setFileSelectionMode(SystemFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this) != SystemFileChooser.APPROVE_OPTION) {
+            return;
         }
-        updateRunButtons();
+        File selected = chooser.getSelectedFile();
+        if (selected == null || !selected.isDirectory()) {
+            return;
+        }
+        if (currentWorkspace != null && selected.getAbsolutePath().equals(currentWorkspace)) {
+            return;
+        }
+        org.gjt.sp.jedit.project.ProjectRoots.addExtraRoot(selected);
+        rebuildWorkspaceTree();
+    }
+
+    private void removeWorkspaceRoot(File folder) {
+        if (folder == null) {
+            return;
+        }
+        if (currentWorkspace != null && folder.getAbsolutePath().equals(currentWorkspace)) {
+            JOptionPane.showMessageDialog(view,
+                jEdit.getProperty("workspace.remove-primary-root.denied"),
+                jEdit.getProperty("workspace.title"),
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        org.gjt.sp.jedit.project.ProjectRoots.removeExtraRoot(folder);
+        rebuildWorkspaceTree();
     }
 
     private void updateRunButtons() {
@@ -772,9 +844,32 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
     private static class FileNode extends DefaultMutableTreeNode {
         private boolean loaded = false;
         private boolean loading = false;
+        private boolean workspaceRoot = false;
 
         public FileNode(File file) {
             super(file);
+        }
+
+        boolean isWorkspaceRoot() {
+            return workspaceRoot;
+        }
+
+        void setWorkspaceRoot(boolean workspaceRoot) {
+            this.workspaceRoot = workspaceRoot;
+        }
+
+        boolean isWorkspaceTreeRoot() {
+            return workspaceRoot;
+        }
+
+        boolean isDeletableNode() {
+            if (workspaceRoot) {
+                return false;
+            }
+            Object parent = getParent();
+            return parent != null
+                && (!(parent instanceof DefaultMutableTreeNode node)
+                    || !"workspace-roots".equals(node.getUserObject()));
         }
 
         public boolean isLoaded() {

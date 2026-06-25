@@ -281,6 +281,18 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         invokeLspFeature(view, (v, client) -> LspSymbolSearches.callHierarchyLsp(v, client));
     }
 
+    public static void formatDocumentLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspFormatting.formatDocument(v, client));
+    }
+
+    public static void formatSelectionLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspFormatting.formatSelection(v, client));
+    }
+
+    public static void organizeImportsLsp(View view) {
+        invokeLspFeature(view, (v, client) -> LspFormatting.organizeImports(v, client));
+    }
+
     public static void showSymbolResults(View view) {
         if (view != null) {
             LspSymbolSearches.showResults(view);
@@ -484,8 +496,12 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         } else if (message.getWhat() == BufferUpdate.SAVED) {
             BufferLspHandler handler = handlers.get(buffer);
             if (handler != null) {
+                if (jEdit.getBooleanProperty("lsp.format-on-save", false)) {
+                    LspFormatting.formatOnSave(buffer, handler.getClient());
+                }
                 handler.syncOnSave();
             }
+            org.gjt.sp.jedit.history.LocalHistory.recordSave(buffer);
         }
     }
 
@@ -656,6 +672,10 @@ public class LspPlugin extends EditPlugin implements EBComponent {
         /** Version sent in the last {@code didOpen} or {@code didChange} for this buffer. */
         int getLastSyncedVersion() {
             return Math.max(0, version - 1);
+        }
+
+        GenericLspClient getClient() {
+            return client;
         }
 
         void notifyOpen() {

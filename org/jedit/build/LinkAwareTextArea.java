@@ -124,6 +124,10 @@ final class LinkAwareTextArea extends JTextArea {
         this.projectRoot = projectRoot;
     }
 
+    File getProjectRoot() {
+        return projectRoot;
+    }
+
     void setMaxLines(int maxLines) {
         this.maxLines = Math.max(1, maxLines);
         trimExcessLines();

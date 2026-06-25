@@ -9,7 +9,6 @@
 package org.jedit.build;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 final class TestRunOptions {
@@ -24,44 +23,30 @@ final class TestRunOptions {
     final Scope scope;
     final String className;
     final String methodName;
-    final boolean debug;
     final List<TestCaseResult> failedCases;
 
     private TestRunOptions(Scope scope, String className, String methodName,
-                           boolean debug, List<TestCaseResult> failedCases) {
+                           List<TestCaseResult> failedCases) {
         this.scope = scope;
         this.className = className != null ? className : "";
         this.methodName = methodName != null ? methodName : "";
-        this.debug = debug;
         this.failedCases = failedCases != null ? List.copyOf(failedCases) : List.of();
     }
 
     static TestRunOptions all() {
-        return new TestRunOptions(Scope.ALL, "", "", false, List.of());
+        return new TestRunOptions(Scope.ALL, "", "", List.of());
     }
 
     static TestRunOptions suite(String className) {
-        return new TestRunOptions(Scope.SUITE, className, "", false, List.of());
+        return new TestRunOptions(Scope.SUITE, className, "", List.of());
     }
 
     static TestRunOptions single(String className, String methodName) {
-        return new TestRunOptions(Scope.SINGLE, className, methodName, false, List.of());
-    }
-
-    static TestRunOptions single(String className, String methodName, boolean debug) {
-        return new TestRunOptions(Scope.SINGLE, className, methodName, debug, List.of());
+        return new TestRunOptions(Scope.SINGLE, className, methodName, List.of());
     }
 
     static TestRunOptions failedOnly(List<TestCaseResult> failedCases) {
-        return new TestRunOptions(Scope.FAILED_ONLY, "", "", false, failedCases);
-    }
-
-    static TestRunOptions debugAll() {
-        return new TestRunOptions(Scope.ALL, "", "", true, List.of());
-    }
-
-    static TestRunOptions debugSuite(String className) {
-        return new TestRunOptions(Scope.SUITE, className, "", true, List.of());
+        return new TestRunOptions(Scope.FAILED_ONLY, "", "", failedCases);
     }
 
     List<String> mavenTestSelectors() {

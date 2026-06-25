@@ -389,6 +389,7 @@ view=new-view \
 	 focus-buffer-switcher \
 	 - \
 	 toggle-line-numbers \
+	 toggle-git-blame \
 	 print.toggle-show-page-breaks \
 	 toggle-statusbar \
 	 toggle-gutter \
@@ -1130,6 +1131,11 @@ git.title=Git
 git.label=Git
 git.dock-position=bottom
 git.icon=MatIcons.HISTORY:22
+
+local-history.title=Timeline
+local-history.label=Timeline
+local-history.dock-position=bottom
+local-history.icon=MatIcons.HISTORY:22
 
 cursor.title=Cursor
 cursor.label=Cursor

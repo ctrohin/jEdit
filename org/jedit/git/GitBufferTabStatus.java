@@ -59,6 +59,8 @@ public final class GitBufferTabStatus implements EBComponent {
         if (instance == null) {
             instance = new GitBufferTabStatus();
             EditBus.addToBus(instance);
+            GitBlameSupport.install();
+            GitMergeConflictSupport.install();
         }
         return instance;
     }

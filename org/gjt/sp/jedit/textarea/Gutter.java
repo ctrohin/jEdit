@@ -32,6 +32,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import org.gjt.sp.jedit.Registers;
+import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.buffer.BufferAdapter;
 import org.gjt.sp.jedit.buffer.BufferListener;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
@@ -77,6 +78,13 @@ public class Gutter extends JComponent implements SwingConstants {
      * @since jEdit 4.0pre4
      */
     public static final int HIGHEST_LAYER = Integer.MAX_VALUE;
+
+    /**
+     * Extensions on this layer paint above line numbers.
+     *
+     * @since jEdit 6.0
+     */
+    public static final int OVER_LINE_NUMBERS_LAYER = 100;
     //}}}
 
     //{{{ Fold painters
@@ -106,6 +114,7 @@ public class Gutter extends JComponent implements SwingConstants {
         enabled = true;
         selectionAreaEnabled = true;
         selectionAreaWidth = SELECTION_GUTTER_WIDTH;
+        blameAreaWidth = jEdit.getIntegerProperty("git.blame.columnWidth", 96);
 
         setAutoscrolls(true);
         setOpaque(true);
@@ -193,12 +202,19 @@ public class Gutter extends JComponent implements SwingConstants {
         int y = clip.y - clip.y % lineHeight + textArea.getPainter().getLineExtraSpacing();
 
         extensionMgr.paintScreenLineRange(textArea, gfx,
-            firstLine, lastLine, y, lineHeight);
+            firstLine, lastLine, y, lineHeight,
+            Integer.MIN_VALUE, OVER_LINE_NUMBERS_LAYER - 1);
 
         for (int line = firstLine; line <= lastLine;
              line++, y += lineHeight) {
             paintLine(gfx, line, y);
         }
+
+        int overlayY = clip.y - clip.y % lineHeight
+            + textArea.getPainter().getLineExtraSpacing();
+        extensionMgr.paintScreenLineRange(textArea, gfx,
+            firstLine, lastLine, overlayY, lineHeight,
+            OVER_LINE_NUMBERS_LAYER, Integer.MAX_VALUE);
 
     } //}}}
 
@@ -315,24 +331,29 @@ public class Gutter extends JComponent implements SwingConstants {
     @Override
     public void setBorder(Border border) {
         super.setBorder(border);
+        recalculateGutterDimensions();
+        revalidate();
+    } //}}}
 
+    private void recalculateGutterDimensions() {
+        Border border = getBorder();
         if (border == null) {
             collapsedSize.width = 0;
             collapsedSize.height = 0;
-        } else {
-            Insets insets = border.getBorderInsets(this);
-            collapsedSize.width = FOLD_MARKER_SIZE + insets.right;
-            if (isSelectionAreaEnabled())
-                collapsedSize.width += selectionAreaWidth;
-            collapsedSize.height = gutterSize.height
-                = insets.top + insets.bottom;
-            lineNumberWidth = getLineNumberWidth();
-            gutterSize.width = FOLD_MARKER_SIZE + insets.right
-                + lineNumberWidth;
+            return;
         }
-
-        revalidate();
-    } //}}}
+        Insets insets = border.getBorderInsets(this);
+        collapsedSize.width = FOLD_MARKER_SIZE + insets.right;
+        if (isSelectionAreaEnabled()) {
+            collapsedSize.width += selectionAreaWidth;
+        }
+        collapsedSize.height = gutterSize.height
+            = insets.top + insets.bottom;
+        lineNumberWidth = getLineNumberWidth();
+        int blameWidth = blameAreaEnabled ? blameAreaWidth : 0;
+        gutterSize.width = FOLD_MARKER_SIZE + insets.right
+            + lineNumberWidth + blameWidth;
+    }
 
     //{{{ setMinLineNumberDigitCount() method
     public void setMinLineNumberDigitCount(int min) {
@@ -398,12 +419,8 @@ public class Gutter extends JComponent implements SwingConstants {
 
         fm = getFontMetrics(font);
 
-        Border border = getBorder();
-        if (border != null) {
-            lineNumberWidth = getLineNumberWidth();
-            gutterSize.width = FOLD_MARKER_SIZE
-                + border.getBorderInsets(this).right
-                + lineNumberWidth;
+        if (getBorder() != null) {
+            recalculateGutterDimensions();
             revalidate();
         }
     } //}}}
@@ -412,6 +429,63 @@ public class Gutter extends JComponent implements SwingConstants {
     private int getLineNumberWidth() {
         return Math.max(fm.charWidth('5') * getLineNumberDigitCount() + 20, 60);
     }
+
+    /**
+     * Returns the x co-ordinate just past the line-number area.
+     * @since jEdit 6.0
+     */
+    public int getLineNumberAreaRight() {
+        return FOLD_MARKER_SIZE + lineNumberWidth;
+    }
+
+    //{{{ isBlameAreaEnabled() method
+    public boolean isBlameAreaEnabled() {
+        return blameAreaEnabled;
+    } //}}}
+
+    //{{{ setBlameAreaEnabled() method
+    public void setBlameAreaEnabled(boolean enabled) {
+        if (blameAreaEnabled == enabled) {
+            return;
+        }
+        blameAreaEnabled = enabled;
+        recalculateGutterDimensions();
+        revalidate();
+        textArea.revalidate();
+        repaint();
+    } //}}}
+
+    //{{{ getBlameAreaWidth() method
+    public int getBlameAreaWidth() {
+        return blameAreaWidth;
+    } //}}}
+
+    //{{{ setBlameAreaWidth() method
+    public void setBlameAreaWidth(int width) {
+        if (width < 0) {
+            width = 0;
+        }
+        if (blameAreaWidth == width) {
+            return;
+        }
+        blameAreaWidth = width;
+        if (blameAreaEnabled) {
+            recalculateGutterDimensions();
+            revalidate();
+            textArea.revalidate();
+            repaint();
+        }
+    } //}}}
+
+    //{{{ getBlameAreaLeft() method
+    public int getBlameAreaLeft() {
+        return getLineNumberAreaRight();
+    } //}}}
+
+    //{{{ getBlameAreaRight() method
+    public int getBlameAreaRight() {
+        return getBlameAreaLeft() + (blameAreaEnabled ? blameAreaWidth : 0);
+    } //}}}
 
     //{{{ Getters and setters
 
@@ -716,6 +790,8 @@ public class Gutter extends JComponent implements SwingConstants {
     private final BufferListener bufferListener;
     private int minLineNumberDigits;
     private int selectionAreaWidth;
+    private boolean blameAreaEnabled;
+    private int blameAreaWidth;
     //}}}
 
     //{{{ paintLine() method

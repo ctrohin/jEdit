@@ -436,6 +436,8 @@ public class GenericLspClient {
         textDocCaps.setSignatureHelp(buildSignatureHelpCapabilities());
         textDocCaps.setCodeAction(buildCodeActionCapabilities());
         textDocCaps.setRename(new RenameCapabilities(false, true));
+        textDocCaps.setFormatting(new FormattingCapabilities());
+        textDocCaps.setRangeFormatting(new RangeFormattingCapabilities());
         capabilities.setTextDocument(textDocCaps);
 
         WorkspaceClientCapabilities workspaceCaps = new WorkspaceClientCapabilities();

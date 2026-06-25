@@ -9,8 +9,9 @@
 package org.jedit.build;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,17 +30,42 @@ final class JestReportParser {
         if (jsonFile == null || !jsonFile.isFile()) {
             return List.of();
         }
-        try (Reader reader = new FileReader(jsonFile)) {
-            JsonElement root = JsonParser.parseReader(reader);
+        try {
+            String text = Files.readString(jsonFile.toPath(), StandardCharsets.UTF_8);
+            if (text.isBlank() || looksLikeNdjsonStream(text)) {
+                return List.of();
+            }
+            JsonElement root = JsonParser.parseString(text);
             if (!root.isJsonObject()) {
                 return List.of();
             }
-            return parseJsonObject(root.getAsJsonObject(), projectRoot);
+            JsonObject object = root.getAsJsonObject();
+            if (!object.has("testResults")) {
+                return List.of();
+            }
+            return parseJsonObject(object, projectRoot);
+        } catch (IOException ex) {
+            Log.log(Log.WARNING, JestReportParser.class,
+                "Failed to read " + jsonFile.getAbsolutePath(), ex);
+            return List.of();
         } catch (Exception ex) {
             Log.log(Log.WARNING, JestReportParser.class,
                 "Failed to parse " + jsonFile.getAbsolutePath(), ex);
             return List.of();
         }
+    }
+
+    private static boolean looksLikeNdjsonStream(String text) {
+        for (String line : text.split("\\R")) {
+            if (line.isBlank()) {
+                continue;
+            }
+            return line.contains("\"type\":\"start\"")
+                || line.contains("\"type\": \"start\"")
+                || line.contains("\"type\":\"testStart\"")
+                || line.contains("\"type\": \"testStart\"");
+        }
+        return false;
     }
 
     private static List<TestCaseResult> parseJsonObject(JsonObject root, File projectRoot) {

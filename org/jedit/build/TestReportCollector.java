@@ -53,7 +53,8 @@ final class TestReportCollector {
             return;
         }
         for (File jsonFile : jsonFiles) {
-            if ("jest-results.json".equals(jsonFile.getName())) {
+            String name = jsonFile.getName();
+            if ("jest-results.json".equals(name) || "dart-results.json".equals(name)) {
                 continue;
             }
             cases.addAll(JestReportParser.parseJsonFile(jsonFile, projectRoot));

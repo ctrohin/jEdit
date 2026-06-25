@@ -125,6 +125,8 @@ public final class BuildOutputView extends JPanel implements DefaultFocusCompone
             exitCode -> {
                 tab.disableProcessInput();
                 setTabStatus(tab, jEdit.getProperty("build-output.finished"));
+                BuildProblemsHub.getInstance().collectFromOutput(
+                    tab.output.getProjectRoot(), tab.output.getText());
                 if (onFinishedWithExitCode != null) {
                     onFinishedWithExitCode.accept(exitCode);
                 }

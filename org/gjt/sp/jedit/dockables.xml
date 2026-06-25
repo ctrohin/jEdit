@@ -63,6 +63,9 @@
 	<DOCKABLE NAME="git" MOVABLE="TRUE">
 		new org.jedit.git.GitView(view);
 	</DOCKABLE>
+	<DOCKABLE NAME="local-history" MOVABLE="TRUE">
+		new org.gjt.sp.jedit.history.LocalHistoryView(view);
+	</DOCKABLE>
 	<DOCKABLE NAME="cursor" MOVABLE="TRUE">
 		new org.jedit.cursor.CursorView(view);
 	</DOCKABLE>

@@ -320,6 +320,11 @@ public final class LspCodeActions {
         }
     }
 
+    static void executeOrganizeImportsCommand(View view, GenericLspClient lspClient,
+                                              Buffer buffer, Command command) {
+        executeWorkspaceCommandAsync(view, lspClient, null, command, buffer);
+    }
+
     /**
      * Runs {@code workspace/executeCommand} asynchronously so the EDT is never blocked
      * while waiting for the server (which may call {@code workspace/applyEdit} back).
