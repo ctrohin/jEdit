@@ -29,7 +29,11 @@ final class TestSourceLocator {
         if (fromMessage != null) {
             return fromMessage;
         }
-        return resolveFromClassName(projectRoot, className);
+        File fromClass = resolveFromClassName(projectRoot, className);
+        if (fromClass != null) {
+            return fromClass;
+        }
+        return resolveDartOrPython(projectRoot, className);
     }
 
     static int resolveLine(String failureMessage) {
@@ -65,12 +69,53 @@ final class TestSourceLocator {
         if (projectRoot == null || className == null || className.isBlank()) {
             return null;
         }
-        String relative = className.replace('.', File.separatorChar) + ".java";
+        String relative = className.replace('.', File.separatorChar);
+        for (String ext : new String[] {".java", ".kt"}) {
+            File candidate = findTestFile(projectRoot, relative + ext);
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private static File resolveDartOrPython(File projectRoot, String className) {
+        if (projectRoot == null || className == null || className.isBlank()) {
+            return null;
+        }
+        String module = className.replace('.', File.separatorChar);
+        File dart = findTestFile(projectRoot, module + "_test.dart");
+        if (dart != null) {
+            return dart;
+        }
+        dart = findTestFile(projectRoot, module + ".dart");
+        if (dart != null) {
+            return dart;
+        }
+        File python = findTestFile(projectRoot, module + ".py");
+        if (python != null) {
+            return python;
+        }
+        if (className.contains(".")) {
+            String simple = className.substring(className.lastIndexOf('.') + 1);
+            python = findTestFile(projectRoot, simple + ".py");
+            if (python != null) {
+                return python;
+            }
+        }
+        return findUnderProject(projectRoot, className + "_test.dart", 0);
+    }
+
+    private static File findTestFile(File projectRoot, String relative) {
         for (String prefix : TEST_SOURCE_PREFIXES) {
             File candidate = new File(projectRoot, prefix + relative);
             if (candidate.isFile()) {
                 return candidate;
             }
+        }
+        File direct = new File(projectRoot, relative);
+        if (direct.isFile()) {
+            return direct;
         }
         return findUnderProject(projectRoot, relative, 0);
     }
@@ -84,6 +129,10 @@ final class TestSourceLocator {
             if (candidate.isFile()) {
                 return candidate;
             }
+        }
+        File direct = new File(dir, relative);
+        if (direct.isFile()) {
+            return direct;
         }
         File[] children = dir.listFiles(File::isDirectory);
         if (children == null) {
@@ -124,6 +173,7 @@ final class TestSourceLocator {
             || name.equals("node_modules")
             || name.equals("target")
             || name.equals("build")
-            || name.equals("out");
+            || name.equals("out")
+            || name.equals(".dart_tool");
     }
 }

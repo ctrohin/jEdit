@@ -89,6 +89,9 @@ final class JestReportParser {
             source = resolveFile(projectRoot, suiteFile);
         }
         int line = TestSourceLocator.resolveLine(message);
+        if (line <= 0) {
+            line = TestMethodLocator.findMethodLine(source, title);
+        }
         return new TestCaseResult(className, title, status, time, message, source, line);
     }
 

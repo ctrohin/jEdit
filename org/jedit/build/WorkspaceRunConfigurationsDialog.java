@@ -413,7 +413,7 @@ final class WorkspaceRunConfigurationsDialog extends EnhancedDialog {
                 }
             }
             case NPM -> NpmProjectSettingsDialog.show(view, projectRoot);
-            case FLUTTER -> FlutterProjectSettingsDialog.show(view, projectRoot);
+            case FLUTTER, DART -> FlutterProjectSettingsDialog.show(view, projectRoot);
             case ANT -> AntProjectSettingsDialog.show(view, projectRoot);
             case PIP -> PipProjectSettingsDialog.show(view, projectRoot);
             default -> { }

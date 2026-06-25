@@ -28,6 +28,12 @@ final class TestDiscovery {
         "(?:public\\s+|protected\\s+|private\\s+)?(?:static\\s+)?void\\s+(\\w+)\\s*\\(");
     private static final Pattern JS_TEST = Pattern.compile(
         "\\b(?:it|test)\\s*\\(\\s*['\"]([^'\"]+)['\"]");
+    private static final Pattern DART_TEST = Pattern.compile(
+        "\\b(?:test|testWidgets)\\s*\\(\\s*['\"]([^'\"]+)['\"]");
+    private static final Pattern DART_GROUP = Pattern.compile(
+        "\\bgroup\\s*\\(\\s*['\"]([^'\"]+)['\"]");
+    private static final Pattern PYTHON_TEST = Pattern.compile(
+        "\\bdef\\s+(test_\\w+)\\s*\\(");
     private static final Pattern JAVA_TEST_ANNOTATION = Pattern.compile(
         "@(?:Test|org\\.junit\\.Test|org\\.junit\\.jupiter\\.api\\.Test|ParameterizedTest)\\b");
 
@@ -66,6 +72,12 @@ final class TestDiscovery {
             if (isJsTestFile(name)) {
                 return discoverJsFile(file, text);
             }
+            if (name.endsWith("_test.dart")) {
+                return discoverDartFile(file, text);
+            }
+            if (name.startsWith("test_") && name.endsWith(".py")) {
+                return discoverPythonFile(file, text);
+            }
         } catch (Exception ignored) {
         }
         return List.of();
@@ -102,6 +114,18 @@ final class TestDiscovery {
                 }
             } else if (isJsTestFile(name)) {
                 for (DiscoveredTest test : discoverJsFile(file, text)) {
+                    cases.add(test.toResult(file.getParentFile()));
+                }
+            } else if (name.endsWith("_test.dart")) {
+                for (DiscoveredTest test : discoverDartFile(file, text)) {
+                    cases.add(test.toResult(file.getParentFile()));
+                }
+            } else if (name.startsWith("test_") && name.endsWith(".py")) {
+                for (DiscoveredTest test : discoverPythonFile(file, text)) {
+                    cases.add(test.toResult(file.getParentFile()));
+                }
+            } else if (name.endsWith(".py") && isPythonTestFile(file)) {
+                for (DiscoveredTest test : discoverPythonFile(file, text)) {
                     cases.add(test.toResult(file.getParentFile()));
                 }
             }
@@ -164,6 +188,61 @@ final class TestDiscovery {
         return tests;
     }
 
+    private static List<DiscoveredTest> discoverDartFile(File file, String text) {
+        List<DiscoveredTest> tests = new ArrayList<>();
+        String className = dartSuiteName(file);
+        String[] lines = text.split("\\R", -1);
+        List<String> groupStack = new ArrayList<>();
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            Matcher groupMatcher = DART_GROUP.matcher(line);
+            if (groupMatcher.find()) {
+                groupStack.add(groupMatcher.group(1));
+                continue;
+            }
+            if (line.startsWith("});") || line.equals("},);")) {
+                if (!groupStack.isEmpty()) {
+                    groupStack.remove(groupStack.size() - 1);
+                }
+                continue;
+            }
+            Matcher testMatcher = DART_TEST.matcher(line);
+            if (testMatcher.find()) {
+                String fullName = qualifiedDartName(groupStack, testMatcher.group(1));
+                tests.add(new DiscoveredTest(className, fullName, i + 1, file));
+            }
+        }
+        return tests;
+    }
+
+    private static List<DiscoveredTest> discoverPythonFile(File file, String text) {
+        List<DiscoveredTest> tests = new ArrayList<>();
+        String className = pythonSuiteName(file);
+        String[] lines = text.split("\\R", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher matcher = PYTHON_TEST.matcher(lines[i]);
+            if (matcher.find()) {
+                tests.add(new DiscoveredTest(className, matcher.group(1), i + 1, file));
+            }
+        }
+        return tests;
+    }
+
+    private static String qualifiedDartName(List<String> groups, String testName) {
+        if (groups.isEmpty()) {
+            return testName;
+        }
+        StringBuilder name = new StringBuilder();
+        for (String group : groups) {
+            if (!name.isEmpty()) {
+                name.append(' ');
+            }
+            name.append(group);
+        }
+        name.append(' ').append(testName);
+        return name.toString();
+    }
+
     private static String javaClassName(File file, String text) {
         Matcher matcher = Pattern.compile("class\\s+(\\w+)").matcher(text);
         if (matcher.find()) {
@@ -188,13 +267,44 @@ final class TestDiscovery {
         return dot > 0 ? name.substring(0, dot) : name;
     }
 
+    private static String dartSuiteName(File file) {
+        String name = file.getName();
+        if (name.endsWith("_test.dart")) {
+            return name.substring(0, name.length() - "_test.dart".length());
+        }
+        int dot = name.lastIndexOf('.');
+        return dot > 0 ? name.substring(0, dot) : name;
+    }
+
+    private static String pythonSuiteName(File file) {
+        String path = file.getPath().replace('\\', '/');
+        int testsIndex = path.lastIndexOf("/tests/");
+        if (testsIndex >= 0) {
+            String module = path.substring(testsIndex + "/tests/".length());
+            int dot = module.lastIndexOf('.');
+            if (dot > 0) {
+                module = module.substring(0, dot);
+            }
+            return module.replace('/', '.');
+        }
+        String name = file.getName();
+        int dot = name.lastIndexOf('.');
+        return dot > 0 ? name.substring(0, dot) : name;
+    }
+
+    private static boolean isPythonTestFile(File file) {
+        String path = file.getPath().replace('\\', '/').toLowerCase();
+        return path.contains("/tests/") || file.getName().startsWith("test_");
+    }
+
     private static boolean shouldSkip(File dir) {
         String name = dir.getName();
         return name.startsWith(".")
             || name.equals("node_modules")
             || name.equals("target")
             || name.equals("build")
-            || name.equals("out");
+            || name.equals("out")
+            || name.equals(".dart_tool");
     }
 
     static final class DiscoveredTest {

@@ -2212,12 +2212,14 @@ workspace-run.config.vm-options-hint.ant=Appended to ANT_OPTS for this configura
 workspace-run.config.vm-options-hint.npm=Appended to NODE_OPTIONS for this configuration.
 workspace-run.config.vm-options-hint.pip=Passed as extra Python interpreter options before the run goal.
 workspace-run.config.vm-options-hint.flutter=Passed as extra command-line arguments before the run goal.
+workspace-run.config.vm-options-hint.dart=Passed as extra command-line arguments before the run goal.
 workspace-run.config.additional-properties-hint.maven=One property per line: name=value (passed as -Dname=value).
 workspace-run.config.additional-properties-hint.gradle=One property per line: name=value (passed as -Dname=value).
 workspace-run.config.additional-properties-hint.ant=One property per line: name=value (passed as -Dname=value).
 workspace-run.config.additional-properties-hint.npm=One variable per line: NAME=value (added to the process environment).
 workspace-run.config.additional-properties-hint.pip=One variable per line: NAME=value (added to the process environment).
 workspace-run.config.additional-properties-hint.flutter=One variable per line: NAME=value (added to the process environment).
+workspace-run.config.additional-properties-hint.dart=One variable per line: NAME=value (added to the process environment).
 workspace-run.settings=Run settings...
 workspace-run.settings.title=Run Project
 workspace-run.settings.intro=Choose which build tool to run and the goal, task, or script to execute.<br>Project folder: <b>{0}</b>
@@ -2232,6 +2234,7 @@ workspace-run.kind.maven=Maven
 workspace-run.kind.gradle=Gradle
 workspace-run.kind.npm=npm / Node.js
 workspace-run.kind.flutter=Flutter
+workspace-run.kind.dart=Dart
 workspace-run.kind.ant=Ant
 workspace-run.kind.pip=Python
 build-output.label=$Output
@@ -2257,7 +2260,7 @@ test-results.title=Tests
 test-results.run=Run Tests
 test-results.rerun-failed=Rerun failed tests
 test-results.empty=No test results yet. Run tests from the workspace toolbar or click Run Tests above.
-test-results.no-reports=Tests finished (exit {0}) but no Surefire/Gradle XML reports were found.
+test-results.no-reports=Tests finished (exit {0}) but no structured test reports were found.
 test-results.caption={0} tests: {1} passed, {2} failed, {3} skipped ({4,number,0.0}s)
 test-results.run-title=Tests ({0})
 test-results.status.passed=Passed
@@ -2282,7 +2285,7 @@ test-debug.vm-options=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,addr
 test-gutter.tooltip=Run test: {0} (Shift+click to debug)
 
 workspace-test.run=Run tests in the workspace project
-workspace-test.run-disabled=Open a Maven, Gradle, Ant, npm, or Flutter project with tests to run them
+workspace-test.run-disabled=Open a Maven, Gradle, Ant, npm, Python, Dart, or Flutter project with tests to run them
 
 ant-project.label=$Ant
 ant-project.title=Ant

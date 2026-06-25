@@ -95,6 +95,9 @@ final class SurefireXmlParser {
         }
         File source = TestSourceLocator.resolve(projectRoot, className, message);
         int line = TestSourceLocator.resolveLine(message);
+        if (line <= 0) {
+            line = TestMethodLocator.findMethodLine(source, methodName);
+        }
         return new TestCaseResult(className, methodName, status, time, message, source, line);
     }
 

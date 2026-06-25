@@ -10,6 +10,7 @@ package org.jedit.build;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,12 @@ public final class WorkspaceTestRunner {
         if (ProjectRoots.findPackageJson(projectRoot) != null) {
             kinds.add(ProjectKind.NPM);
         }
-        if (ProjectRoots.findPubspecYaml(projectRoot) != null) {
-            kinds.add(ProjectKind.FLUTTER);
+        ProjectKind dartKind = DartProjectSupport.resolvePubspecKind(projectRoot);
+        if (dartKind != null) {
+            kinds.add(dartKind);
+        }
+        if (ProjectRoots.findPythonMarker(projectRoot) != null && hasPythonTests(projectRoot)) {
+            kinds.add(ProjectKind.PIP);
         }
         return kinds;
     }
@@ -126,7 +131,7 @@ public final class WorkspaceTestRunner {
 
     static boolean supportsStructuredResults(ProjectKind kind) {
         return switch (kind) {
-            case MAVEN, GRADLE, ANT, NPM -> true;
+            case MAVEN, GRADLE, ANT, NPM, DART, FLUTTER, PIP -> true;
             default -> false;
         };
     }
@@ -152,7 +157,9 @@ public final class WorkspaceTestRunner {
             case GRADLE -> buildGradleTests(projectRoot, options);
             case ANT -> buildAntTests(projectRoot, options);
             case NPM -> buildNpmTests(projectRoot, options);
+            case DART -> buildDartTests(projectRoot, options);
             case FLUTTER -> buildFlutterTests(projectRoot, options);
+            case PIP -> buildPipTests(projectRoot, options);
             default -> null;
         };
     }
@@ -253,13 +260,52 @@ public final class WorkspaceTestRunner {
                 .append(File.separator)
                 .append("jest-results.json");
         }
-        if (options.scope == TestRunOptions.Scope.SINGLE && options.className != null) {
-            String pattern = options.methodName.isBlank()
-                ? options.className
-                : options.className;
-            goal.append(" -t ").append(pattern);
-        }
+        appendNpmSelectors(projectRoot, goal, options);
         return goal.toString();
+    }
+
+    private static void appendNpmSelectors(File projectRoot, StringBuilder goal,
+                                         TestRunOptions options) {
+        switch (options.scope) {
+            case SINGLE -> {
+                if (!options.methodName.isBlank()) {
+                    goal.append(" -t ").append(shellQuote(options.methodName));
+                } else if (!options.className.isBlank()) {
+                    goal.append(" -t ").append(shellQuote(options.className));
+                }
+            }
+            case SUITE -> {
+                File suiteFile = resolveJsSuiteFile(projectRoot, options.className);
+                if (suiteFile != null) {
+                    goal.append(' ').append(relativePath(projectRoot, suiteFile));
+                }
+            }
+            case FAILED_ONLY -> {
+                for (TestCaseResult testCase : options.failedCases) {
+                    String pattern = testCase.methodName != null && !testCase.methodName.isBlank()
+                        ? testCase.methodName
+                        : testCase.className;
+                    if (pattern != null && !pattern.isBlank()) {
+                        goal.append(" -t ").append(shellQuote(pattern));
+                    }
+                }
+            }
+            default -> { }
+        }
+    }
+
+    private static TestInvocation buildDartTests(File projectRoot, TestRunOptions options) {
+        File dir = projectDirectory(ProjectRoots.findPubspecYaml(projectRoot));
+        if (dir == null) {
+            return null;
+        }
+        File reportsDir = TestReportCollector.jeditTestReportsDir(projectRoot);
+        reportsDir.mkdirs();
+        String goal = buildDartTestGoal(projectRoot, options, reportsDir);
+        FlutterProjectSettings settings = FlutterProjectPreferences.load(projectRoot).copy();
+        settings.useFlutterCli = false;
+        FlutterCommandBuilder.Invocation inv = FlutterCommandBuilder.build(dir, settings, goal);
+        return new TestInvocation(inv.workingDir, inv.command, inv.environment);
     }
 
     private static TestInvocation buildFlutterTests(File projectRoot, TestRunOptions options) {
@@ -267,13 +313,198 @@ public final class WorkspaceTestRunner {
         if (dir == null) {
             return null;
         }
-        String goal = "test";
-        if (options.scope == TestRunOptions.Scope.SINGLE && options.className != null) {
-            goal += " --plain-name \"" + options.displayName().replace("\"", "") + "\"";
-        }
+        File reportsDir = TestReportCollector.jeditTestReportsDir(projectRoot);
+        reportsDir.mkdirs();
+        String goal = buildDartTestGoal(projectRoot, options, reportsDir);
         FlutterCommandBuilder.Invocation inv = FlutterCommandBuilder.build(
             dir, FlutterProjectPreferences.load(projectRoot), goal);
         return new TestInvocation(inv.workingDir, inv.command, inv.environment);
+    }
+
+    private static String buildDartTestGoal(File projectRoot, TestRunOptions options,
+                                            File reportsDir) {
+        String reportPath = new File(reportsDir, "dart-results.json").getAbsolutePath();
+        StringBuilder goal = new StringBuilder("test --file-reporter=json:");
+        goal.append(reportPath);
+        switch (options.scope) {
+            case SINGLE -> {
+                if (!options.methodName.isBlank()) {
+                    goal.append(" --plain-name ").append(shellQuote(options.methodName));
+                }
+            }
+            case SUITE -> {
+                File suiteFile = resolveDartTestFile(projectRoot, options.className);
+                if (suiteFile != null) {
+                    goal.append(' ').append(relativePath(projectRoot, suiteFile));
+                }
+            }
+            case FAILED_ONLY -> {
+                for (String plainName : options.dartPlainNames()) {
+                    goal.append(" --plain-name ").append(shellQuote(plainName));
+                }
+            }
+            default -> { }
+        }
+        return goal.toString();
+    }
+
+    private static TestInvocation buildPipTests(File projectRoot, TestRunOptions options) {
+        File marker = ProjectRoots.findPythonMarker(projectRoot);
+        if (marker == null) {
+            return null;
+        }
+        File dir = projectDirectory(marker);
+        File reportsDir = TestReportCollector.jeditTestReportsDir(projectRoot);
+        reportsDir.mkdirs();
+        String junitPath = new File(reportsDir, "pytest-junit.xml").getAbsolutePath();
+        StringBuilder goal = new StringBuilder("-m pytest --junitxml=");
+        goal.append(junitPath);
+        List<String> nodeIds = options.pytestNodeIds();
+        for (String nodeId : nodeIds) {
+            if (nodeId != null && !nodeId.isBlank()) {
+                goal.append(' ').append(nodeId);
+            }
+        }
+        PipProjectSettings settings = PipProjectPreferences.load(projectRoot);
+        Map<String, String> environment = new HashMap<>();
+        if (!ShellCommands.isBlank(settings.pythonHome)) {
+            environment.put("PYTHONHOME", settings.pythonHome.trim());
+        }
+        if (!ShellCommands.isBlank(settings.virtualEnv)) {
+            environment.put("VIRTUAL_ENV", settings.virtualEnv.trim());
+        }
+        String python = ShellCommands.isBlank(settings.pythonExecutable)
+            ? "python"
+            : settings.pythonExecutable.trim();
+        List<String> args = new ArrayList<>();
+        ShellCommands.appendTokens(args, goal.toString());
+        ShellCommands.appendTokens(args, settings.additionalArgs);
+        if (!ShellCommands.isBlank(settings.workingDirectory)) {
+            dir = new File(settings.workingDirectory.trim());
+        }
+        return new TestInvocation(dir, ShellCommands.wrapLauncher(python, args), environment);
+    }
+
+    private static boolean hasPythonTests(File projectRoot) {
+        if (projectRoot == null || !projectRoot.isDirectory()) {
+            return false;
+        }
+        if (new File(projectRoot, "pytest.ini").isFile()
+            || new File(projectRoot, "conftest.py").isFile()) {
+            return true;
+        }
+        return findPythonTestFile(projectRoot, 0) != null;
+    }
+
+    private static File findPythonTestFile(File dir, int depth) {
+        if (depth > 8 || dir == null || !dir.isDirectory()) {
+            return null;
+        }
+        File[] children = dir.listFiles();
+        if (children == null) {
+            return null;
+        }
+        for (File child : children) {
+            if (child.isFile()) {
+                String name = child.getName();
+                if (name.startsWith("test_") && name.endsWith(".py")) {
+                    return child;
+                }
+            } else if (child.isDirectory() && !shouldSkip(child)) {
+                if (child.getName().equals("tests")) {
+                    return child;
+                }
+                File found = findPythonTestFile(child, depth + 1);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static File resolveDartTestFile(File projectRoot, String className) {
+        if (projectRoot == null || className == null || className.isBlank()) {
+            return null;
+        }
+        String base = className.replace('.', File.separatorChar);
+        File candidate = TestSourceLocator.resolve(projectRoot, className, "");
+        if (candidate != null) {
+            return candidate;
+        }
+        File named = new File(projectRoot, base + "_test.dart");
+        if (named.isFile()) {
+            return named;
+        }
+        File testDir = new File(projectRoot, "test");
+        File inTest = new File(testDir, className + "_test.dart");
+        return inTest.isFile() ? inTest : null;
+    }
+
+    private static File resolveJsSuiteFile(File projectRoot, String className) {
+        if (projectRoot == null || className == null || className.isBlank()) {
+            return null;
+        }
+        for (String suffix : new String[] {
+            ".test.js", ".test.ts", ".test.jsx", ".test.tsx",
+            ".spec.js", ".spec.ts", ".spec.jsx", ".spec.tsx"
+        }) {
+            File candidate = findNamedTestFile(projectRoot, className + suffix, 0);
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private static File findNamedTestFile(File dir, String name, int depth) {
+        if (depth > 8 || dir == null || !dir.isDirectory()) {
+            return null;
+        }
+        File direct = new File(dir, name);
+        if (direct.isFile()) {
+            return direct;
+        }
+        File[] children = dir.listFiles(File::isDirectory);
+        if (children == null) {
+            return null;
+        }
+        for (File child : children) {
+            if (shouldSkip(child)) {
+                continue;
+            }
+            File found = findNamedTestFile(child, name, depth + 1);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    private static String relativePath(File projectRoot, File file) {
+        if (projectRoot == null || file == null) {
+            return file != null ? file.getName() : "";
+        }
+        try {
+            String root = projectRoot.getCanonicalPath();
+            String path = file.getCanonicalPath();
+            if (path.startsWith(root)) {
+                String relative = path.substring(root.length());
+                if (relative.startsWith(File.separator)) {
+                    relative = relative.substring(1);
+                }
+                return relative.replace('\\', '/');
+            }
+        } catch (Exception ignored) {
+        }
+        return file.getAbsolutePath().replace('\\', '/');
+    }
+
+    private static String shellQuote(String value) {
+        if (value == null) {
+            return "\"\"";
+        }
+        return "\"" + value.replace("\"", "") + "\"";
     }
 
     private static boolean hasAntTestTarget(File projectRoot) {
@@ -297,6 +528,16 @@ public final class WorkspaceTestRunner {
 
     private static File projectDirectory(File markerFile) {
         return markerFile != null ? markerFile.getParentFile() : null;
+    }
+
+    private static boolean shouldSkip(File dir) {
+        String name = dir.getName();
+        return name.startsWith(".")
+            || name.equals("node_modules")
+            || name.equals("target")
+            || name.equals("build")
+            || name.equals("out")
+            || name.equals(".dart_tool");
     }
 
     static final class TestInvocation {

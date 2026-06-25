@@ -17,6 +17,7 @@ public enum ProjectKind {
     MAVEN("maven"),
     GRADLE("gradle"),
     NPM("npm"),
+    DART("dart"),
     FLUTTER("flutter"),
     ANT("ant"),
     PIP("pip");

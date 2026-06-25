@@ -103,6 +103,49 @@ final class TestRunOptions {
         return !mavenTestSelectors().isEmpty();
     }
 
+    List<String> dartPlainNames() {
+        return switch (scope) {
+            case ALL -> List.of();
+            case SUITE -> List.of();
+            case SINGLE -> methodName.isBlank() ? List.of() : List.of(methodName);
+            case FAILED_ONLY -> {
+                List<String> names = new ArrayList<>();
+                for (TestCaseResult testCase : failedCases) {
+                    if (testCase.methodName != null && !testCase.methodName.isBlank()) {
+                        names.add(testCase.methodName);
+                    }
+                }
+                yield names;
+            }
+        };
+    }
+
+    List<String> pytestNodeIds() {
+        return switch (scope) {
+            case ALL -> List.of();
+            case SUITE -> List.of(pytestNodeId(className, ""));
+            case SINGLE -> List.of(pytestNodeId(className, methodName));
+            case FAILED_ONLY -> {
+                List<String> nodes = new ArrayList<>();
+                for (TestCaseResult testCase : failedCases) {
+                    nodes.add(pytestNodeId(testCase.className, testCase.methodName));
+                }
+                yield nodes;
+            }
+        };
+    }
+
+    private static String pytestNodeId(String className, String methodName) {
+        if (className == null || className.isBlank()) {
+            return methodName != null ? methodName : "";
+        }
+        String path = className.replace('.', '/') + ".py";
+        if (methodName == null || methodName.isBlank()) {
+            return path;
+        }
+        return path + "::" + methodName;
+    }
+
     String displayName() {
         if (methodName.isBlank()) {
             return className;

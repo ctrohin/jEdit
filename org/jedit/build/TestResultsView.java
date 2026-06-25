@@ -311,13 +311,19 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
 
     private void openTestCase(TestCaseResult testCase) {
         if (!testCase.hasNavigationTarget()) {
-            return;
+            TestCaseResult enriched = TestMethodLocator.enrich(
+                TestResultsHub.getInstance().getResult().projectRoot, testCase);
+            if (!enriched.hasNavigationTarget()) {
+                return;
+            }
+            testCase = enriched;
         }
+        int line = testCase.navigationLine();
         FileLink link = new FileLink(
             0,
             0,
             testCase.sourceFile.getAbsolutePath(),
-            Math.max(1, testCase.line),
+            Math.max(1, line),
             1);
         FileLinkNavigator.openLink(view, TestResultsHub.getInstance().getResult().projectRoot, link);
     }

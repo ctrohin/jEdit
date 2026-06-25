@@ -37,7 +37,10 @@ public final class WorkspaceProjectRunner {
             return kinds;
         }
         if (ProjectRoots.findPubspecYaml(projectRoot) != null) {
-            kinds.add(ProjectKind.FLUTTER);
+            ProjectKind dartKind = DartProjectSupport.resolvePubspecKind(projectRoot);
+            if (dartKind != null) {
+                kinds.add(dartKind);
+            }
         }
         if (ProjectRoots.findPomXml(projectRoot) != null) {
             kinds.add(ProjectKind.MAVEN);
@@ -210,6 +213,17 @@ public final class WorkspaceProjectRunner {
                     dir, FlutterProjectPreferences.load(projectRoot), goal, overrides);
                 yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
             }
+            case DART -> {
+                File dir = projectDirectory(ProjectRoots.findPubspecYaml(projectRoot));
+                if (dir == null) {
+                    yield null;
+                }
+                FlutterProjectSettings settings = FlutterProjectPreferences.load(projectRoot).copy();
+                settings.useFlutterCli = false;
+                FlutterCommandBuilder.Invocation inv = FlutterCommandBuilder.build(
+                    dir, settings, goal, overrides);
+                yield new RunInvocation(inv.workingDir, inv.command, inv.environment);
+            }
             case ANT -> {
                 AntProjectSettings settings = AntProjectPreferences.load(projectRoot);
                 File buildXml = AntCommandBuilder.resolveConfiguredBuildFile(projectRoot, settings);
@@ -309,6 +323,10 @@ public final class WorkspaceProjectRunner {
             case FLUTTER -> {
                 goals.add("run");
                 goals.add("run -d chrome");
+            }
+            case DART -> {
+                goals.add("run");
+                goals.add("test");
             }
             case ANT -> {
                 AntProjectSettings settings = AntProjectPreferences.load(projectRoot);

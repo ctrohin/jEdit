@@ -34,8 +34,13 @@ final class TestReportCollector {
         cases.addAll(JestReportParser.parseJsonFile(jestJson, projectRoot));
         File vitestXml = new File(jeditTestReportsDir(projectRoot), "junit.xml");
         cases.addAll(SurefireXmlParser.parseFile(vitestXml, projectRoot));
+        File pytestXml = new File(jeditTestReportsDir(projectRoot), "pytest-junit.xml");
+        cases.addAll(SurefireXmlParser.parseFile(pytestXml, projectRoot));
+        File dartJson = new File(jeditTestReportsDir(projectRoot), "dart-results.json");
+        cases.addAll(DartTestReportParser.parseFile(dartJson, projectRoot));
         addJsonReports(projectRoot, cases);
-        return new TestRunResult(title, projectRoot, kind, exitCode, cases);
+        return new TestRunResult(title, projectRoot, kind, exitCode,
+            TestMethodLocator.enrichAll(projectRoot, cases));
     }
 
     private static void addJsonReports(File projectRoot, List<TestCaseResult> cases) {

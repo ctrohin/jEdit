@@ -69,4 +69,8 @@ final class TestCaseResult {
     boolean hasNavigationTarget() {
         return sourceFile != null && sourceFile.isFile();
     }
+
+    int navigationLine() {
+        return TestMethodLocator.resolveLine(sourceFile, methodName, line);
+    }
 }
