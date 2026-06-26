@@ -51,6 +51,7 @@ import org.gjt.sp.jedit.options.GeneralOptionPane;
 import org.gjt.sp.jedit.options.GutterOptionPane;
 import org.gjt.sp.jedit.syntax.SyntaxStyle;
 import org.gjt.sp.jedit.textarea.AntiAlias;
+import org.gjt.sp.jedit.textarea.BlameGutter;
 import org.gjt.sp.jedit.textarea.Gutter;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.MouseHandler;
@@ -1029,12 +1030,21 @@ public class EditPane extends JPanel implements BufferSetListener
 
 		int width = jEdit.getIntegerProperty(
 			"view.gutter.borderWidth",3);
-		gutter.setBorder(width,
-			jEdit.getColorProperty("view.gutter.focusBorderColor"),
-			jEdit.getColorProperty("view.gutter.noFocusBorderColor"),
-			textArea.getPainter().getBackground());
+		Color focusBorder = jEdit.getColorProperty("view.gutter.focusBorderColor");
+		Color noFocusBorder = jEdit.getColorProperty("view.gutter.noFocusBorderColor");
+		Color gapColor = textArea.getPainter().getBackground();
+		BlameGutter blameGutter = textArea.getBlameGutter();
+		blameGutter.setBackground(backgroundColor);
+		blameGutter.setForeground(
+			jEdit.getColorProperty("view.gutter.fgColor"));
+		blameGutter.setFont(jEdit.getFontProperty("view.gutter.font"));
+		boolean blameEnabled = org.jedit.git.GitBlameSupport.isEnabled();
+		gutter.setBorder(blameEnabled ? 0 : width,
+			focusBorder, noFocusBorder, gapColor);
+		blameGutter.setBorder(blameEnabled ? width : 0,
+			focusBorder, noFocusBorder, gapColor);
 		gutter.setFoldPainter(textArea.getFoldPainter());
-		org.jedit.git.GitBlameSupport.applyGutterState(gutter);
+		org.jedit.git.GitBlameSupport.applyBlameGutterState(this);
 
 		textArea.setCaretBlinkEnabled(jEdit.getBooleanProperty(
 			"view.caretBlink"));
@@ -1375,9 +1385,6 @@ public class EditPane extends JPanel implements BufferSetListener
 					Gutter gutter = textArea.getGutter();
 					int x = FOLD_MARKER_SIZE;
 					int width = gutter.getWidth() - x;
-					if (gutter.isBlameAreaEnabled()) {
-						width = gutter.getBlameAreaLeft() - x;
-					}
 					gfx.fillRect(x, y, width, height);
 				}
 			}

@@ -79,12 +79,6 @@ public class Gutter extends JComponent implements SwingConstants {
      */
     public static final int HIGHEST_LAYER = Integer.MAX_VALUE;
 
-    /**
-     * Extensions on this layer paint above line numbers.
-     *
-     * @since jEdit 6.0
-     */
-    public static final int OVER_LINE_NUMBERS_LAYER = 100;
     //}}}
 
     //{{{ Fold painters
@@ -114,8 +108,6 @@ public class Gutter extends JComponent implements SwingConstants {
         enabled = true;
         selectionAreaEnabled = true;
         selectionAreaWidth = SELECTION_GUTTER_WIDTH;
-        blameAreaWidth = jEdit.getIntegerProperty("git.blame.columnWidth", 96);
-
         setAutoscrolls(true);
         setOpaque(true);
         setRequestFocusEnabled(false);
@@ -203,18 +195,12 @@ public class Gutter extends JComponent implements SwingConstants {
 
         extensionMgr.paintScreenLineRange(textArea, gfx,
             firstLine, lastLine, y, lineHeight,
-            Integer.MIN_VALUE, OVER_LINE_NUMBERS_LAYER - 1);
+            Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         for (int line = firstLine; line <= lastLine;
              line++, y += lineHeight) {
             paintLine(gfx, line, y);
         }
-
-        int overlayY = clip.y - clip.y % lineHeight
-            + textArea.getPainter().getLineExtraSpacing();
-        extensionMgr.paintScreenLineRange(textArea, gfx,
-            firstLine, lastLine, overlayY, lineHeight,
-            OVER_LINE_NUMBERS_LAYER, Integer.MAX_VALUE);
 
     } //}}}
 
@@ -350,9 +336,8 @@ public class Gutter extends JComponent implements SwingConstants {
         collapsedSize.height = gutterSize.height
             = insets.top + insets.bottom;
         lineNumberWidth = getLineNumberWidth();
-        int blameWidth = blameAreaEnabled ? blameAreaWidth : 0;
         gutterSize.width = FOLD_MARKER_SIZE + insets.right
-            + lineNumberWidth + blameWidth;
+            + lineNumberWidth;
     }
 
     //{{{ setMinLineNumberDigitCount() method
@@ -437,55 +422,6 @@ public class Gutter extends JComponent implements SwingConstants {
     public int getLineNumberAreaRight() {
         return FOLD_MARKER_SIZE + lineNumberWidth;
     }
-
-    //{{{ isBlameAreaEnabled() method
-    public boolean isBlameAreaEnabled() {
-        return blameAreaEnabled;
-    } //}}}
-
-    //{{{ setBlameAreaEnabled() method
-    public void setBlameAreaEnabled(boolean enabled) {
-        if (blameAreaEnabled == enabled) {
-            return;
-        }
-        blameAreaEnabled = enabled;
-        recalculateGutterDimensions();
-        revalidate();
-        textArea.revalidate();
-        repaint();
-    } //}}}
-
-    //{{{ getBlameAreaWidth() method
-    public int getBlameAreaWidth() {
-        return blameAreaWidth;
-    } //}}}
-
-    //{{{ setBlameAreaWidth() method
-    public void setBlameAreaWidth(int width) {
-        if (width < 0) {
-            width = 0;
-        }
-        if (blameAreaWidth == width) {
-            return;
-        }
-        blameAreaWidth = width;
-        if (blameAreaEnabled) {
-            recalculateGutterDimensions();
-            revalidate();
-            textArea.revalidate();
-            repaint();
-        }
-    } //}}}
-
-    //{{{ getBlameAreaLeft() method
-    public int getBlameAreaLeft() {
-        return getLineNumberAreaRight();
-    } //}}}
-
-    //{{{ getBlameAreaRight() method
-    public int getBlameAreaRight() {
-        return getBlameAreaLeft() + (blameAreaEnabled ? blameAreaWidth : 0);
-    } //}}}
 
     //{{{ Getters and setters
 
@@ -790,8 +726,6 @@ public class Gutter extends JComponent implements SwingConstants {
     private final BufferListener bufferListener;
     private int minLineNumberDigits;
     private int selectionAreaWidth;
-    private boolean blameAreaEnabled;
-    private int blameAreaWidth;
     //}}}
 
     //{{{ paintLine() method

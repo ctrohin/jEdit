@@ -382,6 +382,7 @@
 				<include name="org/gjt/sp/jedit/textarea/FastRepaintManager.java"/>
 				<include name="org/gjt/sp/jedit/textarea/FirstLine.java"/>
 				<include name="org/gjt/sp/jedit/textarea/FoldPainter.java"/>
+				<include name="org/gjt/sp/jedit/textarea/BlameGutter.java"/>
 				<include name="org/gjt/sp/jedit/textarea/Gutter.java"/>
 				<include name="org/gjt/sp/jedit/textarea/GutterPopupHandler.java"/>
 				<include name="org/gjt/sp/jedit/textarea/InputMethodSupport.java"/>

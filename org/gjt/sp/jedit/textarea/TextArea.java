@@ -92,6 +92,11 @@ public abstract class TextArea extends JPanel
 		elasticTabstopsExpander = new ElasticTabstopsTabExpander(this);
 		gutter = new Gutter(this);
 		gutter.setMouseActionsProvider(new MouseActions(propertyManager, "gutter"));
+		blameGutter = new BlameGutter(this);
+		gutterStrip = new JPanel();
+		gutterStrip.setLayout(new BoxLayout(gutterStrip, BoxLayout.X_AXIS));
+		gutterStrip.add(gutter);
+		gutterStrip.add(blameGutter);
 		listenerList = new EventListenerList();
 		caretEvent = new MutableCaretEvent();
 		blink = true;
@@ -103,7 +108,7 @@ public abstract class TextArea extends JPanel
 		//{{{ Initialize the GUI
 		setLayout(new ScrollLayout());
 		add(ScrollLayout.CENTER,painter);
-		add(ScrollLayout.LEFT,gutter);
+		add(ScrollLayout.LEFT,gutterStrip);
 
 		// some plugins add stuff in a "right-hand" gutter
 		RequestFocusLayerUI reqFocus = new RequestFocusLayerUI();
@@ -275,6 +280,17 @@ public abstract class TextArea extends JPanel
 	public final Gutter getGutter()
 	{
 		return gutter;
+	} //}}}
+
+	//{{{ getBlameGutter() method
+	/**
+	 * Returns the git blame gutter to the right of the main gutter.
+	 *
+	 * @since jEdit 6.0
+	 */
+	public final BlameGutter getBlameGutter()
+	{
+		return blameGutter;
 	} //}}}
 
 	//{{{ getDisplayManager() method
@@ -1140,6 +1156,7 @@ public abstract class TextArea extends JPanel
 		int height = (end - start + 1) * painter.getLineHeight();
 		painter.repaint(0,y,painter.getWidth(),height);
 		gutter.repaint(0,y,gutter.getWidth(),height);
+		blameGutter.repaint(0,y,blameGutter.getWidth(),height);
 	} //}}}
 
 	//{{{ invalidateLine() method
@@ -4693,6 +4710,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 
 		ToolTipManager.sharedInstance().registerComponent(painter);
 		ToolTipManager.sharedInstance().registerComponent(gutter);
+		ToolTipManager.sharedInstance().registerComponent(blameGutter);
 
 		recalculateVisibleLines();
 		if(!buffer.isLoading())
@@ -4713,6 +4731,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 
 		ToolTipManager.sharedInstance().unregisterComponent(painter);
 		ToolTipManager.sharedInstance().unregisterComponent(gutter);
+		ToolTipManager.sharedInstance().unregisterComponent(blameGutter);
 
 		if(focusedComponent == this)
 			focusedComponent = null;
@@ -4912,6 +4931,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 		chunkCache.reset();
 		gutter.repaint();
+		blameGutter.repaint();
 		painter.repaint();
 	} //}}}
 
@@ -5240,6 +5260,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 	private boolean popupEnabled;
 
 	private final Gutter gutter;
+	private final BlameGutter blameGutter;
+	private final JPanel gutterStrip;
 	protected final TextAreaPainter painter;
 
 	private final EventListenerList listenerList;

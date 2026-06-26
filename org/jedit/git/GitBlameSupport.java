@@ -19,7 +19,6 @@ package org.jedit.git;
 
 
 import java.awt.Color;
-
 import java.awt.FontMetrics;
 
 import java.awt.Graphics2D;
@@ -64,6 +63,7 @@ import org.gjt.sp.jedit.msg.PropertiesChanged;
 
 import org.gjt.sp.jedit.options.GutterOptionPane;
 
+import org.gjt.sp.jedit.textarea.BlameGutter;
 import org.gjt.sp.jedit.textarea.Gutter;
 
 import org.gjt.sp.jedit.textarea.JEditTextArea;
@@ -86,9 +86,7 @@ public final class GitBlameSupport implements EBComponent {
 
     private static final String ENABLED_PROPERTY = "git.blame.enabled";
 
-    private static final String COLUMN_WIDTH_PROPERTY = "git.blame.columnWidth";
-
-
+    private static final int HORIZONTAL_PADDING = 4;
 
     private static GitBlameSupport instance;
 
@@ -180,19 +178,67 @@ public final class GitBlameSupport implements EBComponent {
 
 
 
-    public static void applyGutterState(Gutter gutter) {
+    public static void applyBlameGutterState(EditPane editPane) {
 
-        if (gutter == null) {
+        if (instance == null || editPane == null) {
 
             return;
 
         }
 
-        boolean enabled = isEnabled();
+        instance.updateBlameGutterForEditPane(editPane);
 
-        gutter.setBlameAreaWidth(computeBlameColumnWidth(gutter));
+    }
 
-        gutter.setBlameAreaEnabled(enabled);
+
+
+    private void updateBlameGutterForEditPane(EditPane editPane) {
+
+        BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
+
+        blameGutter.setColumnWidth(computeBlameColumnWidth(blameGutter,
+
+            cacheFor(editPane.getBuffer())));
+
+        blameGutter.setBlameEnabled(isEnabled());
+
+    }
+
+
+
+    private static void syncGutterBorders(JEditTextArea textArea) {
+
+        if (textArea == null) {
+
+            return;
+
+        }
+
+        boolean blameEnabled = isEnabled();
+
+        int width = jEdit.getIntegerProperty("view.gutter.borderWidth", 3);
+
+        Color focusBorder = jEdit.getColorProperty("view.gutter.focusBorderColor");
+
+        Color noFocusBorder = jEdit.getColorProperty("view.gutter.noFocusBorderColor");
+
+        Color gapColor = textArea.getPainter().getBackground();
+
+        Gutter gutter = textArea.getGutter();
+
+        BlameGutter blameGutter = textArea.getBlameGutter();
+
+        gutter.setBorder(blameEnabled ? 0 : width,
+
+            focusBorder, noFocusBorder, gapColor);
+
+        blameGutter.setBorder(blameEnabled ? width : 0,
+
+            focusBorder, noFocusBorder, gapColor);
+
+        gutter.updateBorder();
+
+        blameGutter.updateBorder();
 
     }
 
@@ -211,6 +257,10 @@ public final class GitBlameSupport implements EBComponent {
             } else if (EditPaneUpdate.DESTROYED.equals(update.getWhat())) {
 
                 uninstallEditPane(update.getEditPane());
+
+            } else if (EditPaneUpdate.BUFFER_CHANGED.equals(update.getWhat())) {
+
+                updateBlameGutterForEditPane(update.getEditPane());
 
             }
 
@@ -252,11 +302,11 @@ public final class GitBlameSupport implements EBComponent {
 
         BlameExtension extension = new BlameExtension(editPane);
 
-        Gutter gutter = editPane.getTextArea().getGutter();
+        BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
 
-        gutter.addExtension(Gutter.OVER_LINE_NUMBERS_LAYER, extension);
+        blameGutter.addExtension(extension);
 
-        applyGutterState(gutter);
+        updateBlameGutterForEditPane(editPane);
 
         extensions.put(editPane, extension);
 
@@ -274,11 +324,11 @@ public final class GitBlameSupport implements EBComponent {
 
         }
 
-        Gutter gutter = editPane.getTextArea().getGutter();
+        BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
 
-        gutter.removeExtension(extension);
+        blameGutter.removeExtension(extension);
 
-        gutter.setBlameAreaEnabled(false);
+        blameGutter.setBlameEnabled(false);
 
     }
 
@@ -290,7 +340,9 @@ public final class GitBlameSupport implements EBComponent {
 
             EditPane editPane = entry.getKey();
 
-            applyGutterState(editPane.getTextArea().getGutter());
+            updateBlameGutterForEditPane(editPane);
+
+            syncGutterBorders(editPane.getTextArea());
 
             if (isEnabled()) {
 
@@ -306,7 +358,7 @@ public final class GitBlameSupport implements EBComponent {
 
                     }
 
-                    editPane.getTextArea().getGutter().repaint();
+                    editPane.getTextArea().getBlameGutter().repaint();
 
                 }
 
@@ -319,6 +371,12 @@ public final class GitBlameSupport implements EBComponent {
 
 
     private BlameCache cacheFor(Buffer buffer) {
+
+        if (buffer == null) {
+
+            return null;
+
+        }
 
         return caches.computeIfAbsent(buffer, ignored -> new BlameCache());
 
@@ -354,7 +412,9 @@ public final class GitBlameSupport implements EBComponent {
 
             if (entry.getKey().getBuffer() == buffer) {
 
-                entry.getKey().getTextArea().getGutter().repaint();
+                updateBlameGutterForEditPane(entry.getKey());
+
+                entry.getKey().getTextArea().getBlameGutter().repaint();
 
             }
 
@@ -364,15 +424,21 @@ public final class GitBlameSupport implements EBComponent {
 
 
 
-    private static int computeBlameColumnWidth(Gutter gutter) {
+    private static int computeBlameColumnWidth(BlameGutter blameGutter,
 
-        int configured = jEdit.getIntegerProperty(COLUMN_WIDTH_PROPERTY, 96);
+                                               BlameCache cache) {
 
-        FontMetrics fm = gutter.getFontMetrics(gutter.getFont());
+        FontMetrics fm = blameGutter.getFontMetrics(blameGutter.getFont());
 
-        int minimum = fm.stringWidth("M") * 8 + 8;
+        int maxAuthorWidth = cache != null ? cache.maxAuthorWidth(fm) : 0;
 
-        return Math.max(configured, minimum);
+        if (maxAuthorWidth <= 0) {
+
+            return 0;
+
+        }
+
+        return maxAuthorWidth + HORIZONTAL_PADDING;
 
     }
 
@@ -418,9 +484,9 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            Gutter gutter = editPane.getTextArea().getGutter();
+            BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
 
-            if (!gutter.isBlameAreaEnabled()) {
+            if (!blameGutter.isBlameEnabled()) {
 
                 return;
 
@@ -446,9 +512,9 @@ public final class GitBlameSupport implements EBComponent {
 
             FontMetrics fm = gfx.getFontMetrics();
 
-            int columnLeft = gutter.getBlameAreaLeft() + 2;
+            int columnLeft = 2;
 
-            int columnRight = gutter.getBlameAreaRight() - 2;
+            int columnRight = blameGutter.getWidth() - 2;
 
             int maxWidth = Math.max(0, columnRight - columnLeft);
 
@@ -478,13 +544,9 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            Gutter gutter = editPane.getTextArea().getGutter();
+            BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
 
-            if (!gutter.isBlameAreaEnabled()
-
-                || x < gutter.getBlameAreaLeft()
-
-                || x >= gutter.getBlameAreaRight()) {
+            if (!blameGutter.isBlameEnabled()) {
 
                 return null;
 
@@ -609,6 +671,34 @@ public final class GitBlameSupport implements EBComponent {
             }
 
             return data[line - 1];
+
+        }
+
+
+
+        int maxAuthorWidth(FontMetrics fm) {
+
+            String[] data = authors;
+
+            if (data == null) {
+
+                return 0;
+
+            }
+
+            int max = 0;
+
+            for (String author : data) {
+
+                if (author != null && !author.isBlank()) {
+
+                    max = Math.max(max, fm.stringWidth(author));
+
+                }
+
+            }
+
+            return max;
 
         }
 
