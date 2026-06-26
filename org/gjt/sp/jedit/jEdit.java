@@ -37,6 +37,7 @@ import org.jedit.core.MigrationService;
 import org.jedit.migration.OneTimeMigrationService;
 import org.jedit.keymap.KeymapManager;
 import org.jedit.keymap.KeymapManagerImpl;
+import org.jedit.build.TestGutterSupport;
 import org.jedit.lsp.LspPlugin;
 import org.jedit.cursor.CursorPlugin;
 import org.jedit.copilot.CopilotPlugin;
@@ -600,6 +601,8 @@ public class jEdit
 		LspPlugin lspPlugin = new LspPlugin();
 		lspPlugin.start();
 		EditBus.addToBus(lspPlugin);
+
+		TestGutterSupport.install();
 
 		// Cursor integration
 		CursorPlugin cursorPlugin = new CursorPlugin();

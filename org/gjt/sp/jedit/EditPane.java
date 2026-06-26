@@ -60,6 +60,7 @@ import org.gjt.sp.jedit.textarea.StatusListener;
 import org.gjt.sp.jedit.textarea.TextArea;
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
 import org.gjt.sp.jedit.textarea.TextAreaPainter;
+import org.gjt.sp.jedit.textarea.TestGutter;
 import org.gjt.sp.jedit.textarea.TextAreaTransferHandler;
 import org.gjt.sp.util.SyntaxUtilities;
 import org.gjt.sp.util.ThreadUtilities;
@@ -1028,23 +1029,16 @@ public class EditPane extends JPanel implements BufferSetListener
 		gutter.setSelectionAreaWidth(
 				GutterOptionPane.getSelectionAreaWidth());
 
-		int width = jEdit.getIntegerProperty(
-			"view.gutter.borderWidth",3);
-		Color focusBorder = jEdit.getColorProperty("view.gutter.focusBorderColor");
-		Color noFocusBorder = jEdit.getColorProperty("view.gutter.noFocusBorderColor");
-		Color gapColor = textArea.getPainter().getBackground();
 		BlameGutter blameGutter = textArea.getBlameGutter();
 		blameGutter.setBackground(backgroundColor);
 		blameGutter.setForeground(
 			jEdit.getColorProperty("view.gutter.fgColor"));
 		blameGutter.setFont(jEdit.getFontProperty("view.gutter.font"));
-		boolean blameEnabled = org.jedit.git.GitBlameSupport.isEnabled();
-		gutter.setBorder(blameEnabled ? 0 : width,
-			focusBorder, noFocusBorder, gapColor);
-		blameGutter.setBorder(blameEnabled ? width : 0,
-			focusBorder, noFocusBorder, gapColor);
+		TestGutter testGutter = textArea.getTestGutter();
+		testGutter.setBackground(backgroundColor);
 		gutter.setFoldPainter(textArea.getFoldPainter());
 		org.jedit.git.GitBlameSupport.applyBlameGutterState(this);
+		textArea.syncGutterStripBorders();
 
 		textArea.setCaretBlinkEnabled(jEdit.getBooleanProperty(
 			"view.caretBlink"));

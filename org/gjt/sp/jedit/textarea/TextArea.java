@@ -93,10 +93,12 @@ public abstract class TextArea extends JPanel
 		gutter = new Gutter(this);
 		gutter.setMouseActionsProvider(new MouseActions(propertyManager, "gutter"));
 		blameGutter = new BlameGutter(this);
+		testGutter = new TestGutter(this);
 		gutterStrip = new JPanel();
 		gutterStrip.setLayout(new BoxLayout(gutterStrip, BoxLayout.X_AXIS));
 		gutterStrip.add(gutter);
 		gutterStrip.add(blameGutter);
+		gutterStrip.add(testGutter);
 		listenerList = new EventListenerList();
 		caretEvent = new MutableCaretEvent();
 		blink = true;
@@ -291,6 +293,42 @@ public abstract class TextArea extends JPanel
 	public final BlameGutter getBlameGutter()
 	{
 		return blameGutter;
+	} //}}}
+
+	//{{{ getTestGutter() method
+	/**
+	 * Returns the test runner gutter to the right of the blame gutter.
+	 *
+	 * @since jEdit 6.0
+	 */
+	public final TestGutter getTestGutter()
+	{
+		return testGutter;
+	} //}}}
+
+	//{{{ syncGutterStripBorders() method
+	/**
+	 * Places the gutter/text area separator on the rightmost visible strip column.
+	 *
+	 * @since jEdit 6.0
+	 */
+	public void syncGutterStripBorders()
+	{
+		boolean blameEnabled = blameGutter.isBlameEnabled();
+		boolean testEnabled = testGutter.isTestEnabled();
+		int width = jEdit.getIntegerProperty("view.gutter.borderWidth", 3);
+		Color focusBorder = jEdit.getColorProperty("view.gutter.focusBorderColor");
+		Color noFocusBorder = jEdit.getColorProperty("view.gutter.noFocusBorderColor");
+		Color gapColor = painter.getBackground();
+		int gutterBorder = (!blameEnabled && !testEnabled) ? width : 0;
+		int blameBorder = (blameEnabled && !testEnabled) ? width : 0;
+		int testBorder = testEnabled ? width : 0;
+		gutter.setBorder(gutterBorder, focusBorder, noFocusBorder, gapColor);
+		blameGutter.setBorder(blameBorder, focusBorder, noFocusBorder, gapColor);
+		testGutter.setBorder(testBorder, focusBorder, noFocusBorder, gapColor);
+		gutter.updateBorder();
+		blameGutter.updateBorder();
+		testGutter.updateBorder();
 	} //}}}
 
 	//{{{ getDisplayManager() method
@@ -1157,6 +1195,7 @@ public abstract class TextArea extends JPanel
 		painter.repaint(0,y,painter.getWidth(),height);
 		gutter.repaint(0,y,gutter.getWidth(),height);
 		blameGutter.repaint(0,y,blameGutter.getWidth(),height);
+		testGutter.repaint(0,y,testGutter.getWidth(),height);
 	} //}}}
 
 	//{{{ invalidateLine() method
@@ -4711,6 +4750,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		ToolTipManager.sharedInstance().registerComponent(painter);
 		ToolTipManager.sharedInstance().registerComponent(gutter);
 		ToolTipManager.sharedInstance().registerComponent(blameGutter);
+		ToolTipManager.sharedInstance().registerComponent(testGutter);
 
 		recalculateVisibleLines();
 		if(!buffer.isLoading())
@@ -4732,6 +4772,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		ToolTipManager.sharedInstance().unregisterComponent(painter);
 		ToolTipManager.sharedInstance().unregisterComponent(gutter);
 		ToolTipManager.sharedInstance().unregisterComponent(blameGutter);
+		ToolTipManager.sharedInstance().unregisterComponent(testGutter);
 
 		if(focusedComponent == this)
 			focusedComponent = null;
@@ -4932,6 +4973,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		chunkCache.reset();
 		gutter.repaint();
 		blameGutter.repaint();
+		testGutter.repaint();
 		painter.repaint();
 	} //}}}
 
@@ -5261,6 +5303,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 
 	private final Gutter gutter;
 	private final BlameGutter blameGutter;
+	private final TestGutter testGutter;
 	private final JPanel gutterStrip;
 	protected final TextAreaPainter painter;
 

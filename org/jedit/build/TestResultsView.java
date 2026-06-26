@@ -165,7 +165,6 @@ public final class TestResultsView extends JPanel implements DefaultFocusCompone
         super.addNotify();
         TestResultsHub.getInstance().addListener(resultsListener);
         EditBus.addToBus(folderListener);
-        TestGutterSupport.getInstance();
         refreshTree();
     }
 

@@ -27,18 +27,22 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
-import org.gjt.sp.jedit.textarea.Gutter;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
+import org.gjt.sp.jedit.textarea.TestGutter;
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
 
 /**
- * Run icons in the gutter for discovered {@code @Test} and JS test methods.
+ * Run icons in a dedicated gutter column for discovered {@code @Test} and JS test methods.
  */
 public final class TestGutterSupport implements EBComponent {
 
     private static TestGutterSupport instance;
 
     private final Map<EditPane, TestGutterExtension> extensions = new WeakHashMap<>();
+
+    public static void install() {
+        getInstance();
+    }
 
     public static TestGutterSupport getInstance() {
         if (instance == null) {
@@ -64,15 +68,14 @@ public final class TestGutterSupport implements EBComponent {
                 install(update.getEditPane());
             } else if (EditPaneUpdate.DESTROYED.equals(what)) {
                 uninstall(update.getEditPane());
+            } else if (EditPaneUpdate.BUFFER_CHANGED.equals(what)) {
+                refreshEditPane(update.getEditPane());
             }
         } else if (message instanceof BufferUpdate bufferUpdate) {
             Object what = bufferUpdate.getWhat();
             if (BufferUpdate.LOADED.equals(what) || BufferUpdate.SAVED.equals(what)) {
                 refreshBuffer(bufferUpdate.getBuffer());
             }
-        } else if (message instanceof EditPaneUpdate paneUpdate
-            && EditPaneUpdate.BUFFER_CHANGED.equals(paneUpdate.getWhat())) {
-            refreshBuffer(paneUpdate.getEditPane().getBuffer());
         }
     }
 
@@ -80,11 +83,10 @@ public final class TestGutterSupport implements EBComponent {
         if (editPane == null || extensions.containsKey(editPane)) {
             return;
         }
-        JEditTextArea textArea = editPane.getTextArea();
         TestGutterExtension extension = new TestGutterExtension(editPane);
-        Gutter gutter = textArea.getGutter();
-        gutter.addExtension(extension);
-        gutter.addMouseListener(extension.getMouseHandler());
+        TestGutter testGutter = editPane.getTextArea().getTestGutter();
+        testGutter.addExtension(extension);
+        testGutter.addMouseListener(extension.getMouseHandler());
         extensions.put(editPane, extension);
         extension.refresh();
     }
@@ -94,10 +96,10 @@ public final class TestGutterSupport implements EBComponent {
         if (extension == null || editPane == null) {
             return;
         }
-        JEditTextArea textArea = editPane.getTextArea();
-        Gutter gutter = textArea.getGutter();
-        gutter.removeExtension(extension);
-        gutter.removeMouseListener(extension.getMouseHandler());
+        TestGutter testGutter = editPane.getTextArea().getTestGutter();
+        testGutter.removeMouseListener(extension.getMouseHandler());
+        testGutter.removeExtension(extension);
+        updateTestGutterState(editPane, false);
     }
 
     private void refreshBuffer(Buffer buffer) {
@@ -108,16 +110,36 @@ public final class TestGutterSupport implements EBComponent {
         }
     }
 
+    private void refreshEditPane(EditPane editPane) {
+        TestGutterExtension extension = extensions.get(editPane);
+        if (extension != null) {
+            extension.refresh();
+        }
+    }
+
+    private static void updateTestGutterState(EditPane editPane, boolean hasTests) {
+        JEditTextArea textArea = editPane.getTextArea();
+        TestGutter testGutter = textArea.getTestGutter();
+        testGutter.setColumnWidth(hasTests ? TestGutter.DEFAULT_COLUMN_WIDTH : 0);
+        testGutter.setTestEnabled(hasTests);
+        textArea.syncGutterStripBorders();
+    }
+
     private static final class TestGutterExtension extends TextAreaExtension {
 
         private static final int ICON_SIZE = 10;
 
         private final EditPane editPane;
         private final List<TestDiscovery.DiscoveredTest> tests = new ArrayList<>();
+
         private int physicalLineAtPoint(Point point) {
             JEditTextArea textArea = editPane.getTextArea();
-            int screenLine = point.y / textArea.getPainter().getLineHeight();
-            if (screenLine < 0) {
+            int lineHeight = textArea.getPainter().getLineHeight();
+            if (lineHeight <= 0) {
+                return -1;
+            }
+            int screenLine = point.y / lineHeight;
+            if (screenLine < 0 || screenLine >= textArea.getVisibleLines()) {
                 return -1;
             }
             return textArea.getPhysicalLineOfScreenLine(screenLine);
@@ -125,8 +147,8 @@ public final class TestGutterSupport implements EBComponent {
 
         private final MouseAdapter mouseHandler = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() != 1 || e.getX() > ICON_SIZE + 6) {
+            public void mouseReleased(MouseEvent e) {
+                if (!editPane.getTextArea().getTestGutter().isTestEnabled()) {
                     return;
                 }
                 int line = physicalLineAtPoint(e.getPoint());
@@ -153,7 +175,9 @@ public final class TestGutterSupport implements EBComponent {
         void refresh() {
             tests.clear();
             tests.addAll(TestDiscovery.discoverBuffer(editPane.getBuffer()));
-            editPane.getTextArea().getGutter().repaint();
+            boolean hasTests = !tests.isEmpty();
+            updateTestGutterState(editPane, hasTests);
+            editPane.getTextArea().getTestGutter().repaint();
         }
 
         @Override
@@ -163,7 +187,9 @@ public final class TestGutterSupport implements EBComponent {
             if (test == null) {
                 return;
             }
-            int x = 2;
+            TestGutter testGutter = editPane.getTextArea().getTestGutter();
+            int columnWidth = testGutter.getColumnWidth();
+            int x = Math.max(2, (columnWidth - ICON_SIZE) / 2);
             int height = editPane.getTextArea().getPainter().getLineHeight();
             int cy = y + (height / 2);
             gfx.setColor(TestCaseStatus.DISCOVERED.color());

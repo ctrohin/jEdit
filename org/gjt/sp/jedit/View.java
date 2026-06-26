@@ -2221,10 +2221,7 @@ loop:		while (true)
 	{
 		EditPane[] editPanes = getEditPanes();
 		for (EditPane editPane : editPanes)
-		{
-			editPane.getTextArea().getGutter().updateBorder();
-			editPane.getTextArea().getBlameGutter().updateBorder();
-		}
+			editPane.getTextArea().syncGutterStripBorders();
 	} //}}}
 
 	//{{{ getOpenBuffers() method

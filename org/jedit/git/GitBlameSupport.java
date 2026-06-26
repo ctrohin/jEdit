@@ -194,31 +194,7 @@ public final class GitBlameSupport implements EBComponent {
 
         }
 
-        boolean blameEnabled = isEnabled();
-
-        int width = jEdit.getIntegerProperty("view.gutter.borderWidth", 3);
-
-        Color focusBorder = jEdit.getColorProperty("view.gutter.focusBorderColor");
-
-        Color noFocusBorder = jEdit.getColorProperty("view.gutter.noFocusBorderColor");
-
-        Color gapColor = textArea.getPainter().getBackground();
-
-        Gutter gutter = textArea.getGutter();
-
-        BlameGutter blameGutter = textArea.getBlameGutter();
-
-        gutter.setBorder(blameEnabled ? 0 : width,
-
-            focusBorder, noFocusBorder, gapColor);
-
-        blameGutter.setBorder(blameEnabled ? width : 0,
-
-            focusBorder, noFocusBorder, gapColor);
-
-        gutter.updateBorder();
-
-        blameGutter.updateBorder();
+        textArea.syncGutterStripBorders();
 
     }
 
@@ -437,16 +413,7 @@ public final class GitBlameSupport implements EBComponent {
         private final MouseAdapter mouseHandler = new MouseAdapter() {
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                handleMouse(e);
-            }
-
-            @Override
             public void mouseReleased(MouseEvent e) {
-                handleMouse(e);
-            }
-
-            private void handleMouse(MouseEvent e) {
                 if (!isEnabled()) {
                     return;
                 }
@@ -463,9 +430,7 @@ public final class GitBlameSupport implements EBComponent {
                     showPopupMenu(e, blameLine);
                     return;
                 }
-                if (e.getID() == MouseEvent.MOUSE_RELEASED
-                    && e.getButton() == MouseEvent.BUTTON1
-                    && !e.isPopupTrigger()) {
+                if (TextAreaMouseHandler.isLeftButton(e)) {
                     showCommit(blameLine);
                 }
             }
