@@ -24,6 +24,7 @@ import org.gjt.sp.jedit.EBMessage;
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.EditPane;
 import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
@@ -31,12 +32,15 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.TestGutter;
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
 
+import javax.swing.*;
+
 /**
  * Run icons in a dedicated gutter column for discovered {@code @Test} and JS test methods.
  */
 public final class TestGutterSupport implements EBComponent {
 
     private static TestGutterSupport instance;
+    private static final Icon playIcon = IconManager.loadIcon("MatIcons.PLAY_ARROW:16");
 
     private final Map<EditPane, TestGutterExtension> extensions = new WeakHashMap<>();
 
@@ -127,8 +131,6 @@ public final class TestGutterSupport implements EBComponent {
 
     private static final class TestGutterExtension extends TextAreaExtension {
 
-        private static final int ICON_SIZE = 10;
-
         private final EditPane editPane;
         private final List<TestDiscovery.DiscoveredTest> tests = new ArrayList<>();
 
@@ -184,18 +186,17 @@ public final class TestGutterSupport implements EBComponent {
         public void paintValidLine(Graphics2D gfx, int screenLine, int physicalLine,
                                    int start, int end, int y) {
             TestDiscovery.DiscoveredTest test = testAtLine(physicalLine);
-            if (test == null) {
+            if (test == null || playIcon == null) {
                 return;
             }
             TestGutter testGutter = editPane.getTextArea().getTestGutter();
             int columnWidth = testGutter.getColumnWidth();
-            int x = Math.max(2, (columnWidth - ICON_SIZE) / 2);
+            int iconWidth = playIcon.getIconWidth();
+            int iconHeight = playIcon.getIconHeight();
+            int x = Math.max(2, (columnWidth - iconWidth) / 2);
             int height = editPane.getTextArea().getPainter().getLineHeight();
-            int cy = y + (height / 2);
-            gfx.setColor(TestCaseStatus.DISCOVERED.color());
-            int[] xs = {x, x + ICON_SIZE, x + (ICON_SIZE / 2)};
-            int[] ys = {cy - 4, cy - 4, cy + 3};
-            gfx.fillPolygon(xs, ys, 3);
+            int iconY = y + (height - iconHeight) / 2;
+            playIcon.paintIcon(null, gfx, x, iconY);
         }
 
         @Override
