@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -47,7 +46,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.gjt.sp.jedit.bsh.NameSpace;
 import org.gjt.sp.jedit.bsh.UtilEvalError;
-//}}}
 
 /** Loads <code>dockable.xml</code> files and manages creation
  * of new dockable windows.
@@ -58,7 +56,7 @@ import org.gjt.sp.jedit.bsh.UtilEvalError;
  */
 public class DockableWindowFactory
 {
-	//{{{ getInstance() method
+	// getInstance() method
 	public static synchronized DockableWindowFactory getInstance()
 	{
 		if(instance == null)
@@ -66,13 +64,13 @@ public class DockableWindowFactory
 		return instance;
 	} //}}}
 
-	//{{{ DockableWindowFactory constructor
+	// DockableWindowFactory constructor
 	public DockableWindowFactory()
 	{
 		dockableWindowFactories = new HashMap<String, Window>();
 	} //}}}
 
-	//{{{ loadDockableWindows() method
+	// loadDockableWindows() method
 	/**
 	 * Plugins shouldn't need to call this method.
 	 * @since jEdit 4.2pre1
@@ -114,7 +112,7 @@ public class DockableWindowFactory
 		}
 	} //}}}
 
-	//{{{ unloadDockableWindows() method
+	// unloadDockableWindows() method
 	/**
 	 * Plugins shouldn't need to call this method.
 	 * @since jEdit 4.2pre1
@@ -124,7 +122,7 @@ public class DockableWindowFactory
 		dockableWindowFactories.entrySet().removeIf(entry -> plugin == entry.getValue().plugin);
 	} //}}}
 
-	//{{{ cacheDockableWindows() method
+	// cacheDockableWindows() method
 	/**
 	 * @since jEdit 4.2pre1
 	 */
@@ -139,7 +137,7 @@ public class DockableWindowFactory
 		}
 	} //}}}
 
-	//{{{ registerDockableWindow() method
+	// registerDockableWindow() method
 	public void registerDockableWindow(PluginJAR plugin,
 		String name, String code, boolean actions, boolean movable)
 	{
@@ -156,7 +154,7 @@ public class DockableWindowFactory
 		}
 	} //}}}
 
-	//{{{ getRegisteredDockableWindows() method
+	// getRegisteredDockableWindows() method
 	public String[] getRegisteredDockableWindows()
 	{
 		String[] retVal = new String[dockableWindowFactories.size()];
@@ -184,16 +182,16 @@ public class DockableWindowFactory
 		return w.plugin.getPlugin().getClassName();
 	}
 
-	//{{{ getDockableWindowIterator() method
+	// getDockableWindowIterator() method
 	Iterator<Window> getDockableWindowIterator()
 	{
 		return dockableWindowFactories.values().iterator();
 	} //}}}
 
-	//{{{ DockableListHandler class
+	// DockableListHandler class
 	class DockableListHandler extends DefaultHandler
 	{
-		//{{{ DockableListHandler constructor
+		// DockableListHandler constructor
 		/**
 		 * @param plugin - the pluginJAR for which we are loading the dockables.xml
 		 * @param uri - the uri of the dockables.xml file?
@@ -212,14 +210,14 @@ public class DockableWindowFactory
 			cachedDockableMovableFlags = new LinkedList<>();
 		} //}}}
 
-		//{{{ resolveEntity() method
+		// resolveEntity() method
 		@Override
 		public InputSource resolveEntity(String publicId, String systemId)
 		{
 			return XMLUtilities.findEntity(systemId, "dockables.dtd", MiscUtilities.class);
 		} //}}}
 
-		//{{{ characters() method
+		// characters() method
 		@Override
 		public void characters(char[] c, int off, int len)
 		{
@@ -228,7 +226,7 @@ public class DockableWindowFactory
 				code.append(c, off, len);
 		} //}}}
 
-		//{{{ startElement() method
+		// startElement() method
 		@Override
 		public void startElement(String uri, String localName,
 					 String qName, Attributes attrs)
@@ -244,7 +242,7 @@ public class DockableWindowFactory
 			}
 		} //}}}
 
-		//{{{ endElement() method
+		// endElement() method
 		@Override
 		public void endElement(String uri, String localName, String name)
 		{
@@ -278,7 +276,7 @@ public class DockableWindowFactory
 			}
 		} //}}}
 
-		//{{{ startDocument() method
+		// startDocument() method
 		@Override
 		public void startDocument()
 		{
@@ -292,25 +290,25 @@ public class DockableWindowFactory
 			}
 		} //}}}
 
-		//{{{ getCachedDockableNames() method
+		// getCachedDockableNames() method
 		public String[] getCachedDockableNames()
 		{
 			return cachedDockableNames.toArray(new String[cachedDockableNames.size()]);
 		} //}}}
 
-		//{{{ getCachedDockableActionFlags() method
+		// getCachedDockableActionFlags() method
 		public boolean[] getCachedDockableActionFlags()
 		{
 			return booleanListToArray(cachedDockableActionFlags);
 		} //}}}
 
-		//{{{ getCachedDockableMovableFlags() method
+		// getCachedDockableMovableFlags() method
 		public boolean[] getCachedDockableMovableFlags()
 		{
 			return booleanListToArray(cachedDockableMovableFlags);
 		} //}}}
 
-		//{{{ booleanListToArray() method
+		// booleanListToArray() method
 		/**
 		 * This method transforms a List<Boolean> into the corresponding
 		 * boolean[] array
@@ -329,9 +327,9 @@ public class DockableWindowFactory
 			return returnValue;
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 
-		//{{{ Instance variables
+		// Instance variables
 		private final PluginJAR plugin;
 		// What is the purpose of this?
 		private URL uri;
@@ -347,9 +345,8 @@ public class DockableWindowFactory
 		static final boolean MOVABLE_DEFAULT = false;
 
 		private final Stack<String> stateStack;
-		//}}}
 
-		//{{{ pushElement() method
+		// pushElement() method
 		private String pushElement(String name)
 		{
 			name = (name == null) ? null : name.intern();
@@ -359,22 +356,21 @@ public class DockableWindowFactory
 			return name;
 		} //}}}
 
-		//{{{ peekElement() method
+		// peekElement() method
 		private String peekElement()
 		{
 			return stateStack.peek();
 		} //}}}
 
-		//{{{ popElement() method
+		// popElement() method
 		private String popElement()
 		{
 			return stateStack.pop();
 		} //}}}
 
-		//}}}
 	} //}}}
 
-	//{{{ Window class
+	// Window class
     public class Window
 	{
 		PluginJAR plugin;
@@ -384,7 +380,7 @@ public class DockableWindowFactory
 		boolean movable;
 		boolean isBeingCreated;
 
-		//{{{ Window constructor
+		// Window constructor
 		Window(PluginJAR plugin, String name, String code,
 			boolean actions, boolean movable)
 		{
@@ -426,7 +422,7 @@ public class DockableWindowFactory
 			}
 		} //}}}
 
-		//{{{ load() method
+		// load() method
 		void load()
 		{
 			if(loaded)
@@ -435,7 +431,7 @@ public class DockableWindowFactory
 			loadDockableWindows(plugin,plugin.getDockablesURI(),null);
 		} //}}}
 
-		//{{{ createDockableWindow() method
+		// createDockableWindow() method
 		JComponent createDockableWindow(View view, String position)
 		{
 			// Avoid infinite recursion
@@ -480,19 +476,19 @@ public class DockableWindowFactory
 			return win;
 		} //}}}
 
-		//{{{ OpenAction class
+		// OpenAction class
 		class OpenAction extends EditAction
 		{
 			private final String dockable;
 
-			//{{{ OpenAction constructor
+			// OpenAction constructor
 			OpenAction(String name)
 			{
 				super(name);
 				dockable = name;
 			} //}}}
 
-			//{{{ invoke() method
+			// invoke() method
 			@Override
 			public void invoke(View view)
 			{
@@ -500,7 +496,7 @@ public class DockableWindowFactory
 					.showDockableWindow(dockable);
 			} //}}}
 
-			//{{{ getCode() method
+			// getCode() method
 			@Override
 			public String getCode()
 			{
@@ -509,19 +505,19 @@ public class DockableWindowFactory
 			} //}}}
 		} //}}}
 
-		//{{{ ToggleAction class
+		// ToggleAction class
 		class ToggleAction extends EditAction
 		{
 			private final String dockable;
 
-			//{{{ ToggleAction constructor
+			// ToggleAction constructor
 			ToggleAction(String name)
 			{
 				super(name + "-toggle");
 				dockable = name;
 			} //}}}
 
-			//{{{ invoke() method
+			// invoke() method
 			@Override
 			public void invoke(View view)
 			{
@@ -529,14 +525,14 @@ public class DockableWindowFactory
 					.toggleDockableWindow(dockable);
 			} //}}}
 
-			//{{{ isSelected() method
+			// isSelected() method
 			public boolean isSelected(View view)
 			{
 				return view.getDockableWindowManager()
 					.isDockableWindowVisible(dockable);
 			} //}}}
 
-			//{{{ getCode() method
+			// getCode() method
 			@Override
 			public String getCode()
 			{
@@ -545,19 +541,19 @@ public class DockableWindowFactory
 			} //}}}
 		} //}}}
 
-		//{{{ FloatAction class
+		// FloatAction class
 		class FloatAction extends EditAction
 		{
 			private final String dockable;
 
-			//{{{ FloatAction constructor
+			// FloatAction constructor
 			FloatAction(String name)
 			{
 				super(name + "-float");
 				dockable = name;
 			} //}}}
 
-			//{{{ invoke() method
+			// invoke() method
 			@Override
 			public void invoke(View view)
 			{
@@ -565,7 +561,7 @@ public class DockableWindowFactory
 					.floatDockableWindow(dockable);
 			} //}}}
 
-			//{{{ getCode() method
+			// getCode() method
 			@Override
 			public String getCode()
 			{

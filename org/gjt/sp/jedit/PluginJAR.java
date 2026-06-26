@@ -1,7 +1,6 @@
 /*
  * PluginJAR.java - Controls JAR loading and unloading
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.awt.EventQueue;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -74,7 +73,6 @@ import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.IOUtilities;
 
 import static org.gjt.sp.jedit.EditBus.EBHandler;
-//}}}
 
 /**
  * Loads and unloads plugins.<p>
@@ -153,7 +151,7 @@ import static org.gjt.sp.jedit.EditBus.EBHandler;
 public class PluginJAR
 {
 	public static final PluginDepends[] EMPTY_PLUGIN_DEPENDS_ARRAY = new PluginDepends[0];
-	//{{{ Instance variables
+	// Instance variables
 	private final String path;
 	private String cachePath;
 	private final File file;
@@ -189,9 +187,8 @@ public class PluginJAR
 	
 	/** These plugins are an optional dependency for me, I'll use them if they are available, no worries if they aren't. */
 	private final Set<String> weUseThese = new LinkedHashSet<>();
-	//}}}
 
-	//{{{ load(String jarPath, boolean activateDependentIfNecessary)
+	// load(String jarPath, boolean activateDependentIfNecessary)
 	/**
 	 * Loads a plugin, and its dependent plugins if necessary.
 	 *
@@ -274,7 +271,7 @@ public class PluginJAR
 		return jar;
 	} // }}}
 	
-	//{{{ parseJarsFilesString(String path, String jarsString) method
+	// parseJarsFilesString(String path, String jarsString) method
 	/**
 	 * parse the files listed in plugin.CLASSNAME.jars or plugin.CLASSNAME.files
 	 * and return full paths to each file of the list.
@@ -293,7 +290,7 @@ public class PluginJAR
 		return jarPaths;
 	}
 	// }}}
-	//{{{ parseJarsFilesStringNames(String path, String jarsString) method
+	// parseJarsFilesStringNames(String path, String jarsString) method
 	/**
 	 * parse the files listed in plugin.CLASSNAME.jars or plugin.CLASSNAME.files
 	 * and return them as a collection
@@ -311,7 +308,7 @@ public class PluginJAR
 	}
 	// }}}
 
-	//{{{ getJars() method
+	// getJars() method
 	/**
 	 * Get the jars listed in this plugin and return full paths to them
 	 *
@@ -353,7 +350,7 @@ public class PluginJAR
 	}
 	// }}}
 
-	//{{{ getPath() method
+	// getPath() method
 	/**
 	 * Returns the full path name of this plugin's JAR file.
 	 */
@@ -362,7 +359,7 @@ public class PluginJAR
 		return path;
 	} //}}}
 
-	//{{{ findPlugin() method
+	// findPlugin() method
 	/**
 	 * Unlike getPlugin(), will return a PluginJAR that is not yet loaded,
 	 * given its classname.
@@ -388,7 +385,7 @@ public class PluginJAR
 		return null;
 	} // }}}
 
-	//{{{ containsClass() function
+	// containsClass() function
 	/**
 	 * @param className a class name
 	 * @return true if this jar contains a class with that classname.
@@ -419,7 +416,7 @@ public class PluginJAR
 
 	} // }}}
 
-	//{{{ getCachePath() method
+	// getCachePath() method
 	/**
 	 * Returns the full path name of this plugin's summary file.
 	 * The summary file is used to store certain information which allows
@@ -433,7 +430,7 @@ public class PluginJAR
 		return cachePath;
 	} //}}}
 
-	//{{{ getDependencySet() method
+	// getDependencySet() method
 	/**
 	 *
 	 * @param className of a plugin that we wish to load
@@ -474,7 +471,7 @@ public class PluginJAR
 		return retval;
 	} // }}}
 
-	//{{{ getFile() method
+	// getFile() method
 	/**
 	 * Returns a file pointing to the plugin JAR.
 	 */
@@ -483,7 +480,7 @@ public class PluginJAR
 		return file;
 	} //}}}
 
-	//{{{ getClassLoader() method
+	// getClassLoader() method
 	/**
 	 * Returns the plugin's class loader.
 	 */
@@ -492,7 +489,7 @@ public class PluginJAR
 		return classLoader;
 	} //}}}
 
-	//{{{ getZipFile() method
+	// getZipFile() method
 	/**
 	 * Returns the plugin's JAR file, opening it if necessary.
 	 * @since jEdit 4.2pre1
@@ -507,7 +504,7 @@ public class PluginJAR
 		return zipFile;
 	} //}}}
 
-	//{{{ getActionSet() method
+	// getActionSet() method
 	/**
 	 * Returns the plugin's action set for the jEdit action context
 	 * {@link jEdit#getActionContext()}. These actions are loaded from
@@ -520,7 +517,7 @@ public class PluginJAR
 		return actions;
 	} //}}}
 
-	//{{{ getBrowserActionSet() method
+	// getBrowserActionSet() method
 	/**
 	 * Returns the plugin's action set for the file system browser action
 	 * context {@link
@@ -535,7 +532,7 @@ public class PluginJAR
 		return browserActions;
 	} //}}}
 
-	//{{{ checkDependencies() method
+	// checkDependencies() method
 	/**
 	 * Returns true if all dependencies are satisified, false otherwise.
 	 * Also if dependencies are not satisfied, the plugin is marked as
@@ -699,7 +696,7 @@ public class PluginJAR
 		return ok;
 	} //}}}
 
-	//{{{ getRequiredJars() method
+	// getRequiredJars() method
 	/**
 	 * Returns the required jars of this plugin.
 	 *
@@ -711,7 +708,7 @@ public class PluginJAR
 		return weRequireThese;
 	} //}}}
 
-	//{{{ getPluginDepends() method
+	// getPluginDepends() method
 	private static PluginDepends[] getPluginDepends(String classname) throws IllegalArgumentException
 	{
 		var ret = new ArrayList<PluginDepends>();
@@ -748,7 +745,7 @@ public class PluginJAR
 		return ret.toArray(EMPTY_PLUGIN_DEPENDS_ARRAY);
 	} //}}}
 
-	//{{{ getDependencies() method
+	// getDependencies() method
 	/**
 	 * Returns a list of dependencies by searching the plugin properties.
 	 * @param classname The classname of a plugin
@@ -773,7 +770,7 @@ public class PluginJAR
 		return ret;
 	} //}}}
 
-	//{{{ getOptionalDependencies() method
+	// getOptionalDependencies() method
 	/**
 	 * Returns a list of optional dependencies by searching the plugin properties.
 	 * @param classname The classname of a plugin
@@ -803,7 +800,7 @@ public class PluginJAR
 		return ret;
 	} //}}}
 
-	//{{{ PluginDepends class
+	// PluginDepends class
 	private static class PluginDepends
 	{
 		String dep;		// full string, e.g. plugin errorlist.ErrorList 1.3
@@ -814,7 +811,7 @@ public class PluginJAR
 		
 	} //}}}
 
-	//{{{ transitiveClosure()
+	// transitiveClosure()
 	/**
 	 * If plugin A is needed by B, and B is needed by C, we want to
 	 * tell the user that A is needed by B and C when they try to
@@ -845,7 +842,7 @@ public class PluginJAR
 		}
   	} //}}}
 
-	//{{{ getDependentPlugins() method
+	// getDependentPlugins() method
 	/**
 	* @return an array of plugin names that have a hard dependency on this plugin
 	*/
@@ -854,7 +851,7 @@ public class PluginJAR
 		return theseRequireMe.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//{{{ getOptionallyDependentPlugins() method
+	// getOptionallyDependentPlugins() method
 	/**
 	* @return an array of plugin names that have an optional dependency on this plugin
 	*/
@@ -863,7 +860,7 @@ public class PluginJAR
 		return theseUseMe.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 	
-	//{{{ getAllDependentPlugins() method
+	// getAllDependentPlugins() method
 	/**
 	* @return an array of plugin names that have a dependency or an optional dependency on this plugin,
 	* this returns a combination of <code>getDependentPlugins</code> and <code>getOptionallyDependentPlugins</code>.
@@ -877,7 +874,7 @@ public class PluginJAR
 	} //}}}
 	
 
-	//{{{ getPlugin() method
+	// getPlugin() method
 	/**
 	 * Returns the plugin core class for this JAR file. Note that if the
 	 * plugin has not been activated, this will return an instance of
@@ -892,7 +889,7 @@ public class PluginJAR
 		return plugin;
 	} //}}}
 
-	//{{{ activatePlugin() method
+	// activatePlugin() method
 	/**
 	 * Loads the plugin core class. Does nothing if the plugin core class
 	 * has already been loaded. This method might be called on startup,
@@ -965,7 +962,7 @@ public class PluginJAR
 		EditBus.sendAsync(new PluginUpdate(this,PluginUpdate.ACTIVATED,false));
 	} //}}}
 
-	//{{{ activateIfNecessary() method
+	// activateIfNecessary() method
 	/**
 	 * Should be called after a new plugin is installed.
 	 * @since jEdit 4.2pre2
@@ -1029,7 +1026,7 @@ public class PluginJAR
 		}
 	} //}}}
 
-	//{{{ deactivatePlugin() method
+	// deactivatePlugin() method
 	/**
 	 * Unloads the plugin core class. Does nothing if the plugin core class
 	 * has not been loaded.
@@ -1098,7 +1095,7 @@ public class PluginJAR
 		activated = false;
 	} //}}}
 
-	//{{{ getDockablesURI() method
+	// getDockablesURI() method
 	/**
 	 * Returns the location of the plugin's
 	 * <code>dockables.xml</code> file.
@@ -1109,7 +1106,7 @@ public class PluginJAR
 		return dockablesURI;
 	} //}}}
 
-	//{{{ getServicesURI() method
+	// getServicesURI() method
 	/**
 	 * Returns the location of the plugin's
 	 * <code>services.xml</code> file.
@@ -1120,7 +1117,7 @@ public class PluginJAR
 		return servicesURI;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -1130,11 +1127,11 @@ public class PluginJAR
 			return path + ",class=" + plugin.getClassName();
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ Static methods
+	// Static methods
 	
-	//{{{ getPluginCache() method
+	// getPluginCache() method
 	public static PluginCacheEntry getPluginCache(PluginJAR plugin)
 	{
 		String jarCachePath = plugin.getCachePath();
@@ -1173,7 +1170,7 @@ public class PluginJAR
 		}
 	} //}}}
 
-	//{{{ setPluginCache() method
+	// setPluginCache() method
 	static void setPluginCache(PluginJAR plugin, PluginCacheEntry cache)
 	{
 		String jarCachePath = plugin.getCachePath();
@@ -1199,7 +1196,7 @@ public class PluginJAR
 		}
 	} //}}}
 
-	//{{{ getPluginCacheEntry() method
+	// getPluginCacheEntry() method
 	/**
 	 * Returns the cache entry for an installed but not loaded plugin.
 	 * There is no need to use this method if the plugin is loaded.
@@ -1236,9 +1233,8 @@ public class PluginJAR
 		return pluginCacheEntry;
 	}//}}}
 
-	//}}}
 
-	//{{{ PluginJAR constructor
+	// PluginJAR constructor
 	/**
 	 * Creates a PluginJAR object which is not necessarily loaded, but can be later.
 	 * @see #load(String, boolean)
@@ -1257,7 +1253,7 @@ public class PluginJAR
 		actions = new ActionSet();
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	public boolean init()
 	{
 		PluginCacheEntry cache = getPluginCache(this);
@@ -1297,7 +1293,7 @@ public class PluginJAR
 		return true;
 	} //}}}
 
-	//{{{ uninit() method
+	// uninit() method
 	public void uninit(boolean exit)
 	{
 		deactivatePlugin(exit);
@@ -1355,30 +1351,29 @@ public class PluginJAR
 		}
 	} //}}}
 
-	//{{{ getClasses() method
+	// getClasses() method
 	String[] getClasses()
 	{
 		return classes;
 	} //}}}
 
-	//{{{ getResources() method
+	// getResources() method
 	public String[] getResources()
 	{
 		return resources;
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ actionsPresentButNotCoreClass() method
+	// actionsPresentButNotCoreClass() method
 	private void actionsPresentButNotCoreClass()
 	{
 		Log.log(Log.WARNING,this,getPath() + " has an actions.xml but no plugin core class");
 		actions.setLabel("MISSING PLUGIN CORE CLASS");
 	} //}}}
 
-	//{{{ loadCache() method
+	// loadCache() method
 	private boolean loadCache(PluginCacheEntry cache)
 	{
 		// Check if a plugin with the same name
@@ -1494,7 +1489,7 @@ public class PluginJAR
 		return true;
 	} //}}}
 
-	//{{{ generateCache() method
+	// generateCache() method
 	public PluginCacheEntry generateCache() throws IOException
 	{
 		properties = new Properties();
@@ -1729,7 +1724,7 @@ public class PluginJAR
 		return true;
 	}
 
-	//{{{ startPlugin() method
+	// startPlugin() method
 	private void startPlugin()
 	{
 		try
@@ -1775,7 +1770,7 @@ public class PluginJAR
 			});
 	} //}}}
 
-	//{{{ startPluginLater() method
+	// startPluginLater() method
 	private void startPluginLater()
 	{
 		EventQueue.invokeLater(() ->
@@ -1787,7 +1782,7 @@ public class PluginJAR
 		});
 	} //}}}
 
-	//{{{ breakPlugin() method
+	// breakPlugin() method
 	private void breakPlugin()
 	{
 		plugin = new EditPlugin.Broken(this,plugin.getClassName());
@@ -1799,16 +1794,15 @@ public class PluginJAR
 		jEdit.addPluginProps(properties);
 	} //}}}
 
-	//{{{ removePluginCache() method
+	// removePluginCache() method
 	private void removePluginCache()
 	{
 		if(cachePath != null)
 			new File(cachePath).delete();
 	} //}}}
 
-	//}}}
 
-	//{{{ PluginCacheEntry class
+	// PluginCacheEntry class
 	/**
 	 * Used by the <code>DockableWindowManager</code> and
 	 * <code>ServiceManager</code> to handle caching.
@@ -1818,7 +1812,7 @@ public class PluginJAR
 	{
 		public static final int MAGIC = 0xB7A2E424;
 
-		//{{{ Instance variables
+		// Instance variables
 		public PluginJAR plugin;
 		public long modTime;
 
@@ -1840,14 +1834,13 @@ public class PluginJAR
 		public Properties cachedProperties;
 		public Map<String, Properties> localizationProperties;
 		public String pluginClass;
-		//}}}
 
 		/* read() and write() must be kept perfectly in sync...
 		 * its a very simple file format. doing it this way is
 		 * faster than serializing since serialization calls
 		 * reflection, etc. */
 
-		//{{{ read() method
+		// read() method
 		public boolean read(DataInputStream din) throws IOException
 		{
 			int cacheMagic = din.readInt();
@@ -1905,7 +1898,7 @@ public class PluginJAR
 			return true;
 		} //}}}
 
-		//{{{ write() method
+		// write() method
 		public void write(DataOutputStream dout) throws IOException
 		{
 			dout.writeInt(MAGIC);
@@ -1948,9 +1941,9 @@ public class PluginJAR
 			writeString(dout,pluginClass);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 
-		//{{{ readString() method
+		// readString() method
 		private static String readString(DataInputStream din)
 			throws IOException
 		{
@@ -1963,7 +1956,7 @@ public class PluginJAR
 			return new String(str);
 		} //}}}
 
-		//{{{ readURI() method
+		// readURI() method
 		private static URL readURI(DataInputStream din)
 			throws IOException
 		{
@@ -1974,7 +1967,7 @@ public class PluginJAR
 				return new URL(str);
 		} //}}}
 
-		//{{{ readStringArray() method
+		// readStringArray() method
 		private static String[] readStringArray(DataInputStream din)
 			throws IOException
 		{
@@ -1989,7 +1982,7 @@ public class PluginJAR
 			return str;
 		} //}}}
 
-		//{{{ readBooleanArray() method
+		// readBooleanArray() method
 		private static boolean[] readBooleanArray(DataInputStream din)
 			throws IOException
 		{
@@ -2004,7 +1997,7 @@ public class PluginJAR
 			return bools;
 		} //}}}
 
-		//{{{ readMap() method
+		// readMap() method
 		private static Properties readMap(DataInputStream din)
 			throws IOException
 		{
@@ -2021,7 +2014,7 @@ public class PluginJAR
 			return returnValue;
 		} //}}}
 
-		//{{{ readLanguagesMap() method
+		// readLanguagesMap() method
 		private static Map<String, Properties> readLanguagesMap(DataInputStream din)
 			throws IOException
 		{
@@ -2041,7 +2034,7 @@ public class PluginJAR
 			return languages;
 		} //}}}
 
-		//{{{ writeString() method
+		// writeString() method
 		private static void writeString(DataOutputStream dout,
 			Object obj) throws IOException
 		{
@@ -2057,7 +2050,7 @@ public class PluginJAR
 			}
 		} //}}}
 
-		//{{{ writeStringArray() method
+		// writeStringArray() method
 		private static void writeStringArray(DataOutputStream dout,
 			String[] str) throws IOException
 		{
@@ -2073,7 +2066,7 @@ public class PluginJAR
 			}
 		} //}}}
 
-		//{{{ writeBooleanArray() method
+		// writeBooleanArray() method
 		private static void writeBooleanArray(DataOutputStream dout,
 			boolean[] bools) throws IOException
 		{
@@ -2089,7 +2082,7 @@ public class PluginJAR
 			}
 		} //}}}
 
-		//{{{ writeMap() method
+		// writeMap() method
 		private static void writeMap(DataOutputStream dout, Properties properties)
 			throws IOException
 		{
@@ -2102,7 +2095,7 @@ public class PluginJAR
 			}
 		} //}}}
 
-		//{{{ writeLanguages() method
+		// writeLanguages() method
 		private static void writeLanguages(DataOutputStream dout, Map<String, Properties> languages)
 			throws IOException
 		{
@@ -2114,6 +2107,5 @@ public class PluginJAR
 			}
 		} //}}}
 
-		//}}}
 	} //}}}
 }

@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Kazutoshi Satoda
  *
@@ -20,7 +19,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-//}}}
 
 /**
  * Encodings which have BOM at the beginning of byte stream.
@@ -44,7 +42,7 @@ import java.util.Map;
  */
 public class EncodingWithBOM implements Encoding
 {
-	//{{{ Constructor
+	// Constructor
 	public EncodingWithBOM(String plain)
 	{
 		byte[] bom = bomMap.get(plain);
@@ -56,7 +54,7 @@ public class EncodingWithBOM implements Encoding
 		this.bom = bom;
 	} //}}}
 
-	//{{{ implements Encoding
+	// implements Encoding
 	@Override
 	
 	public Reader getTextReader( InputStream in) throws IOException
@@ -95,9 +93,8 @@ public class EncodingWithBOM implements Encoding
 		}
 		return plain.getPermissiveTextReader(in);
 	}
-	//}}}
 
-	//{{{ class Detector
+	// class Detector
 	public static class Detector implements EncodingDetector
 	{
 		@Override
@@ -158,9 +155,9 @@ public class EncodingWithBOM implements Encoding
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Statics
+	// Statics
 	private static final int BOM16 = 0xfeff;
 	private static final byte[] UTF8BOM = { (byte)0xef, (byte)0xbb, (byte)0xbf };
 	private static final Map<String, byte[]> bomMap = new HashMap<>();
@@ -176,12 +173,9 @@ public class EncodingWithBOM implements Encoding
 		bomMap.put("UTF-32LE", new byte[] { low, high, 0x00, 0x00 });
 		bomMap.put("UTF-32BE", new byte[] { 0x00, 0x00, high, low });
 	}
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private final CharsetEncoding plain;
 	private final byte[] bom;
-	//}}}
 
-	//}}}
 }

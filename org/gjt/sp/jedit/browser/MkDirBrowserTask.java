@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  * Portions Copyright (C) 2000, 2003 Slava Pestov
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 
 import java.io.IOException;
-//}}}
 
 /**
  * @author Matthieu CAsanova
@@ -37,7 +35,7 @@ import java.io.IOException;
  */
 class MkDirBrowserTask extends AbstractBrowserTask
 {
-	//{{{ MkDirBrowserTask constructor
+	// MkDirBrowserTask constructor
 	/**
 	 * Creates a new browser I/O request.
 	 * @param browser The VFS browser instance
@@ -50,7 +48,7 @@ class MkDirBrowserTask extends AbstractBrowserTask
 		super(browser, session, vfs, path, awtRunnable);
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -88,7 +86,7 @@ class MkDirBrowserTask extends AbstractBrowserTask
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + "[type=MKDIR"

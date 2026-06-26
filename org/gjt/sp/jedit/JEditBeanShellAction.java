@@ -1,7 +1,6 @@
 /*
  * JEditBeanShellAction.java - jEdit BeanShell action
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
  * Portions Copyright (C) 2000, 2003 Slava Pestov
@@ -44,7 +43,7 @@ import org.gjt.sp.util.Log;
  */
 public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 {
-	//{{{ BeanShellAction constructor
+	// BeanShellAction constructor
 	public JEditBeanShellAction(String name, String code, String isSelected,
 		boolean noRepeat, boolean noRecord, boolean noRememberLast)
 	{
@@ -61,7 +60,7 @@ public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 		sanitizedName = name.replace('.','_').replace('-','_');
 	} //}}}
 
-	//{{{ invoke() method
+	// invoke() method
 	@Override
 	public void invoke(TextArea textArea)
 	{
@@ -83,7 +82,7 @@ public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 		}
 	} //}}}
 
-	//{{{ isSelected() method
+	// isSelected() method
 	public boolean isSelected(Component comp)
 	{
 		if(isSelected == null)
@@ -135,19 +134,19 @@ public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 		}
 	} //}}}
 
-	//{{{ noRepeat() method
+	// noRepeat() method
 	public boolean noRepeat()
 	{
 		return noRepeat;
 	} //}}}
 
-	//{{{ noRecord() method
+	// noRecord() method
 	public boolean noRecord()
 	{
 		return noRecord;
 	} //}}}
 
-	//{{{ noRememberLast() method
+	// noRememberLast() method
 	/**
 	 * Returns if this edit action should not be remembered as the most
 	 * recently invoked action.
@@ -158,13 +157,13 @@ public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 		return noRememberLast;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	public String getCode()
 	{
 		return code.trim();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final boolean noRepeat;
 	private final boolean noRecord;
 	private final boolean noRememberLast;
@@ -174,9 +173,8 @@ public class JEditBeanShellAction extends JEditAbstractEditAction<TextArea>
 	private BshMethod cachedIsSelected;
 	private final String sanitizedName;
 	private static final BeanShellFacade<TextArea> bsh = new MyBeanShellFacade();
-	//}}}
 	
-	//{{{ MyBeanShellFacade class
+	// MyBeanShellFacade class
 	private static class MyBeanShellFacade extends BeanShellFacade<TextArea>
 	{
 		@Override

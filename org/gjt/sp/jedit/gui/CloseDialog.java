@@ -1,7 +1,6 @@
 /*
  * CloseDialog.java - Close all buffers dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.util.Collection;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -35,14 +34,13 @@ import org.gjt.sp.jedit.manager.BufferManager;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.TaskManager;
-//}}}
 
 /** Close all buffers dialog
  * @author Slava Pestov
  */
 public class CloseDialog extends EnhancedDialog
 {
-	//{{{ CloseDialog constructor
+	// CloseDialog constructor
 	public CloseDialog(View view)
 	{
 		this(view, jEdit.getBufferManager().getBuffers());
@@ -114,27 +112,27 @@ public class CloseDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ isOK() method
+	// isOK() method
 	public boolean isOK()
 	{
 		return ok;
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
 		// do nothing
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final View view;
 	private final JList<String> bufferList;
 	private final DefaultListModel<String> bufferModel;
@@ -227,7 +225,7 @@ public class CloseDialog extends EnhancedDialog
 		bufferList.requestFocus();
 	}
 
-	//{{{ ListHandler class
+	// ListHandler class
 	private class ListHandler implements ListSelectionListener
 	{
 		@Override

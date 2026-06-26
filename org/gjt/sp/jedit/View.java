@@ -1,7 +1,6 @@
 /*
  * View.java - jEdit view
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.Desktop.Action;
 import java.awt.event.FocusAdapter;
@@ -92,7 +91,6 @@ import org.gjt.sp.jedit.visitors.JEditVisitorAdapter;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * A <code>View</code> is jEdit's top-level frame window.<p>
@@ -138,9 +136,9 @@ import org.gjt.sp.util.StandardUtilities;
 public class View extends JFrame implements InputHandlerProvider
 {
 	public static final EditPane[] EMPTY_EDIT_PANES_ARRAY = new EditPane[0];
-	//{{{ User interface
+	// User interface
 
-	//{{{ ToolBar-related constants
+	// ToolBar-related constants
 
 	public static final String VIEW_DOCKING_FRAMEWORK_PROPERTY = "view.docking.framework";
 	private static final String ORIGINAL_DOCKING_FRAMEWORK = "Original";
@@ -148,7 +146,7 @@ public class View extends JFrame implements InputHandlerProvider
 		"org.gjt.sp.jedit.gui.DockingFrameworkProvider";
 	private static DockingFrameworkProvider dockingFrameworkProvider;
 
-	//{{{ Groups
+	// Groups
 	/**
 	 * The group of tool bars above the DockableWindowManager
 	 * @see #addToolBar(int,int,java.awt.Component)
@@ -163,9 +161,8 @@ public class View extends JFrame implements InputHandlerProvider
 	 */
 	public static final int BOTTOM_GROUP = 1;
 	public static final int DEFAULT_GROUP = TOP_GROUP;
-	//}}}
 
-	//{{{ Layers
+	// Layers
 
 	// Common layers
 	/**
@@ -247,11 +244,9 @@ public class View extends JFrame implements InputHandlerProvider
 	 * @since jEdit 4.2pre1
 	 */
 	public static final int BELOW_STATUS_BAR_LAYER = -150;
-	//}}}
 
-	//}}}
 
-	//{{{ getDockableWindowManager() method
+	// getDockableWindowManager() method
 	/**
 	 * Returns the dockable window manager associated with this view.
 	 * @since jEdit 2.6pre3
@@ -261,7 +256,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return dockableWindowManager;
 	} //}}}
 
-	//{{{ getDockingFrameworkName() method
+	// getDockingFrameworkName() method
 	public static String getDockingFrameworkName()
 	{
 		String framework = jEdit.getProperty(
@@ -269,7 +264,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return framework;
 	} //}}}
 
-	//{{{ getDockingFrameworkProvider() method
+	// getDockingFrameworkProvider() method
 	public static DockingFrameworkProvider getDockingFrameworkProvider()
 	{
 		if (dockingFrameworkProvider == null)
@@ -291,7 +286,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return dockingFrameworkProvider;
 	} //}}}
 
-	//{{{ getToolBar() method
+	// getToolBar() method
 	/**
 	 * Returns the view's tool bar.
 	 * @since jEdit 4.2pre1
@@ -301,7 +296,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return toolBar;
 	} //}}}
 
-	//{{{ addToolBar() methods
+	// addToolBar() methods
 	/**
 	 * Adds a tool bar to this view.
 	 * @param toolBar The tool bar
@@ -337,7 +332,7 @@ public class View extends JFrame implements InputHandlerProvider
 		getRootPane().revalidate();
 	} //}}}
 
-	//{{{ removeToolBar() method
+	// removeToolBar() method
 	/**
 	 * Removes a tool bar from this view.
 	 * @param toolBar The tool bar
@@ -350,7 +345,7 @@ public class View extends JFrame implements InputHandlerProvider
 		getRootPane().revalidate();
 	} //}}}
 
-	//{{{ showWaitCursor() method
+	// showWaitCursor() method
 	/**
 	 * Shows the wait cursor. This method and
 	 * {@link #hideWaitCursor()} are implemented using a reference
@@ -381,7 +376,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ hideWaitCursor() method
+	// hideWaitCursor() method
 	/**
 	 * Hides the wait cursor.
 	 */
@@ -401,7 +396,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ getSearchBar() method
+	// getSearchBar() method
 	/**
 	 * Returns the search bar.
 	 * @since jEdit 2.4pre4
@@ -411,7 +406,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return searchBar;
 	} //}}}
 
-	//{{{ getActionBar() method
+	// getActionBar() method
 	/**
 	 * Returns the action bar.
 	 * @since jEdit 4.2pre3
@@ -421,7 +416,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return actionBar;
 	} //}}}
 
-	//{{{ getStatus() method
+	// getStatus() method
 	/**
 	 * Returns the status bar. The
 	 * {@link org.gjt.sp.jedit.gui.StatusBar#setMessage(String)} and
@@ -435,7 +430,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return status;
 	} //}}}
 
-	//{{{ quickIncrementalSearch() method
+	// quickIncrementalSearch() method
 	/**
 	 * Quick search.
 	 * @since jEdit 4.0pre3
@@ -472,7 +467,7 @@ public class View extends JFrame implements InputHandlerProvider
 		searchBar.getField().selectAll();
 	} //}}}
 
-	//{{{ quickHyperSearch() method
+	// quickHyperSearch() method
 	/**
 	 * Quick HyperSearch.
 	 * @since jEdit 4.0pre3
@@ -518,7 +513,7 @@ public class View extends JFrame implements InputHandlerProvider
 		searchBar.getField().selectAll();
 	} //}}}
 
-	//{{{ actionBar() method
+	// actionBar() method
 	/**
 	 * Shows the action bar if needed, and sends keyboard focus there.
 	 * @since jEdit 4.2pre1
@@ -533,11 +528,10 @@ public class View extends JFrame implements InputHandlerProvider
 		actionBar.goToActionBar();
 	} //}}}
 
-	//}}}
 
-	//{{{ Input handling
+	// Input handling
 
-	//{{{ getKeyEventInterceptor() method
+	// getKeyEventInterceptor() method
 	/**
 	 * Returns the listener that will handle all key events in this
 	 * view, if any.
@@ -548,7 +542,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return inputHandler.getKeyEventInterceptor();
 	} //}}}
 
-	//{{{ setKeyEventInterceptor() method
+	// setKeyEventInterceptor() method
 	/**
 	 * Sets the listener that will handle all key events in this
 	 * view. For example, the complete word command uses this so
@@ -561,7 +555,7 @@ public class View extends JFrame implements InputHandlerProvider
 		inputHandler.setKeyEventInterceptor(listener);
 	} //}}}
 
-	//{{{ getInputHandler() method
+	// getInputHandler() method
 	/**
 	 * Returns the input handler.
 	 */
@@ -573,7 +567,7 @@ public class View extends JFrame implements InputHandlerProvider
 
 
 
-	//{{{ setInputHandler() method
+	// setInputHandler() method
 	/**
 	 * Sets the input handler.
 	 * @param inputHandler The new input handler
@@ -583,7 +577,7 @@ public class View extends JFrame implements InputHandlerProvider
 		this.inputHandler = inputHandler;
 	} //}}}
 
-	//{{{ getMacroRecorder() method
+	// getMacroRecorder() method
 	/**
 	 * Returns the macro recorder.
 	 */
@@ -592,7 +586,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return recorder;
 	} //}}}
 
-	//{{{ setMacroRecorder() method
+	// setMacroRecorder() method
 	/**
 	 * Sets the macro recorder.
 	 * @param recorder The macro recorder
@@ -602,7 +596,7 @@ public class View extends JFrame implements InputHandlerProvider
 		this.recorder = recorder;
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	/**
 	 * Forwards key events directly to the input handler.
 	 * This is slightly faster than using a KeyListener
@@ -616,7 +610,7 @@ public class View extends JFrame implements InputHandlerProvider
 			super.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	/**
 	 * Forwards key events directly to the input handler.
 	 * This is slightly faster than using a KeyListener
@@ -629,7 +623,7 @@ public class View extends JFrame implements InputHandlerProvider
 			: VIEW);
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	public static final int VIEW = 0;
 	public static final int TEXT_AREA = 1;
 	public static final int ACTION_BAR = 2;
@@ -644,13 +638,11 @@ public class View extends JFrame implements InputHandlerProvider
 		if(!evt.isConsumed())
 			super.processKeyEvent(evt);
 	}
-	//}}}
 
-	//}}}
 
-	//{{{ Buffers, edit panes, split panes
+	// Buffers, edit panes, split panes
 
-	//{{{ splitHorizontally() method
+	// splitHorizontally() method
 	/**
 	 * Splits the view horizontally.
 	 * @return the new editPane
@@ -661,7 +653,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return split(JSplitPane.VERTICAL_SPLIT);
 	} //}}}
 
-	//{{{ splitVertically() method
+	// splitVertically() method
 	/**
 	 * Splits the view vertically.
 	 * @return the new editPane
@@ -672,7 +664,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return split(JSplitPane.HORIZONTAL_SPLIT);
 	} //}}}
 
-	//{{{ split() method
+	// split() method
 	/**
 	 * Splits the view.
 	 * @param orientation the orientation {@link javax.swing.JSplitPane#HORIZONTAL_SPLIT} or
@@ -739,7 +731,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return newEditPane;
 	} //}}}
 
-	//{{{ unsplit() method
+	// unsplit() method
 	/**
 	 * Unsplits the view.
 	 * @since jEdit 2.3pre2
@@ -773,7 +765,7 @@ public class View extends JFrame implements InputHandlerProvider
 			javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
 	} //}}}
 
-	//{{{ unsplitCurrent() method
+	// unsplitCurrent() method
 	/**
 	 * Removes the current split.
 	 * @since jEdit 2.3pre2
@@ -834,7 +826,7 @@ public class View extends JFrame implements InputHandlerProvider
 			javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
 	} //}}}
 
-	//{{{ resplit() method
+	// resplit() method
 	/**
 	 * Restore the split configuration as it was before unsplitting.
 	 *
@@ -848,7 +840,7 @@ public class View extends JFrame implements InputHandlerProvider
 			setSplitConfig(null,lastSplitConfig);
 	} //}}}
 
-	//{{{ getSplitConfig() method
+	// getSplitConfig() method
 	/**
 	*   Split configurations are recorded in a simple RPN "language".
 	*   @return The split configuration, describing where splitpanes
@@ -869,7 +861,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return splitConfig.toString();
 	} //}}}
 
-	//{{{ setSplitConfig() method
+	// setSplitConfig() method
 	/**
 	 * sets the split configuration as per the splitConfig.
 	 *
@@ -891,7 +883,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ nextTextArea() method
+	// nextTextArea() method
 	/**
 	 * Moves keyboard focus to the next text area.
 	 * @since jEdit 2.7pre4
@@ -912,7 +904,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ prevTextArea() method
+	// prevTextArea() method
 	/**
 	 * Moves keyboard focus to the previous text area.
 	 * @since jEdit 2.7pre4
@@ -933,7 +925,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ getSplitPane() method
+	// getSplitPane() method
 	/**
 	 * Returns the top-level split pane, if any.
 	 * @return the top JSplitPane if any.
@@ -944,7 +936,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return splitPane;
 	} //}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the current edit pane's buffer.
 	 * @return the current edit pane's buffer, it can be null
@@ -957,7 +949,7 @@ public class View extends JFrame implements InputHandlerProvider
 			return editPane.getBuffer();
 	} //}}}
 
-	//{{{ getBuffers() method
+	// getBuffers() method
 	/**
 	 * Returns all Buffers opened in this View,
 	 * Sorted according to View options. (as of jEdit 5.2)
@@ -990,7 +982,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return BufferManagerImpl.EMPTY_BUFFER_ARRAY;
 	}//}}}
 
-	//{{{ setBuffer() method
+	// setBuffer() method
 	/**
 	 * Sets the current edit pane's buffer.
 	 * @param buffer The buffer
@@ -1000,7 +992,7 @@ public class View extends JFrame implements InputHandlerProvider
 		editPane.setBuffer(buffer);
 	} //}}}
 
-	//{{{ goToBuffer() method
+	// goToBuffer() method
 	/**
 	 * If this buffer is open in one of the view's edit panes, sets focus
 	 * to that edit pane. Otherwise, opens the buffer in the currently
@@ -1014,7 +1006,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return showBuffer(buffer, true);
 	} //}}}
 
-	//{{{ showBuffer() method
+	// showBuffer() method
 	/**
 	 * If this buffer is open in one of the view's edit panes, activates
 	 * that edit pane. Otherwise, opens the buffer in the currently
@@ -1028,7 +1020,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return showBuffer(buffer, false);
 	} //}}}
 
-	//{{{ getTextArea() method
+	// getTextArea() method
 	/**
 	 * Returns the current edit pane's text area.
 	 * @return the current edit pane's text area, or <b>null</b> if there is no edit pane yet
@@ -1041,7 +1033,7 @@ public class View extends JFrame implements InputHandlerProvider
 			return editPane.getTextArea();
 	} //}}}
 
-	//{{{ getEditPane() method
+	// getEditPane() method
 	/**
 	 * Returns the current edit pane.
 	 * @return the current edit pane
@@ -1052,7 +1044,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return editPane;
 	} //}}}
 
-	//{{{ getEditPanes() method
+	// getEditPanes() method
 	/**
 	 * Returns all edit panes.
 	 * @return an array of all edit panes in the view
@@ -1087,7 +1079,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	}
 
-	//{{{ getViewConfig() method
+	// getViewConfig() method
 	/**
 	 * @return a ViewConfig instance for the current view
 	 * @since jEdit 4.2pre1
@@ -1136,9 +1128,8 @@ public class View extends JFrame implements InputHandlerProvider
 		return config;
 	} //}}}
 
-	//}}}
 
-	//{{{ isClosed() method
+	// isClosed() method
 	/**
 	 * Returns true if this view has been closed with
 	 * {@link jEdit#closeView(View)}.
@@ -1149,7 +1140,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return closed;
 	} //}}}
 
-	//{{{ isPlainView() method
+	// isPlainView() method
 	/**
 	 * Returns true if this is an auxilliary view with no dockable windows.
 	 * @return true if the view is plain
@@ -1160,7 +1151,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return plainView;
 	} //}}}
 
-	//{{{ getNext() method
+	// getNext() method
 	/**
 	 * Returns the next view in the list.
 	 * @return the next view
@@ -1170,7 +1161,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return next;
 	} //}}}
 
-	//{{{ getPrev() method
+	// getPrev() method
 	/**
 	 * Returns the previous view in the list.
 	 * @return the preview view
@@ -1180,7 +1171,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return prev;
 	} //}}}
 
-	//{{{ setPrev() method
+	// setPrev() method
 
 	/**
 	 * Set the previous view in linked list.
@@ -1193,7 +1184,7 @@ public class View extends JFrame implements InputHandlerProvider
 		this.prev = prev;
 	} //}}}
 
-	//{{{ setNext() method
+	// setNext() method
 
 	/**
 	 * Set the next view in linked list.
@@ -1206,14 +1197,14 @@ public class View extends JFrame implements InputHandlerProvider
 		this.next = next;
 	} //}}}
 
-	//{{{ handlePropertiesChanged()
+	// handlePropertiesChanged()
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{
 		propertiesChanged();
 	} //}}}
 
-	//{{{ handleSearchSettingsChanged() method
+	// handleSearchSettingsChanged() method
 	@EBHandler
 	public void handleSearchSettingsChanged(SearchSettingsChanged msg)
 	{
@@ -1221,14 +1212,14 @@ public class View extends JFrame implements InputHandlerProvider
 			searchBar.update();
 	} //}}}
 
-	//{{{ getMinimumSize() method
+	// getMinimumSize() method
 	@Override
 	public Dimension getMinimumSize()
 	{
 		return new Dimension(0,0);
 	} //}}}
 
-	//{{{ setWaitSocket() method
+	// setWaitSocket() method
 	/**
 	 * This socket is closed when the buffer is closed.
 	 */
@@ -1237,7 +1228,7 @@ public class View extends JFrame implements InputHandlerProvider
 		this.waitSocket = waitSocket;
 	} //}}}
 
-	//{{{ toFront() method
+	// toFront() method
 	@Override
 	public void toFront()
 	{
@@ -1260,7 +1251,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -1270,7 +1261,7 @@ public class View extends JFrame implements InputHandlerProvider
 			+ ']';
 	} //}}}
 
-	//{{{ updateTitle() method
+	// updateTitle() method
 	/**
 	 * Updates the title bar.
 	 */
@@ -1313,7 +1304,7 @@ public class View extends JFrame implements InputHandlerProvider
 		setTitle(title.toString());
 	} //}}}
 
-	//{{{ setUserTitle() method
+	// setUserTitle() method
 	/**
 	 * Sets a user-defined title for this view instead of the "view.title" property.
 	 */
@@ -1323,7 +1314,7 @@ public class View extends JFrame implements InputHandlerProvider
 		updateTitle();
 	} //}}}
 
-	//{{{ showUserTitleDialog() method
+	// showUserTitleDialog() method
 	/**
 	 * Shows a dialog for selecting a user-defined title for this view.
 	 */
@@ -1336,19 +1327,19 @@ public class View extends JFrame implements InputHandlerProvider
 		setUserTitle(title);
 	} //}}}
 
-	//{{{ getPrefixFocusOwner() method
+	// getPrefixFocusOwner() method
 	public Component getPrefixFocusOwner()
 	{
 		return prefixFocusOwner;
 	} //}}}
 
-	//{{{ setPrefixFocusOwner() method
+	// setPrefixFocusOwner() method
 	public void setPrefixFocusOwner(Component prefixFocusOwner)
 	{
 		this.prefixFocusOwner = prefixFocusOwner;
 	} //}}}
 
-	//{{{ visit() method
+	// visit() method
 	/**
 	 * Visit the the editpanes and textareas of the view
 	 * @param visitor the visitor
@@ -1374,11 +1365,11 @@ public class View extends JFrame implements InputHandlerProvider
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner();
 	} // }}}
 
-	//{{{ Package-private members
+	// Package-private members
 	View prev;
 	View next;
 
-	//{{{ View constructor
+	// View constructor
 	View(Buffer buffer, ViewConfig config)
 	{
 		fullScreenMode = false;
@@ -1432,7 +1423,7 @@ public class View extends JFrame implements InputHandlerProvider
 		GUIUtilities.addSizeSaver(this, null, plainView ? "plain-view" : "view");
 	} //}}}
 
-	//{{{ updateFullScreenProps() method
+	// updateFullScreenProps() method
 	public void updateFullScreenProps()
 	{
 		boolean alternateLayout = jEdit.getBooleanProperty(
@@ -1465,13 +1456,13 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ isFullScreenMode method
+	// isFullScreenMode method
 	public boolean isFullScreenMode()
 	{
 		return fullScreenMode;
 	}//}}}
 
-	//{{{ toggleFullScreen() method
+	// toggleFullScreen() method
 	public void toggleFullScreen()
 	{
 		fullScreenMode = !fullScreenMode;
@@ -1512,7 +1503,7 @@ public class View extends JFrame implements InputHandlerProvider
 		EditBus.send(new ViewUpdate(this,ViewUpdate.FULL_SCREEN_TOGGLED));
 	} //}}}
 
-	//{{{ confirmToCloseDirty() methods
+	// confirmToCloseDirty() methods
 	/**
 	 * If the view contains dirty buffers which will be closed on
 	 * closing the view, show the confirmation dialog for user.
@@ -1542,7 +1533,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return true;
 	} //}}}
 
-	//{{{ close() method
+	// close() method
 	void close()
 	{
 		EditBus.send(new ViewUpdate(this,ViewUpdate.CLOSED));
@@ -1587,11 +1578,10 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private boolean closed;
 
 	private final DockableWindowManager dockableWindowManager;
@@ -1628,9 +1618,8 @@ public class View extends JFrame implements InputHandlerProvider
 	private Rectangle windowedBounds;
 	private JMenuBar menuBar;
 	private String userTitle;
-	//}}}
 
-	//{{{ setMainContent() method
+	// setMainContent() method
 	private void setMainContent(Component c)
 	{
 		if (mainContent != null)
@@ -1650,7 +1639,7 @@ public class View extends JFrame implements InputHandlerProvider
 		mainPanel.repaint();
 	} //}}}
 
-	//{{{ getEditPanes() method
+	// getEditPanes() method
 	private static void performAction(Component comp, Consumer<? super EditPane> action)
 	{
 		if(comp instanceof EditPane)
@@ -1663,7 +1652,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ showBuffer() method
+	// showBuffer() method
 	private EditPane showBuffer(Buffer buffer, boolean focus)
 	{
 		if(editPane.getBuffer() == buffer
@@ -1692,7 +1681,7 @@ public class View extends JFrame implements InputHandlerProvider
 		return editPane;
 	} //}}}
 
-	//{{{ getSplitConfig() method
+	// getSplitConfig() method
 	/*
 	 * The split config is recorded in a simple RPN "language".
 	 */
@@ -1714,7 +1703,7 @@ public class View extends JFrame implements InputHandlerProvider
 			== JSplitPane.VERTICAL_SPLIT ? "vertical" : "horizontal");
 	} //}}}
 
-	//{{{ appendToSplitConfig() method
+	// appendToSplitConfig() method
 	/**
 	 * Append the Component to the split config.
 	 * The component must be a JSplitPane or an EditPane
@@ -1756,7 +1745,7 @@ public class View extends JFrame implements InputHandlerProvider
 		}
 	} //}}}
 
-	//{{{ restoreSplitConfig() method
+	// restoreSplitConfig() method
 	private Component restoreSplitConfig(Buffer buffer, String splitConfig)
 		throws IOException
 	// this is where checked exceptions piss me off. this method only uses
@@ -1910,7 +1899,7 @@ loop:		while (true)
 		return (Component)obj;
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Reloads various settings from the properties.
 	 */
@@ -1998,7 +1987,7 @@ loop:		while (true)
 			updateFullScreenProps();
 	} //}}}
 
-	//{{{ updateBufferSwitcherStates() method
+	// updateBufferSwitcherStates() method
 	/**
 	 * Enables or Disables the "Focus Buffer Switcher" menu item in the View menu
 	 * depending on the visible state of the buffer switcher.  The menu item
@@ -2052,7 +2041,7 @@ loop:		while (true)
 	} //}}}
 
 
-	//{{{ loadToolBars() method
+	// loadToolBars() method
 	private void loadToolBars()
 	{
 		if(!plainView && (fullScreenMode ?
@@ -2086,7 +2075,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ createEditPane() methods
+	// createEditPane() methods
 	private EditPane createEditPane( Buffer buffer)
 	{
 		return createEditPane(null, buffer);
@@ -2103,7 +2092,7 @@ loop:		while (true)
 		return editPane;
 	} //}}}
 
-	//{{{ setEditPane() method
+	// setEditPane() method
 	private void setEditPane(EditPane editPane)
 	{
 		this.editPane = editPane;
@@ -2119,7 +2108,7 @@ loop:		while (true)
 	} //}}}
 
 
-	//{{{ handleBufferUpdate() method
+	// handleBufferUpdate() method
 	@EBHandler
 	public void handleBufferUpdate(BufferUpdate msg)
 	{
@@ -2139,7 +2128,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ handleEditPaneUpdate() method
+	// handleEditPaneUpdate() method
 	@EBHandler
 	public void handleEditPaneUpdate(EditPaneUpdate msg)
 	{
@@ -2159,7 +2148,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ handleViewUpdate() method
+	// handleViewUpdate() method
 	@EBHandler
 	public void handleViewUpdate(ViewUpdate msg)
 	{
@@ -2179,7 +2168,7 @@ loop:		while (true)
 					(check != GeneralOptionPane.checkFileStatus_focus));
 	}//}}}
 
-	//{{{ closeDuplicateBuffers() method
+	// closeDuplicateBuffers() method
 	/** Used if exclusive buffersets are enabled */
 	private void closeDuplicateBuffers(EditPaneUpdate epu)
 	{
@@ -2211,7 +2200,7 @@ loop:		while (true)
 		});
 	} //}}}
 
-	//{{{ updateGutterBorders() method
+	// updateGutterBorders() method
 	/**
 	 * Updates the borders of all gutters in this view to reflect the
 	 * currently focused text area.
@@ -2224,7 +2213,7 @@ loop:		while (true)
 			editPane.getTextArea().syncGutterStripBorders();
 	} //}}}
 
-	//{{{ getOpenBuffers() method
+	// getOpenBuffers() method
 	private Set<Buffer> getOpenBuffers()
 	{
 		Set<Buffer> openBuffers = new LinkedHashSet<>();
@@ -2236,7 +2225,7 @@ loop:		while (true)
 		return openBuffers;
 	} //}}}
 
-	//{{{ mergeBufferSets() method
+	// mergeBufferSets() method
 	/**
 	 * Merge a EditPane's BufferSet into another one.
 	 * This is used on unsplitting panes not to close buffers.
@@ -2252,11 +2241,10 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ CaretHandler class
+	// CaretHandler class
 	private class CaretHandler implements CaretListener
 	{
 		@Override
@@ -2267,7 +2255,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ FocusHandler class
+	// FocusHandler class
 	private class FocusHandler extends FocusAdapter
 	{
 		@Override
@@ -2290,7 +2278,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ ScrollHandler class
+	// ScrollHandler class
 	private class ScrollHandler implements ScrollListener
 	{
 		@Override
@@ -2304,7 +2292,7 @@ loop:		while (true)
 		public void scrolledHorizontally(TextArea textArea) {}
 	} //}}}
 
-	//{{{ WindowHandler class
+	// WindowHandler class
 	private class WindowHandler extends WindowAdapter
 	{
 		@Override
@@ -2334,7 +2322,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ ViewConfig class
+	// ViewConfig class
 	public static class ViewConfig
 	{
 		public int x, y, width, height, extState;
@@ -2371,7 +2359,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ isInsideScreen() method
+	// isInsideScreen() method
 	private static boolean isInsideScreen(View parent, Rectangle r)
 	{
 		Rectangle bounds;
@@ -2410,7 +2398,7 @@ loop:		while (true)
 			setLocationRelativeTo(parent);
 	}
 
-	//{{{ MyFocusTraversalPolicy class
+	// MyFocusTraversalPolicy class
 	private static class MyFocusTraversalPolicy extends LayoutFocusTraversalPolicy
 	{
 		@Override
@@ -2420,7 +2408,7 @@ loop:		while (true)
 		}
 	} //}}}
 
-	//{{{ SetCursorVisitor class
+	// SetCursorVisitor class
 	private static class SetCursorVisitor extends JEditVisitorAdapter
 	{
 		private final Cursor cursor;
@@ -2436,6 +2424,5 @@ loop:		while (true)
 			editPane.setCursor(cursor);
 		}
 	}//}}}
-	 //}}}
 
 }

@@ -1,7 +1,6 @@
 /*
  * UndoManager.java - Buffer undo manager
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -22,11 +21,10 @@
 
 package org.gjt.sp.jedit.buffer;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.util.IntegerArray;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.jedit.textarea.Selection;
-//}}}
 
 /**
  * A class internal to jEdit's document model. You should not use it
@@ -41,32 +39,32 @@ import org.gjt.sp.jedit.textarea.Selection;
  */
 public class UndoManager
 {
-	//{{{ UndoManager constructor
+	// UndoManager constructor
 	public UndoManager(JEditBuffer buffer)
 	{
 		this.buffer = buffer;
 	} //}}}
 
-	//{{{ setLimit() method
+	// setLimit() method
 	public void setLimit(int limit)
 	{
 		this.limit = limit;
 	} //}}}
 
-	//{{{ clear() method
+	// clear() method
 	public void clear()
 	{
 		undosFirst = undosLast = redosFirst = null;
 		undoCount = 0;
 	} //}}}
 
-	//{{{ canUndo() method
+	// canUndo() method
 	public boolean canUndo()
 	{
 		return (undosLast != null);
 	} //}}}
 
-	//{{{ undo() method
+	// undo() method
 	public Selection[] undo()
 	{
 		if(insideCompoundEdit())
@@ -88,13 +86,13 @@ public class UndoManager
 		}
 	} //}}}
 
-	//{{{ canRedo() method
+	// canRedo() method
 	public boolean canRedo()
 	{
 		return (redosFirst != null);
 	} //}}}
 
-	//{{{ redo() method
+	// redo() method
 	public Selection[] redo()
 	{
 		if(insideCompoundEdit())
@@ -116,7 +114,7 @@ public class UndoManager
 		}
 	} //}}}
 
-	//{{{ beginCompoundEdit() method
+	// beginCompoundEdit() method
 	public void beginCompoundEdit()
 	{
 		if(compoundEditCount == 0)
@@ -128,7 +126,7 @@ public class UndoManager
 		compoundEditCount++;
 	} //}}}
 
-	//{{{ endCompoundEdit() method
+	// endCompoundEdit() method
 	public void endCompoundEdit()
 	{
 		if(compoundEditCount == 0)
@@ -151,19 +149,19 @@ public class UndoManager
 		compoundEditCount--;
 	} //}}}
 
-	//{{{ insideCompoundEdit() method
+	// insideCompoundEdit() method
 	public boolean insideCompoundEdit()
 	{
 		return compoundEditCount != 0;
 	} //}}}
 
-	//{{{ getUndoId() method
+	// getUndoId() method
 	public Object getUndoId()
 	{
 		return undoId;
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	public void contentInserted(int offset, int length, String text, boolean clearDirty)
 	{
 		Edit toMerge = getMergeEdit();
@@ -201,7 +199,7 @@ public class UndoManager
 		}
 	} //}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	public void contentRemoved(int offset, int length, String text, boolean clearDirty)
 	{
 		Edit toMerge = getMergeEdit();
@@ -248,7 +246,7 @@ public class UndoManager
 		KillRing.getInstance().add(rem.str);
 	} //}}}
 
-	//{{{ resetClearDirty method
+	// resetClearDirty method
 	public void resetClearDirty()
 	{
 		redoClearDirty = getLastEdit();
@@ -258,9 +256,9 @@ public class UndoManager
 			undoClearDirty = redosFirst;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final JEditBuffer buffer;
 
 	// queue of undos. last is most recent, first is oldest
@@ -276,9 +274,8 @@ public class UndoManager
 	private CompoundEdit compoundEdit;
 	private Edit undoClearDirty, redoClearDirty;
 	private Object undoId;
-	//}}}
 
-	//{{{ addEdit() method
+	// addEdit() method
 	private void addEdit(Edit edit)
 	{
 		if(undosFirst == null)
@@ -308,13 +305,13 @@ public class UndoManager
 		}
 	} //}}}
 
-	//{{{ getMergeEdit() method
+	// getMergeEdit() method
 	private Edit getMergeEdit()
 	{
 		return (compoundEdit != null ? compoundEdit.last : getLastEdit());
 	} //}}}
 
-	//{{{ getLastEdit() method
+	// getLastEdit() method
 	private Edit getLastEdit()
 	{
 		if(undosLast instanceof CompoundEdit)
@@ -323,7 +320,7 @@ public class UndoManager
 			return undosLast;
 	} //}}}
 
-	//{{{ reviseUndoId()
+	// reviseUndoId()
 	/*
 	 * Revises a unique undoId for a the undo operation that is being
 	 * created as a result of a buffer content change, or that is being
@@ -341,7 +338,7 @@ public class UndoManager
 		undoId = new Object();
 	} //}}}
 
-	//{{{ getReplaceFromRemoveInsert() method
+	// getReplaceFromRemoveInsert() method
 	// a Replace Edit is a Remove Edit and then an Insert Edit
 	private Replace getReplaceFromRemoveInsert(Edit lastElement, Edit newElement)
 	{
@@ -377,7 +374,7 @@ public class UndoManager
 		return null;
 	} //}}}
 
-	//{{{ getCompressedReplaceFromReplaceReplace() method
+	// getCompressedReplaceFromReplaceReplace() method
 	// a CompressedReplace Edit is one to many Replace Edit compressed via offsets
 	private static CompressedReplace getCompressedReplaceFromReplaceReplace(Edit lastElement, Edit newElement)
 	{
@@ -400,14 +397,14 @@ public class UndoManager
 		return null;
 	} //}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Edit class
+	// Edit class
 	private abstract static class Edit
 	{
 		Edit prev, next;
 
-		//{{{ undo() method
+		// undo() method
 		/**
 		 * Returns the selection that should be active after performing
 		 * the operation. If no selection should be active, a 0 length
@@ -422,9 +419,8 @@ public class UndoManager
 		 * contain the inserted text.
 		 */
 		abstract Selection[] undo(UndoManager mgr);
-		//}}}
 
-		//{{{ redo() method
+		// redo() method
 		/**
 		 * @return See {@link #undo}.
 		 * <p>Implementation note: redo always returns caret location only,
@@ -433,20 +429,19 @@ public class UndoManager
 		 * the selection becomes empty, so such is the guess.</p>
 		 */
 		abstract Selection[] redo(UndoManager mgr);
-		//}}}
 	} //}}}
 
-	//{{{ Insert class
+	// Insert class
 	private static class Insert extends Edit
 	{
-		//{{{ Insert constructor
+		// Insert constructor
 		Insert(int offset, String str)
 		{
 			this.offset = offset;
 			this.str = str;
 		} //}}}
 
-		//{{{ undo() method
+		// undo() method
 		@Override
 		Selection[] undo(UndoManager mgr)
 		{
@@ -456,7 +451,7 @@ public class UndoManager
 			return new Selection[] { new Selection.Range(offset, offset) };
 		} //}}}
 
-		//{{{ redo() method
+		// redo() method
 		@Override
 		Selection[] redo(UndoManager mgr)
 		{
@@ -471,17 +466,17 @@ public class UndoManager
 		String str;
 	} //}}}
 
-	//{{{ Remove class
+	// Remove class
 	private static class Remove extends Edit
 	{
-		//{{{ Remove constructor
+		// Remove constructor
 		Remove(int offset, String str)
 		{
 			this.offset = offset;
 			this.str = str;
 		} //}}}
 
-		//{{{ undo() method
+		// undo() method
 		@Override
 		Selection[] undo(UndoManager mgr)
 		{
@@ -493,7 +488,7 @@ public class UndoManager
 			};
 		} //}}}
 
-		//{{{ redo() method
+		// redo() method
 		@Override
 		Selection[] redo(UndoManager mgr)
 		{
@@ -507,10 +502,10 @@ public class UndoManager
 		String str;
 	} //}}}
 
-	//{{{ Replace class
+	// Replace class
 	private static class Replace extends Edit
 	{
-		//{{{ Replace constructor
+		// Replace constructor
 		Replace(int offset, String strRemove, String strInsert)
 		{
 			this.offset = offset;
@@ -518,7 +513,7 @@ public class UndoManager
 			this.strInsert = strInsert;
 		} //}}}
 
-		//{{{ undo() method
+		// undo() method
 		@Override
 		Selection[] undo(UndoManager mgr)
 		{
@@ -530,7 +525,7 @@ public class UndoManager
 			};
 		} //}}}
 
-		//{{{ redo() method
+		// redo() method
 		@Override
 		Selection[] redo(UndoManager mgr)
 		{
@@ -546,10 +541,10 @@ public class UndoManager
 		String strRemove, strInsert;
 	} //}}}
 
-	//{{{ CompressedReplace class
+	// CompressedReplace class
 	private static class CompressedReplace extends Replace
 	{
-		//{{{ CompressedReplace constructor
+		// CompressedReplace constructor
 		CompressedReplace(Replace r1)
 		{
 			super(r1.offset, r1.strRemove, r1.strInsert);
@@ -557,7 +552,7 @@ public class UndoManager
 			offsets.add(r1.offset);
 		} //}}}
 
-		//{{{ add() method
+		// add() method
 		CompressedReplace add(Replace rep)
 		{
 			if(strInsert.equals(rep.strInsert) && strRemove.equals(rep.strRemove))
@@ -568,7 +563,7 @@ public class UndoManager
 			return null;
 		} //}}}
 
-		//{{{ undo() method
+		// undo() method
 		@Override
 		Selection[] undo(UndoManager mgr)
 		{
@@ -581,7 +576,7 @@ public class UndoManager
 			return s;
 		} //}}}
 
-		//{{{ redo() method
+		// redo() method
 		@Override
 		Selection[] redo(UndoManager mgr)
 		{
@@ -597,10 +592,10 @@ public class UndoManager
 		IntegerArray offsets;
 	} //}}}
 
-	//{{{ CompoundEdit class
+	// CompoundEdit class
 	private static class CompoundEdit extends Edit
 	{
-		//{{{ undo() method
+		// undo() method
 		@Override
 		public Selection[] undo(UndoManager mgr)
 		{
@@ -614,7 +609,7 @@ public class UndoManager
 			return retVal;
 		} //}}}
 
-		//{{{ redo() method
+		// redo() method
 		@Override
 		public Selection[] redo(UndoManager mgr)
 		{
@@ -628,7 +623,7 @@ public class UndoManager
 			return retVal;
 		} //}}}
 
-		//{{{ _add() method
+		// _add() method
 		private void _add(Edit edit)
 		{
 			if(first == null)
@@ -641,7 +636,7 @@ public class UndoManager
 			}
 		} //}}}
 
-		//{{{ add() method
+		// add() method
 		public void add(UndoManager mgr, Edit edit)
 		{
 			_add(edit);
@@ -672,7 +667,7 @@ public class UndoManager
 			}
 		} //}}}
 
-		//{{{ exchangeLastElement() method
+		// exchangeLastElement() method
 		private void exchangeLastElement(Edit edit)
 		{
 			// remove last
@@ -698,7 +693,5 @@ public class UndoManager
 		Edit first, last;
 	} //}}}
 
-	//}}}
 
-	//}}}
 }

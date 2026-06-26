@@ -1,7 +1,6 @@
 /*
  * ServiceManager.java - Handles services.xml files in plugins
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.net.URL;
 import java.util.*;
 
@@ -33,7 +32,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.gjt.sp.util.XMLUtilities;
 
 
-//}}}
 
 /**
  * @since jEdit 4.2pre1
@@ -44,7 +42,7 @@ class ServiceListHandler extends DefaultHandler
 {
 	public static final ServiceManager.Descriptor[] EMPTY_DESCRIPTORS = new ServiceManager.Descriptor[0];
 
-	//{{{ ServiceListHandler constructor
+	// ServiceListHandler constructor
 	ServiceListHandler(PluginJAR plugin, URL uri)
 	{
 		this.plugin = plugin;
@@ -54,14 +52,14 @@ class ServiceListHandler extends DefaultHandler
 		cachedServices = new LinkedList<>();
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return XMLUtilities.findEntity(systemId, "services.dtd", getClass());
 	} //}}}
 
-	//{{{ characters() method
+	// characters() method
 	@Override
 	public void characters(char[] c, int off, int len)
 	{
@@ -70,7 +68,7 @@ class ServiceListHandler extends DefaultHandler
 			code.append(c, off, len);
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName,
 				 String tag, Attributes attrs)
@@ -80,7 +78,7 @@ class ServiceListHandler extends DefaultHandler
 		serviceClass = attrs.getValue("CLASS");
 	} //}}}
 
-	//{{{ endElement() method
+	// endElement() method
 	@Override
 	public void endElement(String uri, String localName, String name)
 	{
@@ -107,22 +105,22 @@ class ServiceListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startDocument() method
+	// startDocument() method
 	@Override
 	public void startDocument()
 	{
 		pushElement(null);
 	} //}}}
 
-	//{{{ getCachedServices() method
+	// getCachedServices() method
 	public ServiceManager.Descriptor[] getCachedServices()
 	{
 		return cachedServices.toArray(EMPTY_DESCRIPTORS);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final PluginJAR plugin;
 	private URL uri;
 
@@ -133,26 +131,24 @@ class ServiceListHandler extends DefaultHandler
 	private final Stack<String> stateStack;
 
 	private final List<ServiceManager.Descriptor> cachedServices;
-	//}}}
 
-	//{{{ pushElement() method
+	// pushElement() method
 	private void pushElement(String name)
 	{
 		stateStack.push(name);
 	} //}}}
 
-	//{{{ peekElement() method
+	// peekElement() method
 	
 	private String peekElement()
 	{
 		return stateStack.peek();
 	} //}}}
 
-	//{{{ popElement() method
+	// popElement() method
 	private String popElement()
 	{
 		return stateStack.pop();
 	} //}}}
 
-	//}}}
 }

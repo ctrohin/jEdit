@@ -1,7 +1,6 @@
 /*
  * EnhancedCheckBoxMenuItem.java - Check box menu item
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
@@ -30,14 +29,13 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.jedit.gui.KeyEventTranslator;
 import org.gjt.sp.jedit.gui.statusbar.HoverSetStatusMouseHandler;
 import org.jedit.keymap.Keymap;
-//}}}
 
 /**
  * jEdit's custom menu item. It adds support for multi-key shortcuts.
  */
 public class EnhancedCheckBoxMenuItem extends JCheckBoxMenuItem
 {
-	//{{{ EnhancedCheckBoxMenuItem constructor
+	// EnhancedCheckBoxMenuItem constructor
 	/**
 	 * Creates a new menu item. Most plugins should call
 	 * GUIUtilities.loadMenuItem() instead.
@@ -91,7 +89,7 @@ public class EnhancedCheckBoxMenuItem extends JCheckBoxMenuItem
 		setModel(new Model());
 	} //}}}
 
-	//{{{ getPreferredSize() method
+	// getPreferredSize() method
 	@Override
 	public Dimension getPreferredSize()
 	{
@@ -105,7 +103,7 @@ public class EnhancedCheckBoxMenuItem extends JCheckBoxMenuItem
 		return d;
 	} //}}}
 
-	//{{{ paint() method
+	// paint() method
 	@Override
 	public void paint(Graphics g)
 	{
@@ -127,17 +125,15 @@ public class EnhancedCheckBoxMenuItem extends JCheckBoxMenuItem
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final ActionContext context;
 	private String shortcut;
 	private final String action;
-	//}}}
 
-	//}}}
 
-	//{{{ Model class
+	// Model class
 	private class Model extends DefaultButtonModel
 	{
 		@Override

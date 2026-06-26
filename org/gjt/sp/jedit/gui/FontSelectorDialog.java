@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  * Portions copyright (C) 1999 Jason Ginchereau
@@ -46,7 +45,7 @@ import org.gjt.sp.util.Log;
 
 public class FontSelectorDialog extends EnhancedDialog
 {
-	//{{{ FontSelectorDialog constructor
+	// FontSelectorDialog constructor
 	public FontSelectorDialog(Frame parent,
 				  Font font, boolean monospacedOnly)
 	{
@@ -55,7 +54,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		init(font);
 	} //}}}
 
-	//{{{ FontSelectorDialog constructor
+	// FontSelectorDialog constructor
 	public FontSelectorDialog(Dialog parent,
 				  Font font, boolean monospacedOnly)
 	{
@@ -64,7 +63,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		init(font);
 	} //}}}
 
-	//{{{ FontSelectorDialog constructor
+	// FontSelectorDialog constructor
 	FontSelectorDialog(Frame parent,
 			   Font font,
 			   FontSelector fontSelector, boolean monospacedOnly)
@@ -75,7 +74,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		init(font);
 	} //}}}
 
-	//{{{ FontSelectorDialog constructor
+	// FontSelectorDialog constructor
 	FontSelectorDialog(Dialog parent,
 			   Font font,
 			   FontSelector fontSelector, boolean monospacedOnly)
@@ -86,7 +85,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		init(font);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -94,14 +93,14 @@ public class FontSelectorDialog extends EnhancedDialog
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ getSelectedFont() method
+	// getSelectedFont() method
 	public Font getSelectedFont()
 	{
 		if(!isOK)
@@ -121,9 +120,9 @@ public class FontSelectorDialog extends EnhancedDialog
 			.getSelectedIndex(),size);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private FontSelector fontSelector;
 	private boolean isOK;
 	private JTextField familyField;
@@ -136,7 +135,6 @@ public class FontSelectorDialog extends EnhancedDialog
 	private JButton ok;
 	private JButton cancel;
 	private boolean monospacedOnly;
-	//}}}
 
 	/**
 	 * For some reason the default Java fonts show up in the
@@ -147,7 +145,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		".italic"
 	};
 
-	//{{{ init() method
+	// init() method
 	private void init(Font font)
 	{
 		JPanel content = new JPanel(new BorderLayout());
@@ -267,7 +265,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ getFontList() method
+	// getFontList() method
 	private static String[] getFontList(final boolean monospacedOnly)
 	{
 		String[] nameArray = GraphicsEnvironment
@@ -309,7 +307,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		// Using a small delta for double comparison to handle precision issues
 		return Math.abs(iWidth - wWidth) < 0.0001;
 	}
-	//{{{ createTextFieldAndListPanel() method
+	// createTextFieldAndListPanel() method
 	private static JPanel createTextFieldAndListPanel(String label,
 		JTextField textField, JList list)
 	{
@@ -350,7 +348,7 @@ public class FontSelectorDialog extends EnhancedDialog
 		return panel;
 	} //}}}
 
-	//{{{ updatePreview() method
+	// updatePreview() method
 	private void updatePreview()
 	{
 		String family = familyField.getText();
@@ -368,9 +366,8 @@ public class FontSelectorDialog extends EnhancedDialog
 		preview.setFont(new Font(family,style,size));
 	} //}}}
 
-	//}}}
 
-	//{{{ ListHandler class
+	// ListHandler class
 	private class ListHandler implements ListSelectionListener
 	{
 		@Override

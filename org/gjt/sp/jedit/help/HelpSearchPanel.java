@@ -1,7 +1,6 @@
 /*
  * HelpSearchPanel.java - Help search GUI
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -31,11 +30,10 @@ import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 public class HelpSearchPanel extends JPanel
 {
-	//{{{ HelpSearchPanel constructor
+	// HelpSearchPanel constructor
 	public HelpSearchPanel(HelpViewerInterface helpViewer)
 	{
 		super(new BorderLayout(6,6));
@@ -57,7 +55,7 @@ public class HelpSearchPanel extends JPanel
 		add(BorderLayout.CENTER,new JScrollPane(results));
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final HelpViewerInterface helpViewer;
 	private final HistoryTextField searchField;
 	private final JList<Result> results;
@@ -84,7 +82,7 @@ public class HelpSearchPanel extends JPanel
 		return index;
 	} //}}}
 
-	//{{{ ResultIcon class
+	// ResultIcon class
 	static class ResultIcon implements Icon
 	{
 		private static final RenderingHints renderingHints;
@@ -135,7 +133,7 @@ public class HelpSearchPanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ ResultRenderer class
+	// ResultRenderer class
 	static class ResultRenderer extends DefaultListCellRenderer
 	{
 		@Override
@@ -165,7 +163,7 @@ public class HelpSearchPanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ Result class
+	// Result class
 	static class Result
 	{
 		String file;
@@ -185,7 +183,7 @@ public class HelpSearchPanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ ResultCompare class
+	// ResultCompare class
 	static class ResultCompare implements Comparator<Result>
 	{
 		@Override
@@ -198,7 +196,7 @@ public class HelpSearchPanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener
 	{
 		@Override
@@ -287,7 +285,7 @@ public class HelpSearchPanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	public class MouseHandler extends MouseAdapter
 	{
 		@Override

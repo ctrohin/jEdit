@@ -1,7 +1,6 @@
 /*
  * RecentDirectoriesProvider.java - Recent directory list menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -31,31 +30,30 @@ import java.util.Collections;
 import org.gjt.sp.jedit.browser.*;
 import org.gjt.sp.jedit.gui.HistoryModel;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class RecentDirectoriesProvider implements DynamicMenuProvider
 {
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return true;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
 		final View view = GUIUtilities.getView(menu);
 
-		//{{{ ActionListener...
+		// ActionListener...
 		ActionListener actionListener = evt ->
 		{
 			VFSBrowser.browseDirectory(view,evt.getActionCommand());
 			view.getStatus().setMessage(null);
 		}; //}}}
 
-		//{{{ MouseListener...
+		// MouseListener...
 		MouseListener mouseListener = new MouseAdapter()
 		{
 			@Override

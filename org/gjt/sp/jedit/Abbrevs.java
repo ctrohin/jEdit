@@ -1,7 +1,6 @@
 /*
  * Abbrevs.java - Abbreviation manager
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.gjt.sp.jedit.gui.AddAbbrevDialog;
 import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * Abbreviation manager.
@@ -38,7 +36,7 @@ import org.gjt.sp.util.Log;
  */
 public class Abbrevs
 {
-	//{{{ getExpandOnInput() method
+	// getExpandOnInput() method
 	/**
 	 * @return if abbreviations should be expanded after the
 	 * user finishes typing a word.
@@ -48,7 +46,7 @@ public class Abbrevs
 		return expandOnInput;
 	} //}}}
 
-	//{{{ setExpandOnInput() method
+	// setExpandOnInput() method
 	/**
 	 * Sets if abbreviations should be expanded after the
 	 * user finishes typing a word.
@@ -60,7 +58,7 @@ public class Abbrevs
 		Abbrevs.expandOnInput = expandOnInput;
 	} //}}}
 
-	//{{{ expandAbbrev() method
+	// expandAbbrev() method
 	/**
 	 * Expands the abbrev at the caret position in the specified
 	 * view.
@@ -72,7 +70,7 @@ public class Abbrevs
 	 */
 	public static boolean expandAbbrev(View view, boolean add)
 	{
-		//{{{ Figure out some minor things
+		// Figure out some minor things
 		Buffer buffer = view.getBuffer();
 		JEditTextArea textArea = view.getTextArea();
 		if(!buffer.isEditable())
@@ -107,7 +105,7 @@ public class Abbrevs
 		int wordStart;
 		String abbrev;
 
-		//{{{ Handle abbrevs of the form abbrev#pos1#pos2#pos3#...
+		// Handle abbrevs of the form abbrev#pos1#pos2#pos3#...
 		if(lineText.charAt(pos-1) == '#')
 		{
 			wordStart = lineText.indexOf('#');
@@ -135,7 +133,7 @@ public class Abbrevs
 			abbrev = m_pp.elementAt(0);
 			m_pp.removeElementAt(0);
 		} //}}}
-		//{{{ Handle ordinary abbrevs
+		// Handle ordinary abbrevs
 		else
 		{
 			wordStart = TextUtilities.findWordStart(lineText,pos - 1,
@@ -148,7 +146,7 @@ public class Abbrevs
 			abbrev,(buffer.getBooleanProperty("noTabs") ?
 			buffer.getTabSize() : 0),m_pp);
 
-		//{{{ Maybe show add abbrev dialog
+		// Maybe show add abbrev dialog
 		if(expand == null)
 		{
 			if(add)
@@ -156,7 +154,7 @@ public class Abbrevs
 
 			return false;
 		} //}}}
-		//{{{ Insert the expansion
+		// Insert the expansion
 		else
 		{
 			buffer.remove(lineStart + wordStart,
@@ -187,7 +185,7 @@ public class Abbrevs
 		} //}}}
 	} //}}}
 
-	//{{{ getGlobalAbbrevs() method
+	// getGlobalAbbrevs() method
 	/**
 	 * @return the global abbreviation set.
 	 * @since jEdit 2.3pre1
@@ -200,7 +198,7 @@ public class Abbrevs
 		return globalAbbrevs;
 	} //}}}
 
-	//{{{ setGlobalAbbrevs() method
+	// setGlobalAbbrevs() method
 	/**
 	 * Sets the global abbreviation set.
 	 * @param globalAbbrevs The new global abbrev set
@@ -212,7 +210,7 @@ public class Abbrevs
 		Abbrevs.globalAbbrevs = globalAbbrevs;
 	} //}}}
 
-	//{{{ getModeAbbrevs() method
+	// getModeAbbrevs() method
 	/**
 	 * @return the mode-specific abbreviation set.
 	 * @since jEdit 2.3pre1
@@ -225,7 +223,7 @@ public class Abbrevs
 		return modes;
 	} //}}}
 
-	//{{{ setModeAbbrevs() method
+	// setModeAbbrevs() method
 	/**
 	 * Sets the mode-specific abbreviation set.
 	 * @param modes The new mode abbrev set
@@ -237,7 +235,7 @@ public class Abbrevs
 		Abbrevs.modes = modes;
 	} //}}}
 
-	//{{{ addGlobalAbbrev() method
+	// addGlobalAbbrev() method
 	/**
 	 * Adds an abbreviation to the global abbreviation list.
 	 * @param abbrev The abbreviation
@@ -253,7 +251,7 @@ public class Abbrevs
 		abbrevsChanged = true;
 	} //}}}
 
-	//{{{ addModeAbbrev() method
+	// addModeAbbrev() method
 	/**
 	 * Adds a mode-specific abbrev.
 	 * @param mode The edit mode
@@ -271,7 +269,7 @@ public class Abbrevs
 		abbrevsChanged = true;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	static void save()
 	{
 		jEdit.setBooleanProperty("view.expandOnInput",expandOnInput);
@@ -306,9 +304,9 @@ public class Abbrevs
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private static boolean loaded;
 	private static boolean abbrevsChanged;
 	private static long abbrevsModTime;
@@ -318,7 +316,6 @@ public class Abbrevs
 	
 	/**  Vector of Positional Parameters */
 	private static Vector<String> m_pp = new Vector<>();
-	//}}}
 
 	private Abbrevs() {}
 
@@ -327,7 +324,7 @@ public class Abbrevs
 		expandOnInput = jEdit.getBooleanProperty("view.expandOnInput");
 	}
 
-	//{{{ load() method
+	// load() method
 	private static void load()
 	{
 		globalAbbrevs = new Hashtable<>();
@@ -373,7 +370,7 @@ public class Abbrevs
 		}
 	} //}}}
 
-	//{{{ countNewlines() method
+	// countNewlines() method
 	private static int countNewlines(String s, int end)
 	{
 		int counter = 0;
@@ -387,7 +384,7 @@ public class Abbrevs
 		return counter;
 	} //}}}
 
-	//{{{ expandAbbrev() method
+	// expandAbbrev() method
 	private static Expansion expandAbbrev(String mode, String abbrev,
 		int softTabSize, Vector<String> pp)
 	{
@@ -410,7 +407,7 @@ public class Abbrevs
 			return new Expansion(expand,softTabSize,m_pp);
 	} //}}}
 
-	//{{{ loadAbbrevs() method
+	// loadAbbrevs() method
 	private static void loadAbbrevs(Reader _in) throws IOException
 	{
 		try (BufferedReader in = new BufferedReader(_in))
@@ -444,7 +441,7 @@ public class Abbrevs
 		}
 	} //}}}
 
-	//{{{ saveAbbrevs() methods
+	// saveAbbrevs() methods
 	private static void saveAbbrevs(File file) throws IOException
 	{
 		try (BufferedWriter out = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8)))
@@ -482,9 +479,8 @@ public class Abbrevs
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Expansion class
+	// Expansion class
 	static class Expansion
 	{
 		String text;
@@ -494,7 +490,7 @@ public class Abbrevs
 		// number of positional parameters in abbreviation expansion
 		int posParamCount;
 
-		//{{{ Expansion constructor
+		// Expansion constructor
 		Expansion(String text, int softTabSize, List<String> pp)
 		{
 			StringBuilder buf = new StringBuilder();
@@ -503,7 +499,7 @@ public class Abbrevs
 			for(int i = 0; i < text.length(); i++)
 			{
 				char ch = text.charAt(i);
-				//{{{ Handle backslash
+				// Handle backslash
 				if(backslash)
 				{
 					backslash = false;
@@ -530,8 +526,7 @@ public class Abbrevs
 				}
 				else if(ch == '\\')
 					backslash = true;
-				//}}}
-				//{{{ Handle $
+				// Handle $
 				else if(ch == '$')
 				{
 					if(i != text.length() - 1)

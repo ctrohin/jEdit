@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Kazutoshi Satoda
  *
@@ -20,7 +19,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,7 +31,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
-//}}}
 
 /**
  * Encodings which are provided by java.nio.charset.Charset.
@@ -42,7 +40,7 @@ import java.nio.charset.CodingErrorAction;
  */
 public class CharsetEncoding implements Encoding
 {
-	//{{{ Constructors
+	// Constructors
 	public CharsetEncoding(String name)
 	{
 		body = Charset.forName(name);
@@ -53,7 +51,7 @@ public class CharsetEncoding implements Encoding
 		body = charset;
 	} //}}}
 
-	//{{{ implements Encoding
+	// implements Encoding
 	@Override
 	
 	public Reader getTextReader( InputStream in) throws IOException
@@ -85,9 +83,7 @@ public class CharsetEncoding implements Encoding
 		permissive.onUnmappableCharacter(CodingErrorAction.REPLACE);
 		return new InputStreamReader(in, permissive);
 	}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final Charset body;
-	//}}}
 }

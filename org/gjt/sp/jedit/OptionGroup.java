@@ -1,7 +1,6 @@
 /*
  * OptionGroup.java - Option pane group
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000 mike dillon
  * Portions copyright (C) 2003 Slava Pestov
@@ -45,7 +44,7 @@ public class OptionGroup
 	private boolean sort;
 	// }}}
 	
-	//{{{ OptionGroup constructor
+	// OptionGroup constructor
 	/**
 	 * Creates an option group.
 	 * @param name The internal name of the option group, used to key a
@@ -60,7 +59,7 @@ public class OptionGroup
 		members = new Vector<Object>();
 	} //}}}
 
-	//{{{ OptionGroup constructor
+	// OptionGroup constructor
 	/**
 	 * Creates an option group.
 	 * @param label The label
@@ -81,13 +80,13 @@ public class OptionGroup
 		}
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	public String getName()
 	{
 		return name;
 	} //}}}
 
-	//{{{ getLabel() method
+	// getLabel() method
 	/**
 	 * Returns the option group's human-readable label.
 	 * @since jEdit 4.2pre1
@@ -97,13 +96,13 @@ public class OptionGroup
 		return label;
 	} //}}}
 
-	//{{{ addOptionGroup() method
+	// addOptionGroup() method
 	public void addOptionGroup(OptionGroup group)
 	{
 		insertionSort(group.getLabel(),group);
 	} //}}}
 
-	//{{{ addOptionPane() method
+	// addOptionPane() method
 	public void addOptionPane(OptionPane pane)
 	{
 		String label = jEdit.getProperty("options."
@@ -113,7 +112,7 @@ public class OptionGroup
 		insertionSort(label,pane);
 	} //}}}
 
-	//{{{ addOptionPane() method
+	// addOptionPane() method
 	public void addOptionPane(String pane)
 	{
 		String label = jEdit.getProperty("options."
@@ -123,32 +122,32 @@ public class OptionGroup
 		insertionSort(label,pane);
 	} //}}}
 
-	//{{{ getMembers() method
+	// getMembers() method
 	public Enumeration<Object> getMembers()
 	{
 		return members.elements();
 	} //}}}
 
-	//{{{ getMember() method
+	// getMember() method
 	public Object getMember(int index)
 	{
 		return (index >= 0 && index < members.size())
 			? members.elementAt(index) : null;
 	} //}}}
 
-	//{{{ getMemberIndex() method
+	// getMemberIndex() method
 	public int getMemberIndex(Object member)
 	{
 		return members.indexOf(member);
 	} //}}}
 
-	//{{{ getMemberCount() method
+	// getMemberCount() method
 	public int getMemberCount()
 	{
 		return members.size();
 	} //}}}
 
-	//{{{ setSort() method
+	// setSort() method
 	/**
 	 * Sets if the members of this group should be sorted.
 	 * @since jEdit 4.2pre3
@@ -158,10 +157,10 @@ public class OptionGroup
 		this.sort = sort;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 
-	//{{{ insertionSort() method
+	// insertionSort() method
 	private void insertionSort(String newLabel, Object newObj)
 	{
 		if(sort)
@@ -199,5 +198,4 @@ public class OptionGroup
 		members.addElement(newObj);
 	} //}}}
 
-	//}}}
 }

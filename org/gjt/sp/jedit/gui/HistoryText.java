@@ -1,7 +1,6 @@
 /*
  * HistoryText.java - Common code for text components with a history
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * Controller (manager of models) for HistoryTextArea.
@@ -37,7 +35,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class HistoryText
 {
-	//{{{ HistoryText constructor
+	// HistoryText constructor
 	public HistoryText(JTextComponent text, String name)
 	{
 		this.text = text;
@@ -45,24 +43,24 @@ public class HistoryText
 		index = -1;
 	} //}}}
 
-	//{{{ fireActionPerformed() method
+	// fireActionPerformed() method
 	public void fireActionPerformed()
 	{
 	} //}}}
 
-	//{{{ getIndex() mehtod
+	// getIndex() mehtod
 	public int getIndex()
 	{
 		return index;
 	} //}}}
 
-	//{{{ setIndex() mehtod
+	// setIndex() mehtod
 	public void setIndex(int index)
 	{
 		this.index = index;
 	} //}}}
 
-	//{{{ getModel() method
+	// getModel() method
 	/**
 	 * Returns the underlying history controller.
 	 * @since jEdit 4.3pre1
@@ -72,7 +70,7 @@ public class HistoryText
 		return historyModel;
 	} //}}}
 
-	//{{{ setModel() method
+	// setModel() method
 	/**
 	 * Sets the history list controller.
 	 * @param name The model name
@@ -87,7 +85,7 @@ public class HistoryText
 		index = -1;
 	} //}}}
 
-	//{{{ setInstantPopups() method
+	// setInstantPopups() method
 	/**
 	 * Sets if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -97,7 +95,7 @@ public class HistoryText
 		this.instantPopups = instantPopups;
 	} //}}}
 
-	//{{{ getInstantPopups() method
+	// getInstantPopups() method
 	/**
 	 * Returns if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -107,7 +105,7 @@ public class HistoryText
 		return instantPopups;
 	} //}}}
 
-	//{{{ addCurrentToHistory() method
+	// addCurrentToHistory() method
 	/**
 	 * Adds the currently entered item to the history.
 	 */
@@ -118,7 +116,7 @@ public class HistoryText
 		index = 0;
 	} //}}}
 
-	//{{{ doBackwardSearch() method
+	// doBackwardSearch() method
 	public void doBackwardSearch()
 	{
 		if(historyModel == null)
@@ -149,7 +147,7 @@ public class HistoryText
 		javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null); 
 	} //}}}
 
-	//{{{ doForwardSearch() method
+	// doForwardSearch() method
 	public void doForwardSearch()
 	{
 		if(historyModel == null)
@@ -180,7 +178,7 @@ public class HistoryText
 		javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null); 
 	} //}}}
 
-	//{{{ historyPrevious() method
+	// historyPrevious() method
 	public void historyPrevious()
 	{
 		if(historyModel == null)
@@ -203,7 +201,7 @@ public class HistoryText
 		}
 	} //}}}
 
-	//{{{ historyNext() method
+	// historyNext() method
 	public void historyNext()
 	{
 		if(historyModel == null)
@@ -222,13 +220,13 @@ public class HistoryText
 		}
 	} //}}}
 	
-	//{{{ getDocument() method
+	// getDocument() method
 	public Document getDocument()
 	{
 		return text.getDocument();
 	} //}}}
 	
-	//{{{ getText() method
+	// getText() method
 	/**
 	 * Subclasses can override this to provide funky history behavior,
 	 * for JTextPanes and such.
@@ -238,7 +236,7 @@ public class HistoryText
 		return text.getText();
 	} //}}}
 	
-	//{{{ setText() method
+	// setText() method
 	/**
 	 * Subclasses can override this to provide funky history behavior,
 	 * for JTextPanes and such.
@@ -249,7 +247,7 @@ public class HistoryText
 		this.text.setText(text);
 	} //}}}
 
-	//{{{ getInputStart() method
+	// getInputStart() method
 	/**
 	 * Subclasses can override this to provide funky history behavior,
 	 * for JTextPanes and such.
@@ -259,7 +257,7 @@ public class HistoryText
 		return 0;
 	} //}}}
 
-	//{{{ showPopupMenu() method
+	// showPopupMenu() method
 	public void showPopupMenu(String t, int x, int y)
 	{
 		if(historyModel == null)
@@ -308,7 +306,7 @@ public class HistoryText
 		GenericGUIUtilities.showPopupMenu(popup,text,x,y,false);
 	} //}}}
 
-	//{{{ showPopupMenu() method
+	// showPopupMenu() method
 	public void showPopupMenu(boolean search)
 	{
 		if(search)
@@ -318,16 +316,15 @@ public class HistoryText
 			showPopupMenu("",0,text.getHeight());
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final JTextComponent text;
 	private HistoryModel historyModel;
 	private int index;
 	private String current;
 	private JPopupMenu popup;
 	private boolean instantPopups;
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener
 	{
 		@Override

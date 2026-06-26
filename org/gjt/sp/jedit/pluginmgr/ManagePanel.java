@@ -1,7 +1,6 @@
 /*
  * ManagePanel.java - Manages plugins
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 
 import java.awt.event.*;
@@ -68,14 +67,13 @@ import org.gjt.sp.util.StandardUtilities;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-//}}}
 
 /**
  * The ManagePanel is the JPanel that shows the installed plugins.
  */
 public class ManagePanel extends JPanel
 {
-	//{{{ Private members
+	// Private members
 	private final JCheckBox hideLibraries;
 	private final JTable table;
 	private final JScrollPane scrollpane;
@@ -85,9 +83,8 @@ public class ManagePanel extends JPanel
 	private JPopupMenu popup;
 	private Set<String> selectedPlugins;
 	private Set<String> jarNames;
-	//}}}
 
-	//{{{ ManagePanel constructor
+	// ManagePanel constructor
 	public ManagePanel(PluginManager window)
 	{
 		super(new BorderLayout(12,12));
@@ -165,7 +162,7 @@ public class ManagePanel extends JPanel
 		pluginModel.update();
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	public void update()
 	{
 		pluginModel.update();
@@ -199,7 +196,7 @@ public class ManagePanel extends JPanel
 		}
 	}//}}}
 
-	//{{{ loadPluginSet() method
+	// loadPluginSet() method
 	boolean loadPluginSet(String path)
 	{
 		VFS vfs = VFSManager.getVFSForPath(path);
@@ -242,7 +239,7 @@ public class ManagePanel extends JPanel
 		return true;
 	}//}}}
 
-	//{{{ getDeclaredJars() method
+	// getDeclaredJars() method
 	/**
 	 * Returns a collection of declared jars in the plugin.
 	 * If the plugin is loaded use {@link org.gjt.sp.jedit.PluginJAR#getRequiredJars()}
@@ -278,9 +275,9 @@ public class ManagePanel extends JPanel
 		return jarList;
 	}//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Entry class
+	// Entry class
 	class Entry
 	{
 		static final String LOADED = "loaded";
@@ -401,7 +398,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ PluginTableModel class
+	// PluginTableModel class
 	private class PluginTableModel extends AbstractTableModel
 	{
 		private final List<Entry> entries;
@@ -409,20 +406,20 @@ public class ManagePanel extends JPanel
 		private Map<String, Object> unloaded;
 		private int sortDirection = 1;
 
-		//{{{ Constructor
+		// Constructor
 		PluginTableModel()
 		{
 			entries = new ArrayList<>();
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		@Override
 		public int getColumnCount()
 		{
 			return 5;
 		} //}}}
 
-		//{{{ getColumnClass() method
+		// getColumnClass() method
 		@Override
 		public Class getColumnClass(int columnIndex)
 		{
@@ -433,7 +430,7 @@ public class ManagePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ getColumnName() method
+		// getColumnName() method
 		@Override
 		public String getColumnName(int column)
 		{
@@ -454,13 +451,13 @@ public class ManagePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ getEntry() method
+		// getEntry() method
 		public Entry getEntry(int rowIndex)
 		{
 			return entries.get(rowIndex);
 		} //}}}
 
-		//{{{ getEntry() method
+		// getEntry() method
 		public Entry getEntry(String classname)
 		{
 			if (classname == null || classname.isEmpty())
@@ -473,14 +470,14 @@ public class ManagePanel extends JPanel
 			return null;
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		@Override
 		public int getRowCount()
 		{
 			return entries.size();
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		@Override
 		public Object getValueAt(int rowIndex,int columnIndex)
 		{
@@ -534,14 +531,14 @@ public class ManagePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ isCellEditable() method
+		// isCellEditable() method
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
 			return columnIndex == 0;
 		} //}}}
 
-		//{{{ setValueAt() method
+		// setValueAt() method
 		@Override
 		public void setValueAt(final Object value, int rowIndex,
 			final int columnIndex)
@@ -580,7 +577,7 @@ public class ManagePanel extends JPanel
 			});
 		} //}}}
 
-		//{{{ sort() method
+		// sort() method
 		public void sort(int type)
 		{
 			List<String> savedSelection = new ArrayList<>();
@@ -597,9 +594,8 @@ public class ManagePanel extends JPanel
 			restoreSelection(savedSelection);
 			table.getTableHeader().repaint();
 		}
-		//}}}
 
-		//{{{ update() method
+		// update() method
 		public void update()
 		{
 			List<String> savedSelection = new ArrayList<>();
@@ -646,7 +642,7 @@ public class ManagePanel extends JPanel
 			restoreSelection(savedSelection);
 		} //}}}
 
-		//{{{ unloadPluginJARWithDialog() method
+		// unloadPluginJARWithDialog() method
 		// Perhaps this should also be moved to PluginJAR class?
 		private void unloadPluginJARWithDialog(PluginJAR jar)
 		{
@@ -686,7 +682,7 @@ public class ManagePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ unloadPluginJAR() method
+		// unloadPluginJAR() method
 		private void unloadPluginJAR(PluginJAR jar)
 		{
 			String[] dependents = jar.getAllDependentPlugins();
@@ -705,7 +701,7 @@ public class ManagePanel extends JPanel
 			jEdit.propertiesChanged();
 		} //}}}
 
-		//{{{ saveSelection() method
+		// saveSelection() method
 		/**
 		 * Save the selection in the given list.
 		 * The list will be filled with the jar names of the selected entries
@@ -722,7 +718,7 @@ public class ManagePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ restoreSelection() method
+		// restoreSelection() method
 		/**
 		 * Restore the selection.
 		 *
@@ -765,7 +761,7 @@ public class ManagePanel extends JPanel
 		} //}}}
 	} //}}}
 
-	//{{{ TextRenderer class
+	// TextRenderer class
 	private class TextRenderer extends DefaultTableCellRenderer
 	{
 		private final DefaultTableCellRenderer tcr;
@@ -788,7 +784,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ HideLibrariesButton class
+	// HideLibrariesButton class
 	private class HideLibrariesButton extends JCheckBox
 	{
 		HideLibrariesButton()
@@ -804,7 +800,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ RestoreButton class
+	// RestoreButton class
 	/**
 	 * Permits the user to restore the state of the ManagePanel
 	 * based on a PluginSet.
@@ -845,7 +841,7 @@ public class ManagePanel extends JPanel
 		}
 	}//}}}
 
-	//{{{ SaveButton class
+	// SaveButton class
 	/**
 	 * Permits the user to save the state of the ManagePanel,
 	 * which in this case, is nothing more than a list of
@@ -914,7 +910,7 @@ public class ManagePanel extends JPanel
 		}
 	}//}}}
 
-	//{{{ RemoveButton class
+	// RemoveButton class
 	/**
 	 * The Remove button is the button pressed to remove the selected
 	 * plugin.
@@ -1029,7 +1025,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ FindOrphanActionListener class
+	// FindOrphanActionListener class
 	private class FindOrphan extends JButton implements ActionListener
 	{
 		private FindOrphan()
@@ -1148,7 +1144,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ HelpButton class
+	// HelpButton class
 	private class HelpButton extends JButton implements ListSelectionListener
 	{
 		private URL docURL;
@@ -1197,7 +1193,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ EntryCompare class
+	// EntryCompare class
 	private static class EntryCompare implements Comparator<Entry>
 	{
 		public static final int NAME = 1;
@@ -1256,7 +1252,7 @@ public class ManagePanel extends JPanel
 
 	} //}}}
 
-	//{{{ HeaderMouseHandler class
+	// HeaderMouseHandler class
 	private class HeaderMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -1290,7 +1286,7 @@ public class ManagePanel extends JPanel
 			}
 		}
 
-		//{{{ CleanupActionListener class
+		// CleanupActionListener class
 		private class CleanupActionListener implements ActionListener
 		{
 			@Override
@@ -1331,7 +1327,7 @@ public class ManagePanel extends JPanel
 		} //}}}
 	} //}}}
 
-	//{{{ KeyboardAction class
+	// KeyboardAction class
 	private class KeyboardAction extends AbstractAction
 	{
 		private final KeyboardCommand command;
@@ -1370,7 +1366,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ TableFocusHandler class
+	// TableFocusHandler class
 	private class TableFocusHandler extends FocusAdapter
 	{
 		@Override
@@ -1389,7 +1385,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ HeaderRenderer
+	// HeaderRenderer
 	private static class HeaderRenderer extends DefaultTableCellRenderer
 	{
 		private final DefaultTableCellRenderer tcr;
@@ -1414,7 +1410,7 @@ public class ManagePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ TableSelectionListener class
+	// TableSelectionListener class
 	private class TableSelectionListener implements ListSelectionListener
 	{
 		@Override
@@ -1428,5 +1424,4 @@ public class ManagePanel extends JPanel
 			}
 		}
 	} //}}}
-	//}}}
 }

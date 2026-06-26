@@ -1,7 +1,6 @@
 /*
  * BufferSaveRequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.bufferio;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.util.zip.*;
 
@@ -30,7 +29,6 @@ import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.*;
 import java.nio.charset.UnsupportedCharsetException;
-//}}}
 
 /**
  * A buffer save request.
@@ -39,7 +37,7 @@ import java.nio.charset.UnsupportedCharsetException;
  */
 public class BufferSaveRequest extends BufferIORequest
 {
-	//{{{ BufferSaveRequest constructor
+	// BufferSaveRequest constructor
 	/**
 	 * Creates a new buffer I/O request.
 	 * @param view The view
@@ -54,7 +52,7 @@ public class BufferSaveRequest extends BufferIORequest
 		super(view,buffer,session,vfs,path);
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -159,7 +157,7 @@ public class BufferSaveRequest extends BufferIORequest
 		}
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 
 	/**
 	 * Save the file
@@ -219,9 +217,9 @@ public class BufferSaveRequest extends BufferIORequest
 		return true;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ makeBackup() method
+	// makeBackup() method
 	/**
 	 * Make the backup.
 	 * Only one backup per jEdit session is done unless if you choosed "backup at every save"
@@ -250,7 +248,7 @@ public class BufferSaveRequest extends BufferIORequest
 		}
 	} //}}}
 
-	//{{{ wantTwoStageSave() method
+	// wantTwoStageSave() method
 	private boolean willTwoStageSave(Buffer buffer)
 	{
 		boolean vfsRenameCap = (vfs.getCapabilities() & VFS.RENAME_CAP) != 0;
@@ -260,5 +258,4 @@ public class BufferSaveRequest extends BufferIORequest
 						jEdit.getBooleanProperty("twoStageSave"));
 	}//}}}
 
-	//}}}
 }

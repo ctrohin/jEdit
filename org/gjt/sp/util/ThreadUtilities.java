@@ -1,7 +1,6 @@
 /*
  * ThreadUtilities.java - Utilities for threading
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010 Matthieu Casanova
  * Portions Copyright (C) 2010 Marcelo Vanzin
@@ -22,7 +21,7 @@
  */
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CountDownLatch;
@@ -31,7 +30,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
-//}}}
 
 /**
  * The threadpool of jEdit.
@@ -45,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ThreadUtilities
 {
-	//{{{ runInDispatchThread() method
+	// runInDispatchThread() method
 	/**
 	 * Run the runnable in EventDispatch Thread.
 	 * If the current thread is EventDispatch, it will run
@@ -64,7 +62,7 @@ public class ThreadUtilities
 			EventQueue.invokeLater(runnable);
 	} //}}}
 
-	//{{{ runInDispatchThreadAndWait() method
+	// runInDispatchThreadAndWait() method
 	/** Runs the runnable in EDT through <code>invokeLater</code>,
 	 *  but returns only after the runnable is executed.
 	 *  This method is uninterruptible.
@@ -97,7 +95,7 @@ public class ThreadUtilities
 			Thread.currentThread().interrupt();
 	} //}}}
 
-	//{{{ runInDispatchThreadNow() method
+	// runInDispatchThreadNow() method
 	/**
 	 * Runs the runnable in EDT through <code>invokeAndWait</code>.
 	 * Even if the thread gets interrupted, the call does not return
@@ -154,7 +152,7 @@ public class ThreadUtilities
 			Thread.currentThread().interrupt();
 	} //}}}
 
-	//{{{ runInBackground() method
+	// runInBackground() method
 	/**
 	 * Run the runnable in the threadpool.
 	 * The runnable will be encapsulated in a {@link Task}
@@ -193,7 +191,7 @@ public class ThreadUtilities
 	{
 	}
 
-	//{{{ JEditThreadFactory class
+	// JEditThreadFactory class
 	private static class JEditThreadFactory implements ThreadFactory
 	{
 		private JEditThreadFactory()
@@ -225,7 +223,7 @@ public class ThreadUtilities
 		((ThreadPoolExecutor) threadPool).setCorePoolSize(CORE_POOL_SIZE);
 	}
 
-	//{{{ MyRunnable class
+	// MyRunnable class
 	private static class CountDownLatchRunnable implements Runnable
 	{
 		private final Runnable runnable;

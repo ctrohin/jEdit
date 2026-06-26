@@ -1,7 +1,6 @@
 /*
  * Autosave.java - Autosave manager
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -35,7 +33,7 @@ import org.gjt.sp.util.Log;
  */
 class Autosave implements ActionListener
 {
-	//{{{ setInterval() method
+	// setInterval() method
 	public static void setInterval(int interval)
 	{
 		if(interval == 0)
@@ -60,14 +58,14 @@ class Autosave implements ActionListener
 			timer.setDelay(interval);
 	} //}}}
 
-	//{{{ stop() method
+	// stop() method
 	public static void stop()
 	{
 		if(timer != null)
 			timer.stop();
 	} //}}}
 
-	//{{{ actionPerformed() method
+	// actionPerformed() method
 	@Override
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -101,9 +99,8 @@ class Autosave implements ActionListener
 		Log.flushStream();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static Timer timer;
 
 	private Autosave() {}
-	//}}}
 }

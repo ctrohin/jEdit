@@ -1,7 +1,6 @@
 /*
  * AnimatedIcon.java - Animated version of ImageIcon
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki
  *
@@ -22,11 +21,10 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-//}}}
 
 /** A Animated version of ImageIcon.
  *
@@ -34,7 +32,7 @@ import javax.swing.*;
  */
 public class AnimatedIcon extends ImageIcon
 {
-	//{{{ AnimatedIcon constructor
+	// AnimatedIcon constructor
 	/**
 	 * @param frames The frames to be used in the animation
 	 * @param rate The frame rate of the animation, in frames per second
@@ -49,43 +47,43 @@ public class AnimatedIcon extends ImageIcon
 		this.host = host;
 	} //}}}
 
-	//{{{ getFrames() method
+	// getFrames() method
 	public Image[] getFrames()
 	{
 		return frames;
 	} //}}}
 
-	//{{{ getIcon() method
+	// getIcon() method
 	public Image getIcon()
 	{
 		return icon;
 	} //}}}
 
-	//{{{ getRate() method
+	// getRate() method
 	public int getRate()
 	{
 		return 1000/delay;
 	} //}}}
 
-	//{{{ setFrames() method
+	// setFrames() method
 	public void setFrames(Image[] frames)
 	{
 		this.frames = frames;
 	} //}}}
 
-	//{{{ setIcon() method
+	// setIcon() method
 	public void setIcon(Image icon)
 	{
 		this.icon = icon;
 	} //}}}
 
-	//{{{ setRate() method
+	// setRate() method
 	public void setRate(int rate)
 	{
 		delay = 1000/rate;
 	} //}}}
 
-	//{{{ start() method
+	// start() method
 	/**
 	 * Starts the animation rolling
 	 */
@@ -98,7 +96,7 @@ public class AnimatedIcon extends ImageIcon
 		timer.start();
 	} //}}}
 
-	//{{{ stop() method
+	// stop() method
 	/**
 	 * Stops the animation, and resets to frame 0
 	 */
@@ -115,16 +113,15 @@ public class AnimatedIcon extends ImageIcon
 		host.repaint();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private Image[] frames;
 	private int current;
 	private int delay;
 	private Timer timer;
 	private final Component host;
 	private Image icon;
-	//}}}
 
-	//{{{ Animator class
+	// Animator class
 	private class Animator implements ActionListener
 	{
 		@Override

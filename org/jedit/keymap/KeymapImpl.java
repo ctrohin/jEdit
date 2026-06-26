@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  *
@@ -21,14 +20,13 @@
 
 package org.jedit.keymap;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.util.Properties;
 
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * The default keymap implementation.
@@ -43,7 +41,7 @@ class KeymapImpl implements Keymap
 	private final File file;
 	private boolean modified;
 
-	//{{{ KeymapImpl() constructor
+	// KeymapImpl() constructor
 	KeymapImpl(String name, File file)
 	{
 		this.name = name;
@@ -51,13 +49,13 @@ class KeymapImpl implements Keymap
 		loadProperties();
 	} //}}}
 
-	//{{{ getInputStream() method
+	// getInputStream() method
 	protected InputStream getInputStream()
 	{
 		return Keymap.class.getResourceAsStream(name + "_keys.props");
 	} //}}}
 
-	//{{{ loadProperties() method
+	// loadProperties() method
 	private void loadProperties()
 	{
 		props = new Properties();
@@ -71,7 +69,7 @@ class KeymapImpl implements Keymap
 		}
 	} //}}}
 
-	//{{{ getShortcut() method
+	// getShortcut() method
 	@Override
 	public String getShortcut(String name)
 	{
@@ -79,7 +77,7 @@ class KeymapImpl implements Keymap
 		return property;
 	} //}}}
 
-	//{{{ setShortcut() method
+	// setShortcut() method
 	@Override
 	public void setShortcut(String name, String shortcut)
 	{
@@ -100,21 +98,21 @@ class KeymapImpl implements Keymap
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
 		return name;
 	} //}}}
 
-	//{{{ hashCode() method
+	// hashCode() method
 	@Override
 	public int hashCode()
 	{
 		return name.hashCode();
 	} //}}}
 
-	//{{{ equals() method
+	// equals() method
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -125,7 +123,7 @@ class KeymapImpl implements Keymap
 		return name.equals(keymap.toString());
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	@Override
 	public void save()
 	{

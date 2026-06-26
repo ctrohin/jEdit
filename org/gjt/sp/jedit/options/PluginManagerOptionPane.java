@@ -1,7 +1,6 @@
 /*
  * PluginManagerOptionPane.java - Plugin options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Kris Kopicki
  *
@@ -39,13 +38,13 @@ import org.gjt.sp.util.*;
  */
 public class PluginManagerOptionPane extends AbstractOptionPane
 {
-	//{{{ Constructor
+	// Constructor
 	public PluginManagerOptionPane()
 	{
 		super("plugin-manager");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -160,7 +159,7 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 			appDir.setSelected(true);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -185,9 +184,9 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private JLabel mirrorLabel;
 
 	private JCheckBox disableObsolete;
@@ -202,9 +201,8 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 	private JButton updateMirrors;
 	/** A label telling if the mirror list is being updated. */
 	private final JLabel updateStatus = new JLabel();
-	//}}}
 
-	//{{{ updateMirrorLabel method
+	// updateMirrorLabel method
 	private void updateMirrorLabel()
 	{
 		String currentMirror = jEdit.getProperty("plugin-manager.mirror.id");
@@ -222,9 +220,8 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 			"options.plugin-manager.mirror") + ' ' + mirrorName);
 	} //}}}
 
-	//}}}
 
-	//{{{ MirrorModel class
+	// MirrorModel class
 	static class MirrorModel extends AbstractListModel<String>
 	{
 		private List<MirrorList.Mirror> mirrors;
@@ -262,7 +259,7 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ SingleSelectionModel class
+	// SingleSelectionModel class
 	static class SingleSelectionModel extends DefaultListSelectionModel
 	{
 		SingleSelectionModel()
@@ -274,7 +271,7 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 		public void removeSelectionInterval(int index0, int index1) {}
 	} //}}}
 
-	//{{{ UpdateMirrorsThread class
+	// UpdateMirrorsThread class
 	/**
 	 * The thread that will update the mirror list.
 	 * It will read them from the cache or from the web.
@@ -293,7 +290,7 @@ public class PluginManagerOptionPane extends AbstractOptionPane
 			this.download = download;
 		}
 
-		//{{{ run() method
+		// run() method
 		@Override
 		public void _run()
 		{

@@ -1,7 +1,6 @@
 /*
  * TipOfTheDay.java - Tip of the day window
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
 import java.awt.*;
@@ -32,11 +31,10 @@ import java.util.Random;
 
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Log;
-//}}}
 /** Tip of the day window */
 public class TipOfTheDay extends EnhancedDialog
 {
-	//{{{ TipOfTheDay constructor
+	// TipOfTheDay constructor
 	public TipOfTheDay(View view)
 	{
 		super(view,jEdit.getProperty("tip.title"),false);
@@ -96,30 +94,29 @@ public class TipOfTheDay extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final JCheckBox showNextTime;
 	private final JEditorPane tipText;
 	private int currentTip = -1;
 	private final Random random;
-	//}}}
 
-	//{{{ nextTip() method
+	// nextTip() method
 	private void nextTip()
 	{
 		File[] tips = new File(MiscUtilities.constructPath(
@@ -147,5 +144,4 @@ public class TipOfTheDay extends EnhancedDialog
 		}
 	} //}}}
 
-	//}}}
 }

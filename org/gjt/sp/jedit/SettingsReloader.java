@@ -1,7 +1,6 @@
 /*
  * SettingsReloader.java - Utility class reloads macros and modes when necessary
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.File;
 
 import org.gjt.sp.jedit.EditBus.EBHandler;
@@ -30,18 +29,17 @@ import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSManager;
 import org.gjt.sp.jedit.msg.VFSUpdate;
 import org.gjt.sp.jedit.search.*;
-//}}}
 
 class SettingsReloader
 {
-	//{{{ handleMessage() method
+	// handleMessage() method
 	@EBHandler
 	public void handleVFSUpdate(VFSUpdate vmsg)
 	{
 		maybeReload(vmsg.getPath());
 	} //}}}
 
-	//{{{ maybeReload() method
+	// maybeReload() method
 	private void maybeReload(String path)
 	{
 		String originalPath = path;

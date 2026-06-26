@@ -2,7 +2,6 @@
  * TokenHandler.java - Token markers send tokens to implementations of
  * this class
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *

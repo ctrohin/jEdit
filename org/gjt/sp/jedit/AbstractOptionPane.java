@@ -1,7 +1,6 @@
 /*
  * AbstractOptionPane.java - Abstract option pane
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -22,11 +21,10 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 
-//}}}
 
 /**
  * The default implementation of the option pane interface.<p>
@@ -62,7 +60,7 @@ import java.awt.*;
 // components.
 public class AbstractOptionPane extends JPanel implements OptionPane
 {
-	//{{{ AbstractOptionPane constructor
+	// AbstractOptionPane constructor
 	/**
 	 * Creates a new option pane.
 	 * @param internalName The internal name.
@@ -80,7 +78,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns the internal name of this option pane. The option pane's label
 	 * is set to the value of the property named
@@ -92,7 +90,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		return name;
 	} //}}}
 
-	//{{{ getComponent() method
+	// getComponent() method
 	/**
 	 * Returns the component that should be displayed for this option pane.
 	 * Because this class extends Component, it simply returns "this".
@@ -103,7 +101,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		return this;
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	@Override
 	public final void init()
 	{
@@ -114,7 +112,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		}
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	@Override
 	public final void save()
 	{
@@ -122,7 +120,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 			_save();
 	} //}}}
 
-	//{{{ newLabel()
+	// newLabel()
 	/**
 	 * @param label The label to associate with comp
 	 * @param comp The component to associate the label
@@ -150,7 +148,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		return retval;
 	}// }}}
 
-	//{{{ addComponent() method
+	// addComponent() method
 	/**
 	 * Adds a labeled component to the option pane. Components are
 	 * added in a vertical fashion, one per row. The label is
@@ -269,7 +267,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		add(comp);
 	} //}}}
 
-	//{{{ copyToolTips() method
+	// copyToolTips() method
 	private static void copyToolTips(Component c1, Component c2)
 	{
 		if (!(c1 instanceof JComponent) || !(c2 instanceof JComponent))
@@ -300,7 +298,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		}
 	} //}}}
 
-	//{{{ addSeparator() methods
+	// addSeparator() methods
 	/**
 	 * Adds a separator component.
 	 * @since jEdit 4.1pre7
@@ -363,7 +361,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 		add(box);
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 	/**
 	 * Has the option pane been initialized?
 	 */
@@ -394,9 +392,7 @@ public class AbstractOptionPane extends JPanel implements OptionPane
 	 */
 	protected void _save() {}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final String name;
-	//}}}
 }

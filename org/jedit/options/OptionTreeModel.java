@@ -1,7 +1,6 @@
 /*
  * OptionTreeModel.java - OptionGroup-backed TreeModel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Portions Copyright (C) 2003 Slava Pestov
  * Copyright (C) 2012 Alan Ezust

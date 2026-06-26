@@ -1,7 +1,6 @@
 /*
  * HistoryTextArea.java - Text area with a history
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Collections;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * Text area with a history.
@@ -37,7 +35,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class HistoryTextArea extends JTextArea
 {
-	//{{{ HistoryTextArea constructor
+	// HistoryTextArea constructor
 	public HistoryTextArea(String name)
 	{
 		super(3,15);
@@ -53,7 +51,7 @@ public class HistoryTextArea extends JTextArea
 					InputEvent.SHIFT_DOWN_MASK)));
 	} //}}}
 
-	//{{{ getModel() method
+	// getModel() method
 	/**
 	 * Returns the underlying history controller.
 	 * @since jEdit 4.3pre1
@@ -63,7 +61,7 @@ public class HistoryTextArea extends JTextArea
 		return controller.getModel();
 	} //}}}
 
-	//{{{ setModel() method
+	// setModel() method
 	/**
 	 * Sets the history list controller.
 	 * @param name The model name
@@ -74,7 +72,7 @@ public class HistoryTextArea extends JTextArea
 		controller.setModel(name);
 	} //}}}
 
-	//{{{ setInstantPopups() method
+	// setInstantPopups() method
 	/**
 	 * Sets if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -84,7 +82,7 @@ public class HistoryTextArea extends JTextArea
 		controller.setInstantPopups(instantPopups);
 	} //}}}
 
-	//{{{ getInstantPopups() method
+	// getInstantPopups() method
 	/**
 	 * Returns if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -94,7 +92,7 @@ public class HistoryTextArea extends JTextArea
 		return controller.getInstantPopups();
 	} //}}}
 
-	//{{{ addCurrentToHistory() method
+	// addCurrentToHistory() method
 	/**
 	 * Adds the currently entered item to the history.
 	 */
@@ -103,7 +101,7 @@ public class HistoryTextArea extends JTextArea
 		controller.addCurrentToHistory();
 	} //}}}
 
-	//{{{ setText() method
+	// setText() method
 	/**
 	 * Sets the displayed text.
 	 */
@@ -114,9 +112,9 @@ public class HistoryTextArea extends JTextArea
 		controller.setIndex(-1);
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	protected void processKeyEvent(KeyEvent evt)
 	{
@@ -174,7 +172,7 @@ public class HistoryTextArea extends JTextArea
 			super.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ processMouseEvent() method
+	// processMouseEvent() method
 	@Override
 	protected void processMouseEvent(MouseEvent evt)
 	{
@@ -196,9 +194,7 @@ public class HistoryTextArea extends JTextArea
 		}
 	} //}}}
 	
-	//}}}
 
-	//{{{ Private variables
+	// Private variables
 	private final HistoryText controller;
-	//}}}
 }

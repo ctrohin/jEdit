@@ -1,7 +1,6 @@
 /*
  * HyperSearchFileNode.java - HyperSearch file node
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -45,19 +44,19 @@ public class HyperSearchFileNode implements HyperSearchNode
 			fileSep = "\\\\";
 	}
 
-	//{{{ HyperSearchFileNode constructor
+	// HyperSearchFileNode constructor
 	public HyperSearchFileNode(String path)
 	{
 		this.path = path;
 	} //}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	public Buffer getBuffer(View view)
 	{
 		return jEdit.openFile(view,path);
 	} //}}}
 
-	//{{{ goTo() method
+	// goTo() method
 	public void goTo(EditPane editPane)
 	{
 		Buffer buffer = getBuffer(editPane.getView());
@@ -67,7 +66,7 @@ public class HyperSearchFileNode implements HyperSearchNode
 		editPane.setBuffer(buffer);
 	} //}}}
 	
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		if (showFullPath)
@@ -76,7 +75,7 @@ public class HyperSearchFileNode implements HyperSearchNode
 		return paths[paths.length - 1];
 	} //}}}
 	
-	//{{{ equals() method
+	// equals() method
 	public boolean equals(Object compareObj)
 	{
 		if (!(compareObj instanceof HyperSearchFileNode))

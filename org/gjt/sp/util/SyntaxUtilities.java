@@ -1,7 +1,6 @@
 /*
  * SyntaxUtilities.java - Syntax and styles utility utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2008 Matthieu Casanova, Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.awt.Font;
 import java.math.BigInteger;
@@ -37,7 +36,6 @@ import org.gjt.sp.jedit.syntax.Token;
 import org.gjt.sp.jedit.IPropertyManager;
 
 import static java.util.stream.Collectors.joining;
-//}}}
 
 /**
  * Syntax utilities that depends on JDK only and syntax package.
@@ -100,7 +98,7 @@ public class SyntaxUtilities
 	private static final Pattern COMMA_SEPARATOR_PATTERN =
 			Pattern.compile("\\s*+,\\s*+");
 
-	//{{{ getColorHexString() method
+	// getColorHexString() method
 	/**
 	 * Converts a color object to its hex value. The hex value
 	 * prefixed is with `#', for example `#ff0088'.
@@ -116,7 +114,7 @@ public class SyntaxUtilities
 	} //}}}
 
 	
-	//{{{ parseColor() method
+	// parseColor() method
 	/**
  	 * parseColor in GUIUtilities was deprecated and now removed, but several plugins
  	 * were using that method. This method signature matches that used in GUIUtilities,
@@ -128,7 +126,7 @@ public class SyntaxUtilities
 		return parseColor(name, Color.black);	
 	} //}}}
 	
-	//{{{ parseColor() method
+	// parseColor() method
 	/**
 	 * @since jEdit 4.3pre13
 	 */
@@ -183,7 +181,7 @@ public class SyntaxUtilities
 			return defaultColor;
 	} //}}}
 
-	//{{{ getColorMatrixString() method
+	// getColorMatrixString() method
 	public static String getColorMatrixString(Color[][] matrix)
 	{
 		if (matrix == null)
@@ -196,7 +194,7 @@ public class SyntaxUtilities
 				.collect(joining(",", "[", "]"));
 	} //}}}
 
-	//{{{ parseColorMatrix() method
+	// parseColorMatrix() method
 	/**
 	 * Parses a color matrix of the form {@code "[[red, green], [blue, yellow]]"} into
 	 * a two dimensional array. If the syntax is invalid, the given default value is
@@ -241,7 +239,7 @@ public class SyntaxUtilities
 		return result;
 	} //}}}
 
-	//{{{ parseStyle() method
+	// parseStyle() method
 	/**
 	 * Converts a style string to a style object.
 	 * @param str The style string
@@ -297,7 +295,7 @@ public class SyntaxUtilities
 						size));
 	} //}}}
 
-	//{{{ parseStyle() method
+	// parseStyle() method
 	/**
 	 * Converts a style string to a style object.
 	 * @param str The style string
@@ -314,7 +312,7 @@ public class SyntaxUtilities
 		return parseStyle(str, family, size, color, Color.black);
 	} //}}}
 
-	//{{{ loadStyles() methods
+	// loadStyles() methods
 	/**
 	 * Loads the syntax styles from the properties, giving them the specified
 	 * base font family and size.

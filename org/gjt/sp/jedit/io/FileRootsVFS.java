@@ -1,7 +1,6 @@
 /*
  * FileRootsVFS.java - Local root filesystems VFS
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  * Portions copyright (C) 2002 Kris Kopicki
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.Icon;
 import javax.swing.filechooser.FileSystemView;
@@ -41,7 +40,6 @@ import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.jEdit;
 
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
-//}}}
 
 /**
  * A VFS that lists local root filesystems.
@@ -52,7 +50,7 @@ public class FileRootsVFS extends VFS
 {
 	public static final String PROTOCOL = "roots";
 
-	//{{{ FileRootsVFS constructor
+	// FileRootsVFS constructor
 	public FileRootsVFS()
 	{
 		super("roots",LOW_LATENCY_CAP | BROWSE_CAP
@@ -60,7 +58,7 @@ public class FileRootsVFS extends VFS
 			new String[] { EA_TYPE });
 	} //}}}
 
-	//{{{ getParentOfPath() method
+	// getParentOfPath() method
 	@Override
 	
 	public String getParentOfPath(String path)
@@ -68,14 +66,14 @@ public class FileRootsVFS extends VFS
 		return PROTOCOL + ':';
 	} //}}}
 
-	//{{{ isRemotePath() method
+	// isRemotePath() method
 	@Override
 	public boolean isRemotePath(String path)
 	{
 		return false;
 	} //}}}
 
-	//{{{ _listFiles() method
+	// _listFiles() method
 	@Override
 	public VFSFile[] _listFiles(Object session, String url, Component comp)
 	{
@@ -91,17 +89,17 @@ public class FileRootsVFS extends VFS
 		return rootDE;
 	} //}}}
 
-	//{{{ _getFile() method
+	// _getFile() method
 	@Override
 	public VFSFile _getFile(Object session, String path, Component comp)
 	{
 		return new Root(new File(path));
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final FileSystemView fsView = FileSystemView.getFileSystemView();
 
-	//{{{ listRoots() method
+	// listRoots() method
 	private static File[] listRoots()
 	{
 		if (OperatingSystem.isMacOS())
@@ -146,9 +144,8 @@ public class FileRootsVFS extends VFS
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Root class
+	// Root class
 	static class Root extends VFSFile
 	{
 		Root(File file)

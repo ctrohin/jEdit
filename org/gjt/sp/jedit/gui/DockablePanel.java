@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 
 import java.awt.CardLayout;
 import java.awt.Cursor;
@@ -37,7 +36,6 @@ import javax.swing.border.Border;
 
 import static org.gjt.sp.jedit.gui.DockableWindowManager.*;
 import static org.gjt.sp.jedit.gui.DockableWindowManager.TOP;
-//}}}
 
 /** A panel that holds dockable windows.
  *
@@ -48,7 +46,7 @@ public class DockablePanel extends JPanel
 	private final PanelWindowContainer panel;
 	private final DockableWindowManagerImpl wm;
 
-	//{{{ DockablePanel constructor
+	// DockablePanel constructor
     public DockablePanel(PanelWindowContainer panel)
 	{
 		super(new CardLayout());
@@ -61,26 +59,26 @@ public class DockablePanel extends JPanel
 		addMouseMotionListener(resizeMouseHandler);
 	} //}}}
 
-	//{{{ getWindowContainer() method
+	// getWindowContainer() method
 	PanelWindowContainer getWindowContainer()
 	{
 		return panel;
 	} //}}}
 
-	//{{{ showDockable() method
+	// showDockable() method
     public void showDockable(String name)
 	{
 		((CardLayout)getLayout()).show(this,name);
 	} //}}}
 
-	//{{{ getMinimumSize() method
+	// getMinimumSize() method
 	@Override
 	public Dimension getMinimumSize()
 	{
 		return new Dimension(0,0);
 	} //}}}
 
-	//{{{ getPreferredSize() method
+	// getPreferredSize() method
 	@Override
 	public Dimension getPreferredSize()
 	{
@@ -117,7 +115,7 @@ public class DockablePanel extends JPanel
 		}
 	} //}}}
 
-	//{{{ setBounds() method
+	// setBounds() method
 	@Override
 	public void setBounds(int x, int y, int width, int height)
 	{
@@ -146,13 +144,13 @@ public class DockablePanel extends JPanel
 	/** This belong to ResizeMouseHandler but requires to be static. */
 	static Point dragStart;
 
-	//{{{ ResizeMouseHandler class
+	// ResizeMouseHandler class
 	private class ResizeMouseHandler extends MouseAdapter
 	{
 		/** This is true if the mouse is on the split bar. */
 		boolean canDrag;
 
-		//{{{ mousePressed() method
+		// mousePressed() method
 		@Override
 		public void mousePressed(MouseEvent evt)
 		{
@@ -164,7 +162,7 @@ public class DockablePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ mouseReleased() method
+		// mouseReleased() method
 		@Override
 		public void mouseReleased(MouseEvent evt)
 		{
@@ -182,7 +180,7 @@ public class DockablePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ mouseMoved() method
+		// mouseMoved() method
 		@Override
 		public void mouseMoved(MouseEvent evt)
 		{
@@ -197,7 +195,7 @@ public class DockablePanel extends JPanel
 
 			Insets insets = border.getBorderInsets(DockablePanel.this);
 			canDrag = false;
-			//{{{ Top...
+			// Top...
 			switch (position)
 			{
 				case TOP:
@@ -233,7 +231,7 @@ public class DockablePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ mouseDragged() method
+		// mouseDragged() method
 		@Override
 		public void mouseDragged(MouseEvent evt)
 		{
@@ -248,7 +246,7 @@ public class DockablePanel extends JPanel
 			String position = panel.getPosition();
 
 			int newSize = 0;
-			//{{{ Top...
+			// Top...
 			switch (position)
 			{
 				case TOP:
@@ -276,7 +274,7 @@ public class DockablePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ mouseExited() method
+		// mouseExited() method
 		@Override
 		public void mouseExited(MouseEvent evt)
 		{
@@ -286,7 +284,7 @@ public class DockablePanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ getCursor() method
+		// getCursor() method
 		private int getAppropriateCursor()
 		{
 			String position = panel.getPosition();

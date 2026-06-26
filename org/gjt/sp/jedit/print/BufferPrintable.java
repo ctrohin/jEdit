@@ -1,7 +1,6 @@
 /*
  * BufferPrintable.java - Printable implementation
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  * Portions copyright (C) 2002 Thomas Dilts
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.print;
 
-//{{{ Imports
+// Imports
 import javax.swing.text.TabExpander;
 import javax.swing.SwingUtilities;
 import java.awt.font.*;
@@ -37,7 +36,6 @@ import java.util.List;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.*;
-//}}}
 
 @Deprecated
 /**
@@ -50,7 +48,7 @@ import org.gjt.sp.util.*;
  */
 class BufferPrintable implements Printable
 {
-	//{{{ BufferPrintable constructor
+	// BufferPrintable constructor
 	BufferPrintable(PrinterJob job, Object format,
 		View view, Buffer buffer, Font font, boolean header,
 		boolean footer, boolean lineNumbers, boolean color)
@@ -87,7 +85,7 @@ class BufferPrintable implements Printable
 		tokenHandler = new DisplayTokenHandler();
 	} //}}}
 
-	//{{{ print() method
+	// print() method
 	public void print()
 	{
 		try
@@ -122,7 +120,7 @@ class BufferPrintable implements Printable
 		}
 	} //}}}
 
-	//{{{ print() method
+	// print() method
 	public int print(Graphics _gfx, PageFormat pageFormat, int pageIndex)
 		throws PrinterException
 	{
@@ -174,18 +172,17 @@ class BufferPrintable implements Printable
 		return PAGE_EXISTS;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static Color headerColor = Color.lightGray;
 	private static Color headerTextColor = Color.black;
 	private static Color footerColor = Color.lightGray;
 	private static Color footerTextColor = Color.black;
 	private static Color lineNumberColor = Color.gray;
 	private static Color textColor = Color.black;
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private PrinterJob job;
 	private Object format;
 
@@ -208,9 +205,8 @@ class BufferPrintable implements Printable
 	private FontRenderContext frc;
 
 	private DisplayTokenHandler tokenHandler;
-	//}}}
 
-	//{{{ printPage() method
+	// printPage() method
 	private void printPage(Graphics _gfx, PageFormat pageFormat, int pageIndex,
 		boolean actuallyPaint)
 	{
@@ -243,7 +239,7 @@ class BufferPrintable implements Printable
 		boolean glyphVector = jEdit.getBooleanProperty("print.glyphVector");
 		double lineNumberWidth;
 
-		//{{{ determine line number width
+		// determine line number width
 		if(lineNumbers)
 		{
 			// the +1's ensure that 99 gets 3 digits, 103 gets 4 digits,
@@ -260,13 +256,12 @@ class BufferPrintable implements Printable
 		}
 		else
 			lineNumberWidth = 0.0;
-		//}}}
 
 		//Log.log(Log.DEBUG,this,"#2 - Page dimensions: "
 		//	+ (pageWidth - lineNumberWidth)
 		//	+ 'x' + pageHeight);
 
-		//{{{ calculate tab size
+		// calculate tab size
 		int tabSize = jEdit.getIntegerProperty("print.tabSize",8);
 		char[] chars = new char[tabSize];
 		for(int i = 0; i < chars.length; i++)
@@ -274,7 +269,6 @@ class BufferPrintable implements Printable
 		double tabWidth = font.getStringBounds(chars,
 			0,tabSize,frc).getWidth();
 		PrintTabExpander e = new PrintTabExpander(tabWidth);
-		//}}}
 
 		lm = font.getLineMetrics("gGyYX",frc);
 		//Log.log(Log.DEBUG,this,"Line height is " + lm.getHeight());
@@ -338,7 +332,7 @@ print_loop:	for(;;)
 		}
 	} //}}}
 
-	//{{{ paintHeader() method
+	// paintHeader() method
 	private double paintHeader(Graphics2D gfx, double pageX, double pageY,
 		double pageWidth, boolean actuallyPaint)
 	{
@@ -363,9 +357,8 @@ print_loop:	for(;;)
 
 		return headerBounds.getHeight();
 	}
-	//}}}
 
-	//{{{ paintFooter() method
+	// paintFooter() method
 	private double paintFooter(Graphics2D gfx, double pageX, double pageY,
 		double pageWidth, double pageHeight, int pageIndex,
 		boolean actuallyPaint)
@@ -394,20 +387,19 @@ print_loop:	for(;;)
 		return footerBounds.getHeight();
 	} //}}}
 
-	//}}}
 
-	//{{{ PrintTabExpander class
+	// PrintTabExpander class
 	static class PrintTabExpander implements TabExpander
 	{
 		private double tabWidth;
 
-		//{{{ PrintTabExpander constructor
+		// PrintTabExpander constructor
 		PrintTabExpander(double tabWidth)
 		{
 			this.tabWidth = tabWidth;
 		} //}}}
 
-		//{{{ nextTabStop() method
+		// nextTabStop() method
 		public float nextTabStop(float x, int tabOffset)
 		{
 			int ntabs = (int)((x + 1) / tabWidth);

@@ -1,7 +1,6 @@
 /*
  * MirrorListHandler.java - XML handler for the mirrors list
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki (parts copied from Slava Pestov :) )
  *
@@ -38,13 +37,13 @@ import org.gjt.sp.jedit.options.PluginOptions;
  */
 class MirrorListHandler extends DefaultHandler
 {
-	//{{{ Constructor
+	// Constructor
 	MirrorListHandler(MirrorList mirrors)
 	{
 		this.mirrors = mirrors;
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
@@ -52,7 +51,7 @@ class MirrorListHandler extends DefaultHandler
 					PluginOptions.class);
 	} //}}}
 
-	//{{{ characters() method
+	// characters() method
 	@Override
 	public void characters(char[] c, int off, int len)
 	{
@@ -68,7 +67,7 @@ class MirrorListHandler extends DefaultHandler
 			continent.append(c, off, len);
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName,
 				 String tag, Attributes attrs)
@@ -82,7 +81,7 @@ class MirrorListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endElement() method
+	// endElement() method
 	@Override
 	public void endElement(String uri, String localName, String tag)
 	{
@@ -103,7 +102,7 @@ class MirrorListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startDocument() method
+	// startDocument() method
 	@Override
 	public void startDocument()
 	{
@@ -117,16 +116,16 @@ class MirrorListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endDocument() method
+	// endDocument() method
 	@Override
 	public void endDocument()
 	{
 		mirrors.finished();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Variables
+	// Variables
 	private String id;
 	private final StringBuilder description = new StringBuilder();		// NOPMD
 	private final StringBuilder location = new StringBuilder();			// NOPMD
@@ -137,7 +136,6 @@ class MirrorListHandler extends DefaultHandler
 	private MirrorList.Mirror mirror;
 
 	private final Stack<String> stateStack = new Stack<>();
-	//}}}
 
 	private String pushElement(String name)
 	{
@@ -155,5 +153,4 @@ class MirrorListHandler extends DefaultHandler
 		stateStack.pop();
 	}
 
-	//}}}
 }

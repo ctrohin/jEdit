@@ -1,7 +1,6 @@
 /*
  * GlobalOptionGroup.java -
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  * Portions copyright (C) 1999 mike dillon

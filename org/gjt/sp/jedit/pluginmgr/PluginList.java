@@ -1,7 +1,6 @@
 /*
  * PluginList.java - Plugin list downloaded from server
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.net.URL;
 import java.net.HttpURLConnection;
@@ -38,7 +37,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 
 /**
@@ -58,7 +56,7 @@ class PluginList extends Task
 	private String id;
 	private final Runnable dispatchThreadTask;
 
-	//{{{ PluginList constructor
+	// PluginList constructor
 	/**
 	 * Instantiate the PluginList.
 	 *
@@ -69,7 +67,7 @@ class PluginList extends Task
 		this.dispatchThreadTask = dispatchThreadTask;
 	} //}}}
 
-	//{{{ _run() method
+	// _run() method
 	@Override
 	public void _run()
 	{
@@ -132,7 +130,7 @@ class PluginList extends Task
 		ThreadUtilities.runInDispatchThread(dispatchThreadTask);
 	} //}}}
 
-	//{{{ loadPluginList() method
+	// loadPluginList() method
 	private void loadPluginList(String pluginListXml) throws IOException, SAXException, ParserConfigurationException
 	{
 		PluginListHandler handler = new PluginListHandler(this);
@@ -146,20 +144,20 @@ class PluginList extends Task
 		parser.parse(isrc);
 	} //}}}
 
-	//{{{ addPlugin() method
+	// addPlugin() method
 	void addPlugin(Plugin plugin)
 	{
 		plugins.add(plugin);
 		pluginHash.put(plugin.name,plugin);
 	} //}}}
 
-	//{{{ addPluginSet() method
+	// addPluginSet() method
 	void addPluginSet(PluginSet set)
 	{
 		pluginSets.add(set);
 	} //}}}
 
-	//{{{ finished() method
+	// finished() method
 	void finished()
 	{
 		// after the entire list is loaded, fill out plugin field
@@ -178,7 +176,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ dump() method
+	// dump() method
 	void dump()
 	{
 		for (Plugin plugin : plugins)
@@ -188,7 +186,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ getMirrorId() method
+	// getMirrorId() method
 	/**
 	 * Returns the mirror ID.
 	 *
@@ -200,7 +198,7 @@ class PluginList extends Task
 		return id;
 	} //}}}
 
-	//{{{ PluginSet class
+	// PluginSet class
 	static class PluginSet
 	{
 		String name;
@@ -212,7 +210,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ Plugin class
+	// Plugin class
 	public static class Plugin
 	{
 		String jar;
@@ -357,7 +355,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ Branch class
+	// Branch class
 	static class Branch
 	{
 		String version;
@@ -406,7 +404,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ Dependency class
+	// Dependency class
 	static class Dependency
 	{
 		final String what;
@@ -518,7 +516,7 @@ class PluginList extends Task
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	// TODO: this isn't used, should it be?
 	private static String getAutoSelectedMirror()
@@ -549,5 +547,4 @@ class PluginList extends Task
 			redirected.substring(start, end) :
 			redirected.substring(start);
 	}
-	//}}}
 }

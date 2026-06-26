@@ -1,7 +1,6 @@
 /*
  * StatusWidgetFactory.java - The service for widget of the status bar
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  *

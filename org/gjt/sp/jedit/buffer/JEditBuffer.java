@@ -1,7 +1,6 @@
 /*
  * JEditBuffer.java - jEdit buffer
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2005 Slava Pestov
  * Portions copyright (C) 1999, 2000 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.buffer;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.indent.IndentAction;
 import org.gjt.sp.jedit.indent.IndentRule;
@@ -47,7 +46,6 @@ import java.util.regex.Pattern;
 
 import static org.gjt.sp.jedit.LargeFileMode.ask;
 import static org.gjt.sp.jedit.buffer.WordWrap.none;
-//}}}
 
 /**
  * A <code>JEditBuffer</code> represents the contents of an open text
@@ -95,7 +93,7 @@ public class JEditBuffer
 	 */
 	public static final String LARGE_MODE_FILE = "largefilemode";
 
-	//{{{ JEditBuffer constructors
+	// JEditBuffer constructors
 	{
 		bufferListeners = new Vector<>();
 		lock = new ReentrantReadWriteLock();
@@ -111,7 +109,7 @@ public class JEditBuffer
 	@SuppressWarnings({"unchecked"})
 	public JEditBuffer(Map props)
 	{
-		//{{{ need to convert entries of 'props' to PropValue instances
+		// need to convert entries of 'props' to PropValue instances
 		Set<Map.Entry> set = props.entrySet();
 		for (Map.Entry entry : set)
 		{
@@ -150,9 +148,9 @@ public class JEditBuffer
 		setFoldHandler(new DummyFoldHandler());
 	} //}}}
 
-	//{{{ Flags
+	// Flags
 
-	//{{{ isDirty() method
+	// isDirty() method
 	/**
 	 * @return whether there have been unsaved changes to this buffer.
 	 * This method is thread-safe.
@@ -162,31 +160,31 @@ public class JEditBuffer
 		return dirty;
 	} //}}}
 
-	//{{{ isLoading() method
+	// isLoading() method
 	public boolean isLoading()
 	{
 		return loading;
 	} //}}}
 
-	//{{{ setLoading() method
+	// setLoading() method
 	public void setLoading(boolean loading)
 	{
 		this.loading = loading;
 	} //}}}
 
-	//{{{ isElasticTabstopsOn() method
+	// isElasticTabstopsOn() method
 	public boolean isElasticTabstopsOn()
 	{
 		return elasticTabstopsOn;
 	} //}}}
 
-	//{{{ setElasticTabstopsOn() method
+	// setElasticTabstopsOn() method
 	public void setElasticTabstopsOn(boolean elasticTabstopsOn)
 	{
 		this.elasticTabstopsOn = elasticTabstopsOn;
 	} //}}}
 
-	//{{{ isPerformingIO() method
+	// isPerformingIO() method
 	/**
 	 * @return true if the buffer is currently performing I/O.
 	 * This method is thread-safe.
@@ -197,7 +195,7 @@ public class JEditBuffer
 		return isLoading() || io;
 	} //}}}
 
-	//{{{ setPerformingIO() method
+	// setPerformingIO() method
 	/**
 	 * @param io true if the buffer is currently performing I/O.
 	 * This method is thread-safe.
@@ -208,7 +206,7 @@ public class JEditBuffer
 		this.io = io;
 	} //}}}
 
-	//{{{ isEditable() method
+	// isEditable() method
 	/**
 	 * @return true if this file is editable, false otherwise. A file may
 	 * become uneditable if it is read only, or if I/O is in progress.
@@ -220,7 +218,7 @@ public class JEditBuffer
 		return !(isPerformingIO()) && editable;
 	} //}}}
 
-	//{{{ setEditable() method
+	// setEditable() method
 	/**
 	 * @param editable {@code true} to set the buffer editable, {@code false} otherwise. Default is {@code true}.
 	 * This does not change the read only flag on the file, just makes the buffer
@@ -231,7 +229,7 @@ public class JEditBuffer
 		this.editable = editable;
 	} //}}}
 
-	//{{{ isReadOnly() method
+	// isReadOnly() method
 	/**
 	 * @return true if this file is read only, false otherwise.
 	 * This method is thread-safe.
@@ -241,7 +239,7 @@ public class JEditBuffer
 		return readOnly || readOnlyOverride;
 	} //}}}
 
-	//{{{ setReadOnly() method
+	// setReadOnly() method
 	/**
 	 * Sets the read only flag.
 	 * @param readOnly The read only flag
@@ -251,7 +249,7 @@ public class JEditBuffer
 		readOnlyOverride = readOnly;
 	} //}}}
 
-	//{{{ setDirty() method
+	// setDirty() method
 	/**
 	 * @param d Sets the 'dirty' (changed since last save) flag of this buffer.
 	 */
@@ -279,11 +277,10 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Thread safety
+	// Thread safety
 
-	//{{{ readLock() method
+	// readLock() method
 	/**
 	 * The buffer is guaranteed not to change between calls to
 	 * {@link #readLock()} and {@link #readUnlock()}.
@@ -294,7 +291,7 @@ public class JEditBuffer
 		lock.readLock().lock();
 	} //}}}
 
-	//{{{ readUnlock() method
+	// readUnlock() method
 	/**
 	 * The buffer is guaranteed not to change between calls to
 	 * {@link #readLock()} and {@link #readUnlock()}.
@@ -304,7 +301,7 @@ public class JEditBuffer
 		lock.readLock().unlock();
 	} //}}}
 
-	//{{{ writeLock() method
+	// writeLock() method
 	/**
 	 * Attempting to obtain read lock will block between calls to
 	 * {@link #writeLock()} and {@link #writeUnlock()}.
@@ -315,7 +312,7 @@ public class JEditBuffer
 		lock.writeLock().lock();
 	} //}}}
 
-	//{{{ writeUnlock() method
+	// writeUnlock() method
 	/**
 	 * Attempting to obtain read lock will block between calls to
 	 * {@link #writeLock()} and {@link #writeUnlock()}.
@@ -325,11 +322,10 @@ public class JEditBuffer
 		lock.writeLock().unlock();
 	} //}}}
 
-	//}}}
 
-	//{{{ Line offset methods
+	// Line offset methods
 
-	//{{{ getLength() method
+	// getLength() method
 	/**
 	 * @return the number of characters in the buffer. This method is thread-safe.
 	 */
@@ -339,7 +335,7 @@ public class JEditBuffer
 		return contentMgr.getLength();
 	} //}}}
 
-	//{{{ getLineCount() method
+	// getLineCount() method
 	/**
 	 * @return the number of physical lines in the buffer.
 	 * This method is thread-safe.
@@ -351,7 +347,7 @@ public class JEditBuffer
 		return lineMgr.getLineCount();
 	} //}}}
 
-	//{{{ getLineOfOffset() method
+	// getLineOfOffset() method
 	/**
 	 * Returns the line containing the specified offset.
 	 * This method is thread-safe.
@@ -377,7 +373,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getLineStartOffset() method
+	// getLineStartOffset() method
 	/**
 	 * Returns the start offset of the specified line.
 	 * This method is thread-safe.
@@ -405,7 +401,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getLineEndOffset() method
+	// getLineEndOffset() method
 	/**
 	 * Returns the end offset of the specified line.
 	 * This method is thread-safe.
@@ -433,7 +429,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getLineLength() method
+	// getLineLength() method
 	/**
 	 * @return the length of the specified line.
 	 * This method is thread-safe.
@@ -455,7 +451,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getPriorNonEmptyLine() method
+	// getPriorNonEmptyLine() method
 	/**
 	 * Auto indent needs this.
 	 * @param lineIndex the line
@@ -488,11 +484,10 @@ public class JEditBuffer
 		return returnValue;
 	} //}}}
 
-	//}}}
 
-	//{{{ Text getters and setters
+	// Text getters and setters
 
-	//{{{ getLineText() methods
+	// getLineText() methods
 	/**
 	 * Returns the text on the specified line.
 	 * This method is thread-safe.
@@ -578,7 +573,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getLineSegment() method
+	// getLineSegment() method
 	/**
 	 * Returns the text on the specified line.
 	 * This method is thread-safe.
@@ -608,7 +603,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getText() methods
+	// getText() methods
 	/**
 	 * @return the specified text range. This method is thread-safe.
 	 * @param start The start offset
@@ -680,7 +675,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getSegment() method
+	// getSegment() method
 	/**
 	 * Returns the specified text range. This method is thread-safe.
 	 * It doesn't copy the text
@@ -709,7 +704,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ insert() methods
+	// insert() methods
 	/**
 	 * Inserts a string into the buffer.
 	 * @param offset The offset
@@ -779,7 +774,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ remove() method
+	// remove() method
 	/**
 	 * Removes the specified rang efrom the buffer.
 	 * @param offset The start offset
@@ -835,11 +830,10 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Indentation
+	// Indentation
 
-	//{{{ removeTrailingWhiteSpace() method
+	// removeTrailingWhiteSpace() method
 	/**
 	 * Removes trailing whitespace from all lines in the specified list.
 	 * @param lines The line numbers
@@ -885,7 +879,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ shiftIndentLeft() method
+	// shiftIndentLeft() method
 	/**
 	 * Shifts the indent of each line in the specified list to the left.
 	 * @param lines The line numbers
@@ -923,7 +917,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ shiftIndentRight() method
+	// shiftIndentRight() method
 	/**
 	 * Shifts the indent of each line in the specified list to the right.
 	 * @param lines The line numbers
@@ -961,7 +955,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ indentLines() methods
+	// indentLines() methods
 	/**
 	 * Indents all specified lines.
 	 * @param start The first line to indent
@@ -1001,7 +995,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ simpleIndentLine() method
+	// simpleIndentLine() method
 	/**
 	 * Simply indents the given line to the same level as the previous nonempty line
 	 * @param lineIndex The line number to indent
@@ -1033,7 +1027,7 @@ public class JEditBuffer
 		}
 	} //}}}
 
-	//{{{ indentLine() methods
+	// indentLine() methods
 	/**
 	 * Indents the specified line.
 	 * @param lineIndex The line number to indent
@@ -1097,7 +1091,7 @@ public class JEditBuffer
 		return true;
 	} //}}}
 
-	//{{{ getCurrentIndentForLine() method
+	// getCurrentIndentForLine() method
 	/**
 	 * @return the line's current leading indent.
 	 * @param lineIndex The line number
@@ -1137,7 +1131,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return currentIndent;
 	} //}}}
 
-	//{{{ getIdealIndentForLine() method
+	// getIdealIndentForLine() method
 	/**
 	 * @return the ideal leading indent for the specified line.
 	 * This will apply the various auto-indent rules.
@@ -1154,7 +1148,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			oldIndent);
 	} //}}}
 
-	//{{{ getIdealIndentForLine() method
+	// getIdealIndentForLine() method
 	/**
 	 * Returns the ideal leading indent for the specified line.
 	 * This will apply the various auto-indent rules.
@@ -1187,7 +1181,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return newIndent;
 	} //}}}
 
-	//{{{ getVirtualWidth() method
+	// getVirtualWidth() method
 	/**
 	 * @return the virtual column number (taking tabs into account) of the
 	 * specified position.
@@ -1214,7 +1208,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getOffsetOfVirtualColumn() method
+	// getOffsetOfVirtualColumn() method
 	/**
 	 * Returns the offset of a virtual column number (taking tabs
 	 * into account) relative to the start of the line in question.
@@ -1248,7 +1242,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ insertAtColumn() method
+	// insertAtColumn() method
 	/**
 	 * Like the {@link #insert(int,String)} method, but inserts the string at
 	 * the specified virtual column. Inserts spaces as appropriate if
@@ -1281,7 +1275,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ insertIndented() method
+	// insertIndented() method
 	/**
 	 * Inserts a string into the buffer, indenting each line of the string
 	 * to match the indent of the first line.
@@ -1330,7 +1324,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ isElectricKey() methods
+	// isElectricKey() methods
 	/**
 	 * Should inserting this character trigger a re-indent of
 	 * the current line?
@@ -1350,11 +1344,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return mode.isElectricKey(ch);
 	} //}}}
 
-	//}}}
 
-	//{{{ Syntax highlighting
+	// Syntax highlighting
 
-	//{{{ getLineContext() method
+	// getLineContext() method
 	/**
 	 * Returns the line context of the token marker for the specified line.
 	 */
@@ -1362,9 +1355,8 @@ loop:		for(int i = 0; i < seg.count; i++)
 	{
 		return lineMgr.getLineContext(line);
 	}
-	//}}}
 
-	//{{{ markTokens() method
+	// markTokens() method
 	/**
 	 * Returns the syntax tokens for the specified line.
 	 * @param lineIndex The line number
@@ -1423,13 +1415,13 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getTokenMarker() method
+	// getTokenMarker() method
 	public TokenMarker getTokenMarker()
 	{
 		return tokenMarker;
 	} //}}}
 
-	//{{{ setTokenMarker() method
+	// setTokenMarker() method
 	public void setTokenMarker(TokenMarker tokenMarker)
 	{
 		TokenMarker oldTokenMarker = this.tokenMarker;
@@ -1443,7 +1435,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ createPosition() method
+	// createPosition() method
 	/**
 	 * Creates a floating position (<code>javax.swing.text.Position</code>).
 	 * The position is retained despite text editions.
@@ -1468,11 +1460,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Property methods
+	// Property methods
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Reloads settings from the properties. This should be called
 	 * after the <code>syntax</code> or <code>folding</code>
@@ -1493,7 +1484,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getTabSize() method
+	// getTabSize() method
 	/**
 	 * @return the tab size used in this buffer. This is equivalent
 	 * to calling <code>getProperty("tabSize")</code>.
@@ -1508,7 +1499,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			return tabSize;
 	} //}}}
 
-	//{{{ getIndentSize() method
+	// getIndentSize() method
 	/**
 	 * @return the indent size used in this buffer. This is equivalent
 	 * to calling <code>getProperty("indentSize")</code>.
@@ -1524,7 +1515,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			return indentSize;
 	} //}}}
 
-	//{{{ getProperty() method
+	// getProperty() method
 	/**
 	 * @return the value of a buffer-local property.
 	 *
@@ -1570,19 +1561,19 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ isClosed() method
+	// isClosed() method
 	public boolean isClosed()
 	{
 		return closed;
 	} //}}}
 
-	//{{{ close() method
+	// close() method
 	public void close()
 	{
 		closed = true;
 	} //}}}
 
-	//{{{ hasProperty() method
+	// hasProperty() method
 	/**
 	 * @return true if the buffer local property exists.
 	 *
@@ -1597,13 +1588,13 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return null != getProperty(name);
 	} //}}}
 
-	//{{{ getDefaultProperty() method
+	// getDefaultProperty() method
 	public Object getDefaultProperty(String key)
 	{
 		return null;
 	} //}}}
 
-	//{{{ setProperty() method
+	// setProperty() method
 	/**
 	 * Sets the value of a buffer-local property.
 	 * @param name The property name
@@ -1627,13 +1618,13 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ setDefaultProperty() method
+	// setDefaultProperty() method
 	public void setDefaultProperty(String name, Object value)
 	{
 		properties.put(name,new PropValue(value,true));
 	} //}}}
 
-	//{{{ unsetProperty() method
+	// unsetProperty() method
 	/**
 	 * Clears the value of a buffer-local property.
 	 * @param name The property name
@@ -1644,7 +1635,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		properties.remove(name);
 	} //}}}
 
-	//{{{ resetCachedProperties() method
+	// resetCachedProperties() method
 	public void resetCachedProperties()
 	{
 		// Need to reset properties that were cached defaults,
@@ -1652,7 +1643,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		properties.values().removeIf(value -> value.defaultValue);
 	} //}}}
 
-	//{{{ getStringProperty() method
+	// getStringProperty() method
 	/**
 	 * @return the value of a string property. This method is thread-safe.
 	 * @param name The property name
@@ -1667,7 +1658,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			return null;
 	} //}}}
 
-	//{{{ setStringProperty() method
+	// setStringProperty() method
 	/**
 	 * Sets a string property.
 	 * @param name The property name
@@ -1679,7 +1670,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		setProperty(name,value);
 	} //}}}
 
-	//{{{ getBooleanProperty() methods
+	// getBooleanProperty() methods
 	/**
 	 * @return the value of a boolean property. This method is thread-safe.
 	 * @param name The property name
@@ -1702,7 +1693,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return StandardUtilities.getBoolean(obj, def);
 	} //}}}
 
-	//{{{ setBooleanProperty() method
+	// setBooleanProperty() method
 	/**
 	 * Sets a boolean property.
 	 * @param name The property name
@@ -1714,7 +1705,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		setProperty(name,value ? Boolean.TRUE : Boolean.FALSE);
 	} //}}}
 
-	//{{{ getIntegerProperty() method
+	// getIntegerProperty() method
 	/**
 	 * @return the value of an integer property. This method is thread-safe.
 	 * @param name The property name
@@ -1760,7 +1751,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ setIntegerProperty() method
+	// setIntegerProperty() method
 	/**
 	 * Sets an integer property.
 	 * @param name The property name
@@ -1772,7 +1763,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		setProperty(name,value);
 	} //}}}
 
-	//{{{ getPatternProperty()
+	// getPatternProperty()
 	/**
 	 * @return the value of a property as a regular expression.
 	 * This method is thread-safe.
@@ -1813,7 +1804,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getWordWrap() method
+	// getWordWrap() method
 	/**
 	 * Returns the current word wrap mode
 	 *
@@ -1825,7 +1816,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return WordWrap.valueOf(getStringProperty(WRAP));
 	} //}}}
 
-	//{{{ setWordWrap() method
+	// setWordWrap() method
 	/**
 	 * set word wrap
 	 *
@@ -1873,7 +1864,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			setProperty(LARGE_MODE_FILE, largeFileMode.name());
 	}
 
-	//{{{ getRuleSetAtOffset() method
+	// getRuleSetAtOffset() method
 	/**
 	 * @return the syntax highlighting ruleset at the specified offset.
 	 * @param offset the offset
@@ -1892,7 +1883,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return token.rules;
 	} //}}}
 
-	//{{{ getKeywordMapAtOffset() method
+	// getKeywordMapAtOffset() method
 	/**
 	 * @return the syntax highlighting keyword map in effect at the
 	 * specified offset. Used by the <b>Complete Word</b> command to
@@ -1905,7 +1896,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return getRuleSetAtOffset(offset).getKeywords();
 	} //}}}
 
-	//{{{ getContextSensitiveProperty() method
+	// getContextSensitiveProperty() method
 	/**
 	 * Some settings, like comment start and end strings, can
 	 * vary between different parts of a buffer (HTML text and inline
@@ -1923,7 +1914,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return rulesetProps != null ? rulesetProps.get(name) : null;
 	} //}}}
 
-	//{{{ getMode() method
+	// getMode() method
 	/**
 	 * @return this buffer's edit mode. This method is thread-safe.
 	 */
@@ -1932,7 +1923,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return mode;
 	} //}}}
 
-	//{{{ setMode() methods
+	// setMode() methods
 	/**
 	 * Sets this buffer's edit mode. Note that calling this before a buffer
 	 * is loaded will have no effect; in that case, set the "mode" property
@@ -1984,11 +1975,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 		propertiesChanged();
 	}//}}}
 
-	//}}}
 
-	//{{{ Folding methods
+	// Folding methods
 
-	//{{{ isFoldStart() method
+	// isFoldStart() method
 	/**
 	 * @param line the line
 	 * @return if the specified line begins a fold.
@@ -2000,7 +1990,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			&& getFoldLevel(line) < getFoldLevel(line + 1);
 	} //}}}
 
-	//{{{ isFoldEnd() method
+	// isFoldEnd() method
 	/**
 	 * @return if the specified line ends a fold.
 	 * @param line the line
@@ -2013,7 +2003,7 @@ loop:		for(int i = 0; i < seg.count; i++)
         return foldLevel > nextLineFoldLevel;
 	} //}}}
 
-	//{{{ invalidateCachedFoldLevels() method
+	// invalidateCachedFoldLevels() method
 	/**
 	 * Invalidates all cached fold level information.
 	 * @since jEdit 4.1pre11
@@ -2024,7 +2014,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		fireFoldLevelChanged(0,getLineCount());
 	} //}}}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	/**
 	 * @return the fold level of the specified line.
 	 * @param line A physical line index
@@ -2099,7 +2089,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getFoldAtLine() method
+	// getFoldAtLine() method
 	/**
 	 * @return an array. The first element is the start line, the
 	 * second element is the end line, of the fold containing the
@@ -2158,7 +2148,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return new int[] { start, end };
 	} //}}}
 
-	//{{{ getFoldHandler() method
+	// getFoldHandler() method
 	/**
 	 * @return the current buffer's fold handler.
 	 * @since jEdit 4.2pre1
@@ -2169,7 +2159,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return foldHandler;
 	} //}}}
 
-	//{{{ setFoldHandler() method
+	// setFoldHandler() method
 	/**
 	 * Sets the buffer's fold handler.
 	 * @param foldHandler the fold handler
@@ -2189,11 +2179,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 		fireFoldHandlerChanged();
 	} //}}}
 
-	//}}}
 
-	//{{{ Undo
+	// Undo
 
-	//{{{ undo() method
+	// undo() method
 	/**
 	 * Undoes the most recent edit.
 	 * @param textArea the text area
@@ -2235,7 +2224,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ redo() method
+	// redo() method
 	/**
 	 * Redoes the most recently undone edit.
 	 * @param textArea the textArea
@@ -2278,7 +2267,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ isTransactionInProgress() method
+	// isTransactionInProgress() method
 	/**
 	 * @return if an undo or compound edit is currently in progress. If this
 	 * method returns true, then eventually a
@@ -2291,7 +2280,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return transaction || undoInProgress || insideCompoundEdit() || loading;
 	} //}}}
 
-	//{{{ beginCompoundEdit() method
+	// beginCompoundEdit() method
 	/**
 	 * Starts a compound edit. All edits from now on until
 	 * {@link #endCompoundEdit()} are called will be merged
@@ -2316,7 +2305,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ endCompoundEdit() method
+	// endCompoundEdit() method
 	/**
 	 * Ends a compound edit. All edits performed since
 	 * {@link #beginCompoundEdit()} was called can now
@@ -2340,7 +2329,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	}//}}}
 
-	//{{{ insideCompoundEdit() method
+	// insideCompoundEdit() method
 	/**
 	 * @return if a compound edit is currently active.
 	 * @since jEdit 3.1pre1
@@ -2350,7 +2339,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return undoMgr.insideCompoundEdit();
 	} //}}}
 
-	//{{{ isUndoInProgress() method
+	// isUndoInProgress() method
 	/**
 	 * @return if an undo or redo is currently being performed.
 	 * @since jEdit 4.3pre3
@@ -2360,7 +2349,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return undoInProgress;
 	} //}}}
 
-	//{{{ getUndoId() method
+	// getUndoId() method
 	/**
 	 * @return an object that identifies the undo operation to which the
 	 * current content change belongs. This method can be used by buffer
@@ -2377,9 +2366,8 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return undoMgr.getUndoId();
 	} //}}}
 
-	//}}}
 
-	//{{{ Buffer events
+	// Buffer events
 	public static final int NORMAL_PRIORITY = 0;
 	public static final int HIGH_PRIORITY = 1;
 
@@ -2395,7 +2383,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	}
 
-	//{{{ addBufferListener() methods
+	// addBufferListener() methods
 	/**
 	 * Adds a buffer change listener.
 	 * @param listener The listener
@@ -2429,7 +2417,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		addBufferListener(listener,NORMAL_PRIORITY);
 	} //}}}
 
-	//{{{ removeBufferListener() method
+	// removeBufferListener() method
 	/**
 	 * Removes a buffer change listener.
 	 * @param listener The listener
@@ -2447,7 +2435,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getBufferListeners() method
+	// getBufferListeners() method
 	/**
 	 * @return an array of registered buffer change listeners.
 	 * @since jEdit 4.3pre3
@@ -2464,7 +2452,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return returnValue;
 	} //}}}
 
-	//{{{ setUndoLimit() method
+	// setUndoLimit() method
 	/**
 	 * Set the undo limit of the Undo Manager.
 	 *
@@ -2477,7 +2465,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 			undoMgr.setLimit(limit);
 	} //}}}
 
-	//{{{ canUndo() method
+	// canUndo() method
 	/**
 	 * @return true if an undo operation can be performed.
 	 * @since jEdit 4.3pre18
@@ -2489,7 +2477,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return undoMgr.canUndo();
 	} //}}}
 
-	//{{{ canRedo() method
+	// canRedo() method
 	/**
 	 * @return true if a redo operation can be performed.
 	 * @since jEdit 4.3pre18
@@ -2501,7 +2489,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return undoMgr.canRedo();
 	} //}}}
 
-	//{{{ isContextInsensitive() method
+	// isContextInsensitive() method
 	/**
 	 * Returns true if the buffer highlight is
 	 * not sensitive to the context.
@@ -2514,7 +2502,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return contextInsensitive;
 	}//}}}
 
-	//{{{ setContextInsensitive() method
+	// setContextInsensitive() method
 	/**
 	 * Set the buffer to be insensitive to the context during
 	 * highlight.
@@ -2527,9 +2515,8 @@ loop:		for(int i = 0; i < seg.count; i++)
 		this.contextInsensitive = contextInsensitive;
 	}//}}}
 
-	//}}}
 
-	//{{{ Protected members
+	// Protected members
 	/**
 	 * The edit mode of the buffer.
 	 */
@@ -2542,9 +2529,9 @@ loop:		for(int i = 0; i < seg.count; i++)
 	protected UndoManager undoMgr;
 	protected TokenMarker tokenMarker;
 
-	//{{{ Event firing methods
+	// Event firing methods
 
-	//{{{ fireFoldLevelChanged() method
+	// fireFoldLevelChanged() method
 	protected void fireFoldLevelChanged(int start, int end)
 	{
 		for(int i = 0; i < bufferListeners.size(); i++)
@@ -2562,7 +2549,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ fireContentInserted() method
+	// fireContentInserted() method
 	protected void fireContentInserted(int startLine, int offset,
 		int numLines, int length)
 	{
@@ -2582,7 +2569,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ fireContentRemoved() method
+	// fireContentRemoved() method
 	protected void fireContentRemoved(int startLine, int offset,
 		int numLines, int length)
 	{
@@ -2602,7 +2589,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ firePreContentInserted() method
+	// firePreContentInserted() method
 	protected void firePreContentInserted(int startLine, int offset,
 		int numLines, int length)
 	{
@@ -2622,7 +2609,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ firePreContentRemoved() method
+	// firePreContentRemoved() method
 	protected void firePreContentRemoved(int startLine, int offset,
 		int numLines, int length)
 	{
@@ -2642,27 +2629,27 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ fireBeginUndo() method
+	// fireBeginUndo() method
 	protected void fireBeginUndo()
 	{
 	} //}}}
 
-	//{{{ fireEndUndo() method
+	// fireEndUndo() method
 	protected void fireEndUndo()
 	{
 	} //}}}
 
-	//{{{ fireBeginRedo() method
+	// fireBeginRedo() method
 	protected void fireBeginRedo()
 	{
 	} //}}}
 
-	//{{{ fireEndRedo() method
+	// fireEndRedo() method
 	protected void fireEndRedo()
 	{
 	} //}}}
 
-	//{{{ fireTransactionComplete() method
+	// fireTransactionComplete() method
 	protected void fireTransactionComplete()
 	{
 		for(int i = 0; i < bufferListeners.size(); i++)
@@ -2680,7 +2667,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ fireFoldHandlerChanged() method
+	// fireFoldHandlerChanged() method
 	protected void fireFoldHandlerChanged()
 	{
 		for(int i = 0; i < bufferListeners.size(); i++)
@@ -2698,7 +2685,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ fireBufferLoaded() method
+	// fireBufferLoaded() method
 	protected void fireBufferLoaded()
 	{
 		for(int i = 0; i < bufferListeners.size(); i++)
@@ -2716,21 +2703,20 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ isFileReadOnly() method
+	// isFileReadOnly() method
 	protected boolean isFileReadOnly()
 	{
 		return readOnly;
 	} //}}}
 
-	//{{{ setFileReadOnly() method
+	// setFileReadOnly() method
 	protected void setFileReadOnly(boolean readOnly)
 	{
 		this.readOnly = readOnly;
 	} //}}}
 
-	//{{{ loadText() method
+	// loadText() method
 	protected void loadText(Segment seg, IntegerArray endOffsets)
 	{
 		if(seg == null)
@@ -2779,13 +2765,13 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ invalidateFoldLevels() method
+	// invalidateFoldLevels() method
 	protected void invalidateFoldLevels()
 	{
 		lineMgr.setFirstInvalidFoldLevel(0);
 	} //}}}
 
-	//{{{ parseBufferLocalProperties() method
+	// parseBufferLocalProperties() method
 	protected void parseBufferLocalProperties()
 	{
 		int maxRead = 10000;
@@ -2811,7 +2797,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ markTokens() method
+	// markTokens() method
 	protected TokenMarker.LineContext markTokens(Segment seg, TokenMarker.LineContext prevContext,
 						     TokenHandler _tokenHandler)
 	{
@@ -2819,7 +2805,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return context;
 	} //}}}
 
-	//{{{ Used to store property values
+	// Used to store property values
 	protected static class PropValue
 	{
 		PropValue( Object value, boolean defaultValue)
@@ -2847,9 +2833,8 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final List<Listener> bufferListeners;
 	private boolean closed;
 	private final ReentrantReadWriteLock lock;
@@ -2875,13 +2860,13 @@ loop:		for(int i = 0; i < seg.count; i++)
 	public boolean elasticTabstopsOn;
 	private ColumnBlock columnBlock;
 
-	//{{{ getListener() method
+	// getListener() method
 	private BufferListener getListener(int index)
 	{
 		return bufferListeners.get(index).listener;
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	private void contentInserted(int offset, int length,
 		IntegerArray endOffsets)
 	{
@@ -2918,7 +2903,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ parseBufferLocalProperties() method
+	// parseBufferLocalProperties() method
 	@SuppressWarnings({"fallthrough"})
 	private void parseBufferLocalProperties(CharSequence prop)
 	{
@@ -2998,7 +2983,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 	} //}}}
 
-	//{{{ getIndentRules() method
+	// getIndentRules() method
 	private List<IndentRule> getIndentRules(int line)
 	{
 		String modeName = null;
@@ -3010,7 +2995,7 @@ loop:		for(int i = 0; i < seg.count; i++)
 		return ModeProvider.instance.getMode(modeName).getIndentRules();
 	} //}}}
 
-	//{{{ updateColumnBlocks() method
+	// updateColumnBlocks() method
 	public void updateColumnBlocks(int startLine,int endLine,int startColumn, Node parent)
 	{
 		if (parent != null && startLine >= 0 && endLine >= 0 && startLine <= endLine)
@@ -3070,9 +3055,8 @@ loop:		for(int i = 0; i < seg.count; i++)
 			throw new IllegalArgumentException();
 		}
 	}
-	//}}}
 
-	//{{{ getTabStopPosition() method
+	// getTabStopPosition() method
 	public int getTabStopPosition(Segment seg)
 	{
 		for (int i = 0; i < seg.count; i++)
@@ -3084,11 +3068,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 		}
 		return -5;
 	}
-	 //}}}
 
 	public final Object columnBlockLock = new Object();
 
-	//{{{ indentUsingElasticTabstops() method
+	// indentUsingElasticTabstops() method
 	public void indentUsingElasticTabstops()
 	{
 		synchronized(columnBlockLock)
@@ -3097,13 +3080,10 @@ loop:		for(int i = 0; i < seg.count; i++)
 			updateColumnBlocks(0, lineMgr.getLineCount()-1, 0, columnBlock);
 		}
 	}
-	 //}}}
 
-	//{{{ getColumnBlock() method
+	// getColumnBlock() method
 	public ColumnBlock getColumnBlock()
 	{
 		return columnBlock;
 	}
-	 //}}}
-//}}}
 }

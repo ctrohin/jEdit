@@ -1,7 +1,6 @@
 /*
  * VFS.java - Virtual filesystem implementation
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.awt.Component;
 import java.io.*;
@@ -44,7 +43,6 @@ import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.Task;
 import org.gjt.sp.util.ThreadUtilities;
 
-//}}}
 
 /**
  * A virtual filesystem implementation.<p>
@@ -109,7 +107,7 @@ import org.gjt.sp.util.ThreadUtilities;
  */
 public abstract class VFS
 {
-	//{{{ Capabilities
+	// Capabilities
 	/**
 	 * Read capability.
 	 * @since jEdit 2.6pre2
@@ -176,9 +174,8 @@ public abstract class VFS
 	 * @since jEdit 5.0pre1
 	 */
 	public static final int NON_AWT_SESSION_CAP = 1 << 8;
-	//}}}
 
-	//{{{ Extended attributes
+	// Extended attributes
 	/**
 	 * File type.
 	 * @since jEdit 4.2pre1
@@ -202,11 +199,10 @@ public abstract class VFS
 	 * @since jEdit 4.2pre1
 	 */
 	public static final String EA_MODIFIED = "modified";
-	//}}}
 
 	public static final int IOBUFSIZE = 32678;
 
-	//{{{ VFS constructors
+	// VFS constructors
 	/**
 	 * Creates a new virtual filesystem.
 	 * @param name The name
@@ -234,7 +230,7 @@ public abstract class VFS
 		this.extAttrs = extAttrs;
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns this VFS's name. The name is used to obtain the
 	 * label stored in the <code>vfs.<i>name</i>.label</code>
@@ -245,7 +241,7 @@ public abstract class VFS
 		return name;
 	} //}}}
 
-	//{{{ getCapabilities() method
+	// getCapabilities() method
 	/**
 	 * Returns the capabilities of this VFS.
 	 * @since jEdit 2.6pre2
@@ -255,7 +251,7 @@ public abstract class VFS
 		return caps;
 	} //}}}
 
-	//{{{ isMarkersFileSupported() method
+	// isMarkersFileSupported() method
 	/**
 	 * Returns if an additional markers file can be saved by this VFS.
 	 * Default is {@code true}.
@@ -267,7 +263,7 @@ public abstract class VFS
 		return true;
 	} //}}}
 
-	//{{{ getExtendedAttributes() method
+	// getExtendedAttributes() method
 	/**
 	 * Returns the extended attributes supported by this VFS.
 	 * @since jEdit 4.2pre1
@@ -277,7 +273,7 @@ public abstract class VFS
 		return extAttrs;
 	} //}}}
 
-	//{{{ getFileName() method
+	// getFileName() method
 	/**
 	 * Returns the file name component of the specified path.
 	 * @param path The path
@@ -303,7 +299,7 @@ public abstract class VFS
 		return path.substring(index + 1);
 	} //}}}
 
-	//{{{ getFilePath() method
+	// getFilePath() method
 	/**
 	 * Returns the path component of the specified VFS path.
 	 * The standard implementation cuts off the protocol
@@ -331,7 +327,7 @@ public abstract class VFS
 		return VFSManager.getVFSForPath(filePath).getFilePath(filePath);
 	} //}}}
 
-	//{{{ getParentOfPath() method
+	// getParentOfPath() method
 	/**
 	 * Returns the parent of the specified path. This must be
 	 * overridden to return a non-null value for browsing of this
@@ -355,7 +351,7 @@ public abstract class VFS
 		return path.substring(0,index + 1);
 	} //}}}
 
-	//{{{ isRemotePath() method
+	// isRemotePath() method
 	/**
 	 * Returns whether the specified path should be treated as remote path.
 	 * This can have effects like not restoring the file on reopening jEdit eventually
@@ -393,7 +389,7 @@ public abstract class VFS
 		return true;
 	} //}}}
 
-	//{{{ constructPath() method
+	// constructPath() method
 	/**
 	 * Constructs a path from the specified directory and
 	 * file name component. This must be overridden to return a
@@ -414,7 +410,7 @@ public abstract class VFS
 		return parent + path;
 	} //}}}
 
-	//{{{ getFileSeparator() method
+	// getFileSeparator() method
 	/**
 	 * Returns the file separator used by this VFS.
 	 * @since jEdit 2.6pre9
@@ -424,7 +420,7 @@ public abstract class VFS
 		return '/';
 	} //}}}
 
-	//{{{ getTwoStageSaveName() method
+	// getTwoStageSaveName() method
 	/**
 	 * Returns a temporary file name based on the given path.
 	 *
@@ -445,7 +441,7 @@ public abstract class VFS
 			'#' + getFileName(path) + "#save#");
 	} //}}}
 
-	//{{{ reloadDirectory() method
+	// reloadDirectory() method
 	/**
 	 * Called before a directory is reloaded by the file system browser.
 	 * Can be used to flush a cache, etc.
@@ -453,7 +449,7 @@ public abstract class VFS
 	 */
 	public void reloadDirectory(String path) {} //}}}
 
-	//{{{ createVFSSession() methods
+	// createVFSSession() methods
 	/**
 	 * Creates a VFS session. This method is called from the AWT thread,
 	 * so it should not do any I/O. It could, however, prompt for
@@ -491,9 +487,8 @@ public abstract class VFS
 		}
 		return session;
 	}
-	//}}}
 
-	//{{{ load() method
+	// load() method
 	/**
 	 * Loads the specified buffer. The default implementation posts
 	 * an I/O request to the I/O thread.
@@ -546,7 +541,7 @@ public abstract class VFS
 		return true;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	/**
 	 * Saves the specifies buffer. The default implementation posts
 	 * an I/O request to the I/O thread.
@@ -579,7 +574,7 @@ public abstract class VFS
 		return true;
 	} //}}}
 
-	//{{{ copy() methods
+	// copy() methods
 	/**
 	 * Copy a file to another using VFS.
 	 *
@@ -762,7 +757,7 @@ public abstract class VFS
 		return copy(progress, sourcePath, targetPath, comp, canStop, true);
 	} //}}}
 
-	//{{{ insert() method
+	// insert() method
 	/**
 	 * Inserts a file into the specified buffer. The default implementation
 	 * posts an I/O request to the I/O thread.
@@ -789,7 +784,7 @@ public abstract class VFS
 
 	// A method name that starts with _ requires a session object
 
-	//{{{ _canonPath() method
+	// _canonPath() method
 	/**
 	 * Returns the canonical form of the specified path name. For example,
 	 * <code>~</code> might be expanded to the user's home directory.
@@ -805,7 +800,7 @@ public abstract class VFS
 		return path;
 	} //}}}
 
-	//{{{ _listDirectory() method
+	// _listDirectory() method
 	/**
 	 * A convenience method that matches file names against globs, and can
 	 * optionally list the directory recursively.
@@ -829,7 +824,7 @@ public abstract class VFS
 	} //}}}
 
 
-	//{{{ _listDirectory() method
+	// _listDirectory() method
 	/**
 	 * A convenience method that matches file names against globs, and can
 	 * optionally list the directory recursively.
@@ -862,7 +857,7 @@ public abstract class VFS
 				      skipHidden);
 	} //}}}
 
-	//{{{ _listDirectory() method
+	// _listDirectory() method
 	/**
 	 * A convenience method that filters the directory listing
 	 * according to a filter, and can optionally list the directory
@@ -901,7 +896,7 @@ public abstract class VFS
 		return retVal;
 	} //}}}
 
-	//{{{ _listFiles() method
+	// _listFiles() method
 	/**
 	 * Lists the specified directory.
 	 * @param session The session
@@ -921,7 +916,7 @@ public abstract class VFS
 		return null;
 	} //}}}
 
-	//{{{ _getFile() method
+	// _getFile() method
 	/**
 	 * Returns the specified directory entry.
 	 * @param session The session get it with {@link VFS#createVFSSession(String, Component)}
@@ -936,7 +931,7 @@ public abstract class VFS
 		return null;
 	} //}}}
 
-	//{{{ _delete() method
+	// _delete() method
 	/**
 	 * Deletes the specified URL.
 	 * @param session The VFS session
@@ -951,7 +946,7 @@ public abstract class VFS
 		return false;
 	} //}}}
 
-	//{{{ _rename() method
+	// _rename() method
 	/**
 	 * Renames the specified URL. Some filesystems might support moving
 	 * URLs between directories, however others may not. Do not rely on
@@ -969,7 +964,7 @@ public abstract class VFS
 		return false;
 	} //}}}
 
-	//{{{ _mkdir() method
+	// _mkdir() method
 	/**
 	 * Creates a new directory with the specified URL.
 	 * @param session The VFS session
@@ -984,7 +979,7 @@ public abstract class VFS
 		return false;
 	} //}}}
 
-	//{{{ _backup() method
+	// _backup() method
 	/**
 	 * Backs up the specified file. Default implementation in 5.0pre1
 	 * copies the file to the backup directory. Before 5.0pre1 it was
@@ -1055,7 +1050,7 @@ public abstract class VFS
 
 	} //}}}
 
-	//{{{ _createInputStream() method
+	// _createInputStream() method
 	/**
 	 * Creates an input stream. This method is called from the I/O
 	 * thread.
@@ -1076,7 +1071,7 @@ public abstract class VFS
 		return null;
 	} //}}}
 
-	//{{{ _createOutputStream() method
+	// _createOutputStream() method
 	/**
 	 * Creates an output stream. This method is called from the I/O
 	 * thread.
@@ -1094,7 +1089,7 @@ public abstract class VFS
 		return null;
 	} //}}}
 
-	//{{{ _saveComplete() method
+	// _saveComplete() method
 	/**
 	 * Called after a file has been saved.
 	 * @param session The VFS session
@@ -1109,7 +1104,7 @@ public abstract class VFS
 	public void _saveComplete(Object session, Buffer buffer, String path,
 		Component comp) throws IOException {} //}}}
 
-	//{{{ _finishTwoStageSave() method
+	// _finishTwoStageSave() method
 	/**
 	 * Called after a file has been saved and we use twoStageSave (first saving to
 	 * another file). This should re-apply permissions for example.
@@ -1128,7 +1123,7 @@ public abstract class VFS
 	{
 	} //}}}
 
-	//{{{ _endVFSSession() method
+	// _endVFSSession() method
 	/**
 	 * Finishes the specified VFS session. This must be called
 	 * after all I/O with this VFS is complete, to avoid leaving
@@ -1143,7 +1138,7 @@ public abstract class VFS
 	{
 	} //}}}
 
-	//{{{ getDefaultColorFor() method
+	// getDefaultColorFor() method
 	/**
 	 * Returns color of the specified file name, by matching it against
 	 * user-specified regular expressions.
@@ -1166,7 +1161,7 @@ public abstract class VFS
 		}
 	} //}}}
 
-	//{{{ DirectoryEntryCompare class
+	// DirectoryEntryCompare class
 	/**
 	 * Implementation of {@link Comparator}
 	 * interface that compares {@link VFSFile} instances.
@@ -1205,14 +1200,14 @@ public abstract class VFS
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final String name;
 	private final int caps;
 	private final String[] extAttrs;
 	private static List<ColorEntry> colors;
 	private static final Object lock = new Object();
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		EditBus.addToBus(new EBComponent()
@@ -1231,7 +1226,7 @@ public abstract class VFS
 		});
 	} //}}}
 
-	//{{{ recursive listFiles() method
+	// recursive listFiles() method
 	private void listFiles(Object session, Collection<String> stack,
 		List<String> files, String directory, VFSFileFilter filter, boolean recursive,
 		Component comp, boolean skipBinary, boolean skipHidden) throws IOException
@@ -1306,7 +1301,7 @@ public abstract class VFS
 		}
 	} //}}}
 
-	//{{{ loadColors() method
+	// loadColors() method
 	private static void loadColors()
 	{
 		synchronized(lock)
@@ -1339,7 +1334,7 @@ public abstract class VFS
 		}
 	} //}}}
 
-	//{{{ ColorEntry class
+	// ColorEntry class
 	private static class ColorEntry
 	{
 		private final Pattern re;
@@ -1362,7 +1357,7 @@ public abstract class VFS
 		}
 	} //}}}
 
-	//{{{ SessionGetter class
+	// SessionGetter class
 	private class SessionGetter implements Runnable
 	{
 		SessionGetter(String path, Component comp)
@@ -1384,5 +1379,4 @@ public abstract class VFS
 		public Object get() { return session; }
 	} //}}}
 
-	//}}}
 }

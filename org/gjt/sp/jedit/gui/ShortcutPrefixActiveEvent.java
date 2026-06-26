@@ -2,7 +2,6 @@
  *  ShortcutPrefixActiveEvent.java - Event fired when jEdit starts and stops
  *  listening for shortcut completions
  *  :tabSize=4:indentSize=4:noTabs=false:
- *  :folding=explicit:collapseFolds=1:
  *
  *  Copyright (C) 2005 Jeffrey Hoyt
  *
@@ -22,7 +21,7 @@
  */
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.util.Hashtable;
 
 import javax.swing.event.ChangeEvent;
@@ -30,7 +29,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import org.gjt.sp.util.Log;
-//}}}
 
 /** Event fired when jEdit starts and stops listening for shortcut completions
  *
@@ -54,7 +52,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 	 */
 	protected static EventListenerList listenerList = new EventListenerList();
 
-	//{{{  Constructor
+	// Constructor
 	/**
 	 * Constructor for the ShortcutPrefixActiveEvent object
 	 *
@@ -68,7 +66,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 		this.active = active;
 	} //}}}
 
-	//{{{ addChangeEventListener() method
+	// addChangeEventListener() method
 	/**
 	 * Adds a feature to the ChangeEventListener attribute of the
 	 * ShortcutPrefixActiveEvent class
@@ -81,7 +79,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 		Log.log(Log.DEBUG, ShortcutPrefixActiveEvent.class, "Listener added.  " + listenerList.getListenerList().length + " left.");
 	}//}}}
 
-	//{{{ removeChangeEventListener() method
+	// removeChangeEventListener() method
 	/**
 	 * Description of the Method
 	 *
@@ -93,7 +91,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 		Log.log(Log.DEBUG, ShortcutPrefixActiveEvent.class, "Listener removed.  " + listenerList.getListenerList().length + " left.");
 	}//}}}
 
-	//{{{ firePrefixStateChange() method
+	// firePrefixStateChange() method
 	/**
 	 * Description of the Method
 	 *
@@ -117,7 +115,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 	}//}}}
 
 
-	//{{{  getBindings()
+	// getBindings()
 	/**
 	 * Gets the bindings attribute of the ShortcutPrefixActiveEvent object
 	 *
@@ -128,7 +126,7 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 		return bindings;
 	}//}}}
 
-	//{{{  getActive()
+	// getActive()
 	/**
 	 * Gets the active attribute of the ShortcutPrefixActiveEvent object
 	 *
@@ -138,6 +136,5 @@ public class ShortcutPrefixActiveEvent extends ChangeEvent
 	{
 		return active;
 	}
-	//}}}
 }
 

@@ -1,6 +1,5 @@
 /* OneTimeMigrationService.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2012 Alan Ezust
  *
@@ -25,7 +24,7 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 import org.jedit.core.MigrationService;
 
-//{{{ OneTimeMigrationService class
+// OneTimeMigrationService class
 /** Base class from which one can more easily implement a migration step
     that should be executed only once per installation.
     <p>

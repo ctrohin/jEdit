@@ -1,7 +1,6 @@
 /*
  * EBMessage.java - An EditBus message
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2002 Slava Pestov
  *
@@ -40,7 +39,7 @@ package org.gjt.sp.jedit;
  */
 public abstract class EBMessage
 {
-	//{{{ EBMessage constructor
+	// EBMessage constructor
 	/**
 	 * Creates a new message.
 	 * @param source The message source
@@ -51,7 +50,7 @@ public abstract class EBMessage
 		this.source = source;
 	} //}}}
 
-	//{{{ EBMessage constructor
+	// EBMessage constructor
 	/**
 	 * Creates a new message.
 	 * @param source The message source
@@ -61,7 +60,7 @@ public abstract class EBMessage
 		this.source = source;
 	} //}}}
 
-	//{{{ getSource() method
+	// getSource() method
 	/**
 	 * @return the sender of this message.
 	 * @since jEdit 4.2pre1
@@ -71,7 +70,7 @@ public abstract class EBMessage
 		return source;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Returns a string representation of this message.
 	 */
@@ -84,7 +83,7 @@ public abstract class EBMessage
 			+ '[' + paramString() + ']';
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	/**
 	 * @return a string representation of this message's parameters.
 	 */
@@ -93,7 +92,6 @@ public abstract class EBMessage
 		return "source=" + source;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Object source;
-	//}}}
 }

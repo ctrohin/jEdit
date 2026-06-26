@@ -1,7 +1,6 @@
 /*
  * HistoryModelSaver.java - Interface for loading and saving of the "history" files.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *

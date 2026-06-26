@@ -1,7 +1,6 @@
 /*
  * ContextAddDialog.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Marcelo Vancin
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -48,7 +47,6 @@ import javax.swing.border.EmptyBorder;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.AbstractContextOptionPane.MenuItem;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 
 /** Dialog for showing ActionSets and adding actions to context menus
@@ -60,7 +58,7 @@ public class ContextAddDialog extends EnhancedDialog
 {
 	private static final String CONTEXT_ADD_DIALOG_LAST_SELECTION = "contextAddDialog.lastSelection";
 
-	//{{{ ContextAddDialog constructor
+	// ContextAddDialog constructor
 	public ContextAddDialog(Component comp, ActionContext actionContext)
 	{
 		super(GenericGUIUtilities.getParentDialog(comp),
@@ -154,7 +152,7 @@ public class ContextAddDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -162,14 +160,14 @@ public class ContextAddDialog extends EnhancedDialog
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ getSelection() method
+	// getSelection() method
 	public String getSelection()
 	{
 		if(!isOK)
@@ -187,14 +185,14 @@ public class ContextAddDialog extends EnhancedDialog
 	} //}}}
 
 
-	//{{{ private members
+	// private members
 	private boolean isOK;
 	private final JRadioButton separator;
 	private final JRadioButton action;
 	private final JComboBox<ActionSet> combo;
 	private final JList<MenuItem> list;
 
-	//{{{ updateList() method
+	// updateList() method
 	private void updateList()
 	{
 		ActionSet actionSet = (ActionSet)combo.getSelectedItem();
@@ -216,10 +214,9 @@ public class ContextAddDialog extends EnhancedDialog
 
 		list.setListData(listModel);
 	} //}}}
-	//}}}
 
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override

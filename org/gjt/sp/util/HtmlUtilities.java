@@ -1,7 +1,6 @@
 /*
  * HtmlUtilities.java - HTML utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010 Shlomy Reinstein
  *
@@ -41,9 +40,9 @@ import org.gjt.sp.jedit.syntax.SyntaxStyle;
 
 public class HtmlUtilities
 {
-	//{{{ public section
+	// public section
 
-	//{{{ parseHighlightStyle()
+	// parseHighlightStyle()
 	/**
 	 * Parses a string specifying a syntax highlight style.
 	 *
@@ -69,7 +68,7 @@ public class HtmlUtilities
 		return s;
 	} //}}}
 
-	//{{{ style2html()
+	// style2html()
 	/**
 	 * Parses a string specifying a syntax highlight style, and creates an
 	 * HTML representation for it.
@@ -99,7 +98,7 @@ public class HtmlUtilities
 		return tag.toString();
 	} //}}}
 
-	//{{{ highlightString()
+	// highlightString()
 	/**
 	 * Creates an HTML presentation of a given string, where selected substrings
 	 * are highlighted with a given syntax style tag.
@@ -131,7 +130,7 @@ public class HtmlUtilities
 		return sb.toString();
 	} //}}}
 
-	//{{{ appendString2html
+	// appendString2html
 	/**
 	 * Appends a given non-HTML string to an HTML string, translating character
 	 * entities to the appropriate HTML form.
@@ -171,15 +170,13 @@ public class HtmlUtilities
 		}
 	} //}}}
 	
-	//}}}
 
-	//{{{ private section
+	// private section
 
-	//{{{ color2html()
+	// color2html()
 	private static String color2html(Color c)
 	{
 		return "rgb(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ");";
 	} //}}}
 
-	//}}}
 }

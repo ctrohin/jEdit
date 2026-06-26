@@ -1,7 +1,6 @@
 /*
  * PluginManager.java - Plugin manager window
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002-2013 Slava Pestov, Matthieu Casanova, Kris Kopicki,
  * 				Shlomy Reinstein, Alan Ezust, Björn Kautler
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.*;
@@ -39,14 +38,13 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * @version $Id$
  */
 public class PluginManager extends JFrame
 {
-	//{{{ getInstance() method
+	// getInstance() method
 	/**
 	 * Returns the currently visible plugin manager window, or null.
 	 * @since jEdit 4.2pre2
@@ -56,7 +54,7 @@ public class PluginManager extends JFrame
 		return instance;
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -66,7 +64,7 @@ public class PluginManager extends JFrame
 		super.dispose();
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged message)
 	{
@@ -77,7 +75,7 @@ public class PluginManager extends JFrame
 		}
 	} //}}}
 
-	//{{{ handlePluginUpdate() method
+	// handlePluginUpdate() method
 	@EBHandler
 	public void handlePluginUpdate(PluginUpdate msg)
 	{
@@ -92,7 +90,7 @@ public class PluginManager extends JFrame
 		}
 	} //}}}
 
-	//{{{ showPluginManager() method
+	// showPluginManager() method
 	public static void showPluginManager(Frame parent)
 	{
 		if (instance == null)
@@ -100,28 +98,28 @@ public class PluginManager extends JFrame
 		instance.toFront();
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	public void ok()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ getPluginList() method
+	// getPluginList() method
 	PluginList getPluginList()
 	{
 		return pluginList;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static PluginManager instance;
 
-	//{{{ Instance variables
+	// Instance variables
 	private JTabbedPane tabPane;
 	private JButton done;
 	private JButton mgrOptions;
@@ -133,11 +131,10 @@ public class PluginManager extends JFrame
 	private boolean queuedUpdate;
 	private boolean downloadingPluginList;
 	private final Frame parent;
-	//}}}
 
 	public static final String PROPERTY_PLUGINSET = "plugin-manager.pluginset.path";
 
-	//{{{ pluginRemoved() method
+	// pluginRemoved() method
 	/**
 	 * A callback called by the @link ManagePanel} when a plugin is removed.
 	 * In that case, if the plugin had an update, the updater has to remove it,
@@ -149,7 +146,7 @@ public class PluginManager extends JFrame
 		installer.updateModel();
 	} //}}}
 
-	//{{{ PluginManager constructor
+	// PluginManager constructor
 	private PluginManager(Frame parent)
 	{
 		super(jEdit.getProperty("plugin-manager.title"));
@@ -157,7 +154,7 @@ public class PluginManager extends JFrame
 		init();
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	private void init()
 	{
 		EditBus.addToBus(this);
@@ -210,7 +207,7 @@ public class PluginManager extends JFrame
 		setVisible(true);
 	} //}}}
 
-	//{{{ shouldUpdatePluginList()
+	// shouldUpdatePluginList()
 	/**
 	* Check if the plugin list should be updated.
 	* It will return <code>true</code> if the pluginList is <code>null</code>
@@ -226,7 +223,7 @@ public class PluginManager extends JFrame
 			!downloadingPluginList;
 	} //}}}
 
-	//{{{ updatePluginList() method
+	// updatePluginList() method
 	private void updatePluginList()
 	{
 		if(jEdit.getSettingsDirectory() == null
@@ -247,7 +244,7 @@ public class PluginManager extends JFrame
 		ThreadUtilities.runInBackground(pluginList);
 	} //}}}
 
-	//{{{ checkForObsoletePlugins()
+	// checkForObsoletePlugins()
 	/** Checks for obsolete plugins, and marks them as unsupported.
 	 *  <p>
 	 *  An obsolete plugin branch can be marked as inactive, or
@@ -293,7 +290,7 @@ public class PluginManager extends JFrame
 		}
 	} //}}}
 
-	//{{{ disablePlugin()
+	// disablePlugin()
 	private void disablePlugin(PluginJAR jar, String name) 
 	{
 		Log.log(Log.ERROR, this, "Plugin: " + name + 
@@ -308,7 +305,7 @@ public class PluginManager extends JFrame
 		jEdit.propertiesChanged();		
 	}//}}}
 	
-	//{{{ pluginListUpdated() method
+	// pluginListUpdated() method
 	private void pluginListUpdated()
 	{
 		Component selected = tabPane.getSelectedComponent();
@@ -320,7 +317,7 @@ public class PluginManager extends JFrame
 		checkForObsoletePlugins();
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	public void processKeyEvents(KeyEvent ke)
 	{
 		if ((ke.getID() == KeyEvent.KEY_PRESSED) &&
@@ -331,9 +328,8 @@ public class PluginManager extends JFrame
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ ListUpdater class
+	// ListUpdater class
 	class ListUpdater implements ChangeListener
 	{
 		@Override

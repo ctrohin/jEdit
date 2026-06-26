@@ -1,7 +1,6 @@
 /*
  * ScrollLineCount.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -31,7 +30,7 @@ import org.gjt.sp.util.Log;
 class ScrollLineCount extends Anchor
 {
 
-	//{{{ ScrollLineCount constructor
+	// ScrollLineCount constructor
 	ScrollLineCount(DisplayManager displayManager,
 		TextArea textArea)
 	{
@@ -41,7 +40,7 @@ class ScrollLineCount extends Anchor
 	@Override
 	public void changed() {}
 
-	//{{{ reset() method
+	// reset() method
 	@Override
 	public void reset()
 	{

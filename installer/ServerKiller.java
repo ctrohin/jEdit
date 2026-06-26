@@ -1,7 +1,7 @@
 /*
  * ServerKiller.java - Utility class for the installer
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
+ * 
  *
  * Copyright (C) 2009 Eric Le Lay
  *

@@ -1,7 +1,6 @@
 /*
  * FoldHandler.java - Fold handler interface
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -47,7 +46,7 @@ public abstract class FoldHandler
 	/** The FoldHandlerProvider. */
 	public static FoldHandlerProvider foldHandlerProvider;
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns the internal name of this FoldHandler
 	 * @return The internal name of this FoldHandler
@@ -57,9 +56,8 @@ public abstract class FoldHandler
 	{
 		return name;
 	}
-	//}}}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	/**
 	 * Returns the fold level of the specified line.
 	 * @param buffer The buffer in question
@@ -70,9 +68,8 @@ public abstract class FoldHandler
 	 * @since jEdit 4.0pre1
 	 */
 	public abstract int getFoldLevel(JEditBuffer buffer, int lineIndex, Segment seg);
-	//}}}
 
-	//{{{ getPrecedingFoldLevels() method
+	// getPrecedingFoldLevels() method
 	/**
 	 * Returns the fold levels of the lines preceding the specified line,
 	 * which depend on the specified line.
@@ -89,9 +86,8 @@ public abstract class FoldHandler
 	{
 		return null;
 	}
-	//}}}
 
-	//{{{ equals() method
+	// equals() method
 	/**
 	 * Returns if the specified fold handler is equal to this one.
 	 * @param o The object
@@ -105,13 +101,13 @@ public abstract class FoldHandler
 			return getClass() == o.getClass();
 	} //}}}
 
-	//{{{ hashCode() method
+	// hashCode() method
 	public int hashCode()
 	{
 		return getClass().hashCode();
 	} //}}}
 
-	//{{{ getFoldHandler() method
+	// getFoldHandler() method
 	/**
 	 * Returns the fold handler with the specified name, or null if
 	 * there is no registered handler with that name.
@@ -122,9 +118,8 @@ public abstract class FoldHandler
 	{
 		return foldHandlerProvider.getFoldHandler(name);
 	}
-	//}}}
 
-	//{{{ getFoldModes() method
+	// getFoldModes() method
 	/**
 	 * Returns an array containing the names of all registered fold
 	 * handlers.
@@ -135,16 +130,14 @@ public abstract class FoldHandler
 	{
 		return foldHandlerProvider.getFoldModes();
 	}
-	//}}}
 
-	//{{{ FoldHandler() constructor
+	// FoldHandler() constructor
 	protected FoldHandler(String name)
 	{
 		this.name = name;
 	}
-	//}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return name;

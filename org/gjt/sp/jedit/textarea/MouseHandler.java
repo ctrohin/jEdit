@@ -1,7 +1,6 @@
 /*
  * MouseHandler.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov
  * Portions copyright (C) 2000 Ollie Rutherfurd
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.awt.event.*;
 
 import org.gjt.sp.jedit.EditBus;
@@ -32,20 +31,19 @@ import org.gjt.sp.jedit.msg.PositionChanging;
 import static java.awt.event.MouseEvent.BUTTON1;
 import static java.awt.event.MouseEvent.BUTTON2;
 import static java.awt.event.MouseEvent.BUTTON3;
-//}}}
 
 /**
  * The mouseHandler used for jEdit.
  */
 public class MouseHandler extends TextAreaMouseHandler
 {
-	//{{{ MouseHandler constructor
+	// MouseHandler constructor
 	public MouseHandler(JEditTextArea textArea)
 	{
 		super(textArea);
 	} //}}}
 
-	//{{{ mousePressed() method
+	// mousePressed() method
 	@Override
 	public void mousePressed(MouseEvent evt)
 	{

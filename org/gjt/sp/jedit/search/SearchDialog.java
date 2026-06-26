@@ -1,7 +1,6 @@
 /*
  * SearchDialog.java - Search and replace dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.border.*;
 import javax.swing.*;
@@ -39,7 +38,6 @@ import org.gjt.sp.jedit.browser.VFSBrowser;
 import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * Search and replace dialog.
@@ -48,7 +46,7 @@ import org.gjt.sp.jedit.*;
  */
 public class SearchDialog extends EnhancedDialog
 {
-	//{{{ Constants
+	// Constants
 	/**
 	 * Default file set.
 	 * @since jEdit 3.2pre2
@@ -56,9 +54,8 @@ public class SearchDialog extends EnhancedDialog
 	public static final int CURRENT_BUFFER = 0;
 	public static final int ALL_BUFFERS = 1;
 	public static final int DIRECTORY = 2;
-	//}}}
 
-	//{{{ getSearchDialog() method
+	// getSearchDialog() method
 	
 	public static SearchDialog getSearchDialog(View view)
 	{
@@ -73,7 +70,7 @@ public class SearchDialog extends EnhancedDialog
 		return searchDialog;
 	} //}}}
 
-	//{{{ showSearchDialog() method
+	// showSearchDialog() method
 	/**
 	 * Displays a search and replace dialog box, reusing an existing one
 	 * if necessary.
@@ -118,7 +115,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ setSearchString() method
+	// setSearchString() method
 	/**
 	 * Sets the search string.
 	 *
@@ -207,7 +204,7 @@ public class SearchDialog extends EnhancedDialog
 		updateEnabled();
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -249,7 +246,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
@@ -258,7 +255,7 @@ public class SearchDialog extends EnhancedDialog
 		setVisible(false);
 	} //}}}
 
-	//{{{ handleSearchSettingsChanged() method
+	// handleSearchSettingsChanged() method
 	@EBHandler
 	public void handleSearchSettingsChanged(EBMessage msg)
 	{
@@ -266,7 +263,7 @@ public class SearchDialog extends EnhancedDialog
 			load();
 	} //}}}
 
-	//{{{ setVisible() method
+	// setVisible() method
 	@Override
 	public void setVisible(boolean b)
 	{
@@ -277,7 +274,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ initFocusOrder() method
+	// initFocusOrder() method
 	private void initFocusOrder()
 	{
 		// find and replace history fields
@@ -323,7 +320,7 @@ public class SearchDialog extends EnhancedDialog
 		focusOrder.add(skipBinaryFiles);
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -332,11 +329,11 @@ public class SearchDialog extends EnhancedDialog
 		super.dispose();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	private static final Map<View, SearchDialog> viewHash = new HashMap<View, SearchDialog>();
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 
 	// fields
@@ -367,9 +364,8 @@ public class SearchDialog extends EnhancedDialog
 	private boolean saving;
 
 	private final FocusOrder focusOrder;
-	//}}}
 
-	//{{{ SearchDialog constructor
+	// SearchDialog constructor
 	/**
 	 * Creates a new search and replace dialog box.
 	 * @param view The view
@@ -409,7 +405,7 @@ public class SearchDialog extends EnhancedDialog
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ createFindLabelAndField() method
+	// createFindLabelAndField() method
 	private void createFindLabelAndField(JPanel fieldPanel,
 		GridBagConstraints cons)
 	{
@@ -436,7 +432,7 @@ public class SearchDialog extends EnhancedDialog
 		cons.gridy++;
 	} //}}}
 
-	//{{{ createReplaceLabelAndField() method
+	// createReplaceLabelAndField() method
 	private void createReplaceLabelAndField(JPanel fieldPanel,
 		GridBagConstraints cons)
 	{
@@ -487,7 +483,7 @@ public class SearchDialog extends EnhancedDialog
 		cons.gridy++;
 	} //}}}
 
-	//{{{ createFieldPanel() method
+	// createFieldPanel() method
 	private JPanel createFieldPanel()
 	{
 		JPanel fieldPanel = new JPanel(new GridBagLayout());
@@ -504,7 +500,7 @@ public class SearchDialog extends EnhancedDialog
 		return fieldPanel;
 	} //}}}
 
-	//{{{ createSearchSettingsPanel() method
+	// createSearchSettingsPanel() method
 	private JPanel createSearchSettingsPanel()
 	{
 		JPanel searchSettings = new JPanel(new VariableGridLayout(
@@ -604,7 +600,7 @@ public class SearchDialog extends EnhancedDialog
 		return searchSettings;
 	} //}}}
 
-	//{{{ createMultiFilePanel() method
+	// createMultiFilePanel() method
 	private JPanel createMultiFilePanel()
 	{
 		JPanel multifile = new JPanel();
@@ -719,7 +715,7 @@ public class SearchDialog extends EnhancedDialog
 		return multifile;
 	} //}}}
 
-	//{{{ createButtonsPanel() method
+	// createButtonsPanel() method
 	private Box createButtonsPanel()
 	{
 		Box box = new Box(BoxLayout.Y_AXIS);
@@ -764,7 +760,7 @@ public class SearchDialog extends EnhancedDialog
 		return box;
 	} //}}}
 
-	//{{{ updateEnabled() method
+	// updateEnabled() method
 	private void updateEnabled()
 	{
 		wrap.setEnabled(!hyperSearch.isSelected()
@@ -798,7 +794,7 @@ public class SearchDialog extends EnhancedDialog
 			&& !searchSelection.isSelected());
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	/**
 	 * @param cancel If true, we don't bother the user with warning messages
 	 */
@@ -911,7 +907,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ closeOrKeepDialog() method
+	// closeOrKeepDialog() method
 	private void closeOrKeepDialog()
 	{
 		if(keepDialog.isSelected())
@@ -935,7 +931,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	private void load()
 	{
 		wholeWord.setSelected(SearchAndReplace.getWholeWord());
@@ -999,11 +995,10 @@ public class SearchDialog extends EnhancedDialog
 			"search.keepDialog.toggle"));
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ ReplaceActionHandler class
+	// ReplaceActionHandler class
 	class ReplaceActionHandler implements ActionListener
 	{
 		@Override
@@ -1017,7 +1012,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ SettingsActionHandler class
+	// SettingsActionHandler class
 	class SettingsActionHandler implements ActionListener
 	{
 		@Override
@@ -1037,7 +1032,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ MultiFileActionHandler class
+	// MultiFileActionHandler class
 	class MultiFileActionHandler implements ActionListener
 	{
 		@Override
@@ -1072,7 +1067,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 
 
-		//{{{ synchronizeMultiFileSettings() method
+		// synchronizeMultiFileSettings() method
 		private void synchronizeMultiFileSettings()
 		{
 			// don't sync search directory when "search all buffers" is active
@@ -1090,7 +1085,7 @@ public class SearchDialog extends EnhancedDialog
 		} //}}}
 	} //}}}
 
-	//{{{ ButtonActionHandler class
+	// ButtonActionHandler class
 	class ButtonActionHandler implements ActionListener
 	{
 		@Override
@@ -1157,7 +1152,7 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ FocusOrder class
+	// FocusOrder class
 	// Simple focus order policy, focus order is the order components are added
 	// to this policy.
 	class FocusOrder extends FocusTraversalPolicy
@@ -1234,5 +1229,4 @@ public class SearchDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//}}}
 }

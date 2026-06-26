@@ -1,7 +1,6 @@
 /*
  * StandardUtilities.java - Various miscallaneous utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2006 Matthieu Casanova, Slava Pestov
  * Portions copyright (C) 2000 Richard S. Hall
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import javax.swing.text.Segment;
 
 import java.security.MessageDigest;
@@ -32,7 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.Stack;
-//}}}
 
 /**
  * Several tools that depends on JDK only.
@@ -45,7 +43,7 @@ public class StandardUtilities
 {
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-	//{{{ charsToEscapes() methods
+	// charsToEscapes() methods
 	/**
 	 * Escapes newlines, tabs, backslashes, and quotes in the specified
 	 * string.
@@ -87,7 +85,7 @@ public class StandardUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ getPrevIndentStyle() method
+	// getPrevIndentStyle() method
 	/**
 	 * @param str A java string
   	 * @return the leading whitespace of that string, for indenting subsequent lines.
@@ -107,7 +105,7 @@ public class StandardUtilities
 
 	} //}}}
 
-	//{{{ getLeadingWhiteSpace() methods
+	// getLeadingWhiteSpace() methods
 	/**
 	 * Returns the number of leading white space characters in the
 	 * specified string.
@@ -144,7 +142,7 @@ loop:		for(;whitespace < str.length();)
 		return whitespace;
 	} //}}}
 
-	//{{{ getTrailingWhiteSpace() method
+	// getTrailingWhiteSpace() method
 	/**
 	 * Returns the number of trailing whitespace characters in the
 	 * specified string.
@@ -168,7 +166,7 @@ loop:		for(int i = str.length() - 1; i >= 0; i--)
 		return whitespace;
 	} //}}}
 
-	//{{{ getLeadingWhiteSpaceWidth() methods
+	// getLeadingWhiteSpaceWidth() methods
 	/**
 	 * Returns the width of the leading white space in the specified
 	 * string.
@@ -208,7 +206,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return whitespace;
 	} //}}}
 
-	//{{{ createWhiteSpace() method
+	// createWhiteSpace() method
 	/**
 	 * Creates a string of white space with the specified length.<p>
 	 *
@@ -227,7 +225,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return createWhiteSpace(len,tabSize,0);
 	} //}}}
 
-	//{{{ truncateWhiteSpace() method
+	// truncateWhiteSpace() method
 	public static String truncateWhiteSpace(int len, int tabSize,
 		String indentStr)
 	{
@@ -259,7 +257,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return buf.toString();
 	} //}}}
 
-	//{{{ createWhiteSpace() method
+	// createWhiteSpace() method
 	/**
 	 * Creates a string of white space with the specified length.<p>
 	 *
@@ -298,7 +296,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return buf.toString();
 	} //}}}
 
-	//{{{ getVirtualWidth() method
+	// getVirtualWidth() method
 	/**
 	 * Returns the virtual column number (taking tabs into account) of the
 	 * specified offset in the segment.
@@ -328,7 +326,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return virtualPosition;
 	} //}}}
 
-	//{{{ getOffsetOfVirtualColumn() method
+	// getOffsetOfVirtualColumn() method
 	/**
 	 * Returns the array offset of a virtual column number (taking tabs
 	 * into account) in the segment.
@@ -374,7 +372,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return -1;
 	} //}}}
 
-	//{{{ compareStrings() method
+	// compareStrings() method
 	/**
 	 * Compares two strings.<p>
 	 *
@@ -473,7 +471,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return char1.length - char2.length;
 	} //}}}
 
-	//{{{ StringCompare class
+	// StringCompare class
 	/**
 	 * Compares objects as strings.
 	 */
@@ -498,7 +496,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		}
 	} //}}}
 
-	//{{{ globToRE() method
+	// globToRE() method
 	/**
 	 * Converts a Unix-style glob to a regular expression.<p>
 	 *
@@ -589,7 +587,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return buf.toString();
 	} //}}}
 
-	//{{{ regionMatches() method
+	// regionMatches() method
 	/**
 	 * Implementation of String.regionMatches() for CharSequence.
 	 *
@@ -645,7 +643,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return ret;
 	} //}}}
 
-	//{{{ startsWith() method
+	// startsWith() method
 	/**
 	 * Implementation of String.startsWith() for CharSequence.
 	 *
@@ -670,7 +668,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return ret;
 	} //}}}
 
-	//{{{ getBoolean() method
+	// getBoolean() method
 	/**
 	 * Returns a boolean from a given object.
 	 * @param obj the object
@@ -697,7 +695,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 		return def;
 	} //}}}
 
-	//{{{ formatFileSize() method
+	// formatFileSize() method
 	public static final DecimalFormat KB_FORMAT = new DecimalFormat("#.# kB");
 	public static final DecimalFormat MB_FORMAT = new DecimalFormat("#.# MB");
 
@@ -755,7 +753,7 @@ loop:		for(int i = 0; i < str.length(); i++)
 	}
 	// }}}
 
-	//{{{ castUnchecked() method
+	// castUnchecked() method
 	/**
 	 * Casts the given argument to the needed return type.
 	 *

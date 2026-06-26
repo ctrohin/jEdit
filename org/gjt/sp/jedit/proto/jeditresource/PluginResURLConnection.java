@@ -1,7 +1,6 @@
 /*
  * PluginResURLConnection.java - jEdit plugin resource URL connection
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 1999 - 2014 Slava Pestov, Eric Le Lay, Alan Ezust
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.proto.jeditresource;
 
-//{{{ Imports
+// Imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,16 +36,15 @@ import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.PluginJAR;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
-//}}}
 
-//{{{ class PluginResURLConnection
+// class PluginResURLConnection
 /** An implementation of jeditresource:/ url protocol.
 
 	Can be used for accessing jEdit core resources as well.
 */
 public class PluginResURLConnection extends URLConnection
 {
-	//{{{ constructor
+	// constructor
 	public PluginResURLConnection(URL url)
 		throws IOException
 	{
@@ -76,7 +74,7 @@ public class PluginResURLConnection extends URLConnection
 			resource = resource.substring(1);
 	}//}}}
 
-	//{{{ connect()
+	// connect()
 	/**
 	 * @throws	IOException	on error
 	 * @throws	FileNotFoundException if resource is not found
@@ -132,7 +130,7 @@ public class PluginResURLConnection extends URLConnection
 		}
 	}//}}}
 
-	//{{{ getInputStream()
+	// getInputStream()
 	/**
 	 * @return	input stream to read the resource's contents. never null
 	 * @throws	IOException	on error
@@ -146,7 +144,7 @@ public class PluginResURLConnection extends URLConnection
 		return in;
 	}//}}}
 
-	//{{{ getHeaderField()
+	// getHeaderField()
 	public String getHeaderField(String name)
 	{
 		if(name.equals("content-type"))
@@ -170,9 +168,8 @@ public class PluginResURLConnection extends URLConnection
 			return null;
 	}//}}}
 
-	//{{{ private members
+	// private members
 	private InputStream in;
 	private String plugin;
 	private String resource;
-	//}}}
 }//}}}

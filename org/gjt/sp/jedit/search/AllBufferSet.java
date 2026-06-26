@@ -1,7 +1,6 @@
 /*
  * AllBufferSet.java - All buffer matcher
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
 
 import static org.gjt.sp.util.StandardUtilities.EMPTY_STRING_ARRAY;
-//}}}
 
 /**
  * A file set for searching all open buffers in a view.
@@ -41,7 +39,7 @@ import static org.gjt.sp.util.StandardUtilities.EMPTY_STRING_ARRAY;
  */
 public class AllBufferSet extends BufferListSet
 {
-	//{{{ AllBufferSet constructor
+	// AllBufferSet constructor
 	/**
 	 * Creates a view buffer set.
 	 * @param glob The filename glob
@@ -54,14 +52,14 @@ public class AllBufferSet extends BufferListSet
 		this.view = view;
 	} //}}}
 	
-	//{{{ getView() method
+	// getView() method
 	/** @since jEdit 5.1pre1 */
 	public View getView() 
 	{
 		return view;
 	}//}}}
 	
-	//{{{ getFileFilter() method
+	// getFileFilter() method
 	/**
 	 * Returns the filename filter.
 	 * @since jEdit 2.7pre3
@@ -71,7 +69,7 @@ public class AllBufferSet extends BufferListSet
 		return glob;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	/**
 	 * Returns the BeanShell code that will recreate this file set.
 	 * @since jEdit 2.7pre3
@@ -83,12 +81,11 @@ public class AllBufferSet extends BufferListSet
 		+ "\", view)";
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private final String glob;
 	private final View view;
-	//}}}
 
-	//{{{ _getFiles() method
+	// _getFiles() method
 	@Override
 	protected String[] _getFiles(Component comp)
 	{

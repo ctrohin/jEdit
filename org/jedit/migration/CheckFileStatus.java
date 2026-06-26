@@ -1,6 +1,5 @@
 /* CheckFileStatus.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2012 Alan Ezust
  *
@@ -23,7 +22,7 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.options.GeneralOptionPane;
 
 
-//{{{ CheckFileStatus class
+// CheckFileStatus class
 /**
  * Migration step for the 'checkFileStatus' property whose meaning changed slightly
  * in jEdit. Default value was before 0 and is now 1.

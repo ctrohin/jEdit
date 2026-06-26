@@ -1,7 +1,6 @@
 /*
  * MouseActions.java - Simplifies mouse handling
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -30,14 +29,14 @@ public class MouseActions implements MouseActionsProvider
 {
 	private final IPropertyManager propertyManager;
 
-	//{{{ MouseActions constructor
+	// MouseActions constructor
 	MouseActions(IPropertyManager propertyManager, String name)
 	{
 		this.propertyManager = propertyManager;
 		this.name = name;
 	} //}}}
 
-	//{{{ getActionForEvent() method
+	// getActionForEvent() method
 	@Override
 	public String getActionForEvent(MouseEvent evt, String variant)
 	{

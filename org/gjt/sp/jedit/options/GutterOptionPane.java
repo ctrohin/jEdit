@@ -1,7 +1,6 @@
 /*
  * GutterOptionPane.java - Gutter options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000 mike dillon
  * Portions copyright (C) 2001, 2002 Slava Pestov
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.awt.*;
@@ -34,17 +33,16 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.themes.ThemeConstants;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.SyntaxUtilities;
-//}}}
 
 public class GutterOptionPane extends AbstractOptionPane
 {
-	//{{{ GutterOptionPane constructor
+	// GutterOptionPane constructor
 	public GutterOptionPane()
 	{
 		super("gutter");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	public void _init()
 	{
@@ -255,7 +253,7 @@ public class GutterOptionPane extends AbstractOptionPane
 		selectionAreaBgColor.setSelectedColor(jEdit.getDefaultColorProperty(themePrefix + "view.gutter.selectionAreaBgColor"));
 	}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -322,14 +320,14 @@ public class GutterOptionPane extends AbstractOptionPane
 			Integer.parseInt(selectionAreaWidth.getText()));
 	} //}}}
 
-	//{{{ setGutterComponentsEnabledState
+	// setGutterComponentsEnabledState
 	private void setGutterComponentsEnabledState()
 	{
 		GenericGUIUtilities.setEnabledRecursively(gutterComponents,
 			gutterEnabled.isSelected());
 	} //}}}
 
-	//{{{ addFoldStyleChooser() method
+	// addFoldStyleChooser() method
 	private void addFoldStyleChooser()
 	{
 		painters = ServiceManager.getServiceNames(JEditTextArea.FOLD_PAINTER_SERVICE);
@@ -348,13 +346,13 @@ public class GutterOptionPane extends AbstractOptionPane
 		addComponent(new JLabel(jEdit.getProperty("options.gutter.foldStyle.label")), foldPainter);
 	} //}}}
 
-	//{{{ isGutterEnabled() method
+	// isGutterEnabled() method
 	public static boolean isGutterEnabled()
 	{
 		return jEdit.getBooleanProperty(GUTTER_ENABLED_PROPERTY);
 	} //}}}
 
-	//{{{ getMinLineNumberDigits() method
+	// getMinLineNumberDigits() method
 	public static int getMinLineNumberDigits()
 	{
 		int n = jEdit.getIntegerProperty("view.gutter.minDigitCount", 2);
@@ -363,13 +361,13 @@ public class GutterOptionPane extends AbstractOptionPane
 		return n;
 	} //}}}
 
-	//{{{ isSelectionAreaEnabled() method
+	// isSelectionAreaEnabled() method
 	public static boolean isSelectionAreaEnabled()
 	{
 		return jEdit.getBooleanProperty(SELECTION_AREA_ENABLED_PROPERTY);
 	} //}}}
 
-	//{{{ getSelectionAreaBgColor() method
+	// getSelectionAreaBgColor() method
 	public static Color getSelectionAreaBackground()
 	{
 		String color = jEdit.getProperty(SELECTION_AREA_BGCOLOR_PROPERTY);
@@ -378,7 +376,7 @@ public class GutterOptionPane extends AbstractOptionPane
 		return SyntaxUtilities.parseColor(color, Color.black);
 	} //}}}
 
-	//{{{ getSelectionAreaWidth() method
+	// getSelectionAreaWidth() method
 	public static int getSelectionAreaWidth()
 	{
 		int n = jEdit.getIntegerProperty("view.gutter.selectionAreaWidth",
@@ -388,7 +386,7 @@ public class GutterOptionPane extends AbstractOptionPane
 		return n;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final String GUTTER_ENABLED_PROPERTY =
 		"view.gutter.enabled";
 	private static final String SELECTION_AREA_ENABLED_PROPERTY =
@@ -420,5 +418,4 @@ public class GutterOptionPane extends AbstractOptionPane
 	private JCheckBox selectionAreaEnabled;
 	private ColorWellButton selectionAreaBgColor;
 	private JTextField selectionAreaWidth;
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * CurrentBufferSet.java - Current buffer matcher
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2001 Slava Pestov
  *
@@ -31,21 +30,21 @@ import org.gjt.sp.jedit.*;
  */
 public class CurrentBufferSet implements SearchFileSet
 {
-	//{{{ getFirstFile() method
+	// getFirstFile() method
 	@Override
 	public String getFirstFile(View view)
 	{
 		return view.getBuffer().getPath();
 	} //}}}
 	
-	//{{{ getLastFile() method
+	// getLastFile() method
 	@Override
 	public String getLastFile(View view)
 	{
 		return view.getBuffer().getPath();
 	} //}}}
 
-	//{{{ getNextFile() method
+	// getNextFile() method
 	@Override
 	public String getNextFile(View view, String file)
 	{
@@ -55,7 +54,7 @@ public class CurrentBufferSet implements SearchFileSet
 			return null;
 	} //}}}
 	
-	//{{{ getPrevFile() method
+	// getPrevFile() method
 	@Override
 	public String getPrevFile(View view, String file)
 	{
@@ -65,21 +64,21 @@ public class CurrentBufferSet implements SearchFileSet
 			return null;
 	} //}}}
 
-	//{{{ getFiles() method
+	// getFiles() method
 	@Override
 	public String[] getFiles(View view)
 	{
 		return new String[] { view.getBuffer().getPath() };
 	} //}}}
 
-	//{{{ getFileCount() method
+	// getFileCount() method
 	@Override
 	public int getFileCount(View view)
 	{
 		return 1;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	@Override
 	public String getCode()
 	{

@@ -1,7 +1,6 @@
 /*
  * ViewOptionPane.java - Editor window options
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  * Portions Copyright (C) 2009 Matthieu Casanova
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.*;
 
@@ -32,17 +31,16 @@ import java.awt.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.util.Log;
-//}}}
 
 public class ViewOptionPane extends AbstractOptionPane
 {
-    //{{{ ViewOptionPane constructor
+    // ViewOptionPane constructor
 	public ViewOptionPane()
 	{
 		super("view");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -224,7 +222,7 @@ public class ViewOptionPane extends AbstractOptionPane
 
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -257,7 +255,7 @@ public class ViewOptionPane extends AbstractOptionPane
 
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JLabel layout;
 	private Icon layoutIcon1, layoutIcon2, layoutIcon3, layoutIcon4;
 	private JButton alternateDockingLayout, alternateToolBarLayout;
@@ -278,9 +276,8 @@ public class ViewOptionPane extends AbstractOptionPane
 	private JCheckBox showBufferList;
 	private JCheckBox showBufferTabs;
 
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)

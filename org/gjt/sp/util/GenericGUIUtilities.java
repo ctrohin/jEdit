@@ -1,7 +1,6 @@
 /*
  * GenericGUIUtilities.java - Various GUI utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  * Copyright (C) 2016 Eric Le Lay (move from GUIUtilities.java)
@@ -57,7 +56,7 @@ import org.gjt.sp.jedit.textarea.TextAreaMouseHandler;
 */
 public class GenericGUIUtilities
 {
-	//{{{ prettifyMenuLabel() method
+	// prettifyMenuLabel() method
 	/**
 	 * `Prettifies' a menu item label by removing the `$' sign. This
 	 * can be used to process the contents of an <i>action</i>.label
@@ -77,7 +76,7 @@ public class GenericGUIUtilities
 		return result;
 	} //}}}
 
-	//{{{ setAutoMnemonic() method
+	// setAutoMnemonic() method
 	/**
 	 * Sets the mnemonic for the given button using jEdit convention,
 	 * taking the letter after the dollar.
@@ -105,7 +104,7 @@ public class GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ adjustForScreenBounds() method
+	// adjustForScreenBounds() method
 	/**
 	 * Gives a rectangle the specified bounds, ensuring it is within the
 	 * screen bounds.
@@ -142,7 +141,7 @@ public class GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ requestFocus() method
+	// requestFocus() method
 	/**
 	 * Focuses on the specified component as soon as the window becomes
 	 * active.
@@ -163,7 +162,7 @@ public class GenericGUIUtilities
 		});
 	} //}}}
 
-	//{{{ isPopupTrigger() method
+	// isPopupTrigger() method
 	/**
 	 * Returns if the specified event is the popup trigger event.
 	 * This implements precisely defined behavior, as opposed to
@@ -176,7 +175,7 @@ public class GenericGUIUtilities
 		return TextAreaMouseHandler.isRightButton(evt);
 	} //}}}
 
-	//{{{ isLeftButton() method
+	// isLeftButton() method
 	/**
 	 * @param evt A mouse event
 	 * @since jEdit 5.6
@@ -186,7 +185,7 @@ public class GenericGUIUtilities
 		return TextAreaMouseHandler.isLeftButton(evt);
 	} //}}}
 
-	//{{{ isMiddleButton() method
+	// isMiddleButton() method
 	/**
 	 * @param modifiers The modifiers flag from a mouse event
 	 * @since jEdit 5.3.1
@@ -207,7 +206,7 @@ public class GenericGUIUtilities
 		return TextAreaMouseHandler.isMiddleButton(evt);
 	} //}}}
 
-	//{{{ isRightButton() method
+	// isRightButton() method
 	/**
 	 * @param modifiers The modifiers flag from a mouse event
 	 * @since jEdit 5.3.1
@@ -228,7 +227,7 @@ public class GenericGUIUtilities
 		return TextAreaMouseHandler.isRightButton(evt);
 	} //}}}
 
-	//{{{ getScreenBounds() method
+	// getScreenBounds() method
 	/**
 	 * Returns the screen bounds, taking into account multi-screen
 	 * environments.
@@ -251,7 +250,7 @@ public class GenericGUIUtilities
 		return bounds;
 	} //}}}
 
-	//{{{ showPopupMenu() method
+	// showPopupMenu() method
 	/**
 	 * Shows the specified popup menu, ensuring it is displayed within
 	 * the bounds of the screen.
@@ -271,7 +270,7 @@ public class GenericGUIUtilities
 		showPopupMenu(popup,comp,x,y,true);
 	} //}}}
 
-	//{{{ showPopupMenu() method
+	// showPopupMenu() method
 	/**
 	 * Shows the specified popup menu, ensuring it is displayed within
 	 * the bounds of the screen.
@@ -344,7 +343,7 @@ public class GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ isAncestorOf() method
+	// isAncestorOf() method
 	/**
 	 * Returns if the first component is an ancestor of the
 	 * second by traversing up the component hierarchy.
@@ -366,7 +365,7 @@ public class GenericGUIUtilities
 		return false;
 	} //}}}
 
-	//{{{ getParentDialog() method
+	// getParentDialog() method
 	/**
 	 * Traverses the given component's parent tree looking for an
 	 * instance of JDialog, and return it. If not found, return null.
@@ -378,7 +377,7 @@ public class GenericGUIUtilities
 		return (JDialog) SwingUtilities.getAncestorOfClass(JDialog.class, c);
 	} //}}}
 
-	//{{{ setEnabledRecursively() method
+	// setEnabledRecursively() method
 	/**
 	 * Call setEnabled() recursively on the container and its descendants.
 	 * @param c The container
@@ -397,7 +396,7 @@ public class GenericGUIUtilities
 		c.setEnabled(enabled);
 	} //}}}
 
-	//{{{ setButtonContentMargin() method
+	// setButtonContentMargin() method
 	/**
 	 * Sets the content margin of a button (for Nimbus L&amp;F).
 	 * @param button  the button to modify
@@ -412,7 +411,7 @@ public class GenericGUIUtilities
 		button.putClientProperty("Nimbus.Overrides", defaults);
 	} //}}}
 
-	//{{{
+	// 
 	/**
  	 * Makes components the same size by finding the largest width and height of the
  	 * given components then setting all components to that width and height. This is
@@ -442,7 +441,7 @@ public class GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ defaultTableDimension() method
+	// defaultTableDimension() method
 	/**
 	 * JTable cell size, based on global defaults.
 	 * @since jEdit 5.3.1
@@ -456,7 +455,7 @@ public class GenericGUIUtilities
 		return label.getPreferredSize();
 	} //}}}
 
-	//{{{ defaultColumnWidth() method
+	// defaultColumnWidth() method
 	/**
 	 * Column width for JTable, based on global defaults.
 	 * @since jEdit 5.3.1
@@ -466,7 +465,7 @@ public class GenericGUIUtilities
 		return defaultTableCellSize().width;
 	} //}}}
 
-	//{{{ defaultRowHeight() method
+	// defaultRowHeight() method
 	/**
 	 * Row height for JTable, based on global defaults.
 	 * @since jEdit 5.3.1

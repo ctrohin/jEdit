@@ -1,7 +1,6 @@
 /*
  * DockingOptionPane.java - Dockable window options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -49,19 +48,18 @@ import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.gui.DockableWindowManager;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
-//{{{ DockingOptionPane class
+// DockingOptionPane class
 @SuppressWarnings("serial")
 public class DockingOptionPane extends AbstractOptionPane
 {
-	//{{{ DockingOptionPane constructor
+	// DockingOptionPane constructor
 	public DockingOptionPane()
 	{
 		super("docking");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	public void _init()
 	{
@@ -75,7 +73,7 @@ public class DockingOptionPane extends AbstractOptionPane
 			new DefaultComboBoxModel<>(windowModel.getDockableSets().toArray(StandardUtilities.EMPTY_STRING_ARRAY)));
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -86,15 +84,14 @@ public class DockingOptionPane extends AbstractOptionPane
 		windowModel.save();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private JComboBox<String> dockingFramework;
 	private WindowTableModel windowModel;
 	private JCheckBox autoLoadModeLayout;
 	private JCheckBox autoSaveModeLayout;
 	private JComboBox<String> dockableSetSelection;
-	//}}}
 
 	private static final String DOCKING_OPTIONS_PREFIX = "options.docking.";
 	public static final String AUTO_LOAD_MODE_LAYOUT_PROP = DOCKING_OPTIONS_PREFIX + "autoLoadModeLayout";
@@ -157,7 +154,7 @@ public class DockingOptionPane extends AbstractOptionPane
 		vSetSelection.add(Box.createVerticalStrut(6));
 		return p;
 	}
-	//{{{ createWindowTableScroller() method
+	// createWindowTableScroller() method
 	private JScrollPane createWindowTableScroller()
 	{
 		windowModel = createWindowModel();
@@ -180,15 +177,14 @@ public class DockingOptionPane extends AbstractOptionPane
 		return scroller;
 	} //}}}
 
-	//{{{ createWindowModel() method
+	// createWindowModel() method
 	private static WindowTableModel createWindowModel()
 	{
 		return new WindowTableModel();
 	} //}}}
 
-	//}}}
 
-	//{{{ DockPositionCellRenderer class
+	// DockPositionCellRenderer class
 	private static class DockPositionCellRenderer extends JComboBox<String> implements TableCellRenderer
 	{
 		DockPositionCellRenderer()
@@ -214,7 +210,7 @@ public class DockingOptionPane extends AbstractOptionPane
 	} //}}}
 } //}}}
 
-//{{{ WindowTableModel class
+// WindowTableModel class
 @SuppressWarnings("serial")
 class WindowTableModel extends AbstractTableModel
 {
@@ -224,7 +220,7 @@ class WindowTableModel extends AbstractTableModel
 	private final Map<String, List<Entry>> dockableSets;
 	private List<Entry> windows;
 
-	//{{{ WindowTableModel constructor
+	// WindowTableModel constructor
 	WindowTableModel()
 	{
 		dockableSets = new HashMap<>();
@@ -261,7 +257,7 @@ class WindowTableModel extends AbstractTableModel
 		return sets;
 	}
 
-	//{{{ showSet() method
+	// showSet() method
 	public void showSet(String set)
 	{
 		windows = dockableSets.get(set);
@@ -269,21 +265,21 @@ class WindowTableModel extends AbstractTableModel
 		fireTableDataChanged();
 	} //}}}
 
-	//{{{ getColumnCount() method
+	// getColumnCount() method
 	@Override
 	public int getColumnCount()
 	{
 		return 2;
 	} //}}}
 
-	//{{{ getRowCount() method
+	// getRowCount() method
 	@Override
 	public int getRowCount()
 	{
 		return windows.size();
 	} //}}}
 
-	//{{{ getColumnClass() method
+	// getColumnClass() method
 	@Override
 	public Class getColumnClass(int col)
 	{
@@ -297,7 +293,7 @@ class WindowTableModel extends AbstractTableModel
 		}
 	} //}}}
 
-	//{{{ getValueAt() method
+	// getValueAt() method
 	@Override
 	public Object getValueAt(int row, int col)
 	{
@@ -313,14 +309,14 @@ class WindowTableModel extends AbstractTableModel
 		}
 	} //}}}
 
-	//{{{ isCellEditable() method
+	// isCellEditable() method
 	@Override
 	public boolean isCellEditable(int row, int col)
 	{
 		return col != 0;
 	} //}}}
 
-	//{{{ setValueAt() method
+	// setValueAt() method
 	@Override
 	public void setValueAt(Object value, int row, int col)
 	{
@@ -340,7 +336,7 @@ class WindowTableModel extends AbstractTableModel
 		fireTableRowsUpdated(row,row);
 	} //}}}
 
-	//{{{ getColumnName() method
+	// getColumnName() method
 	@Override
 	public String getColumnName(int index)
 	{
@@ -355,13 +351,13 @@ class WindowTableModel extends AbstractTableModel
 		}
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	public void save()
 	{
 		windows.forEach(Entry::save);
 	} //}}}
 
-	//{{{ Entry class
+	// Entry class
 	private static class Entry
 	{
 		final String name;
@@ -386,7 +382,7 @@ class WindowTableModel extends AbstractTableModel
 		}
 	} //}}}
 
-	//{{{ WindowCompare class
+	// WindowCompare class
 	static class WindowCompare implements Comparator<Object>
 	{
 		@Override

@@ -1,7 +1,6 @@
 /*
  * HoverSetStatusMouseHandler.java - set status with help text on hover
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  * Copyright (C) 2016 Eric Le Lay (extracted from EnhancedMenuItem)

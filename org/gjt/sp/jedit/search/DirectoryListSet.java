@@ -1,7 +1,6 @@
 /*
  * DirectoryListSet.java - Directory list matcher
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.io.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * Recursive directory search.
@@ -37,7 +35,7 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class DirectoryListSet extends BufferListSet
 {
-	//{{{ DirectoryListSet constructor
+	// DirectoryListSet constructor
 	public DirectoryListSet(String directory, String glob, boolean recurse)
 	{
 		this.directory = directory;
@@ -47,13 +45,13 @@ public class DirectoryListSet extends BufferListSet
 
 
 
-	//{{{ getDirectory() method
+	// getDirectory() method
 	public String getDirectory()
 	{
 		return directory;
 	} //}}}
 
-	//{{{ setDirectory() method
+	// setDirectory() method
 	/**
 	 * @since jEdit 4.2pre1
 	 */
@@ -63,13 +61,13 @@ public class DirectoryListSet extends BufferListSet
 		invalidateCachedList();
 	} //}}}
 
-	//{{{ getFileFilter() method
+	// getFileFilter() method
 	public String getFileFilter()
 	{
 		return glob;
 	} //}}}
 
-	//{{{ setFileFilter() method
+	// setFileFilter() method
 	/**
 	 * @since jEdit 4.2pre1
 	 */
@@ -79,13 +77,13 @@ public class DirectoryListSet extends BufferListSet
 		invalidateCachedList();
 	} //}}}
 
-	//{{{ isRecursive() method
+	// isRecursive() method
 	public boolean isRecursive()
 	{
 		return recurse;
 	} //}}}
 
-	//{{{ setRecursive() method
+	// setRecursive() method
 	/**
 	 * @since jEdit 4.2pre1
 	 */
@@ -95,7 +93,7 @@ public class DirectoryListSet extends BufferListSet
 		invalidateCachedList();
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	@Override
 	public String getCode()
 	{
@@ -104,7 +102,7 @@ public class DirectoryListSet extends BufferListSet
 			+ recurse + ')';
 	} //}}}
 
-	//{{{ _getFiles() method
+	// _getFiles() method
 	@Override
 	protected String[] _getFiles(final Component comp)
 	{
@@ -134,9 +132,8 @@ public class DirectoryListSet extends BufferListSet
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private String directory;
 	private String glob;
 	private boolean recurse;
-	//}}}
 }

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.event.*;
 import javax.accessibility.Accessible;
 
@@ -56,7 +56,6 @@ import org.jedit.git.GitBufferTabLabels;
 import org.jedit.git.GitBufferTabStatus;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /** BufferSwitcher class
    @version $Id$

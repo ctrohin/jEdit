@@ -1,7 +1,6 @@
 /*
  * AppearanceOptionPane.java - Appearance options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.awt.*;
@@ -49,7 +48,6 @@ import static java.awt.GridBagConstraints.VERTICAL;
 import static java.awt.event.ItemEvent.SELECTED;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static javax.swing.BorderFactory.createEmptyBorder;
-//}}}
 
 public class AppearanceOptionPane extends AbstractOptionPane implements ItemListener
 {
@@ -59,7 +57,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 	 */
 	public static final String[] builtInIconThemes = {"tango", "old"};
 
-	//{{{ AppearanceOptionPane constructor
+	// AppearanceOptionPane constructor
 	public AppearanceOptionPane()
 	{
 		super("appearance");
@@ -73,7 +71,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 			new UIManager.LookAndFeelInfo("FlatLaf Darcula", FlatDarculaLaf.class.getName())
 		};
 	}
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -373,7 +371,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		ThemeUtils.applyTheme(theme);
 	}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -475,9 +473,9 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		jEdit.setBooleanProperty("decorate.dialogs",decorateDialogs.isSelected());
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private UIManager.LookAndFeelInfo[] lfs;
 	private JComboBox<String> lookAndFeel;
 	private FontSelector primaryFont;
@@ -500,9 +498,8 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 	private ColorWellButton systemTrayIconBackgroundColor;
 	private ScreenRectangleSelectionButton systemTrayIconBackgroundRectangle;
 	private boolean lnfChanged = false;
-	//}}}
 
-	//{{{ setFileFlag() method
+	// setFileFlag() method
 	private void setFileFlag(String fileName, boolean present)
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -534,7 +531,7 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		}
 	} //}}}
 
-	//{{{ setFonts() method
+	// setFonts() method
 	private void setFonts() {
 		// "primary" font, for buttons, labels, menus, etc, components that just
 		// display text
@@ -577,7 +574,6 @@ public class AppearanceOptionPane extends AbstractOptionPane implements ItemList
 		UIManager.put("TextPane.font", secondaryFont.getFont());
 	} //}}}
 
-    //}}}
 
 	// {{{ itemStateChanged() methods
     public final void itemStateChanged( ItemEvent evt )

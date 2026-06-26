@@ -1,7 +1,6 @@
 /*
  * StandaloneTextArea.java - A TextArea that can be embedded in applications
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov
  * Portions copyright (C) 2000 Ollie Rutherfurd
@@ -24,7 +23,7 @@
  */
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
@@ -58,7 +57,6 @@ import org.gjt.sp.jedit.syntax.SyntaxStyle;
 import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.SyntaxUtilities;
-//}}}
 
 /** jEdit's standalone text component.
  *
@@ -99,11 +97,10 @@ import org.gjt.sp.util.SyntaxUtilities;
 public class StandaloneTextArea extends TextArea
 {
 
-	//{{{ Instance variables
+	// Instance variables
 	private final IPropertyManager propertyManager;
-	//}}}
 
-	//{{{ StandaloneTextArea constructor
+	// StandaloneTextArea constructor
 	/**
 	 * Creates a new StandaloneTextArea. A reference to the propertyManager is saved and used to read the properties
 	 * when {@link StandaloneTextArea#propertiesChanged()} is called.
@@ -126,12 +123,11 @@ public class StandaloneTextArea extends TextArea
 		actionSet.load();
 		actionSet.initKeyBindings();
 
-		//{{{ init Style property manager
+		// init Style property manager
 		if (SyntaxUtilities.propertyManager == null)
 		{
 			SyntaxUtilities.propertyManager = propertyManager;
 		}
-		//}}}
 
 		initTextArea();
 
@@ -165,7 +161,7 @@ public class StandaloneTextArea extends TextArea
 
 	} //}}}
 
-	//{{{ initTextArea() method
+	// initTextArea() method
 	/**
 	 * Initializes the text area by re-reading the properties from the property manager passed to the
 	 * constructor.
@@ -199,7 +195,7 @@ public class StandaloneTextArea extends TextArea
 		buffer.setUndoLimit(undoCount);
 	} //}}}
 
-	//{{{ initGutter() method
+	// initGutter() method
 	private void initGutter()
 	{
 		Gutter gutter = getGutter();
@@ -249,7 +245,7 @@ public class StandaloneTextArea extends TextArea
 			painter.getBackground());
 	} //}}}
 
-	//{{{ initPainter() method
+	// initPainter() method
 	/**
 	 * Init the painter of this textarea.
 	 *
@@ -314,18 +310,17 @@ public class StandaloneTextArea extends TextArea
 		painter.setFoldLineStyle(foldLineStyle);
 	} //}}}
 
-	//{{{
+	// 
 	// The following methods are copied from jEdit.java and refer to the propertyManager passed
 	// to the constructor.
-	//}}}
 
-	//{{{ getProperty() method
+	// getProperty() method
 	public String getProperty(String name)
 	{
 		return propertyManager.getProperty(name);
 	} //}}}
 
-	//{{{ getBooleanProperty() methods
+	// getBooleanProperty() methods
 	/**
 	 * Returns the value of a boolean property.
 	 * @param name The property
@@ -355,7 +350,7 @@ public class StandaloneTextArea extends TextArea
 			return def;
 	} //}}}
 
-	//{{{ getIntegerProperty() method
+	// getIntegerProperty() method
 	/**
 	 * Returns the value of an integer property.
 	 * @param name The property
@@ -380,7 +375,7 @@ public class StandaloneTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ getFontProperty() methods
+	// getFontProperty() methods
 	/**
 	 * Returns the value of a font property. The family is stored
 	 * in the <code><i>name</i></code> property, the font size is stored
@@ -448,7 +443,7 @@ public class StandaloneTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ getColorProperty() methods
+	// getColorProperty() methods
 	/**
 	 * Returns the value of a color property.
 	 * @param name The property name
@@ -474,7 +469,7 @@ public class StandaloneTextArea extends TextArea
 			return SyntaxUtilities.parseColor(value, def);
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Reinitializes the textarea by reading the properties from the property manager
 	 */
@@ -493,7 +488,7 @@ public class StandaloneTextArea extends TextArea
 		super.propertiesChanged();
 	} //}}}
 
-	//{{{ initBuffer() method
+	// initBuffer() method
 	/**
 	 * Reinitializes the buffer by reading the properties from the property manager
 	 */
@@ -526,7 +521,7 @@ public class StandaloneTextArea extends TextArea
 		buffer.propertiesChanged();
 	} // }}}
 
-	//{{{ createTextArea() method
+	// createTextArea() method
 	/**
 	 * Create a standalone TextArea.
 	 * If you want to use it in jEdit, please use {@link JEditEmbeddedTextArea#JEditEmbeddedTextArea()}
@@ -540,11 +535,11 @@ public class StandaloneTextArea extends TextArea
 		props.putAll(loadProperties("/keymaps/jEdit_keys.props"));
 		props.putAll(loadProperties("/org/gjt/sp/jedit/jedit.props"));
 		StandaloneTextArea textArea = new StandaloneTextArea(props::getProperty);
-		textArea.getBuffer().setProperty("folding", "explicit");
+		textArea.getBuffer().setProperty("folding", "indent");
 		return textArea;
 	} // }}}
 
-	//{{{ loadProperties() method
+	// loadProperties() method
 	private static Properties loadProperties(String fileName)
 	{
 		Properties props = new Properties();
@@ -566,7 +561,7 @@ public class StandaloneTextArea extends TextArea
 		return props;
 	} //}}}
 
-	//{{{ StandaloneActionSet class
+	// StandaloneActionSet class
 	/**
 	 * The actionSet for standalone textArea.
 	 * @author Matthieu Casanova
@@ -619,7 +614,7 @@ public class StandaloneTextArea extends TextArea
 		TransferHandler.getInstance().registerTransferableService(new StringTransferableService());
 	}
 
-	//{{{ main() method
+	// main() method
 	public static void main(String[] args)
 	{
 		JFrame frame = new JFrame();

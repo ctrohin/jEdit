@@ -1,7 +1,6 @@
 /*
  * Token.java - Syntax token
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -31,7 +30,7 @@ import java.lang.reflect.Field;
  */
 public class Token
 {
-	//{{{ stringToToken() method
+	// stringToToken() method
 	/**
 	 * Converts a token type string to a token type constant.
 	 * @param value The token type
@@ -50,7 +49,7 @@ public class Token
 		}
 	} //}}}
 
-	//{{{ tokenToString() method
+	// tokenToString() method
 	/**
 	 * Converts a token type constant to a token type string.
 	 * @since jEdit 4.2pre1
@@ -60,7 +59,7 @@ public class Token
 		return (token == Token.END) ? "END" : TOKEN_TYPES[token % ID_COUNT];
 	} //}}}
 
-	//{{{ Token types
+	// Token types
 	public static final String[] TOKEN_TYPES = {
 		"NULL",
 		"COMMENT1",
@@ -103,14 +102,13 @@ public class Token
 	public static final byte LITERAL4 = 16;
 	public static final byte MARKUP = 17;
 	public static final byte OPERATOR = 18;
-	//}}}
 
 	public static final byte ID_COUNT = 19;
 
 	// Special:
 	public static final byte END = 127;
 
-	//{{{ Instance variables
+	// Instance variables
 	/**
 	 * The id of this token.
 	 */
@@ -135,9 +133,8 @@ public class Token
 	 * The next token in the linked list.
 	 */
 	public Token next;
-	//}}}
 
-	//{{{ Token constructor
+	// Token constructor
 	/**
 	 * Creates a new token.
 	 * @param id The id of the token
@@ -153,7 +150,7 @@ public class Token
 		this.rules = rules;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Returns a string representation of this token.
 	 */
@@ -163,7 +160,7 @@ public class Token
 	} //}}}
 	
 	
-	//{{{ isCommentOrLiteral() method
+	// isCommentOrLiteral() method
 	/**
 	 * @return true for COMMENTx and LITERALx tokens 
 	 */

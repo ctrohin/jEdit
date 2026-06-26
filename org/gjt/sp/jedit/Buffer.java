@@ -1,7 +1,6 @@
 /*
  * Buffer.java - jEdit buffer
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2005 Slava Pestov
  * Portions copyright (C) 1999, 2000 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +68,6 @@ import static org.gjt.sp.jedit.LargeFileMode.nohighlight;
 import static org.gjt.sp.jedit.buffer.WordWrap.hard;
 import static org.gjt.sp.jedit.buffer.WordWrap.none;
 import static org.gjt.sp.jedit.buffer.WordWrap.soft;
-//}}}
 
 /**
  * A <code>Buffer</code> represents the contents of an open text
@@ -102,7 +100,7 @@ import static org.gjt.sp.jedit.buffer.WordWrap.soft;
  */
 public class Buffer extends JEditBuffer
 {
-	//{{{ Some constants
+	// Some constants
 	/**
 	 * Backed up property.
 	 * @since jEdit 3.2pre2
@@ -148,11 +146,10 @@ public class Buffer extends JEditBuffer
 	public static final String GZIPPED = "gzipped";
 
 	private static final byte[] DUMMY_HASH = new byte[0];
-	//}}}
 
-	//{{{ Input/output methods
+	// Input/output methods
 
-	//{{{ reload() method
+	// reload() method
 	/**
 	 * Reloads the buffer from disk, asking for confirmation if the buffer
 	 * has unsaved changes.
@@ -176,7 +173,7 @@ public class Buffer extends JEditBuffer
 		load(view,true);
 	} //}}}
 
-	//{{{ reload() method
+	// reload() method
 	/**
 	 * Reloads the buffer from disk with a new encoding,
 	 * asking for confirmation if the buffer has unsaved changes.
@@ -191,7 +188,7 @@ public class Buffer extends JEditBuffer
 		reload(view);
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	/**
 	 * Loads the buffer from disk.
 	 * @param view The view
@@ -263,7 +260,7 @@ public class Buffer extends JEditBuffer
 		else
 			loadAutosave = false;
 
-		//{{{ Do some stuff once loading is finished
+		// Do some stuff once loading is finished
 		Runnable runnable = new Runnable()
 		{
 			@Override
@@ -333,7 +330,7 @@ public class Buffer extends JEditBuffer
 		return true;
 	} //}}}
 
-	//{{{ insertFile() method
+	// insertFile() method
 	/**
 	 * Loads a file from disk, and inserts it into this buffer.
 	 * @param view The view
@@ -370,7 +367,7 @@ public class Buffer extends JEditBuffer
 		return vfs.insert(view,this,path);
 	} //}}}
 
-	//{{{ autosave() method
+	// autosave() method
 	/**
 	 * Autosaves this buffer.
 	 */
@@ -379,7 +376,7 @@ public class Buffer extends JEditBuffer
 		autosave(false);
 	} //}}}
 
-	//{{{ autosave() method
+	// autosave() method
 	/**
 	 * Autosaves this buffer.
 	 *
@@ -410,7 +407,7 @@ public class Buffer extends JEditBuffer
 			autosaveFile.getPath()));
 	} //}}}
 
-	//{{{ saveAs() method
+	// saveAs() method
 	/**
 	 * Prompts the user for a file to save this buffer to.
 	 * @param view The view
@@ -442,7 +439,7 @@ public class Buffer extends JEditBuffer
 		return saved;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	/**
 	 * Saves this buffer to the specified path name, or the current path
 	 * name if it's null.
@@ -456,7 +453,7 @@ public class Buffer extends JEditBuffer
 		return save(view,path,true,false);
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	/**
 	 * Saves this buffer to the specified path name, or the current path
 	 * name if it's null.
@@ -473,7 +470,7 @@ public class Buffer extends JEditBuffer
 		return save(view,path,rename,false);
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	/**
 	 * Saves this buffer to the specified path name, or the current path
 	 * name if it's null.
@@ -672,7 +669,7 @@ public class Buffer extends JEditBuffer
 		return true;
 	} //}}}
 
-	//{{{ checkFileStatus() method
+	// checkFileStatus() method
 	public static final int FILE_NOT_CHANGED = 0;
 	public static final int FILE_CHANGED = 1;
 	public static final int FILE_DELETED = 2;
@@ -724,11 +721,10 @@ public class Buffer extends JEditBuffer
 		return FILE_NOT_CHANGED;
 	} //}}}
 
-	//}}}
 
-	//{{{ Getters/setter methods for various buffer meta-data
+	// Getters/setter methods for various buffer meta-data
 
-	//{{{ getLastModified() method
+	// getLastModified() method
 	/**
 	 * @return the last time jEdit modified the file on disk.
 	 * This method is thread-safe.
@@ -738,7 +734,7 @@ public class Buffer extends JEditBuffer
 		return modTime;
 	} //}}}
 
-	//{{{ setLastModified() method
+	// setLastModified() method
 	/**
 	 * Sets the last time jEdit modified the file on disk.
 	 * @param modTime The new modification time
@@ -748,7 +744,7 @@ public class Buffer extends JEditBuffer
 		this.modTime = modTime;
 	} //}}}
 
-	//{{{ getAutoReload() method
+	// getAutoReload() method
 	/**
 	 * @return the status of the AUTORELOAD flag
 	 * If true, reload changed files automatically
@@ -758,7 +754,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(AUTORELOAD);
 	} //}}}
 
-	//{{{ setAutoReload() method
+	// setAutoReload() method
 	/**
 	 * Sets the status of the AUTORELOAD flag
 	 * @param value # If true, reload changed files automatically
@@ -769,20 +765,20 @@ public class Buffer extends JEditBuffer
 		autoreloadOverridden = isAutoreloadPropertyOverriden();
 	} //}}}
 //
-//	//{{{ getIoTask() method
+//	// getIoTask() method
 //	public IoTask getIoTask()
 //	{
 //		return ioTask;
 //	} //}}}
 //
-//	//{{{ setIoTask() method
+//	// setIoTask() method
 //	public void setIoTask(IoTask task)
 //	{
 //		assert(ioTask == null || ioTask != null && ioTask.getState() == StateValue.DONE);
 //		this.ioTask = task;
 //	} //}}}
 
-	//{{{ getAutoReloadDialog() method
+	// getAutoReloadDialog() method
 	/**
 	 * @return the status of the AUTORELOAD_DIALOG flag
 	 * If true, prompt for reloading or notify user
@@ -793,7 +789,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(AUTORELOAD_DIALOG);
 	} //}}}
 
-	//{{{ setAutoReloadDialog() method
+	// setAutoReloadDialog() method
 	/**
 	 * Sets the status of the AUTORELOAD_DIALOG flag
 	 * @param value # If true, prompt for reloading or notify user
@@ -806,7 +802,7 @@ public class Buffer extends JEditBuffer
 		autoreloadOverridden = isAutoreloadPropertyOverriden();
 	} //}}}
 
-	//{{{ getVFS() method
+	// getVFS() method
 	/**
 	 * Returns the virtual filesystem responsible for loading and
 	 * saving this buffer. This method is thread-safe.
@@ -817,7 +813,7 @@ public class Buffer extends JEditBuffer
 		return VFSManager.getVFSForPath(path);
 	} //}}}
 
-	//{{{ getAutosaveFile() method
+	// getAutosaveFile() method
 	/**
 	 * @return the autosave file for this buffer. This may be null if
 	 * the file is non-local.
@@ -827,7 +823,7 @@ public class Buffer extends JEditBuffer
 		return autosaveFile;
 	} //}}}
 
-	//{{{ removeAutosaveFile() method
+	// removeAutosaveFile() method
 	/**
 	 * Remove the autosave file.
 	 * @since jEdit 4.3pre12
@@ -841,7 +837,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * @return the name of this buffer. This method is thread-safe.
 	 */
@@ -850,7 +846,7 @@ public class Buffer extends JEditBuffer
 		return name;
 	} //}}}
 
-	//{{{ getPath() method
+	// getPath() method
 	/**
 	 * @return the path name of this buffer. This method is thread-safe.
 	 */
@@ -859,7 +855,7 @@ public class Buffer extends JEditBuffer
 		return path;
 	} //}}}
 
-	//{{{ getPath() method
+	// getPath() method
 	/**
 	  * @param shortVersion if true, replaces home path with ~/ on unix
 	  * @return the path
@@ -870,7 +866,7 @@ public class Buffer extends JEditBuffer
 	} //}}}
 
 
-	//{{{ getSymlinkPath() method
+	// getSymlinkPath() method
 	/**
 	 * @return If this file is a symbolic link, returns the link destination.
 	 * Otherwise returns the file's path. This method is thread-safe.
@@ -881,7 +877,7 @@ public class Buffer extends JEditBuffer
 		return symlinkPath;
 	} //}}}
 
-	//{{{ getDirectory() method
+	// getDirectory() method
 	/**
 	 * @return the directory containing this buffer.
 	 * @since jEdit 4.1pre11
@@ -891,7 +887,7 @@ public class Buffer extends JEditBuffer
 		return directory;
 	} //}}}
 
-	//{{{ isClosed() method
+	// isClosed() method
 	/**
 	 * @return true if this buffer has been closed with
 	 * {@link org.gjt.sp.jedit.jEdit#closeBuffer(View,Buffer)}.
@@ -903,7 +899,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(CLOSED);
 	} //}}}
 
-	//{{{ isLoaded() method
+	// isLoaded() method
 	/**
 	 * @return true if the buffer is loaded. This method is thread-safe.
 	 */
@@ -912,7 +908,7 @@ public class Buffer extends JEditBuffer
 		return !isLoading();
 	} //}}}
 
-	//{{{ isNewFile() method
+	// isNewFile() method
 	/**
 	 * @return whether this buffer lacks a corresponding version on disk.
 	 * This method is thread-safe.
@@ -922,7 +918,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(NEW_FILE);
 	} //}}}
 
-	//{{{ setNewFile() method
+	// setNewFile() method
 	/**
 	 * Sets the new file flag.
 	 * @param newFile The new file flag
@@ -934,7 +930,7 @@ public class Buffer extends JEditBuffer
 			setFlag(UNTITLED,false);
 	} //}}}
 
-	//{{{ isUntitled() method
+	// isUntitled() method
 	/**
 	 * @return true if this file is 'untitled'. This method is thread-safe.
 	 */
@@ -944,7 +940,7 @@ public class Buffer extends JEditBuffer
 	} //}}}
 
 
-	//{{{ isTitled() method
+	// isTitled() method
 	/**
 	 * @return true if this file is not'untitled'. This method is thread-safe.
 	 * @since jEdit 5.6pre1
@@ -954,7 +950,7 @@ public class Buffer extends JEditBuffer
 		return !isUntitled();
 	} //}}}
 
-	//{{{ setUntitled() method
+	// setUntitled() method
 	/**
 	 *
 	 * @param untitled untitled value to set
@@ -965,7 +961,7 @@ public class Buffer extends JEditBuffer
 		setFlag(UNTITLED, untitled);
 	} //}}}
 
-	//{{{ setDirty() method
+	// setDirty() method
 	/**
 	 * Sets the 'dirty' (changed since last save) flag of this buffer.
 	 */
@@ -1003,7 +999,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ isTemporary() method
+	// isTemporary() method
 	/**
 	 * @return if this is a temporary buffer. This method is thread-safe.
 	 * @see jEdit#openTemporary(View,String,String,boolean)
@@ -1015,7 +1011,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(TEMPORARY);
 	} //}}}
 
-	//{{{ isBackup() method
+	// isBackup() method
 	/**
 	 * @return if this buffer most probably contains backup file
 	 */
@@ -1030,7 +1026,7 @@ public class Buffer extends JEditBuffer
 		return super.isEditable() && !isLocked(); // respects "locked" property
 	}
 
-	//{{{ isLocked() method
+	// isLocked() method
 	/**
 	 * @return if this buffer is locked for editing
 	 */
@@ -1038,9 +1034,8 @@ public class Buffer extends JEditBuffer
 	{
 		return getBooleanProperty("locked", false);
 	}
-	//}}}
 
-	//{{{ setLocked() method
+	// setLocked() method
 	/**
 	 * Changes locked state of the buffer.
 	 * @param locked true to lock, false to unlock
@@ -1050,9 +1045,8 @@ public class Buffer extends JEditBuffer
 		setBooleanProperty("locked", locked);
 		propertiesChanged();
 	}
-	//}}}
 
-	//{{{ toggleLocked() method
+	// toggleLocked() method
 	/**
 	 * Toggles locked state of the buffer.
 	 * @param view We show a message in the view's status bar
@@ -1067,9 +1061,8 @@ public class Buffer extends JEditBuffer
 		EditBus.send(new PropertiesChanged(Buffer.this));
 
 	}
-	//}}}
 
-	//{{{ getIcon() method
+	// getIcon() method
 	/**
 	 * @return this buffer's icon.
 	 * @since jEdit 2.6pre6
@@ -1086,11 +1079,10 @@ public class Buffer extends JEditBuffer
 			return IconManager.loadIcon("MatIcons.WEB_ASSET:10");
 	} //}}}
 
-	//}}}
 
-	//{{{ Property methods
+	// Property methods
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Reloads settings from the properties. This should be called
 	 * after the <code>syntax</code> or <code>folding</code>
@@ -1112,7 +1104,7 @@ public class Buffer extends JEditBuffer
 			EditBus.send(new BufferUpdate(this,null,BufferUpdate.PROPERTIES_CHANGED));
 	} //}}}
 
-	//{{{ getDefaultProperty() method
+	// getDefaultProperty() method
 	@Override
 	public Object getDefaultProperty(String name)
 	{
@@ -1145,7 +1137,7 @@ public class Buffer extends JEditBuffer
 		return retVal;
 	} //}}}
 
-	//{{{ toggleWordWrap() method
+	// toggleWordWrap() method
 	/**
 	 * Toggles word wrap between the three available modes. This is used
 	 * by the status bar.
@@ -1174,7 +1166,7 @@ public class Buffer extends JEditBuffer
 		propertiesChanged();
 	} //}}}
 
-	//{{{ toggleAutoIndent() method
+	// toggleAutoIndent() method
 	/**
 	 * Toggles automatic indentation on and off.
 	 * @param view This view's status bar will display the message
@@ -1197,7 +1189,7 @@ public class Buffer extends JEditBuffer
 	}
 
 
-	//{{{ toggleLineSeparator() method
+	// toggleLineSeparator() method
 	/**
 	 * Toggles the line separator between the three available settings.
 	 * This is used by the status bar.
@@ -1229,7 +1221,7 @@ public class Buffer extends JEditBuffer
 		setLineSeparator(lineSep);
 	} //}}}
 
-	//{{{ getContextSensitiveProperty() method
+	// getContextSensitiveProperty() method
 
 	/**
 	 * Set the line separator value
@@ -1242,7 +1234,7 @@ public class Buffer extends JEditBuffer
 		propertiesChanged();
 	} //}}}
 
-	//{{{ getContextSensitiveProperty() method
+	// getContextSensitiveProperty() method
 	/**
 	 * Some settings, like comment start and end strings, can
 	 * vary between different parts of a buffer (HTML text and inline
@@ -1271,13 +1263,11 @@ public class Buffer extends JEditBuffer
 			return String.valueOf(value);
 	} //}}}
 
-	//}}}
 
-	//}}}
 
-	//{{{ Edit modes, syntax highlighting
+	// Edit modes, syntax highlighting
 
-	//{{{ setMode() method
+	// setMode() method
 	/**
 	 * Sets this buffer's edit mode by calling the accept() method
 	 * of each registered edit mode.
@@ -1377,11 +1367,10 @@ public class Buffer extends JEditBuffer
 		return defaultMode;
 	}
 
-	//}}}
 
-	//{{{ Marker methods
+	// Marker methods
 
-	//{{{ getMarkers() method
+	// getMarkers() method
 	/**
 	 * @return a vector of markers.
 	 * @since jEdit 3.2pre1
@@ -1391,7 +1380,7 @@ public class Buffer extends JEditBuffer
 		return markers;
 	} //}}}
 
-	//{{{ getMarkerStatusPrompt() method
+	// getMarkerStatusPrompt() method
 	/**
 	 * @param action some action
 	 * @return the status prompt for the given marker action. Only
@@ -1404,7 +1393,7 @@ public class Buffer extends JEditBuffer
 			new String[] { getMarkerNameString() });
 	} //}}}
 
-	//{{{ getMarkerNameString() method
+	// getMarkerNameString() method
 	/**
 	 * @return a string of all set markers, used by the status bar
 	 * (eg, "a b $ % ^").
@@ -1429,7 +1418,7 @@ public class Buffer extends JEditBuffer
 			return buf.toString();
 	} //}}}
 
-	//{{{ addOrRemoveMarker() method
+	// addOrRemoveMarker() method
 	/**
 	 * If a marker is set on the line of the position, it is removed. Otherwise
 	 * a new marker with the specified shortcut is added.
@@ -1446,7 +1435,7 @@ public class Buffer extends JEditBuffer
 			addMarker(shortcut,pos);
 	} //}}}
 
-	//{{{ addMarker() method
+	// addMarker() method
 	/**
 	 * Adds a marker to this buffer.
 	 * @param pos The position of the marker
@@ -1500,7 +1489,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getMarkerInRange() method
+	// getMarkerInRange() method
 	/**
 	 * @return the first marker within the specified range.
 	 * @param start The start offset
@@ -1519,7 +1508,7 @@ public class Buffer extends JEditBuffer
 		return null;
 	} //}}}
 
-	//{{{ getMarkerAtLine() method
+	// getMarkerAtLine() method
 	/**
 	 * @return the first marker at the specified line, or <code>null</code>
 	 * if there is none.
@@ -1537,7 +1526,7 @@ public class Buffer extends JEditBuffer
 		return null;
 	} //}}}
 
-	//{{{ removeMarker() method
+	// removeMarker() method
 	/**
 	 * Removes all markers at the specified line.
 	 * @param line The line number
@@ -1561,7 +1550,7 @@ public class Buffer extends JEditBuffer
 			BufferUpdate.MARKERS_CHANGED));
 	} //}}}
 
-	//{{{ removeAllMarkers() method
+	// removeAllMarkers() method
 	/**
 	 * Removes all defined markers.
 	 * @since jEdit 2.6pre1
@@ -1582,7 +1571,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ getMarker() method
+	// getMarker() method
 	/**
 	 * @return the marker with the specified shortcut.
 	 * @param shortcut The shortcut
@@ -1598,7 +1587,7 @@ public class Buffer extends JEditBuffer
 		return null;
 	} //}}}
 
-	//{{{ getMarkersPath() method
+	// getMarkersPath() method
 	/**
 	 * Returns the path for this buffer's markers file
 	 * @param vfs The appropriate VFS
@@ -1614,7 +1603,7 @@ public class Buffer extends JEditBuffer
 			+ ".marks";
 	} //}}}
 
-	//{{{ updateMarkersFile() method
+	// updateMarkersFile() method
 	/**
 	 * Save the markers file, or delete it when there are mo markers left
 	 * Handling markers is now independent from saving the buffer.
@@ -1645,7 +1634,7 @@ public class Buffer extends JEditBuffer
 		return true;
 	} //}}}
 
-	//{{{ markersChanged() method
+	// markersChanged() method
 	/**
 	 * @return true when markers have changed and the markers file needs
 	 * to be updated
@@ -1656,7 +1645,7 @@ public class Buffer extends JEditBuffer
 		return getFlag(MARKERS_CHANGED);
 	} //}}}
 
-	//{{{ setMarkersChanged() method
+	// setMarkersChanged() method
 	/**
 	 * Sets/unsets the MARKERS_CHANGED flag
 	 * @param changed changed
@@ -1667,11 +1656,10 @@ public class Buffer extends JEditBuffer
 		setFlag(MARKERS_CHANGED, changed);
 	} //}}}
 
-	//}}}
 
-	//{{{ Miscellaneous methods
+	// Miscellaneous methods
 
-	//{{{ setWaitSocket() method
+	// setWaitSocket() method
 	/**
 	 * This socket is closed when the buffer is closed.
 	 * @param waitSocket the socket
@@ -1681,7 +1669,7 @@ public class Buffer extends JEditBuffer
 		this.waitSocket = waitSocket;
 	} //}}}
 
-	//{{{ getNext() method
+	// getNext() method
 	/**
 	 * @return the next buffer in the list.
 	 */
@@ -1690,7 +1678,7 @@ public class Buffer extends JEditBuffer
 		return next;
 	} //}}}
 
-	//{{{ getPrev() method
+	// getPrev() method
 	/**
 	 * @return the previous buffer in the list.
 	 */
@@ -1699,19 +1687,19 @@ public class Buffer extends JEditBuffer
 		return prev;
 	} //}}}
 
-	//{{{ setPrev() method
+	// setPrev() method
 	public void setPrev(Buffer prev)
 	{
 		this.prev = prev;
 	} //}}}
 
-	//{{{ setNext() method
+	// setNext() method
 	public void setNext(Buffer next)
 	{
 		this.next = next;
 	} //}}}
 
-	//{{{ getIndex() method
+	// getIndex() method
 	/**
 	 * @return the position of this buffer in the buffer list.
 	 */
@@ -1729,7 +1717,7 @@ public class Buffer extends JEditBuffer
 		return count;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Returns a string representation of this buffer.
 	 * This simply returns the path name.
@@ -1740,7 +1728,7 @@ public class Buffer extends JEditBuffer
 		return name + " (" + MiscUtilities.abbreviateView(directory) + ')';
 	} //}}}
 
-	//{{{ addBufferUndoListener() method
+	// addBufferUndoListener() method
 	/**
 	 * Adds a buffer undo listener.
 	 * @param listener The listener
@@ -1751,7 +1739,7 @@ public class Buffer extends JEditBuffer
 		undoListeners.add(listener);
 	} //}}}
 
-	//{{{ removeBufferUndoListener() method
+	// removeBufferUndoListener() method
 	/**
 	 * Removes a buffer undo listener.
 	 * @param listener The listener
@@ -1762,21 +1750,20 @@ public class Buffer extends JEditBuffer
 		undoListeners.remove(listener);
 	} //}}}
 
-	//}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	/** The previous buffer in the list. */
 	Buffer prev;
 	/** The next buffer in the list. */
 	Buffer next;
 
-	//{{{ Buffer constructor
+	// Buffer constructor
 	Buffer(String path, boolean newFile, boolean temp, Map props)
 	{
 		this(path, newFile, temp, props, false);
 	}
 
-	//{{{ Buffer constructor
+	// Buffer constructor
 	Buffer(String path, boolean newFile, boolean temp, Map props, boolean untitled)
 	{
 		super(props);
@@ -1796,7 +1783,7 @@ public class Buffer extends JEditBuffer
 		undoListeners = new Vector<>();
 	} //}}}
 
-	//{{{ commitTemporary() method
+	// commitTemporary() method
 	void commitTemporary()
 	{
 		setFlag(TEMPORARY,false);
@@ -1804,14 +1791,14 @@ public class Buffer extends JEditBuffer
 		finishLoading();
 	} //}}}
 
-	//{{{ close() method
+	// close() method
 	@Override
 	public void close()
 	{
 		close(false);
 	}
 
-	//{{{ close() method
+	// close() method
 	/**
 	 * close the buffer
 	 * @param doNotSave when true, we do not want to keep the autosave even for untitled
@@ -1850,9 +1837,8 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Protected members
+	// Protected members
 
 	@Override
 	protected TokenMarker.LineContext markTokens(Segment seg, TokenMarker.LineContext prevContext,
@@ -1870,7 +1856,7 @@ public class Buffer extends JEditBuffer
 		return context;
 	}
 
-	//{{{ fireBeginUndo() method
+	// fireBeginUndo() method
 	@Override
 	protected void fireBeginUndo()
 	{
@@ -1888,7 +1874,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ fireEndUndo() method
+	// fireEndUndo() method
 	@Override
 	protected void fireEndUndo()
 	{
@@ -1906,7 +1892,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ fireBeginRedo() method
+	// fireBeginRedo() method
 	@Override
 	protected void fireBeginRedo()
 	{
@@ -1924,7 +1910,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ fireEndRedo() method
+	// fireEndRedo() method
 	@Override
 	protected void fireEndRedo()
 	{
@@ -1941,13 +1927,12 @@ public class Buffer extends JEditBuffer
 			}
 		}
 	} //}}}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Flags
+	// Flags
 
-	//{{{ setFlag() method
+	// setFlag() method
 	private void setFlag(int flag, boolean value)
 	{
 		if(value)
@@ -1956,21 +1941,21 @@ public class Buffer extends JEditBuffer
 			flags &= ~(1 << flag);
 	} //}}}
 
-	//{{{ getFlag() method
+	// getFlag() method
 	private boolean getFlag(int flag)
 	{
 		int mask = 1 << flag;
 		return (flags & mask) == mask;
 	} //}}}
 
-	//{{{ getFlag() method
+	// getFlag() method
 	private boolean isAutoreloadPropertyOverriden()
 	{
 		return getFlag(AUTORELOAD) != jEdit.getBooleanProperty("autoReload") ||
 			getFlag(AUTORELOAD_DIALOG) != jEdit.getBooleanProperty("autoReloadDialog");
 	} //}}}
 
-	//{{{ Flag values
+	// Flag values
 	private static final int CLOSED = 0;
 	private static final int NEW_FILE = 3;
 	private static final int UNTITLED = 4;
@@ -1979,13 +1964,11 @@ public class Buffer extends JEditBuffer
 	private static final int AUTORELOAD_DIALOG = 7;
 	private static final int TEMPORARY = 10;
 	private static final int MARKERS_CHANGED = 12;
-	//}}}
 
 	private int flags;
 
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	/** Indicate if the autoreload property was overridden */
 	private int longLineLimit;
 	private final TokenMarker textTokenMarker;
@@ -2008,9 +1991,8 @@ public class Buffer extends JEditBuffer
 //
 //	/** the current ioTask of this buffer */
 //	private volatile IoTask ioTask;
-	//}}}
 
-	//{{{ setPath() method
+	// setPath() method
 	private void setPath(final String path)
 	{
 		jEdit.visit(new JEditVisitorAdapter()
@@ -2051,7 +2033,7 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ setAutosaveFile() method
+	// setAutosaveFile() method
 	/**
 	 * Set the autosave file, based on the autosettings dir.
 	 * @since jEdit 5.5pre1
@@ -2062,7 +2044,7 @@ public class Buffer extends JEditBuffer
 		autosaveFile = new File(autosaveDir,'#' + name + '#');
 	} //}}}
 
-	//{{{ recoverAutosave() method
+	// recoverAutosave() method
 	private boolean recoverAutosave(final View view)
 	{
 		if(!autosaveFile.canRead())
@@ -2099,7 +2081,7 @@ public class Buffer extends JEditBuffer
 			return false;
 	} //}}}
 
-	//{{{ checkFileForLoad() method
+	// checkFileForLoad() method
 	private boolean checkFileForLoad(View view, VFS vfs, String path)
 	{
 		if((vfs.getCapabilities() & VFS.LOW_LATENCY_CAP) != 0)
@@ -2158,7 +2140,7 @@ public class Buffer extends JEditBuffer
 		return true;
 	} //}}}
 
-	//{{{ checkFileForSave() method
+	// checkFileForSave() method
 	private static boolean checkFileForSave(View view, VFS vfs, String path)
 	{
 		if((vfs.getCapabilities() & VFS.LOW_LATENCY_CAP) != 0)
@@ -2228,7 +2210,7 @@ public class Buffer extends JEditBuffer
 		}
 	}
 
-	//{{{ finishLoading() method
+	// finishLoading() method
 	private void finishLoading()
 	{
 		updateHash();
@@ -2262,13 +2244,13 @@ public class Buffer extends JEditBuffer
 		}
 	} //}}}
 
-	//{{{ finishSaving() method
+	// finishSaving() method
 	private void finishSaving(View view, String oldPath,
 		String oldSymlinkPath, String path,
 		boolean rename, boolean error)
 	{
 
-		//{{{ Set the buffer's path
+		// Set the buffer's path
 		// Caveat: won't work if save() called with a relative path.
 		// But I don't think anyone calls it like that anyway.
 		if(!error && !path.equals(oldPath))
@@ -2310,7 +2292,7 @@ public class Buffer extends JEditBuffer
 			}
 		} //}}}
 
-		//{{{ Update this buffer for the new path
+		// Update this buffer for the new path
 		if(rename)
 		{
 			if(file != null)
@@ -2378,5 +2360,4 @@ public class Buffer extends JEditBuffer
 		} //}}}
 	} //}}}
 
-	//}}}
 }

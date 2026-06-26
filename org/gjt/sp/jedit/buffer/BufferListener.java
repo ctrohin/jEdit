@@ -1,7 +1,6 @@
 /*
  * BufferListener.java - Buffer listener interface
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -44,7 +43,7 @@ package org.gjt.sp.jedit.buffer;
  */
 public interface BufferListener
 {
-	//{{{ foldLevelChanged() method
+	// foldLevelChanged() method
 	/**
 	 * Called when line fold levels change.
 	 * @param buffer The buffer in question
@@ -53,9 +52,8 @@ public interface BufferListener
 	 * @since jEdit 4.3pre3
 	 */
 	void foldLevelChanged(JEditBuffer buffer, int startLine, int endLine);
-	//}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	/**
 	 * Called when text is inserted into the buffer.
 	 * @param buffer The buffer in question
@@ -67,9 +65,8 @@ public interface BufferListener
 	 */
 	void contentInserted(JEditBuffer buffer, int startLine, int offset,
 		int numLines, int length);
-	//}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	/**
 	 * Called when text is removed from the buffer.
 	 * @param buffer The buffer in question
@@ -81,9 +78,8 @@ public interface BufferListener
 	 */
 	void contentRemoved(JEditBuffer buffer, int startLine, int offset,
 		int numLines, int length);
-	//}}}
 
-	//{{{ preContentInserted() method
+	// preContentInserted() method
 	/**
 	 * Called when text is about to be inserted in the buffer.
 	 * @param buffer The buffer in question
@@ -95,9 +91,8 @@ public interface BufferListener
 	 */
 	void preContentInserted(JEditBuffer buffer, int startLine, int offset,
 		int numLines, int length);
-	//}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * Called when text is about to be removed from the buffer, but is
 	 * still present.
@@ -110,9 +105,8 @@ public interface BufferListener
 	 */
 	void preContentRemoved(JEditBuffer buffer, int startLine, int offset,
 		int numLines, int length);
-	//}}}
 
-	//{{{ transactionComplete() method
+	// transactionComplete() method
 	/**
 	 * Called after an undo or compound edit has finished. The text area
 	 * uses this event to queue up and collapse cleanup operations so they
@@ -123,9 +117,8 @@ public interface BufferListener
 	 * @since jEdit 4.3pre3
 	 */
 	void transactionComplete(JEditBuffer buffer);
-	//}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	/**
 	 * Called to notify the text area that folds need to be collapsed if
 	 * the "collapseFolds" property is set. This method is called after the
@@ -136,9 +129,8 @@ public interface BufferListener
 	 * @since jEdit 4.3pre3
 	 */
 	void foldHandlerChanged(JEditBuffer buffer);
-	//}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	/**
 	 * Called to notify the text area that the buffer has been reloaded.
 	 *
@@ -146,5 +138,4 @@ public interface BufferListener
 	 * @since jEdit 4.3pre3
 	 */
 	void bufferLoaded(JEditBuffer buffer);
-	//}}}
 }

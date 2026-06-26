@@ -1,7 +1,6 @@
 /*
  * FileCellRenderer.java - renders table cells for the VFS browser
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 Jason Ginchereau
  * Portions copyright (C) 2001, 2003 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.font.*;
 import javax.swing.*;
@@ -36,7 +35,6 @@ import org.gjt.sp.jedit.io.FavoritesVFS;
 import org.gjt.sp.jedit.io.VFSFile;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.manager.BufferManagerImpl;
-//}}}
 
 /**
  * Local filesystem VFS.
@@ -51,7 +49,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 	public static Icon filesystemIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.filesystem.icon"));
 	public static Icon loadingIcon = IconManager.loadIcon(jEdit.getProperty("vfs.browser.loading.icon"));
 
-	//{{{ FileCellRenderer constructor
+	// FileCellRenderer constructor
 	public FileCellRenderer()
 	{
 		plainFont = UIManager.getFont("Tree.font");
@@ -60,7 +58,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		boldFont = plainFont.deriveFont(Font.BOLD);
 	} //}}}
 
-	//{{{ getTableCellRendererComponent() method
+	// getTableCellRendererComponent() method
 	@Override
 	public Component getTableCellRendererComponent(JTable table,
 		Object value, boolean isSelected, boolean hasFocus, 
@@ -135,7 +133,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		return this;
 	} //}}}
 
-	//{{{ paintComponent() method
+	// paintComponent() method
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -175,7 +173,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		}
 	} //}}}
 
-	//{{{ getIconForFile() method
+	// getIconForFile() method
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -188,7 +186,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 			bufferManager._getBuffer(file.getSymlinkPath()).isPresent());
 	} //}}}
 
-	//{{{ getIconForFile() method
+	// getIconForFile() method
 	public static Icon getIconForFile(VFSFile file,
 		boolean expanded, boolean openBuffer)
 	{
@@ -197,20 +195,20 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		return file.getIcon(expanded, openBuffer);
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	Font plainFont;
 	Font boldFont;
 	boolean showIcons;
 	private static boolean defaultIcons = true;
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	void propertiesChanged()
 	{
 		showIcons = jEdit.getBooleanProperty("vfs.browser.showIcons");
 		defaultIcons = jEdit.getBooleanProperty("vfs.browser.useDefaultIcons");
 	} //}}}
 
-	//{{{ getEntryWidth() method
+	// getEntryWidth() method
 	int getEntryWidth(VFSDirectoryEntryTableModel.Entry entry,
 		Font font, FontRenderContext fontRenderContext)
 	{
@@ -228,15 +226,13 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		return width;
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private boolean openBuffer;
 	private boolean isSelected;
 	private VFSFile file;
-	//}}}
 
-	//{{{ ExpansionToggleBorder class
+	// ExpansionToggleBorder class
 	static class ExpansionToggleBorder implements Border
 	{
 		static final Icon COLLAPSE_ICON;
@@ -249,14 +245,14 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 		static final int STATE_COLLAPSED = 1;
 		static final int STATE_EXPANDED = 2;
 
-		//{{{ ExpansionToggleBorder constructor
+		// ExpansionToggleBorder constructor
 		ExpansionToggleBorder(int state, int level)
 		{
 			this.state = state;
 			this.level = level;
 		} //}}}
 
-		//{{{ paintBorder() method
+		// paintBorder() method
 		@Override
 		public void paintBorder(Component c, Graphics g,
 			int x, int y, int width, int height)
@@ -277,7 +273,7 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 			}
 		} //}}}
 
-		//{{{ getBorderInsets() method
+		// getBorderInsets() method
 		@Override
 		public Insets getBorderInsets(Component c)
 		{
@@ -285,21 +281,21 @@ public class FileCellRenderer extends DefaultTableCellRenderer
 				+ ICON_WIDTH + 4,1,1);
 		} //}}}
 
-		//{{{ isBorderOpaque() method
+		// isBorderOpaque() method
 		@Override
 		public boolean isBorderOpaque()
 		{
 			return false;
 		} //}}}
 
-		//{{{ isExpansionToggle() method
+		// isExpansionToggle() method
 		public static boolean isExpansionToggle(int level, int x)
 		{
 			return (x >= level * LEVEL_WIDTH)
 				&& (x <= level * LEVEL_WIDTH + ICON_WIDTH);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final int state;
 		private final int level;
 

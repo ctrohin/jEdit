@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2019 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -64,11 +63,10 @@ import static javax.swing.BorderFactory.createRaisedBevelBorder;
 import static javax.swing.Box.createRigidArea;
 import static javax.swing.BoxLayout.PAGE_AXIS;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
-//}}}
 
 public class ScreenRectangleSelectionButton extends JButton
 {
-	//{{{ ColorWellButton constructor
+	// ColorWellButton constructor
 	public ScreenRectangleSelectionButton(BufferedImage image)
 	{
 		setIcon(new ScreenRectangle(image));
@@ -76,13 +74,13 @@ public class ScreenRectangleSelectionButton extends JButton
 		addActionListener(new ActionHandler());
 	} //}}}
 
-	//{{{ getSelectedImage() method
+	// getSelectedImage() method
 	public BufferedImage getSelectedImage()
 	{
 		return ((ScreenRectangle)getIcon()).image;
 	} //}}}
 
-	//{{{ setSelectedImage() method
+	// setSelectedImage() method
 	public void setSelectedImage(BufferedImage image)
 	{
 		((ScreenRectangle)getIcon()).image = image;
@@ -90,7 +88,7 @@ public class ScreenRectangleSelectionButton extends JButton
 		fireStateChanged();
 	} //}}}
 
-	//{{{ setRectangleDimension() method
+	// setRectangleDimension() method
 	public void setRectangleDimension(Dimension dimension)
 	{
 		((ScreenRectangle)getIcon()).dimension = dimension;
@@ -98,7 +96,7 @@ public class ScreenRectangleSelectionButton extends JButton
 		fireStateChanged();
 	} //}}}
 
-	//{{{ ScreenRectangle class
+	// ScreenRectangle class
 	static class ScreenRectangle implements Icon
 	{
 		Dimension dimension;
@@ -136,7 +134,7 @@ public class ScreenRectangleSelectionButton extends JButton
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener
 	{
 		@Override

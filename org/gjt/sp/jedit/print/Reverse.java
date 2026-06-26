@@ -1,7 +1,6 @@
 /*
  * Reverse.java - Print attribute indicating reverse print order
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) Dale Anson
  *

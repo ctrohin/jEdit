@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -50,7 +49,7 @@ public class IconManager {
     private static String iconPath = "jeditresource:/org/gjt/sp/jedit/icons/themes/";
 
 
-    //{{{ loadIcon() method
+    // loadIcon() method
     /**
      * Loads an icon.
      * @param iconName The icon name
@@ -146,7 +145,7 @@ public class IconManager {
             .toArray();
     }
 
-    //{{{ setIconPath() method
+    // setIconPath() method
     /**
      * Sets the path where jEdit looks for icons.
      * @param iconPath the icon path
@@ -165,7 +164,7 @@ public class IconManager {
             return new URL(iconPath + iconName);
     }
 
-    //{{{ init() method
+    // init() method
     public static void init()
     {
         initializeDeprecatedIcons();
@@ -403,5 +402,4 @@ public class IconManager {
         IconFontSwing.register(MatIcons.getIconFont());
         IconFontSwing.register(FileIcons.getIconFont());
     }
-    //}}}
 }

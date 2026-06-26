@@ -1,7 +1,6 @@
 /*
  * DisplayManager.java - Low-level text display
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 import org.gjt.sp.jedit.buffer.*;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * Manages low-level text display tasks, such as folding.
@@ -38,9 +36,9 @@ import org.gjt.sp.util.Log;
  */
 public class DisplayManager
 {
-	//{{{ Static part
+	// Static part
 
-	//{{{ getDisplayManager() method
+	// getDisplayManager() method
 	static DisplayManager getDisplayManager(JEditBuffer buffer,
 		TextArea textArea)
 	{
@@ -70,19 +68,19 @@ public class DisplayManager
 		return dmgr;
 	} //}}}
 
-	//{{{ release() method
+	// release() method
 	void release()
 	{
 		inUse = false;
 	} //}}}
 
-	//{{{ bufferClosed() method
+	// bufferClosed() method
 	public static void bufferClosed(JEditBuffer buffer)
 	{
 		bufferMap.remove(buffer);
 	} //}}}
 
-	//{{{ textAreaDisposed() method
+	// textAreaDisposed() method
 	static void textAreaDisposed(TextArea textArea)
 	{
 		for (List<DisplayManager> l : bufferMap.values())
@@ -101,9 +99,8 @@ public class DisplayManager
 	} //}}}
 
 	private static final Map<JEditBuffer, List<DisplayManager>> bufferMap = new HashMap<>();
-	//}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * @since jEdit 4.3pre3
 	 */
@@ -112,7 +109,7 @@ public class DisplayManager
 		return buffer;
 	} //}}}
 
-	//{{{ isLineVisible() method
+	// isLineVisible() method
 	/**
 	 * Returns if the specified physical line is visible.
 	 * @param line A physical line index
@@ -123,7 +120,7 @@ public class DisplayManager
 		return folds.search(line) % 2 == 0;
 	} //}}}
 
-	//{{{ isOutsideNarrowing() method
+	// isOutsideNarrowing() method
 	/**
 	 * Returns true if the display is narrowed and the specified line is
 	 * outside of the narrowing.
@@ -161,7 +158,7 @@ public class DisplayManager
 		return false;
 	} //}}}
 	
-	//{{{ getFirstVisibleLine() method
+	// getFirstVisibleLine() method
 	/**
 	 * Returns the physical line number of the first visible line.
 	 * @since jEdit 4.2pre1
@@ -171,7 +168,7 @@ public class DisplayManager
 		return folds.first();
 	} //}}}
 
-	//{{{ getLastVisibleLine() method
+	// getLastVisibleLine() method
 	/**
 	 * Returns the physical line number of the last visible line.
 	 * @since jEdit 4.2pre1
@@ -181,7 +178,7 @@ public class DisplayManager
 		return folds.last();
 	} //}}}
 
-	//{{{ getNextVisibleLine() method
+	// getNextVisibleLine() method
 	/**
 	 * Returns the next visible line after the specified line index,
 	 * or (-1) if there is no next visible line.
@@ -196,7 +193,7 @@ public class DisplayManager
 		return folds.next(line);
 	} //}}}
 
-	//{{{ getPrevVisibleLine() method
+	// getPrevVisibleLine() method
 	/**
 	 * Returns the previous visible line before the specified line index.
 	 * @param line a physical line index
@@ -211,7 +208,7 @@ public class DisplayManager
 		return folds.prev(line);
 	} //}}}
 
-	//{{{ getScreenLineCount() method
+	// getScreenLineCount() method
 	/**
 	 * Returns how many screen lines contains the given physical line.
 	 * It can be greater than 1 when using soft wrap
@@ -225,7 +222,7 @@ public class DisplayManager
 		return screenLineMgr.getScreenLineCount(line);
 	} //}}}
 
-	//{{{ getScrollLineCount() method
+	// getScrollLineCount() method
 	/**
 	 * Returns the number of displayable lines
 	 * It can be greater than the number of lines of the buffer when using
@@ -238,7 +235,7 @@ public class DisplayManager
 		return scrollLineCount.getScrollLine();
 	} //}}}
 
-	//{{{ collapseFold() method
+	// collapseFold() method
 	/**
 	 * Collapses the fold at the specified physical line index.
 	 * @param line A physical line index
@@ -261,7 +258,7 @@ public class DisplayManager
 
 		int initialFoldLevel = buffer.getFoldLevel(line);
 
-		//{{{ Find fold start and end...
+		// Find fold start and end...
 		int start = 0;
 		if(line != lineCount - 1
 			&& buffer.getFoldLevel(line + 1) > initialFoldLevel)
@@ -316,7 +313,7 @@ public class DisplayManager
 		textArea.foldStructureChanged();
 	} //}}}
 
-	//{{{ expandFold() method
+	// expandFold() method
 	/**
 	 * Expands the fold at the specified physical line index.
 	 * @param line A physical line index
@@ -335,7 +332,7 @@ public class DisplayManager
 		return firstSubfold.get();
 	} //}}}
 
-	//{{{ expandAllFolds() method
+	// expandAllFolds() method
 	/**
 	 * Expands all folds.
 	 * @since jEdit 4.2pre1
@@ -347,7 +344,7 @@ public class DisplayManager
 		textArea.foldStructureChanged();
 	} //}}}
 
-	//{{{ expandFolds() method
+	// expandFolds() method
 	/**
 	 * This method should only be called from <code>actions.xml</code>.
 	 * @since jEdit 4.2pre1
@@ -362,7 +359,7 @@ public class DisplayManager
 			expandFolds((digit - '1') + 1);
 	} //}}}
 
-	//{{{ expandFolds() method
+	// expandFolds() method
 	/**
 	 * Expands all folds with the specified fold level.
 	 * @param foldLevel The fold level
@@ -414,7 +411,7 @@ public class DisplayManager
 		}
 	} //}}}
 	
-	//{{{ expandFolds() method
+	// expandFolds() method
 	/**
 	 * Expands all folds with the specified fold level.
 	 * @param foldLevel The fold level
@@ -425,7 +422,7 @@ public class DisplayManager
 		expandFolds(foldLevel, true);
 	} //}}}
 
-	//{{{ narrow() method
+	// narrow() method
 	/**
 	 * Narrows the visible portion of the buffer to the specified
 	 * line range.
@@ -457,13 +454,13 @@ public class DisplayManager
 		textArea.foldStructureChanged();
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	final FirstLine firstLine;
 	final ScrollLineCount scrollLineCount;
 	final ScreenLineManager screenLineMgr;
 	final RangeMap folds;
 
-	//{{{ init() method
+	// init() method
 	void init()
 	{
 		// Needs information available in textArea only when a
@@ -492,7 +489,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ notifyScreenLineChanges() method
+	// notifyScreenLineChanges() method
 	/**
 	 * FirstLine or ScrollLineCount changed
 	 * Update ScrollBar, etc.
@@ -538,7 +535,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ setFirstLine() method
+	// setFirstLine() method
 	/**
 	 * Sets the vertical scroll bar position
 	 *
@@ -574,7 +571,7 @@ public class DisplayManager
 		notifyScreenLineChanges();
 	} //}}}
 
-	//{{{ setFirstPhysicalLine() method
+	// setFirstPhysicalLine() method
 	/**
 	 * Scroll from a given amount of lines.
 	 *
@@ -627,7 +624,7 @@ public class DisplayManager
 		notifyScreenLineChanges();
 	} //}}}
 
-	//{{{ invalidateScreenLineCounts() method
+	// invalidateScreenLineCounts() method
 	void invalidateScreenLineCounts()
 	{
 		screenLineMgr.invalidateScreenLineCounts();
@@ -635,7 +632,7 @@ public class DisplayManager
 		scrollLineCount.setCallReset(true);
 	} //}}}
 
-	//{{{ updateScreenLineCount() method
+	// updateScreenLineCount() method
 	void updateScreenLineCount(int line)
 	{
 		// If this DisplayManager is not current visible one,
@@ -657,7 +654,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ bufferLoaded() method
+	// bufferLoaded() method
 	void bufferLoaded()
 	{
 		initialized = false;
@@ -675,7 +672,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	void foldHandlerChanged()
 	{
 		if(buffer.isLoading())
@@ -699,9 +696,8 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private boolean initialized;
 	private boolean inUse;
 	private final JEditBuffer buffer;
@@ -709,7 +705,7 @@ public class DisplayManager
 	private final BufferHandler bufferHandler;
 	private final ElasticTabStopBufferListener elasticTabStopListener;
 
-	//{{{ DisplayManager constructor
+	// DisplayManager constructor
 	private DisplayManager(JEditBuffer buffer, TextArea textArea,
 		DisplayManager copy)
 	{
@@ -738,7 +734,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ resetAnchors() method
+	// resetAnchors() method
 	private void resetAnchors()
 	{
 		firstLine.setCallReset(true);
@@ -746,14 +742,14 @@ public class DisplayManager
 		notifyScreenLineChanges();
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	private void dispose()
 	{
 		buffer.removeBufferListener(bufferHandler);
 		buffer.removeBufferListener(elasticTabStopListener);
 	} //}}}
 
-	//{{{ showLineRange() method
+	// showLineRange() method
 	// for folding
 	private void showLineRange(int start, int end)
 	{
@@ -782,7 +778,7 @@ public class DisplayManager
 		folds.show(start,end);
 	} //}}}
 
-	//{{{ hideLineRange() method
+	// hideLineRange() method
 	private void hideLineRange(int start, int end)
 	{
 		if(Debug.FOLD_VIS_DEBUG)
@@ -829,7 +825,7 @@ public class DisplayManager
 		}
 	} //}}}
 
-	//{{{ setScreenLineCount() method
+	// setScreenLineCount() method
 	/**
 	 * Sets the number of screen lines that the specified physical line
 	 * is split into.
@@ -844,7 +840,7 @@ public class DisplayManager
 
 	} //}}}
 
-	//{{{ _expandFold() method
+	// _expandFold() method
 	/**
 	 * Expands the fold at the specified physical line index.
 	 * @param line A physical line index
@@ -885,7 +881,7 @@ public class DisplayManager
 			return unfolded;
 		}
 
-		//{{{ Find fold start and fold end...
+		// Find fold start and fold end...
 		int start;
 		int initialFoldLevel = buffer.getFoldLevel(line);
 		if (buffer.getFoldLevel(line + 1) > initialFoldLevel)
@@ -931,7 +927,7 @@ public class DisplayManager
 			}
 		} // }}}
 
-		//{{{ Expand the fold...
+		// Expand the fold...
 		if(fully)
 		{
 			showLineRange(start,end);
@@ -964,7 +960,7 @@ public class DisplayManager
 		return unfolded;
 	} //}}}
 	
-	//{{{ MutableInteger class
+	// MutableInteger class
 	private static class MutableInteger
 	{
 		MutableInteger(int value)
@@ -985,5 +981,4 @@ public class DisplayManager
 		private int value;
 	} //}}}
 	
-	//}}}
 }

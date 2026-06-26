@@ -1,7 +1,6 @@
 /*
  * TextAreaInputHandler.java - Manages key bindings and executes actions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.input;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.jedit.gui.KeyEventTranslator;
 import org.gjt.sp.jedit.gui.KeyEventWorkaround;
@@ -35,7 +34,6 @@ import java.util.Hashtable;
 import org.gjt.sp.jedit.JEditBeanShellAction;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.gui.ShortcutPrefixActiveEvent;
-//}}}
 
 /**
  * This class manage the key bindings and execute the actions binded on the
@@ -48,14 +46,14 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 {
 	private final TextArea textArea;
 
-	//{{{ TextAreaInputHandler constructor
+	// TextAreaInputHandler constructor
 	protected TextAreaInputHandler(TextArea textArea)
 	{
 		this.textArea = textArea;
 		bindings = currentBindings = new Hashtable();
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	/**
 	 * Forwards key events directly to the input handler.
 	 * This is slightly faster than using a KeyListener
@@ -132,7 +130,7 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		}
 	} //}}}
 
-	//{{{ processKeyEventSub() method
+	// processKeyEventSub() method
 	private void processKeyEventSub(boolean focusOnTextArea)
 	{
 		// this is a weird hack.
@@ -144,11 +142,10 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		}
 	} //}}}
 
-	//{{{ getAction() method
+	// getAction() method
 	protected abstract JEditBeanShellAction getAction(String action);
-	//}}}
 
-	//{{{ invokeAction() method
+	// invokeAction() method
 	/**
 	 * Invokes the specified action, repeating and recording it as
 	 * necessary.
@@ -161,7 +158,7 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		invokeAction(getAction(action));
 	} //}}}
 
-	//{{{ invokeAction() method
+	// invokeAction() method
 	/**
 	 * Invokes the specified action, repeating and recording it as
 	 * necessary.
@@ -221,7 +218,7 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		}
 	} //}}}
 
-	//{{{ handleKey() method
+	// handleKey() method
 	/**
 	 * Handles the given keystroke.
 	 * @param keyStroke The key stroke
@@ -332,7 +329,7 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		return false;
 	} //}}}
 
-	//{{{ userInput() method
+	// userInput() method
 	protected void userInput(char ch)
 	{
 		lastActionCount = 0;
@@ -344,7 +341,7 @@ public abstract class TextAreaInputHandler extends AbstractInputHandler<JEditBea
 		repeatCount = 1;
 	} //}}}
 
-	//{{{ invokeReadNextChar() method
+	// invokeReadNextChar() method
 	protected void invokeReadNextChar(char ch)
 	{
 		String charStr = StandardUtilities.charsToEscapes(String.valueOf(ch));

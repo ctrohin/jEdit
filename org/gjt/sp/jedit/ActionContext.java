@@ -1,7 +1,6 @@
 /*
  * ActionContext.java - For code sharing between jEdit and VFSBrowser
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  *
@@ -37,7 +36,7 @@ package org.gjt.sp.jedit;
  */
 public abstract class ActionContext extends JEditActionContext<EditAction, ActionSet>
 {
-	//{{{ getActionSetForAction() method
+	// getActionSetForAction() method
 	/**
 	 * Returns the action set that contains the specified action.
 	 * This method is still here for binary compatility
@@ -52,7 +51,7 @@ public abstract class ActionContext extends JEditActionContext<EditAction, Actio
 		return super.getActionSetForAction(action);
 	} //}}}
 
-	//{{{ getAction() method
+	// getAction() method
 	/**
 	 * Returns the specified action.
 	 * @param name The action name

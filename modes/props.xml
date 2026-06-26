@@ -5,6 +5,7 @@
 <MODE>
 	<PROPS>
 		<PROPERTY NAME="contextInsensitive" VALUE="FALSE" />
+		<PROPERTY NAME="folding" VALUE="none" />
 	</PROPS>
 	<RULES>
         <!-- 

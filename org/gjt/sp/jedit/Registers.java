@@ -1,7 +1,6 @@
 /*
  * Registers.java - Register manager
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  * Portions Copyright (C) 2010 Matthieu Casanova
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.awt.datatransfer.*;
 import java.awt.Toolkit;
 import java.io.*;
@@ -39,7 +38,6 @@ import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.util.Log;
 
 
-//}}}
 
 /**
  * jEdit's registers are an extension of the clipboard metaphor.<p>
@@ -68,7 +66,7 @@ import org.gjt.sp.util.Log;
  */
 public class Registers
 {
-	//{{{ copy() method
+	// copy() method
 	/**
 	 * Copies the text selected in the text area into the specified register.
 	 * This will replace the existing contents of the designated register.
@@ -89,7 +87,7 @@ public class Registers
 
 	} //}}}
 
-	//{{{ cut() method
+	// cut() method
 	/**
 	 * Copies the text selected in the text area into the specified
 	 * register, and then removes it from the buffer.
@@ -116,7 +114,7 @@ public class Registers
 			javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null);
 	} //}}}
 
-	//{{{ append() methods
+	// append() methods
 	/**
 	 * Appends the text selected in the text area to the specified register,
 	 * with a newline between the old and new text.
@@ -193,7 +191,7 @@ public class Registers
 			textArea.setSelectedText("");
 	} //}}}
 
-	//{{{ paste() methods
+	// paste() methods
 	/**
 	 * Insets the contents of the specified register into the text area.
 	 * @param textArea The text area
@@ -390,7 +388,7 @@ public class Registers
 		HistoryModel.getModel("clipboard").addItem(selection);
 	} //}}}
 
-	//{{{ applyMode() method
+	// applyMode() method
 	private static void applyMode(Mode mode, JEditBuffer buffer)
 	{
 		if (mode != null &&
@@ -402,7 +400,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ getTextFromTransferable() method
+	// getTextFromTransferable() method
 	private static String getTextFromTransferable(Transferable transferable, DataFlavor dataFlavor)
 	{
 		try
@@ -417,7 +415,7 @@ public class Registers
 		return null;
 	} //}}}
 
-	//{{{ getRegister() method
+	// getRegister() method
 	/**
 	 * Returns the specified register.
 	 * @param name The name
@@ -436,7 +434,7 @@ public class Registers
 			return registers[name];
 	} //}}}
 
-	//{{{ setRegister() methods
+	// setRegister() methods
 	/**
 	 * Sets the specified register.
 	 * @param name The name
@@ -489,7 +487,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ clearRegister() method
+	// clearRegister() method
 	/**
 	 * Sets the value of the specified register to <code>null</code>.
 	 * @param name The register name
@@ -511,7 +509,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ getRegisters() method
+	// getRegisters() method
 	/**
 	 * Returns an array of all available registers. Some of the elements
 	 * of this array might be <code>null</code>.
@@ -523,7 +521,7 @@ public class Registers
 		return registers;
 	} //}}}
 
-	//{{{ getRegisterNameString() method
+	// getRegisterNameString() method
 	/**
 	 * Returns a string of all defined registers, used by the status bar
 	 * (eg, "a b $ % ^").
@@ -552,7 +550,7 @@ public class Registers
 			return buf.toString();
 	} //}}}
 
-	//{{{ saveRegisters() method
+	// saveRegisters() method
 	public static void saveRegisters()
 	{
 		if(!loaded || !modified)
@@ -565,31 +563,31 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ setListener() method
+	// setListener() method
 	public static void setListener(RegistersListener listener)
 	{
 		Registers.listener = listener;
 	} //}}}
 
-	//{{{ setSaver() method
+	// setSaver() method
 	public static void setSaver(RegisterSaver saver)
 	{
 		Registers.saver = saver;
 	} //}}}
 
-	//{{{ isLoading() method
+	// isLoading() method
 	public static boolean isLoading()
 	{
 		return loading;
 	} //}}}
 
-	//{{{ setLoading() method
+	// setLoading() method
 	public static void setLoading(boolean loading)
 	{
 		Registers.loading = loading;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static Register[] registers;
 	private static boolean loaded, loading;
 	private static RegisterSaver saver;
@@ -612,7 +610,7 @@ public class Registers
 			registers['%'] = new ClipboardRegister(selection);
 	}
 
-	//{{{ touchRegister() method
+	// touchRegister() method
 	private static void touchRegister(char name)
 	{
 		if(name == '%' || name == '$')
@@ -625,7 +623,7 @@ public class Registers
 			modified = true;
 	} //}}}
 
-	//{{{ loadRegisters() method
+	// loadRegisters() method
 	private static void loadRegisters()
 	{
 		if (saver != null)
@@ -635,7 +633,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ loadRegisters() method
+	// loadRegisters() method
 	private static String stripEOLChars(String selection) throws IOException
 	{
 		boolean trailingEOL = selection.endsWith("\n")
@@ -667,11 +665,10 @@ public class Registers
 		return buf.toString();
 	}  //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Register interface
+	// Register interface
 	/**
 	 * A register.
 	 */
@@ -700,7 +697,7 @@ public class Registers
 		void setTransferable(Transferable transferable);
 	} //}}}
 
-	//{{{ ClipboardRegister class
+	// ClipboardRegister class
 	/**
 	 * A clipboard register. Register "$" should always be an
 	 * instance of this.
@@ -773,7 +770,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ debugListDataFlavors() method
+	// debugListDataFlavors() method
 	protected static void debugListDataFlavors(Transferable transferable)
 	{
 		DataFlavor[] dataFlavors = transferable.getTransferDataFlavors();
@@ -791,7 +788,7 @@ public class Registers
 		}
 	} //}}}
 
-	//{{{ DefaultRegister class
+	// DefaultRegister class
 	private static class DefaultRegister implements Register
 	{
 		private Transferable transferable;
@@ -834,5 +831,4 @@ public class Registers
 		}
 	} //}}}
 
-	//}}}
 }

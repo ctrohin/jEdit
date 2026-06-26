@@ -1,7 +1,6 @@
 /*
  * AbbrevsOptionPane.java - Abbrevs options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import javax.swing.*;
@@ -35,9 +34,8 @@ import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
-//{{{ AbbrevsOptionPane class
+// AbbrevsOptionPane class
 /**
  * Abbrev editor.
  * @author Slava Pestov
@@ -45,13 +43,13 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class AbbrevsOptionPane extends AbstractOptionPane
 {
-	//{{{ AbbrevsOptionPane constructor
+	// AbbrevsOptionPane constructor
 	public AbbrevsOptionPane()
 	{
 		super("abbrevs");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -135,7 +133,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		updateEnabled();
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -155,9 +153,9 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		Abbrevs.setModeAbbrevs(modeHash);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private JComboBox<String> setsComboBox;
 	private JCheckBox expandOnInput;
 	private JTable abbrevsTable;
@@ -166,9 +164,8 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 	private JButton add;
 	private JButton edit;
 	private JButton remove;
-	//}}}
 
-	//{{{ updateEnabled() method
+	// updateEnabled() method
 	private void updateEnabled()
 	{
 		int selectedRow = abbrevsTable.getSelectedRow();
@@ -176,7 +173,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		remove.setEnabled(selectedRow != -1);
 	} //}}}
 
-	//{{{ edit() method
+	// edit() method
 	private void edit()
 	{
 		AbbrevsModel abbrevsModel = (AbbrevsModel)abbrevsTable.getModel();
@@ -207,7 +204,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	private void add(AbbrevsModel abbrevsModel, String abbrev,
 		String expansion)
 	{
@@ -224,9 +221,8 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		updateEnabled();
 	} //}}}
 
-	//}}}
 
-	//{{{ HeaderMouseHandler class
+	// HeaderMouseHandler class
 	private class HeaderMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -244,7 +240,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ TableMouseHandler class
+	// TableMouseHandler class
 	private class TableMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -255,7 +251,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -299,7 +295,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Renderer class
+	// Renderer class
 	private static class Renderer extends DefaultTableCellRenderer
 	{
 		@Override
@@ -322,13 +318,13 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ AbbrevsModel class
+	// AbbrevsModel class
 	private static class AbbrevsModel extends AbstractTableModel
 	{
 		List<Abbrev> abbrevs;
 		int lastSort;
 
-		//{{{ AbbrevsModel constructor
+		// AbbrevsModel constructor
 		AbbrevsModel(Map<String,String> abbrevHash)
 		{
 			abbrevs = new Vector<>();
@@ -341,7 +337,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ sort() method
+		// sort() method
 		void sort(int col)
 		{
 			lastSort = col;
@@ -349,21 +345,21 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			fireTableDataChanged();
 		} //}}}
 
-		//{{{ add() method
+		// add() method
 		void add(String abbrev, String expansion)
 		{
 			abbrevs.add(new Abbrev(abbrev,expansion));
 			sort(lastSort);
 		} //}}}
 
-		//{{{ remove() method
+		// remove() method
 		void remove(int index)
 		{
 			abbrevs.remove(index);
 			fireTableStructureChanged();
 		} //}}}
 
-		//{{{ toHashtable() method
+		// toHashtable() method
 		public Hashtable<String,String> toHashtable()
 		{
 			Hashtable<String,String> hash = new Hashtable<>();
@@ -375,21 +371,21 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			return hash;
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		@Override
 		public int getColumnCount()
 		{
 			return 2;
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		@Override
 		public int getRowCount()
 		{
 			return abbrevs.size();
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		@Override
 		public Object getValueAt(int row, int col)
 		{
@@ -405,7 +401,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ setValueAt() method
+		// setValueAt() method
 		@Override
 		public void setValueAt(Object value, int row, int col)
 		{
@@ -422,7 +418,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			fireTableRowsUpdated(row,row);
 		} //}}}
 
-		//{{{ getColumnName() method
+		// getColumnName() method
 		@Override
 		public String getColumnName(int index)
 		{
@@ -437,7 +433,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ AbbrevCompare class
+		// AbbrevCompare class
 		private static class AbbrevCompare implements Comparator<Abbrev>
 		{
 			private final int col;
@@ -469,7 +465,7 @@ public class AbbrevsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ Abbrev class
+		// Abbrev class
 		private static class Abbrev
 		{
 			Abbrev() {}

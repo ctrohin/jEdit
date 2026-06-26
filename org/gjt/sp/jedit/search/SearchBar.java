@@ -1,7 +1,6 @@
 /*
  * SearchBar.java - Search & replace toolbar
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.event.*;
@@ -33,7 +32,6 @@ import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.SyntaxUtilities;
-//}}}
 
 /**
  * Incremental search tool bar.
@@ -41,7 +39,7 @@ import org.gjt.sp.util.SyntaxUtilities;
  */
 public class SearchBar extends JToolBar
 {
-	//{{{ SearchBar constructor
+	// SearchBar constructor
 	public SearchBar(final View view, boolean temp)
 	{
 		this.view = view;
@@ -110,7 +108,7 @@ public class SearchBar extends JToolBar
 		wholeWord.setRequestFocusEnabled(false);
 		update();
 
-		//{{{ Create the timer used by incremental search
+		// Create the timer used by incremental search
 		timer = new Timer(0,new ActionListener()
 		{
 			@Override
@@ -138,20 +136,20 @@ public class SearchBar extends JToolBar
 		setCloseButtonVisibility();
 	} //}}}
 
-	//{{{ getField() method
+	// getField() method
 	public HistoryTextField getField()
 	{
 		return find;
 	} //}}}
 
-	//{{{ setHyperSearch() method
+	// setHyperSearch() method
 	public void setHyperSearch(boolean hyperSearch)
 	{
 		jEdit.setBooleanProperty("view.search.hypersearch.toggle",hyperSearch);
 		this.hyperSearch.setSelected(hyperSearch);
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	public void update()
 	{
 		ignoreCase.setSelected(SearchAndReplace.getIgnoreCase());
@@ -161,7 +159,7 @@ public class SearchBar extends JToolBar
 			"view.search.hypersearch.toggle"));
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged()
 	{
 		// Option may have been changed
@@ -173,9 +171,9 @@ public class SearchBar extends JToolBar
 		
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private final HistoryTextField find;
 	private final JCheckBox ignoreCase;
@@ -194,22 +192,21 @@ public class SearchBar extends JToolBar
 	private int searchStart;
 	private boolean searchReverse;
 	private boolean isRemovable;
-	//}}}
 
-	//{{{ find() method
+	// find() method
 	private void find(boolean reverse)
 	{
 		timer.stop();
 
 		String text = find.getText();
-		//{{{ If nothing entered, show search and replace dialog box
+		// If nothing entered, show search and replace dialog box
 		if(text.isEmpty())
 		{
 			jEdit.setBooleanProperty("search.hypersearch.toggle",
 				hyperSearch.isSelected());
 			SearchDialog.showSearchDialog(view,null,SearchDialog.CURRENT_BUFFER);
 		} //}}}
-		//{{{ HyperSearch
+		// HyperSearch
 		else if(hyperSearch.isSelected())
 		{
 			if(isRemovable)
@@ -223,7 +220,7 @@ public class SearchBar extends JToolBar
 			SearchAndReplace.setSearchFileSet(new CurrentBufferSet());
 			SearchAndReplace.hyperSearch(view);
 		} //}}}
-		//{{{ Incremental search
+		// Incremental search
 		else
 		{
 			// on enter, start search from end
@@ -267,7 +264,7 @@ public class SearchBar extends JToolBar
 		} //}}}
 	} //}}}
 
-	//{{{ incrementalSearch() method
+	// incrementalSearch() method
 	private boolean incrementalSearch(int start, boolean reverse)
 	{
 		/* For example, if the current fileset is a directory,
@@ -317,7 +314,7 @@ public class SearchBar extends JToolBar
 		return ret;
 	} //}}}
 
-	//{{{ timerIncrementalSearch() method
+	// timerIncrementalSearch() method
 	private void timerIncrementalSearch(int start, boolean reverse)
 	{
 		searchStart = start;
@@ -329,7 +326,7 @@ public class SearchBar extends JToolBar
 		timer.start();
 	} //}}}
 	
-	//{{{ setCloseButtonVisibility() method
+	// setCloseButtonVisibility() method
 	private void setCloseButtonVisibility()
 	{
 		if(isRemovable)
@@ -350,16 +347,14 @@ public class SearchBar extends JToolBar
 		else if(close != null)
 			remove(close);
 	}
-	//}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ DocumentHandler class
+	// DocumentHandler class
 	class DocumentHandler implements DocumentListener
 	{
-		//{{{ insertUpdate() method
+		// insertUpdate() method
 		@Override
 		public void insertUpdate(DocumentEvent evt)
 		{
@@ -381,7 +376,7 @@ public class SearchBar extends JToolBar
 			}
 		} //}}}
 
-		//{{{ removeUpdate() method
+		// removeUpdate() method
 		@Override
 		public void removeUpdate(DocumentEvent evt)
 		{
@@ -418,13 +413,12 @@ public class SearchBar extends JToolBar
 			}
 		} //}}}
 
-		//{{{ changedUpdate() method
+		// changedUpdate() method
 		@Override
 		public void changedUpdate(DocumentEvent evt) {}
-		//}}}
 	} //}}}
 
-	//{{{ KeyHandler class
+	// KeyHandler class
 	class KeyHandler extends KeyAdapter
 	{
 		@Override
@@ -450,5 +444,4 @@ public class SearchBar extends JToolBar
 			}
 		}
 	} //}}}
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * StatusBarOptionPane.java - Tool bar options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008-2021 Matthieu Casanova
  * Portions Copyright (C) 2000-2002 Slava Pestov
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.AbstractOptionPane;
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.ServiceManager;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
-//}}}
 
 /**
  * Status bar editor.
@@ -55,19 +53,19 @@ public class StatusBarOptionPane extends AbstractOptionPane
 
 	private WidgetTableModel widgetTableModel;
 
-	//{{{ StatusBarOptionPane constructor
+	// StatusBarOptionPane constructor
 	public StatusBarOptionPane()
 	{
 		super("status");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
 		setLayout(new BorderLayout());
 
-		//{{{ North
+		// North
 		JPanel checkboxPanel = new JPanel(new GridLayout(2,1));
 		showStatusbar = new JCheckBox(jEdit.getProperty(
 			"options.status.visible"));
@@ -83,9 +81,8 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		JPanel north = new JPanel(new GridLayout(2,1));
 		north.add(checkboxPanel);
 		add(north, BorderLayout.NORTH);
-		//}}}
 
-		//{{{ Options panel
+		// Options panel
 		AbstractOptionPane optionsPanel = new AbstractOptionPane("Status Options");
 		/* Foreground color */
 		optionsPanel.addComponent(jEdit.getProperty("options.status.foreground"),
@@ -142,9 +139,8 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		optionsPanel.addComponent(showCaretVirtual);
 		optionsPanel.addComponent(showCaretOffset);
 		optionsPanel.addComponent(showCaretBufferLength);
-		//}}}
 
-		//{{{ widgets panel
+		// widgets panel
 		widgetTableModel = new WidgetTableModel();
 		widgetTable = new JTable(widgetTableModel);
 		widgetTable.setDefaultRenderer(WidgetTableModel.TableEntry.class, new WidgetCellRenderer());
@@ -153,9 +149,8 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		widgetTable.getSelectionModel().addListSelectionListener(e -> updateButtons());
 		JPanel widgetsPanel = new JPanel(new BorderLayout());
 		widgetsPanel.add(new JScrollPane(widgetTable), BorderLayout.CENTER);
-		//}}}
 
-		//{{{ Create buttons
+		// Create buttons
 		JPanel buttons = new JPanel();
 		buttons.setBorder(new EmptyBorder(3,0,0,0));
 		buttons.setLayout(new BoxLayout(buttons,BoxLayout.X_AXIS));
@@ -171,7 +166,6 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		buttons.add(moveDown);
 		buttons.add(Box.createHorizontalStrut(6));
 		buttons.add(Box.createGlue());
-		//}}}
 
 		widgetsPanel.add(buttons, BorderLayout.SOUTH);
 
@@ -183,7 +177,7 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		updateButtons();
 	} ///}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -221,9 +215,9 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		jEdit.setProperty(propertyName, String.join(" ", tokens));
 	}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private ColorWellButton foregroundColor;
 	private ColorWellButton backgroundColor;
 	private ColorWellButton memForegroundColor;
@@ -238,9 +232,8 @@ public class StatusBarOptionPane extends AbstractOptionPane
 	private JCheckBox showCaretVirtual;
 	private JCheckBox showCaretOffset;
 	private JCheckBox showCaretBufferLength;
-	//}}}
 
-	//{{{ updateButtons() method
+	// updateButtons() method
 	private void updateButtons()
 	{
 		int index = widgetTable.getSelectedRow();
@@ -248,7 +241,7 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		moveDown.setEnabled(index != -1 && index != widgetTable.getRowCount() - 1);
 	} //}}}
 
-	//{{{ moveUp() method
+	// moveUp() method
 	private void moveUp()
 	{
 		int index = widgetTable.getSelectedRow();
@@ -256,7 +249,7 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		widgetTable.getSelectionModel().setSelectionInterval(index - 1, index - 1);
 	} //}}}
 
-	//{{{ moveDown() method
+	// moveDown() method
 	private void moveDown()
 	{
 		int index = widgetTable.getSelectedRow();
@@ -264,9 +257,8 @@ public class StatusBarOptionPane extends AbstractOptionPane
 		widgetTable.getSelectionModel().setSelectionInterval(index + 1, index + 1);
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 	private static class WidgetTableModel extends AbstractTableModel implements Iterable<WidgetTableModel.TableEntry>
 	{
 		private final List<TableEntry> widgets;
@@ -464,6 +456,5 @@ public class StatusBarOptionPane extends AbstractOptionPane
 			return widgetComponent;
 		}
 	}
-	//}}}
 }
 

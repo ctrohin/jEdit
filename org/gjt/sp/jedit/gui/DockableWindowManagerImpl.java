@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,7 +67,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DockableWindowManagerImpl extends DockableWindowManager
 {
 
-	//{{{ DockableWindowConfig class
+	// DockableWindowConfig class
 	public static class DockableWindowConfig extends DockingLayout
 	{
 		// {{{ PerspectiveHandler class
@@ -170,7 +169,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 
 	} //}}}
 
-	//{{{ Data members
+	// Data members
 	/** A mapping from Strings to Entry objects. */
 	private final Map<String, Entry> windows;
 	private final PanelWindowContainer left;
@@ -221,7 +220,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		return docking;
 	} // }}}
 
-	//{{{ DockableWindowManagerImpl constructor
+	// DockableWindowManagerImpl constructor
 	/**
 	 * Creates a new dockable window manager.
 	 * @param view The view
@@ -258,7 +257,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		add(RIGHT,right.dockablePanel);
 	} //}}}
 
-	//{{{ setMainPanel() method
+	// setMainPanel() method
 	@Override
 	public void setMainPanel(JPanel panel)
 	{
@@ -266,7 +265,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 	} //}}}
 
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Initialises dockable window manager. Do not call this method directly.
 	 */
@@ -282,7 +281,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		propertiesChanged();
 	} //}}}
 
-	//{{{ floatDockableWindow() method
+	// floatDockableWindow() method
 	/**
 	 * Opens a new instance of the specified dockable window in a floating
 	 * container.
@@ -317,7 +316,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		return newEntry.win;
 	} //}}}
 
-	//{{{ showDockableWindow() method
+	// showDockableWindow() method
 	/**
 	 * Opens the specified dockable window.
 	 * @param name The dockable window name
@@ -353,7 +352,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			/* an error occurred */;
 	} //}}}
 
-	//{{{ hideDockableWindow() method
+	// hideDockableWindow() method
 	/**
 	 * Hides the specified dockable window.
 	 * @param name The dockable window name
@@ -376,7 +375,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			entry.container.show(null);
 	} //}}}
 
-	//{{{ getDockable() method
+	// getDockable() method
 	/**
 	 * Returns the specified dockable window.
 	 *
@@ -400,7 +399,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			return entry.win;
 	} //}}}
 
-	//{{{ isDockableWindowVisible() method
+	// isDockableWindowVisible() method
 	/**
 	 * Returns if the specified dockable window is visible.
 	 * @param name The dockable window name
@@ -415,7 +414,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			return entry.container.isVisible(entry);
 	} //}}}
 
-	//{{{ isDockableWindowDocked() method
+	// isDockableWindowDocked() method
 	/**
 	 * Returns if the specified dockable window is docked into the
 	 * view.
@@ -432,7 +431,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			return !entry.position.equals(FLOATING);
 	} //}}}
 
-	//{{{ closeCurrentArea() method
+	// closeCurrentArea() method
 	/**
 	 * Closes the most recently focused dockable.
 	 * @since jEdit 4.1pre3
@@ -475,7 +474,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		});
 	} //}}}
 
-	//{{{ close() method
+	// close() method
 	/**
 	 * Called when the view is being closed.
 	 * @since jEdit 2.6pre3
@@ -498,35 +497,35 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		}
 	} //}}}
 
-	//{{{ getTopDockingArea() method
+	// getTopDockingArea() method
 	@Override
 	public PanelWindowContainer getTopDockingArea()
 	{
 		return top;
 	} //}}}
 
-	//{{{ getLeftDockingArea() method
+	// getLeftDockingArea() method
 	@Override
 	public PanelWindowContainer getLeftDockingArea()
 	{
 		return left;
 	} //}}}
 
-	//{{{ getBottomDockingArea() method
+	// getBottomDockingArea() method
 	@Override
 	public PanelWindowContainer getBottomDockingArea()
 	{
 		return bottom;
 	} //}}}
 
-	//{{{ getRightDockingArea() method
+	// getRightDockingArea() method
 	@Override
 	public PanelWindowContainer getRightDockingArea()
 	{
 		return right;
 	} //}}}
 
-	//{{{ createPopupMenu() method
+	// createPopupMenu() method
 	public JPopupMenu createPopupMenu(
 		final DockableWindowContainer container,
 		final String dockable,
@@ -628,7 +627,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		return popup;
 	} //}}}
 
-	//{{{ paintChildren() method
+	// paintChildren() method
 	@Override
 	public void paintChildren(Graphics g)
 	{
@@ -642,7 +641,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		}
 	} //}}}
 
-	//{{{ handleDockableWindowUpdate() method
+	// handleDockableWindowUpdate() method
 	@Override
 	@EBHandler
 	public void handleDockableWindowUpdate(DockableWindowUpdate msg)
@@ -651,7 +650,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			propertiesChanged();
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@Override
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
@@ -659,7 +658,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		propertiesChanged();
 	} //}}}
 
-	//{{{ handlePluginUpdate() method
+	// handlePluginUpdate() method
 	@Override
 	@EBHandler
 	public void handlePluginUpdate(PluginUpdate pmsg)
@@ -709,7 +708,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		}
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	int resizePos;
 	/**
 	 * This is the rectangle you drag to resize the split.
@@ -717,7 +716,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 	 */
 	Rectangle resizeRect;
 
-	//{{{ setResizePos() method
+	// setResizePos() method
 	void setResizePos(int resizePos, PanelWindowContainer resizing)
 	{
 		this.resizePos = resizePos;
@@ -787,16 +786,15 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		repaint(toRepaint);
 	} //}}}
 
-	//{{{ finishResizing() method
+	// finishResizing() method
 	void finishResizing()
 	{
 		resizeRect = null;
 		repaint();
 	} //}}}
 
-	//}}}
 
-	//{{{ setDockableNotifications() method
+	// setDockableNotifications() method
 	@Override
 	public void setDockableNotifications(String name, int errorCount, int warningCount)
 	{
@@ -830,9 +828,8 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		entry.btn.revalidate();
 		entry.btn.repaint();
 	}
-	//}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	@Override
 	protected void propertiesChanged()
 	{
@@ -886,7 +883,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		repaint();
 	} //}}}
 
-	//{{{ addEntry() method
+	// addEntry() method
 	private void addEntry(DockableWindowFactory.Window factory)
 	{
 		Entry e;
@@ -906,7 +903,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		windows.put(factory.name,e);
 	} //}}}
 
-	//{{{ getAllPluginEntries() method
+	// getAllPluginEntries() method
 	/**
 	 * If remove is false, only remove from clones list, otherwise remove
 	 * from both entries and clones.
@@ -989,7 +986,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 
 	private boolean continuousLayout;
 
-	//{{{ Entry class
+	// Entry class
 	public static class Entry
 	{
 		public DockableWindowFactory.Window factory;
@@ -1008,7 +1005,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 		int notificationWarnings;
 		int buttonRotation = PanelWindowContainer.RotatedTextIcon.NONE;
 
-		//{{{ Entry constructor
+		// Entry constructor
 		Entry(DockableWindowFactory.Window factory)
 		{
 			this(factory, normalizeDockPosition(jEdit.getProperty(factory.name
@@ -1050,7 +1047,7 @@ public class DockableWindowManagerImpl extends DockableWindowManager
 			return retval;
 		}
 
-		//{{{ Entry constructor
+		// Entry constructor
 		Entry(DockableWindowFactory.Window factory, String position)
 		{
 			this.factory = factory;

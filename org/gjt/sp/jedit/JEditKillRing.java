@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  * Portions copyright (C) 2006, 2011 Matthieu Casanova
@@ -45,7 +44,7 @@ import javax.swing.*;
  */
 class JEditKillRing extends KillRing
 {
-	//{{{ Constructor
+	// Constructor
 	JEditKillRing()
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -55,7 +54,7 @@ class JEditKillRing extends KillRing
 		}
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	@Override
 	public void load()
 	{
@@ -100,7 +99,7 @@ class JEditKillRing extends KillRing
 		reset(handler.list);
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	@Override
 	public void save()
 	{
@@ -155,10 +154,10 @@ class JEditKillRing extends KillRing
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private SettingsXML killringXML;
 
-	//{{{ KillRingHandler class
+	// KillRingHandler class
 	private static class KillRingHandler extends DefaultHandler
 	{
 		public List<String> list = new LinkedList<>();
@@ -220,5 +219,4 @@ class JEditKillRing extends KillRing
 		private final StringBuilder charData = new StringBuilder();
 		private boolean inEntry;
 	} //}}}
-	//}}}
 }

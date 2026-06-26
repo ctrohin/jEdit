@@ -1,7 +1,6 @@
 /*
  * ContentManager.java - Manages text content
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2002 Slava Pestov
  *
@@ -37,13 +36,13 @@ import javax.swing.text.Segment;
  */
 class ContentManager
 {
-	//{{{ getLength() method
+	// getLength() method
 	public final int getLength()
 	{
 		return length;
 	} //}}}
 
-	//{{{ getText() methods
+	// getText() methods
 	public String getText(int start, int len)
 	{
 		if(start >= gapStart)
@@ -100,7 +99,7 @@ class ContentManager
 		}
 	} //}}}
 
-	//{{{ getSegment() method
+	// getSegment() method
 	/**
 	 * Returns a read-only segment of the buffer.
 	 * It doesn't copy the text
@@ -124,7 +123,7 @@ class ContentManager
 		}
 	} //}}}
 
-	//{{{ insert() methods
+	// insert() methods
 	public void insert(int start, String str)
 	{
 		int len = str.length();
@@ -159,7 +158,7 @@ class ContentManager
 		length += seg.count;
 	} //}}}
 
-	//{{{ _setContent() method
+	// _setContent() method
 	public void _setContent(char[] text, int length)
 	{
 		assert text != null;
@@ -169,32 +168,32 @@ class ContentManager
 		this.length = length;
 	} //}}}
 
-	//{{{ remove() method
+	// remove() method
 	public void remove(int start, int len)
 	{
 		moveGapStart(start);
 		length -= len;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final char[] EMPTY_TEXT = new char[0];
 	private char[] text = EMPTY_TEXT;
 	private int gapStart;
 	private int length;
 
-	//{{{ gapEnd() method
+	// gapEnd() method
 	private int gapEnd()
 	{
 		return gapStart + gapLength();
 	} //}}}
 
-	//{{{ gapLength() method
+	// gapLength() method
 	private int gapLength()
 	{
 		return text.length - length;
 	} //}}}
 
-	//{{{ moveGapStart() method
+	// moveGapStart() method
 	private void moveGapStart(int newStart)
 	{
 		int gapEnd = gapEnd();
@@ -218,7 +217,7 @@ class ContentManager
 		gapStart = newStart;
 	} //}}}
 
-	//{{{ ensureCapacity() method
+	// ensureCapacity() method
 	private void ensureCapacity(int capacity)
 	{
 		if(capacity >= text.length)
@@ -234,7 +233,7 @@ class ContentManager
 		}
 	} //}}}
 
-	//{{{ prepareGapForInsertion() method
+	// prepareGapForInsertion() method
 	private void prepareGapForInsertion(int start, int len)
 	{
 		moveGapStart(start);
@@ -242,5 +241,4 @@ class ContentManager
 			ensureCapacity(length + len);
 	} //}}}
 
-	//}}}
 }

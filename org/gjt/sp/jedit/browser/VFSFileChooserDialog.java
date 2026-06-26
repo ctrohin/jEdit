@@ -1,7 +1,6 @@
 /*
  * VFSFileChooserDialog.java - VFS file chooser
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
@@ -40,7 +39,6 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.bufferio.IoTask;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * Wraps the VFS browser in a modal dialog.
@@ -50,14 +48,14 @@ import org.gjt.sp.util.*;
  */
 public class VFSFileChooserDialog extends EnhancedDialog
 {
-	//{{{ VFSFileChooserDialog constructor
+	// VFSFileChooserDialog constructor
 	public VFSFileChooserDialog(View view, String path,
 		int mode, boolean multipleSelection)
 	{
 		this(view,path,mode,multipleSelection,true);
 	} //}}}
 
-	//{{{ VFSFileChooserDialog constructor
+	// VFSFileChooserDialog constructor
 	/**
 	 * Constructs a new VFSFileChooserDialog. If <code>authoshow</code>
 	 * is true, the dialog will be show automatically and the call
@@ -73,7 +71,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		_init(view,path,mode,multipleSelection,autoshow);
 	} //}}}
 
-	//{{{ VFSFileChooserDialog constructor
+	// VFSFileChooserDialog constructor
 	/**
 	 * Constructs a new VFSFileChooserDialog.
 	 * This version can specify a dialog as the parent instead
@@ -88,7 +86,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		_init(view,path,mode,multipleSelection,autoshow);
 	} //}}}
 
-	//{{{ VFSFileChooserDialog constructor
+	// VFSFileChooserDialog constructor
 	/**
 	 * Constructs a new VFSFileChooserDialog.
 	 * This version can specify a Frame as the parent instead
@@ -103,7 +101,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		_init(view,path,mode,multipleSelection,autoshow);
 	} //}}}
 
-	//{{{ getBrowser() method
+	// getBrowser() method
 	/**
 	 * Returns the VFSBrowser instance used internally.
 	 * @return the VFS browser used in the dialog
@@ -114,7 +112,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		return browser;
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -123,7 +121,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		super.dispose();
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -211,14 +209,14 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		});
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 
 	/**
 	 * Returns the selected files.
@@ -255,24 +253,23 @@ public class VFSFileChooserDialog extends EnhancedDialog
 			return getSelectedFiles(VFSFile.FILE,VFSFile.FILE);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private VFSBrowser browser;
 	private VFSFileNameField filenameField;
 	private String filename;
 	private JButton ok;
 	private boolean isOK;
 	private TaskListener ioTaskHandler;
-	//}}}
 
-	//{{{ getDefaultTitle() method
+	// getDefaultTitle() method
 	private static String getDefaultTitle()
 	{
 		return jEdit.getProperty("vfs.browser.title");
 	}// }}}
 
-	//{{{ getTitle() method
+	// getTitle() method
 	private static String getTitle(int mode)
 	{
 		switch(mode)
@@ -290,7 +287,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		}
 	}// }}}
 
-	//{{{ _init method
+	// _init method
 	private void _init(View view, String path,
 		int mode, boolean multipleSelection, boolean autoshow)
 	{
@@ -389,7 +386,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 			setVisible(true);
 	} //}}}
 
-	//{{{ doFileExistsWarning() method
+	// doFileExistsWarning() method
 	private boolean doFileExistsWarning(String filename)
 	{
 		if(browser.getMode() == VFSBrowser.SAVE_DIALOG
@@ -406,7 +403,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		return false;
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 	
 	private String[] getSelectedFiles(int type1, int type2)
 	{
@@ -428,13 +425,12 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		return l.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
-	//{{{ BrowserHandler class
+	// Inner classes
+	// BrowserHandler class
 	private class BrowserHandler implements BrowserListener
 	{
-		//{{{ filesSelected() method
+		// filesSelected() method
 		@Override
 		public void filesSelected(VFSBrowser browser, VFSFile[] files)
 		{
@@ -483,7 +479,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 			}
 		} //}}}
 
-		//{{{ filesActivated() method
+		// filesActivated() method
 		@Override
 		public void filesActivated(VFSBrowser browser, VFSFile[] files)
 		{
@@ -525,7 +521,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		} //}}}
 	} //}}}
 
-	//{{{ IoTaskListener class
+	// IoTaskListener class
 	private class IoTaskHandler implements TaskListener
 	{
 		private final Runnable cursorStatus = () ->
@@ -544,28 +540,28 @@ public class VFSFileChooserDialog extends EnhancedDialog
 			}
 		};
 
-		//{{{ waiting() method
+		// waiting() method
 		@Override
 		public void waiting(Task task)
 		{
 			SwingUtilities.invokeLater(cursorStatus);
 		} //}}}
 	
-		//{{{ running() method
+		// running() method
 		@Override
 		public void running(Task task)
 		{
 			SwingUtilities.invokeLater(cursorStatus);
 		} //}}}
 	
-		//{{{ done() method
+		// done() method
 		@Override
 		public void done(Task task)
 		{
 			SwingUtilities.invokeLater(cursorStatus);
 		} //}}}
 
-		//{{{ progressUpdate() method
+		// progressUpdate() method
 		@Override
 		public void valueUpdated(Task task)
 		{
@@ -573,7 +569,7 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		} //}}}
 	} //}}}
 
-	//{{{ GetFileTypeRequest class
+	// GetFileTypeRequest class
 	private class GetFileTypeRequest extends IoTask
 	{
 		private final VFS    vfs;
@@ -621,5 +617,4 @@ public class VFSFileChooserDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//}}}
 }

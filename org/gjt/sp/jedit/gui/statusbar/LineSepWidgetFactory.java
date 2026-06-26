@@ -1,7 +1,6 @@
 /*
  * LineSepWidgetFactory.java - The line separator widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008-2021 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -38,7 +37,6 @@ import org.gjt.sp.jedit.jEdit;
 import org.jedit.misc.LineSepType;
 
 import javax.swing.*;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -46,17 +44,17 @@ import javax.swing.*;
  */
 public class LineSepWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new LineSepWidget(view);
 	} //}}}
 	
-	//{{{ LineSepWidget class
+	// LineSepWidget class
 	private static class LineSepWidget extends AbstractLabelWidget
 	{
-		//{{{ LineSepWidget constructor
+		// LineSepWidget constructor
 		LineSepWidget(View view)
 		{
 			super(view);
@@ -107,7 +105,7 @@ public class LineSepWidgetFactory implements StatusWidgetFactory
 			});
 		}
 
-		//{{{ update() method
+		// update() method
 		@Override
 		public void update()
 		{

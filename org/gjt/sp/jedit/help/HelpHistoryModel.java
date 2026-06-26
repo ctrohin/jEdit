@@ -1,7 +1,6 @@
 /*
  * HelpHistoryModel.java - History Model for Help GUI
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Nicholas O'Leary
  *
@@ -35,14 +34,14 @@ public class HelpHistoryModel
 {
 	public static final HistoryEntry[] EMPTY_HISTORY_ENTRIES_ARRAY = new HistoryEntry[0];
 
-	//{{{ HelpHistoryModel constructor
+	// HelpHistoryModel constructor
 	public HelpHistoryModel(int size)
 	{
 		history = new HistoryEntry[size];
 		listeners = new ArrayList<>();
 	} //}}}
 
-	//{{{ forward() method
+	// forward() method
 	HistoryEntry forward(HelpViewer helpViewer)
 	{
 		if(history.length - historyPos <= 1)
@@ -60,14 +59,14 @@ public class HelpHistoryModel
 		return result;
 	} //}}}
 
-	//{{{ hasNext() method
+	// hasNext() method
 	public boolean hasNext()
 	{
 		return !((history.length - historyPos <= 1) ||
 			 (history[historyPos] == null));
 	} //}}}
 
-	//{{{ back() method
+	// back() method
 	HistoryEntry back(HelpViewer helpViewer)
 	{
 		if (historyPos <= 1)
@@ -80,13 +79,13 @@ public class HelpHistoryModel
 		return result;
 	} //}}}
 
-	//{{{ hasPrevious() method
+	// hasPrevious() method
 	public boolean hasPrevious()
 	{
 		return (historyPos>1);
 	} //}}}
 
-	//{{{ addToHistory() method
+	// addToHistory() method
 	public void addToHistory(String url)
 	{
 		history[historyPos] = new HistoryEntry(url,url,0);
@@ -107,7 +106,7 @@ public class HelpHistoryModel
 		fireUpdate();
 	} //}}}
 
-	//{{{ setCurrentScrollPosition() method
+	// setCurrentScrollPosition() method
 	public void setCurrentScrollPosition(URL currentPage, int scrollPosition)
 	{
 		if ((null != currentPage) && (historyPos >= 1) &&
@@ -117,7 +116,7 @@ public class HelpHistoryModel
 		}
 	} //}}}
 
-	//{{{ setCurrentEntry() method
+	// setCurrentEntry() method
 	public void setCurrentEntry(HistoryEntry entry)
 	{
 		for (int i=0 ; i<history.length ; i++)
@@ -132,7 +131,7 @@ public class HelpHistoryModel
 		// Do nothing?
 	} //}}}
 
-	//{{{ updateTitle() method
+	// updateTitle() method
 	public void updateTitle(String url, String title)
 	{
 		for (HistoryEntry aHistory : history)
@@ -143,7 +142,7 @@ public class HelpHistoryModel
 		fireUpdate();
 	}//}}}
 
-	//{{{ getPreviousURLs() method
+	// getPreviousURLs() method
 	HistoryEntry[] getPreviousURLs()
 	{
 		if (historyPos <= 1)
@@ -155,7 +154,7 @@ public class HelpHistoryModel
 		return previous;
 	} //}}}
 
-	//{{{ getNextURLs() method
+	// getNextURLs() method
 	HistoryEntry[] getNextURLs()
 	{
 		if (history.length - historyPos <= 1)
@@ -171,53 +170,52 @@ public class HelpHistoryModel
 		return next;
 	} //}}}
 
-	//{{{ addHelpHistoryModelListener() method
+	// addHelpHistoryModelListener() method
 	public void addHelpHistoryModelListener(HelpHistoryModelListener hhml)
 	{
 		listeners.add(hhml);
 	} //}}}
 
-	//{{{ removeHelpHistoryModelListener() method
+	// removeHelpHistoryModelListener() method
 	public void removeHelpHistoryModelListener(HelpHistoryModelListener hhml)
 	{
 		listeners.remove(hhml);
 	} //}}}
 
-	//{{{ fireUpdate() method
+	// fireUpdate() method
 	public void fireUpdate()
 	{
 		for (HelpHistoryModelListener listener : listeners)
 			listener.historyUpdated();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private int historyPos;
 	private final HistoryEntry[] history;
 	private final List<HelpHistoryModelListener> listeners;
-	//}}}
 
-	//{{{ Inner Classes
+	// Inner Classes
 
-	//{{{ HistoryEntry class
+	// HistoryEntry class
 	static class HistoryEntry
 	{
 		String url;
 		String title;
 		int scrollPosition;
 
-		//{{{ HistoryEntry constructor
+		// HistoryEntry constructor
 		HistoryEntry(String url, String title)
 		{
 			this(url,title,0);
 		} //}}}
 
-		//{{{ HistoryEntry constructor
+		// HistoryEntry constructor
 		HistoryEntry(HistoryEntry original)
 		{
 			this(original.url,original.title,original.scrollPosition);
 		} //}}}
 
-		//{{{ HistoryEntry constructor
+		// HistoryEntry constructor
 		HistoryEntry(String url, String title, int scrollPosition)
 		{
 			this.url = url;
@@ -225,13 +223,13 @@ public class HelpHistoryModel
 			this.scrollPosition = scrollPosition;
 		} //}}}
 
-		//{{{ equals() method
+		// equals() method
 		public boolean equals(HistoryEntry he)
 		{
 			return he.url.equals(url) && he.title.equals(title) && (he.scrollPosition == scrollPosition);
 		} //}}}
 
-		//{{{ toString() method
+		// toString() method
 		public String toString()
 		{
 			return getClass().getName() + "[url=" + url + ",title=" + title
@@ -239,5 +237,4 @@ public class HelpHistoryModel
 		} //}}}
 	} //}}}
 
-	//}}}
 }

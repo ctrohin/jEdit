@@ -2,7 +2,6 @@
  * Chunk.java - A syntax token with extra information required for painting it
  * on screen
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2002 Slava Pestov
  *
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 
 
 import javax.swing.text.*;
@@ -36,7 +35,6 @@ import java.util.List;
 
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.jedit.IPropertyManager;
-//}}}
 
 /**
  * A syntax token with extra information required for painting it
@@ -48,7 +46,7 @@ public class Chunk extends Token
 	public static final Font[] EMPTY_FONT_ARRAY = new Font[0];
 	public static final GlyphVector[] EMPTY_GLYPH_VECTOR_ARRAY = new GlyphVector[0];
 
-	//{{{ paintChunkList() method
+	// paintChunkList() method
 	/**
 	 * Paints a chunk list.
 	 * @param chunks The chunk list
@@ -103,7 +101,7 @@ public class Chunk extends Token
 		return _x;
 	} //}}}
 
-	//{{{ paintChunkBackgrounds() method
+	// paintChunkBackgrounds() method
 	/**
 	 * Paints the background highlights of a chunk list.
 	 * @param chunks The chunk list
@@ -133,7 +131,7 @@ public class Chunk extends Token
 			{
 				if(chunks.isAccessible())
 				{
-					//{{{ Paint token background color if necessary
+					// Paint token background color if necessary
 					Color bgColor = chunks.background;
 					if(bgColor != null)
 					{
@@ -155,7 +153,7 @@ public class Chunk extends Token
 		return _x;
 	} //}}}
 
-	//{{{ offsetToX() method
+	// offsetToX() method
 	/**
 	 * Converts an offset in a chunk list into an x co-ordinate.
 	 * @param chunks The chunk list
@@ -184,7 +182,7 @@ public class Chunk extends Token
 		return x;
 	} //}}}
 
-	//{{{ xToOffset() method
+	// xToOffset() method
 	/**
 	 * Converts an x co-ordinate in a chunk list into an offset.
 	 * @param chunks The chunk list
@@ -210,7 +208,7 @@ public class Chunk extends Token
 		return -1;
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Reload internal configuration based on the given properties.
 	 *
@@ -262,7 +260,7 @@ public class Chunk extends Token
 		glyphCache = null;
 	} //}}}
 
-	//{{{ getSubstFont() method
+	// getSubstFont() method
 	/**
 	 * Returns the first font which can display a character from
 	 * configured substitution candidates, or null if there is no
@@ -291,7 +289,7 @@ public class Chunk extends Token
 		return null;
 	} //}}}
 
-	//{{{ deriveSubstFont() method
+	// deriveSubstFont() method
 	/**
 	 * Derives a font to match the main font for purposes of
 	 * font substitution.
@@ -315,7 +313,7 @@ public class Chunk extends Token
 		return substFont;
 	} //}}}
 
-	//{{{ usedFontSubstitution() method
+	// usedFontSubstitution() method
 	/**
 	 * Returns true if font substitution was used in the layout of this chunk.
 	 * If substitution was not used, the chunk may be assumed to be composed
@@ -327,17 +325,15 @@ public class Chunk extends Token
 				(glyphData.getGlyphVectorData().length > 1 ||
 				(glyphData.getGlyphVectorData().length == 1 && glyphData.getGlyphVectorData()[0].getGlyphVector().getFont() != style.getFont())));
 	}
-	//}}}
 
-	//{{{ Package private members
+	// Package private members
 
-	//{{{ Instance variables
+	// Instance variables
 	SyntaxStyle style;
 	// set up after init()
 	float width;
-	//}}}
 
-	//{{{ Chunk constructor
+	// Chunk constructor
 	/**
 	 * Constructs a virtual indent appears at the beggining of a wrapped line.
 	 */
@@ -349,7 +345,7 @@ public class Chunk extends Token
 		assert isInitialized();
 	} //}}}
 
-	//{{{ Chunk constructor
+	// Chunk constructor
 	Chunk(byte id, int offset, int length, ParserRuleSet rules,
 		SyntaxStyle[] styles, byte defaultID)
 	{
@@ -362,7 +358,7 @@ public class Chunk extends Token
 		assert !isInitialized();
 	} //}}}
 
-	//{{{ Chunk constructor
+	// Chunk constructor
 	Chunk(byte id, int offset, int length, ParserRuleSet rules,
 		SyntaxStyle style, Color background)
 	{
@@ -373,7 +369,7 @@ public class Chunk extends Token
 		assert !isInitialized();
 	} //}}}
 
-	//{{{ isAccessible() method
+	// isAccessible() method
 	/**
 	 * Returns true if this chunk has accesible text.
 	 */
@@ -382,7 +378,7 @@ public class Chunk extends Token
 		return length > 0;
 	} //}}}
 
-	//{{{ isInitialized() method
+	// isInitialized() method
 	/**
 	 * Returns true if this chunk is ready for painting.
 	 */
@@ -393,7 +389,7 @@ public class Chunk extends Token
 			|| (width > 0);	// tab
 	} //}}}
 
-	//{{{ isTab() method
+	// isTab() method
 	/**
 	 * Returns true if this chunk represents a tab.
 	 */
@@ -403,7 +399,7 @@ public class Chunk extends Token
 			&& lineText.array[lineText.offset + offset] == '\t';
 	} //}}}
 
-	//{{{ snippetBefore() method
+	// snippetBefore() method
 	/**
 	 * Returns a shorten uninitialized chunk before specific offset.
 	 */
@@ -414,7 +410,7 @@ public class Chunk extends Token
 			rules, style, background);
 	} //}}}
 
-	//{{{ snippetAfter() method
+	// snippetAfter() method
 	/**
 	 * Returns a shorten uninitialized chunk after specific offset.
 	 */
@@ -425,7 +421,7 @@ public class Chunk extends Token
 			rules, style, background);
 	} //}}}
 
-	//{{{ snippetBeforeLineOffset() method
+	// snippetBeforeLineOffset() method
 	/**
 	 * Returns a shorten uninitialized chunk before specific offset.
 	 * The offset is it in the line text, instead of in chunk.
@@ -435,7 +431,7 @@ public class Chunk extends Token
 		return snippetBefore(lineOffset - offset);
 	} //}}}
 
-	//{{{ offsetToX() method
+	// offsetToX() method
 	final float offsetToX(int offset)
 	{
 		if(glyphData == null)
@@ -459,7 +455,7 @@ public class Chunk extends Token
 		return -1;
 	} //}}}
 
-	//{{{ xToOffset() method
+	// xToOffset() method
 	final int xToOffset(float x, boolean round)
 	{
 		if (glyphData == null)
@@ -504,7 +500,7 @@ public class Chunk extends Token
 		return -1;
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	void init(Segment lineText, TabExpander expander, float x,
 		FontRenderContext fontRenderContext, int physicalLineOffset)
 	{
@@ -542,11 +538,10 @@ public class Chunk extends Token
 		assert isInitialized();
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static boolean fontSubstEnabled;
 	private static boolean fontSubstSystemFontsEnabled;
 	private static Font[] preferredFonts;
@@ -578,25 +573,23 @@ public class Chunk extends Token
 	// Windows XP).
 	private static int glyphCacheCapacity = 256;
 	private static SoftReference<GlyphCache> glyphCache;
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	// this is either style.getBackgroundColor() or
 	// styles[defaultID].getBackgroundColor()
 	private Color background;
 	private char[] chars;
 	private String str;
 	private GlyphData glyphData;
-	//}}}
 
-	//{{{ init() method
+	// init() method
 	private GlyphData buildGlyphInfo(char[] chars, FontRenderContext fontRenderContext)
 	{
 		GlyphVector[] glyphs = layoutGlyphs(style.getFont(), fontRenderContext, chars, 0, chars.length);
 		return new GlyphData(glyphs);
 	} //}}}
 
-	//{{{ getFontSubstList() method
+	// getFontSubstList() method
 	/**
 	 * Obtain a list of preferred fallback fonts as specified by the user
 	 * (see Text Area in Global Options), as well as a list of all fonts
@@ -634,7 +627,7 @@ public class Chunk extends Token
 		return fontSubstList;
 	} //}}}
 
-	//{{{ drawGlyphs() method
+	// drawGlyphs() method
 	/**
 	 * Draws the internal list of glyph vectors into the given
 	 * graphics object.
@@ -654,7 +647,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ layoutGlyphVector() methods
+	// layoutGlyphVector() methods
 	/**
 	 * A wrapper of Font.layoutGlyphVector() to simplify the calls.
 	 */
@@ -700,7 +693,7 @@ public class Chunk extends Token
 		return result;
 	} // }}}
 
-	//{{{ layoutGlyphs() method
+	// layoutGlyphs() method
 	/**
 	 * Layout the glyphs to render the given text, applying font
 	 * substitution if configured.
@@ -739,7 +732,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ doFontSubstitution() method
+	// doFontSubstitution() method
 	private static void doFontSubstitution(FontSubstitution subst,
 		Font mainFont,
 		char[] text, int start, int end)
@@ -778,7 +771,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ class FontSubstitution
+	// class FontSubstitution
 	// A helper class to build GlyphVector[] with least calls to
 	// layoutGlyphVector() no matter how many the font substitution
 	// logic find intermediate boundaries.
@@ -858,7 +851,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ getGlyphCache() method
+	// getGlyphCache() method
 	private static GlyphCache getGlyphCache()
 	{
 		if (glyphCache != null)
@@ -874,7 +867,7 @@ public class Chunk extends Token
 		return newOne;
 	} //}}}
 
-	//{{{ class GlyphKey
+	// class GlyphKey
 	private static class GlyphKey
 	{
 		public final char[] chars;
@@ -915,7 +908,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ class GlyphCache
+	// class GlyphCache
 	private static class GlyphCache extends LinkedHashMap<GlyphKey, GlyphData>
 	{
 		GlyphCache(int capacity)
@@ -934,7 +927,7 @@ public class Chunk extends Token
 		private final int capacity;
 	} //}}}
 
-	//{{{ class GlyphCache
+	// class GlyphCache
 	private static class GlyphData
 	{
 		private final GlyphVectorData[] glyphVectorData;
@@ -964,7 +957,7 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//{{{ class GlyphVectorData
+	// class GlyphVectorData
 	private static class GlyphVectorData
 	{
 		private final GlyphVector glyphVector;
@@ -987,5 +980,4 @@ public class Chunk extends Token
 		}
 	} //}}}
 
-	//}}}
 }

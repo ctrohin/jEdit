@@ -1,7 +1,6 @@
 /*
  * EditAbbrevDialog.java - Displayed when editing abbrevs
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -30,11 +29,10 @@ import java.awt.*;
 import java.util.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 /** Displayed when editing abbrevs */
 public class EditAbbrevDialog extends JDialog
 {
-	//{{{ EditAbbrevDialog constructor
+	// EditAbbrevDialog constructor
 	/**
 	 * @since jEdit 4.2pre3
 	 */
@@ -45,7 +43,7 @@ public class EditAbbrevDialog extends JDialog
 		init(abbrev, expansion, abbrevs);
 	} //}}}
 
-	//{{{ EditAbbrevDialog constructor
+	// EditAbbrevDialog constructor
 	public EditAbbrevDialog(Dialog dialog, String abbrev, String expansion,
 		Map abbrevs)
 	{
@@ -53,7 +51,7 @@ public class EditAbbrevDialog extends JDialog
 		init(abbrev, expansion, abbrevs);
 	} //}}}
 
-	//{{{ getAbbrev() method
+	// getAbbrev() method
 	public String getAbbrev()
 	{
 		if(!isOK)
@@ -62,7 +60,7 @@ public class EditAbbrevDialog extends JDialog
 		return editor.getAbbrev();
 	} //}}}
 
-	//{{{ getExpansion() method
+	// getExpansion() method
 	public String getExpansion()
 	{
 		if(!isOK)
@@ -71,14 +69,14 @@ public class EditAbbrevDialog extends JDialog
 		return editor.getExpansion();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private AbbrevEditor editor;
 	private JButton ok;
 	private boolean isOK;
 	private String originalAbbrev;
 	private Map abbrevs;
 
-	//{{{ init() method
+	// init() method
 	private void init(String abbrev, String expansion, Map abbrevs)
 	{
 		this.abbrevs = abbrevs;
@@ -121,7 +119,7 @@ public class EditAbbrevDialog extends JDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ checkForExistingAbbrev() method
+	// checkForExistingAbbrev() method
 	private boolean checkForExistingAbbrev()
 	{
 		String abbrev = editor.getAbbrev();
@@ -140,9 +138,8 @@ public class EditAbbrevDialog extends JDialog
 		return true;
 	} //}}}
 
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -167,7 +164,7 @@ public class EditAbbrevDialog extends JDialog
 		}
 	} //}}}
 
-	//{{{ KeyHandler class
+	// KeyHandler class
 	class KeyHandler extends KeyAdapter
 	{
 		public void keyPressed(KeyEvent evt)

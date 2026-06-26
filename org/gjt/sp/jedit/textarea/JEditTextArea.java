@@ -1,7 +1,6 @@
 /*
  * JEditTextArea.java - jEdit's text component
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov
  * Portions copyright (C) 2000 Ollie Rutherfurd
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.awt.AWTEvent;
 import java.awt.event.MouseEvent;
 import java.util.regex.Pattern;
@@ -44,7 +43,6 @@ import org.gjt.sp.jedit.msg.PropertiesChanged;
 import org.gjt.sp.jedit.options.GlobalOptions;
 import org.gjt.sp.jedit.print.PageBreakExtension;
 import org.gjt.sp.jedit.textarea.fold.FoldPainter;
-//}}}
 
 /**
  * jEdit's text component.<p>
@@ -61,7 +59,7 @@ import org.gjt.sp.jedit.textarea.fold.FoldPainter;
 public class JEditTextArea extends TextArea
 {
 
-	//{{{ JEditTextArea constructor
+	// JEditTextArea constructor
 	/**
 	 * Creates a new JEditTextArea.
 	 */
@@ -77,7 +75,7 @@ public class JEditTextArea extends TextArea
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -90,7 +88,7 @@ public class JEditTextArea extends TextArea
 		super.dispose();
 	} //}}}
 
-	//{{{ getFoldPainter() method
+	// getFoldPainter() method
 	@Override
 	public FoldPainter getFoldPainter()
 	{
@@ -104,7 +102,7 @@ public class JEditTextArea extends TextArea
 	} //}}}
 
 	// {{{ Overrides for macro recording.
-	//{{{ home() method
+	// home() method
 	/**
 	 * An override to record the acutual action taken for home().
 	 */
@@ -127,7 +125,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ end() method
+	// end() method
 	/**
 	 * An override to record the acutual action taken for end().
 	 */
@@ -151,7 +149,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ smartHome() method
+	// smartHome() method
 	/**
 	 * An override to record the acutual action taken for smartHome().
 	 */
@@ -183,7 +181,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ smartEnd() method
+	// smartEnd() method
 	/**
 	 * An override to record the acutual action taken for smartHome().
 	 */
@@ -223,7 +221,7 @@ public class JEditTextArea extends TextArea
 		super.goToBufferEnd(select);
 	}
 
-	//{{{ goToMatchingBracket() method
+	// goToMatchingBracket() method
 	/**
 	 * Moves the caret to the bracket matching the one before the caret.
 	 * Also sends PositionChanging if it goes somewhere.
@@ -265,7 +263,7 @@ public class JEditTextArea extends TextArea
 		return super.replaceSelection(selectedText);
 	}//}}}
 
-	//{{{ showGoToLineDialog() method
+	// showGoToLineDialog() method
 	/**
 	 * Displays the 'go to line' dialog box, and moves the caret to the
 	 * specified line number, or moves the caret back or forward by the offset provided.
@@ -308,7 +306,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ userInput() method
+	// userInput() method
 	/**
 	 * Handles the insertion of the specified character. It performs the
 	 * following operations in addition to TextArea#userInput(char):
@@ -330,7 +328,7 @@ public class JEditTextArea extends TextArea
 		super.userInput(ch);
 	} //}}}
 
-	//{{{ addExplicitFold() method
+	// addExplicitFold() method
 	/**
 	 * Surrounds the selection with explicit fold markers.
 	 * @since jEdit 4.0pre3
@@ -348,7 +346,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ formatParagraph() method
+	// formatParagraph() method
 	/**
 	 * Formats the paragraph containing the caret.
 	 * @since jEdit 2.7pre2
@@ -366,7 +364,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ doWordCount() method
+	// doWordCount() method
 	@SuppressWarnings("fallthrough")
 	protected static void doWordCount(View view, String text)
 	{
@@ -401,7 +399,7 @@ public class JEditTextArea extends TextArea
 		GUIUtilities.message(view,"wordcount",args);
 	} //}}}
 
-	//{{{ showWordCountDialog() method
+	// showWordCountDialog() method
 	/**
 	 * Displays the 'word count' dialog box.
 	 * @since jEdit 2.7pre2
@@ -418,9 +416,9 @@ public class JEditTextArea extends TextArea
 		doWordCount(view,buffer.getText(0,buffer.getLength()));
 	} //}}}
 
-	//{{{ Getters and setters
+	// Getters and setters
 
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Returns this text area's view.
 	 * @since jEdit 4.2pre5
@@ -430,17 +428,14 @@ public class JEditTextArea extends TextArea
 		return view;
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private SelectionMatchHighlight selectionMatchHighlight;
-	//}}}
-	//}}}
 
-	//{{{ Fold painters
+	// Fold painters
 	/**
 	 * Fold painter service.
 	 * @since jEdit 4.3pre16
@@ -449,7 +444,7 @@ public class JEditTextArea extends TextArea
 	public static final String FOLD_PAINTER_SERVICE = "org.gjt.sp.jedit.textarea.fold.FoldPainter";
 	public static final String DEFAULT_FOLD_PAINTER_SERVICE = "Triangle";
 
-	//{{{ getFoldPainterService() method
+	// getFoldPainterService() method
 	public static String getFoldPainterName()
 	{
 		return jEdit.getProperty(FOLD_PAINTER_PROPERTY, DEFAULT_FOLD_PAINTER_SERVICE);
@@ -457,7 +452,7 @@ public class JEditTextArea extends TextArea
 
 	//}}} Fold painters
 
-	//{{{ handlePopupTrigger() method
+	// handlePopupTrigger() method
 	/**
 	 * Do the same thing as right-clicking on the text area. The Gestures
 	 * plugin uses this API.
@@ -475,7 +470,7 @@ public class JEditTextArea extends TextArea
 		}
 	} //}}}
 
-	//{{{ createPopupMenu() method
+	// createPopupMenu() method
 	/**
 	 * Creates the popup menu.
 	 * @since 4.3pre15
@@ -493,7 +488,7 @@ public class JEditTextArea extends TextArea
 		popup.add(customize);
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{

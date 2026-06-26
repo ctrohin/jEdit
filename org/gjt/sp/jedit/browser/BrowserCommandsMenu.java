@@ -1,7 +1,6 @@
 /*
  * BrowserCommandsMenu.java - provides various commands
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  * Portions copyright (C) 1999 Jason Ginchereau
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -36,7 +35,6 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.manager.BufferManager;
 import org.gjt.sp.jedit.menu.MenuItemTextComparator;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * @version $Id$
@@ -44,7 +42,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class BrowserCommandsMenu extends JPopupMenu
 {
-	//{{{ BrowserCommandsMenu constructor
+	// BrowserCommandsMenu constructor
 	public BrowserCommandsMenu(VFSBrowser browser, VFSFile[] files)
 	{
 		this.browser = browser;
@@ -180,7 +178,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		update();
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	public void update()
 	{
 		if(encodingMenuItems != null && browser.currentEncoding != null)
@@ -203,13 +201,13 @@ public class BrowserCommandsMenu extends JPopupMenu
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final VFSBrowser browser;
 	private HashMap<String, JRadioButtonMenuItem> encodingMenuItems;
 	private JCheckBoxMenuItem autoDetect;
 	private JRadioButtonMenuItem otherEncoding;
 
-	//{{{ createMenuItem() methods
+	// createMenuItem() methods
 	private static JMenuItem createMenuItem(String name, String iconName)
 	{
 		JMenuItem jMenuItem =
@@ -223,7 +221,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		return createMenuItem(name, null);
 	} //}}}
 
-	//{{{ createEncodingMenu() method
+	// createEncodingMenu() method
 	private JMenu createEncodingMenu()
 	{
 		ActionListener actionHandler = new ActionHandler();
@@ -290,7 +288,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		return encodingMenu;
 	} //}}}
 
-	//{{{ createCustomMenu() method
+	// createCustomMenu() method
 	private static Optional<JMenu> createCustomMenu()
 	{
 		if (!jEdit.getProperty("browser.custom.context", "").isEmpty())
@@ -302,7 +300,7 @@ public class BrowserCommandsMenu extends JPopupMenu
 		return Optional.empty();
 	} //}}}
 
-	//{{{ createPluginsMenu() method
+	// createPluginsMenu() method
 	private static JMenu createPluginMenu(VFSBrowser browser)
 	{
 		JMenu pluginMenu = new JMenu(jEdit.getProperty(
@@ -313,9 +311,8 @@ public class BrowserCommandsMenu extends JPopupMenu
 	} //}}}
 
 
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override

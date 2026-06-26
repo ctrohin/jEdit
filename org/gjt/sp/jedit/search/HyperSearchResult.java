@@ -1,7 +1,6 @@
 /*
  * HyperSearchResult.java - HyperSearch result
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import javax.swing.text.Position;
 
 import org.gjt.sp.jedit.msg.BufferUpdate;
@@ -30,7 +29,6 @@ import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * A set of occurrences of the search string on a given line in a buffer.
@@ -45,7 +43,7 @@ public class HyperSearchResult implements HyperSearchNode
 	public Occur occur;
 	public int occurCount;
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	public Buffer getBuffer(View view)
 	{
 		if(buffer == null)
@@ -53,7 +51,7 @@ public class HyperSearchResult implements HyperSearchNode
 		return buffer;
 	} //}}}
 
-	//{{{ getSelection() method
+	// getSelection() method
 	/**
 	 * Returns an array of selection objects pointing to the occurrences
 	 * of the search term on the current line. The buffer must be opened
@@ -82,21 +80,21 @@ public class HyperSearchResult implements HyperSearchNode
 		return returnValue;
 	} //}}}
 
-	//{{{ goTo() method
+	// goTo() method
 	public void goTo(final EditPane editPane)
 	{
 		new GotoDelayed(editPane);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return str;
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ HyperSearchResult constructor
+	// HyperSearchResult constructor
 	HyperSearchResult(Buffer buffer, int line)
 	{
 		path = buffer.getPath();
@@ -110,7 +108,7 @@ public class HyperSearchResult implements HyperSearchNode
 			.replace('\t',' ').trim();
 	} //}}}
 
-	//{{{ bufferOpened() method
+	// bufferOpened() method
 	void bufferOpened(Buffer buffer)
 	{
 		this.buffer = buffer;
@@ -122,7 +120,7 @@ public class HyperSearchResult implements HyperSearchNode
 		}
 	} //}}}
 
-	//{{{ bufferClosed() method
+	// bufferClosed() method
 	void bufferClosed()
 	{
 		buffer = null;
@@ -134,7 +132,7 @@ public class HyperSearchResult implements HyperSearchNode
 		}
 	} //}}}
 
-	//{{{ addOccur() method
+	// addOccur() method
 	void addOccur(int start, int end)
 	{
 		Occur o = new Occur(start,end);
@@ -143,7 +141,7 @@ public class HyperSearchResult implements HyperSearchNode
 		occurCount++;
 	} //}}}
 
-	//{{{ pathEquals() method
+	// pathEquals() method
 	/**
 	 * @param path A canonical path
 	 */
@@ -152,7 +150,7 @@ public class HyperSearchResult implements HyperSearchNode
 		return path.equals(MiscUtilities.resolveSymlinks(this.path));
 	} //}}}
 	
-	//{{{ equals() method
+	// equals() method
 	public boolean equals(Object compareObj)
 	{
 		if (!(compareObj instanceof HyperSearchResult))
@@ -162,16 +160,15 @@ public class HyperSearchResult implements HyperSearchNode
 			&& buffer.equals(otherResult.buffer);		
 	}//}}}
 
-	//}}}
 
-	//{{{ Occur class
+	// Occur class
 	public class Occur
 	{
 		public int start, end;
 		public Position startPos, endPos;
 		public Occur next;
 
-		//{{{ Occur constructor
+		// Occur constructor
 		Occur(int start, int end)
 		{
 			this.start = start;
@@ -181,7 +178,7 @@ public class HyperSearchResult implements HyperSearchNode
 				bufferOpened();
 		} //}}}
 
-		//{{{ bufferOpened() method
+		// bufferOpened() method
 		void bufferOpened()
 		{
 			startPos = buffer.createPosition(Math.min(
@@ -190,7 +187,7 @@ public class HyperSearchResult implements HyperSearchNode
 				buffer.getLength(),end));
 		} //}}}
 
-		//{{{ bufferClosed() method
+		// bufferClosed() method
 		void bufferClosed()
 		{
 			start = startPos.getOffset();

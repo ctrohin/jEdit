@@ -1,7 +1,6 @@
 /*
  * BrowserColorsOptionPane.java - Browser colors options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import javax.swing.*;
@@ -35,9 +34,8 @@ import org.gjt.sp.jedit.gui.ColorChooserDialog;
 import org.gjt.sp.jedit.gui.RolloverButton;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.jedit.*;
-//}}}
 
-//{{{ BrowserColorsOptionPane class
+// BrowserColorsOptionPane class
 /**
  * Browser color editor.
  * @author Slava Pestov
@@ -45,15 +43,15 @@ import org.gjt.sp.jedit.*;
  */
 public class BrowserColorsOptionPane extends AbstractOptionPane
 {
-	//{{{ BrowserColorsOptionPane constructor
+	// BrowserColorsOptionPane constructor
 	public BrowserColorsOptionPane()
 	{
 		super("browser.colors");
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -109,23 +107,22 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 		updateEnabled();
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
 		colorsModel.save();
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private BrowserColorsModel colorsModel;
 	private JTable colorsTable;
 	private JButton remove;
 	private JButton moveUp;
 	private JButton moveDown;
 
-	//{{{ updateEnabled() method
+	// updateEnabled() method
 	private void updateEnabled()
 	{
 		int selectedRow = colorsTable.getSelectedRow();
@@ -135,16 +132,15 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			colorsModel.getRowCount() - 1);
 	} //}}}
 
-	//{{{ setSelectedRow() method
+	// setSelectedRow() method
 	private void setSelectedRow(int row)
 	{
 		colorsTable.getSelectionModel().setSelectionInterval(row,row);
 		colorsTable.scrollRectToVisible(colorsTable.getCellRect(row,0,true));
 	} //}}}
 
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -174,7 +170,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -195,10 +191,10 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ BrowserColorsModel class
+	// BrowserColorsModel class
 	private static class BrowserColorsModel extends AbstractTableModel
 	{
-		//{{{ BrowserColorsModel constructor
+		// BrowserColorsModel constructor
 		BrowserColorsModel()
 		{
 			entries = new ArrayList<>();
@@ -215,21 +211,21 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ add() method
+		// add() method
 		void add()
 		{
 			entries.add(new Entry("",UIManager.getColor("Tree.foreground")));
 			fireTableRowsInserted(entries.size() - 1,entries.size() - 1);
 		} //}}}
 
-		//{{{ remove() method
+		// remove() method
 		void remove(int index)
 		{
 			entries.remove(index);
 			fireTableRowsDeleted(entries.size(),entries.size());
 		} //}}}
 
-		//{{{ moveUp() method
+		// moveUp() method
 		public void moveUp(int index)
 		{
 			Entry entry = entries.get(index);
@@ -238,7 +234,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			fireTableRowsUpdated(index - 1,index);
 		} //}}}
 
-		//{{{ moveDown() method
+		// moveDown() method
 		public void moveDown(int index)
 		{
 			Entry entry = entries.get(index);
@@ -247,7 +243,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			fireTableRowsUpdated(index,index + 1);
 		} //}}}
 
-		//{{{ save() method
+		// save() method
 		void save()
 		{
 			int i;
@@ -263,21 +259,21 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			jEdit.unsetProperty("vfs.browser.colors." + i + ".color");
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		@Override
 		public int getColumnCount()
 		{
 			return 2;
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		@Override
 		public int getRowCount()
 		{
 			return entries.size();
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		@Override
 		public Object getValueAt(int row, int col)
 		{
@@ -294,14 +290,14 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ isCellEditable() method
+		// isCellEditable() method
 		@Override
 		public boolean isCellEditable(int row, int col)
 		{
 			return col == 0;
 		} //}}}
 
-		//{{{ setValueAt() method
+		// setValueAt() method
 		@Override
 		public void setValueAt(Object value, int row, int col)
 		{
@@ -315,7 +311,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			fireTableRowsUpdated(row,row);
 		} //}}}
 
-		//{{{ getColumnName() method
+		// getColumnName() method
 		@Override
 		public String getColumnName(int index)
 		{
@@ -330,7 +326,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ getColumnClass() method
+		// getColumnClass() method
 		@Override
 		public Class<?> getColumnClass(int col)
 		{
@@ -347,7 +343,7 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 
 		private final List<Entry> entries;
 
-		//{{{ Entry class
+		// Entry class
 		private static class Entry
 		{
 			String glob;
@@ -360,17 +356,17 @@ public class BrowserColorsOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ ColorRenderer class
+		// ColorRenderer class
 		private static class ColorRenderer extends JLabel implements TableCellRenderer
 		{
-			//{{{ ColorRenderer constructor
+			// ColorRenderer constructor
 			ColorRenderer()
 			{
 				setOpaque(true);
 				setBorder(SyntaxHiliteOptionPane.noFocusBorder);
 			} //}}}
 
-			//{{{ getTableCellRendererComponent() method
+			// getTableCellRendererComponent() method
 			@Override
 			public Component getTableCellRendererComponent(
 				JTable table,

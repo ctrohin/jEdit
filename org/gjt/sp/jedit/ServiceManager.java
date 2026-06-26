@@ -1,7 +1,6 @@
 /*
  * ServiceManager.java - Handles services.xml files in plugins
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -34,7 +33,6 @@ import org.gjt.sp.util.XMLUtilities;
 import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.jedit.buffer.FoldHandlerProvider;
 import org.gjt.sp.jedit.buffer.FoldHandler;
-//}}}
 
 /**
  * A generic way for plugins (and core) to provide various API extensions.<p>
@@ -103,7 +101,7 @@ import org.gjt.sp.jedit.buffer.FoldHandler;
  */
 public class ServiceManager
 {
-	//{{{ loadServices() method
+	// loadServices() method
 	/**
 	 * Loads a <code>services.xml</code> file.
 	 * @since jEdit 4.2pre1
@@ -142,7 +140,7 @@ public class ServiceManager
 		}
 	} //}}}
 
-	//{{{ unloadServices() method
+	// unloadServices() method
 	/**
 	 * Removes all services belonging to the specified plugin.
 	 * @param plugin The plugin
@@ -153,7 +151,7 @@ public class ServiceManager
 		serviceMap.keySet().removeIf(d -> d.plugin == plugin);
 	} //}}}
 
-	//{{{ registerService() method
+	// registerService() method
 	/**
 	 * Registers a service. Plugins should provide a
 	 * <code>services.xml</code> file instead of calling this directly.
@@ -172,7 +170,7 @@ public class ServiceManager
 		serviceMap.put(d,d);
 	} //}}}
 
-	//{{{ unregisterService() method
+	// unregisterService() method
 	/**
 	 * Unregisters a service.
 	 *
@@ -187,7 +185,7 @@ public class ServiceManager
 		serviceMap.remove(d);
 	} //}}}
 
-	//{{{ getServiceTypes() method
+	// getServiceTypes() method
 	/**
 	 * Returns all known service class types.
 	 *
@@ -204,7 +202,7 @@ public class ServiceManager
 		return returnValue.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//{{{ getServiceNames() method
+	// getServiceNames() method
 	/**
 	 * Returns the names of all registered services with the given
 	 * class. For example, calling this with a parameter of
@@ -227,13 +225,13 @@ public class ServiceManager
 	} //}}}
 
 
-	//{{{ getServiceNames() method
+	// getServiceNames() method
 	public static String[] getServiceNames(Class clazz)
 	{
 		return getServiceNames(clazz.getName());
 	} //}}}
 
-	//{{{ getService() methods
+	// getService() methods
 	/**
 	 * Returns an instance of the given service. The first time this is
 	 * called for a given service, the BeanShell code is evaluated. The
@@ -283,9 +281,9 @@ public class ServiceManager
 		return (E) getService(clazz.getName(), name);
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ registerService() method
+	// registerService() method
 	/**
 	 * Registers a service.
 	 *
@@ -297,13 +295,11 @@ public class ServiceManager
 		serviceMap.put(d,d);
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private static final Map<Descriptor, Descriptor> serviceMap = new HashMap<>();
-	//}}}
 
-	//{{{ Descriptor class
+	// Descriptor class
 	static class Descriptor
 	{
 		final String clazz;

@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.tray;
 
-//{{{ Imports
+// Imports
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
 
 import static org.gjt.sp.jedit.EditBus.*;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -46,7 +44,7 @@ public class JEditSwingTrayIcon extends JEditTrayIcon
 	private String userDir;
 	private String[] args;
 
-	//{{{ JEditSwingTrayIcon() constructor
+	// JEditSwingTrayIcon() constructor
 	public JEditSwingTrayIcon()
 	{
 		super(GUIUtilities.getEditorIcon(), "jEdit");
@@ -81,7 +79,7 @@ public class JEditSwingTrayIcon extends JEditTrayIcon
 		}
 	}
 
-	//{{{ setTrayIconArgs() method
+	// setTrayIconArgs() method
 	@Override
 	void setTrayIconArgs(boolean restore, String userDir, String[] args)
 	{
@@ -90,7 +88,7 @@ public class JEditSwingTrayIcon extends JEditTrayIcon
 		this.args = args;
 	} //}}}
 
-	//{{{ MyMouseAdapter class
+	// MyMouseAdapter class
 	private class MyMouseAdapter extends MouseAdapter
 	{
 		@Override

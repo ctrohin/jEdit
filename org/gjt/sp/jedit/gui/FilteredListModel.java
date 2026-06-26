@@ -1,7 +1,6 @@
 /*
  * FilteredTableModel.java - A Filtered table model decorator
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  *
@@ -59,7 +58,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 
 	private JList list;
 
-	//{{{ FilteredTableModel() constructor
+	// FilteredTableModel() constructor
 	protected FilteredListModel(E delegated)
 	{
 		this.delegated = delegated;
@@ -67,7 +66,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		resetFilter();
 	} //}}}
 
-	//{{{ setList() method
+	// setList() method
 	/**
 	 * Set the JList that uses this model.
 	 * It is used to restore the selection after the filter has been applied
@@ -82,13 +81,13 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		this.list = list;
 	} //}}}
 
-	//{{{ getDelegated() method
+	// getDelegated() method
 	public E getDelegated()
 	{
 		return delegated;
 	} //}}}
 
-	//{{{ setDelegated() method
+	// setDelegated() method
 	public void setDelegated(E delegated)
 	{
 		this.delegated.removeListDataListener(this);
@@ -96,13 +95,13 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		this.delegated = delegated;
 	} //}}}
 
-	//{{{ resetFilter() method
+	// resetFilter() method
 	private void resetFilter()
 	{
 		filteredIndices = null;
 	} //}}}
 
-	//{{{ setFilter() method
+	// setFilter() method
 	public void setFilter( final String filter)
 	{
 		Runnable runner = new Runnable()
@@ -141,14 +140,14 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		SwingUtilities.invokeLater(runner);
 	} //}}}
 
-	//{{{ prepareFilter() method
+	// prepareFilter() method
 	
 	public String prepareFilter( String filter)
 	{
 		return filter;
 	} //}}}
 
-	//{{{ passFilter() method
+	// passFilter() method
 	/**
 	 * This callback indicates if a row passes the filter.
 	 *
@@ -157,9 +156,8 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 	 * @return true if the row must be visible
 	 */
 	public abstract boolean passFilter(int row,  String filter);
-	//}}}
 
-	//{{{ saveSelection()
+	// saveSelection()
 	protected Set<Integer> saveSelection()
 	{
 		if (list == null)
@@ -176,7 +174,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		return selectedRows;
 	} //}}}
 
-	//{{{ restoreSelection() method
+	// restoreSelection() method
 	protected void restoreSelection(Set<Integer> selectedIndices)
 	{
 		if (selectedIndices == null || getSize() == 0)
@@ -212,7 +210,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 			list.setSelectionInterval(from, to);
 	}  //}}}
 
-	//{{{ getTrueRow() method
+	// getTrueRow() method
 	/**
 	 * Converts a row index from the JTable to an internal row index from the delegated model.
 	 *
@@ -226,7 +224,7 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		return filteredIndices.get(rowIndex).intValue();
 	} //}}}
 
-	//{{{ getInternal2ExternalRow() method
+	// getInternal2ExternalRow() method
 	/**
 	 * Converts a row index from the delegated table model into a row index of the JTable.
 	 *
@@ -245,14 +243,14 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		return externalRowIndex.intValue();
 	} //}}}
 
-	//{{{ getElementAt() method
+	// getElementAt() method
 	public Object getElementAt(int index)
 	{
 		int trueRowIndex = getTrueRow(index);
 		return delegated.getElementAt(trueRowIndex);
 	} //}}}
 
-	//{{{ getSize() method
+	// getSize() method
 	public int getSize()
 	{
 		if (filteredIndices == null)
@@ -260,19 +258,19 @@ public abstract class FilteredListModel<E extends ListModel<?>> extends Abstract
 		return filteredIndices.size();
 	} //}}}
 
-	//{{{ contentsChanged() method
+	// contentsChanged() method
 	public void contentsChanged(ListDataEvent e)
 	{
 		setFilter(filter);
 	} //}}}
 
-	//{{{ intervalAdded() method
+	// intervalAdded() method
 	public void intervalAdded(ListDataEvent e)
 	{
 		setFilter(filter);
 	} //}}}
 
-	//{{{ intervalRemoved() method
+	// intervalRemoved() method
 	public void intervalRemoved(ListDataEvent e)
 	{
 		setFilter(filter);

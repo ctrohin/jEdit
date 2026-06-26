@@ -1,7 +1,6 @@
 /*
  * DefaultInputHandlerProvider.java - This class provide the input handler
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *

@@ -3,7 +3,6 @@
  * version 1.8
  * A BeanShell macro script for the jEdit text editor
  * :tabSize=2:indentSize=2:noTabs=true:
- * :folding=explicit:collapseFolds=1:
  *
  *  $Header$
  *  Copyright (C) 2001-2003 Tom Gutwin

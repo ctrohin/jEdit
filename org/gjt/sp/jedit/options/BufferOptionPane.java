@@ -1,7 +1,6 @@
 /*
  * BufferOptionPane.java -
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -67,7 +66,7 @@ public class BufferOptionPane extends AbstractOptionPane
 		init();
 	}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -79,7 +78,7 @@ public class BufferOptionPane extends AbstractOptionPane
 
 		addSeparator("buffer-options.loading-saving");
 
-		//{{{ Line separator
+		// Line separator
 		lineSeparator = new JComboBox<>(LineSepType.values());
 		lineSeparator.setRenderer(new LineSepListCellRenderer());
 		String lineSep = buffer.getStringProperty(JEditBuffer.LINESEP);
@@ -90,9 +89,8 @@ public class BufferOptionPane extends AbstractOptionPane
 		lineSeparator.setSelectedItem(currentLineSepType);
 		addComponent(jEdit.getProperty("buffer-options.lineSeparator"),
 			lineSeparator);
-		//}}}
 
-		//{{{ Encoding
+		// Encoding
 		String[] encodings = MiscUtilities.getEncodings(true);
 		Arrays.sort(encodings,new StandardUtilities.StringCompare<>(true));
 		encoding = new JComboBox<>(encodings);
@@ -100,16 +98,14 @@ public class BufferOptionPane extends AbstractOptionPane
 		encoding.setSelectedItem(buffer.getStringProperty(JEditBuffer.ENCODING));
 		addComponent(jEdit.getProperty("buffer-options.encoding"),
 			encoding);
-		//}}}
 
-		//{{{ GZipped setting
+		// GZipped setting
 		gzipped = new JCheckBox(jEdit.getProperty(
 			"buffer-options.gzipped"));
 		gzipped.setSelected(buffer.getBooleanProperty(Buffer.GZIPPED));
 		addComponent(gzipped);
-		//}}}
 
-		//{{{ Autoreload settings
+		// Autoreload settings
 		/* Check mod status on focus */
 		String[] modCheckOptions = {
 			jEdit.getProperty("options.general.checkModStatus.nothing"),
@@ -141,39 +137,35 @@ public class BufferOptionPane extends AbstractOptionPane
 
 		addSeparator("buffer-options.editing");
 
-		//{{{ Edit mode
+		// Edit mode
 		modes = jEdit.getModes();
 		Arrays.sort(modes,new StandardUtilities.StringCompare<>(true));
 		mode = new JComboBox<>(modes);
 		mode.setSelectedItem(buffer.getMode());
 		mode.addActionListener(new ActionHandler());
 		addComponent(jEdit.getProperty("buffer-options.mode"),mode);
-		//}}}
 
-		//{{{ Fold mode
+		// Fold mode
 		String[] foldModes = FoldHandler.getFoldModes();
 
 		folding = new JComboBox<>(foldModes);
 		folding.setSelectedItem(buffer.getStringProperty("folding"));
 		addComponent(jEdit.getProperty("options.editing.folding"),
 			folding);
-		//}}}
 
-		//{{{ Automatic indentation
+		// Automatic indentation
 		String[] indentModes = {"none", "simple", "full"};
 		autoIndent = new JComboBox<>(indentModes);
 		autoIndent.setSelectedItem(buffer.getStringProperty("autoIndent"));
 		addComponent(jEdit.getProperty("options.editing.autoIndent"), autoIndent);
-		//}}}
 
-		//{{{ Wrap mode
+		// Wrap mode
 		wrap = new JComboBox<>(WordWrap.values());
 		wrap.setSelectedItem(buffer.getWordWrap());
 		addComponent(jEdit.getProperty("options.editing.wrap"),
 			wrap);
-		//}}}
 
-		//{{{ Max line length
+		// Max line length
 		String[] lineLengths = { "0", "72", "76", "80" };
 
 		maxLineLen = new JComboBox<>(lineLengths);
@@ -181,47 +173,41 @@ public class BufferOptionPane extends AbstractOptionPane
 		maxLineLen.setSelectedItem(buffer.getStringProperty("maxLineLen"));
 		addComponent(jEdit.getProperty("options.editing.maxLineLen"),
 			maxLineLen);
-		//}}}
 
-		//{{{ Tab size
+		// Tab size
 		String[] tabSizes = { "2", "4", "8" };
 		tabSize = new JComboBox<>(tabSizes);
 		tabSize.setEditable(true);
 		tabSize.setSelectedItem(buffer.getStringProperty("tabSize"));
 		addComponent(jEdit.getProperty("options.editing.tabSize"),tabSize);
-		//}}}
 
-		//{{{ Indent size
+		// Indent size
 		indentSize = new JComboBox<>(tabSizes);
 		indentSize.setEditable(true);
 		indentSize.setSelectedItem(buffer.getStringProperty("indentSize"));
 		addComponent(jEdit.getProperty("options.editing.indentSize"),
 			indentSize);
-		//}}}
 
-		//{{{ Soft tabs
+		// Soft tabs
 		noTabs = new JCheckBox(jEdit.getProperty(
 			"options.editing.noTabs"));
 		noTabs.setSelected(buffer.getBooleanProperty("noTabs"));
 		addComponent(noTabs);
-		//}}}
 
-		//{{{ Elastic tabstops
+		// Elastic tabstops
 		elasticTabstops = new JCheckBox(jEdit.getProperty(
 			"options.editing.elasticTabstops"));
 		elasticTabstops.setToolTipText(jEdit.getProperty("options.editing.elasticTabstops.tooltip"));
 		elasticTabstops.setSelected(buffer.getBooleanProperty("elasticTabstops"));
 		addComponent(elasticTabstops);
-		//}}}
 
-		//{{{ Locked setting
+		// Locked setting
 		locked = new JCheckBox(jEdit.getProperty("buffer-options.locked"));
 		locked.setSelected(buffer.getBooleanProperty("locked"));
 		addComponent(locked);
-		//}}}
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -321,10 +307,10 @@ public class BufferOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ ActionHandler() class
+	// ActionHandler() class
 	private class ActionHandler implements ActionListener
 	{
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{

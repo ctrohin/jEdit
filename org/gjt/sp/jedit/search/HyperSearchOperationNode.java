@@ -1,7 +1,6 @@
 /*
  * HyperSearchOperationNode.java - Top result node of a HyperSearch request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -35,7 +34,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-//}}}
 
 /**
  * Top result node of a HyperSearch request.
@@ -51,7 +49,7 @@ public class HyperSearchOperationNode
 	private SearchMatcher searchMatcher;
 	private String noWordSep;
 	
-	//{{{ HyperSearchOperationNode constructor
+	// HyperSearchOperationNode constructor
 	public HyperSearchOperationNode(String searchString, SearchMatcher searchMatcher)
 	{
 		this.searchString = searchString;
@@ -59,25 +57,25 @@ public class HyperSearchOperationNode
 		noWordSep = searchMatcher.getNoWordSep();
 	}//}}}
 	
-	//{{{ toString() method
+	// toString() method
 	public String toString() 
 	{
 		return searchString;
 	}//}}}
 	
-	//{{{ isTreeViewDisplayed() method
+	// isTreeViewDisplayed() method
 	public boolean isTreeViewDisplayed() 
 	{
 		return treeViewDisplayed;
 	}//}}}
 	
-	//{{{ setTreeViewDisplayed() method
+	// setTreeViewDisplayed() method
 	public void setTreeViewDisplayed(boolean treeViewDisplayed) 
 	{
 		this.treeViewDisplayed = treeViewDisplayed;
 	}//}}}
 	
-	//{{{ restoreFlatNodes() method
+	// restoreFlatNodes() method
 	public void restoreFlatNodes(JTree resultTree, DefaultMutableTreeNode operNode)
 	{
 		for (DefaultMutableTreeNode element : resultNodes)
@@ -99,7 +97,7 @@ public class HyperSearchOperationNode
 			new TreePath(operNode.getPath()));
 	}//}}}
 	
-	//{{{ cacheFlatNodes() method
+	// cacheFlatNodes() method
 	public void cacheResultNodes(DefaultMutableTreeNode operNode) 
 	{
 		resultNodes = new ArrayList<DefaultMutableTreeNode>(operNode.getChildCount());
@@ -107,7 +105,7 @@ public class HyperSearchOperationNode
 			resultNodes.add((DefaultMutableTreeNode) e.nextElement());
 	}//}}}
 	
-	//{{{ removeNodeFromCache() method
+	// removeNodeFromCache() method
 	public static void removeNodeFromCache(MutableTreeNode mnode)
 	{
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)mnode;
@@ -130,7 +128,7 @@ public class HyperSearchOperationNode
 		
 	}//}}}
 	
-	//{{{ insertTreeNodes() method
+	// insertTreeNodes() method
 	public void insertTreeNodes(JTree resultTree, DefaultMutableTreeNode operNode)
 	{
 		String fileSep = System.getProperty("file.separator");
@@ -222,7 +220,7 @@ public class HyperSearchOperationNode
 		
 	}//}}}
 
-	//{{{ getSearchMatcher() method
+	// getSearchMatcher() method
 	public SearchMatcher getSearchMatcher()
 	{
 		// The searchMatcher has to remember the noWordSep property that was used
@@ -232,7 +230,7 @@ public class HyperSearchOperationNode
 		return searchMatcher;
 	}//}}}
 
-	//{{{ getSearchString() method
+	// getSearchString() method
 	public String getSearchString()
 	{
 		return searchString;

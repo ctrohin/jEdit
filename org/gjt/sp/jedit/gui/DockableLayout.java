@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -21,9 +20,8 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
-//}}}
 /** A more flexible BorderLayout with dockables. */
 public class DockableLayout implements LayoutManager2
 {
@@ -47,7 +45,7 @@ public class DockableLayout implements LayoutManager2
 
 	private Component topButtons, leftButtons, bottomButtons, rightButtons;
 
-	//{{{ isAlternateLayout() method
+	// isAlternateLayout() method
 	/**
 	 * jEdit View option: wide horizontal docking areas versus tall vertical docking areas
 	 * @return true if using the "alternate layout"
@@ -57,20 +55,20 @@ public class DockableLayout implements LayoutManager2
 		return alternateLayout;
 	} //}}}
 
-	//{{{ setAlternateLayout() method
+	// setAlternateLayout() method
 	public void setAlternateLayout(boolean alternateLayout)
 	{
 		this.alternateLayout = alternateLayout;
 	} //}}}
 
-	//{{{ addLayoutComponent() method
+	// addLayoutComponent() method
 	@Override
 	public void addLayoutComponent(String name, Component comp)
 	{
 		addLayoutComponent(comp, name);
 	} //}}}
 
-	//{{{ addLayoutComponent() method
+	// addLayoutComponent() method
 	@Override
 	public void addLayoutComponent(Component comp, Object cons)
 	{
@@ -94,7 +92,7 @@ public class DockableLayout implements LayoutManager2
 			rightButtons = comp;
 	} //}}}
 
-	//{{{ removeLayoutComponent() method
+	// removeLayoutComponent() method
 	@Override
 	public void removeLayoutComponent(Component comp)
 	{
@@ -110,7 +108,7 @@ public class DockableLayout implements LayoutManager2
 			right = null;
 	} //}}}
 
-	//{{{ preferredLayoutSize() method
+	// preferredLayoutSize() method
 	@Override
 	public Dimension preferredLayoutSize(Container parent)
 	{
@@ -140,7 +138,7 @@ public class DockableLayout implements LayoutManager2
 		return prefSize;
 	} //}}}
 
-	//{{{ minimumLayoutSize() method
+	// minimumLayoutSize() method
 	@Override
 	public Dimension minimumLayoutSize(Container parent)
 	{
@@ -148,14 +146,14 @@ public class DockableLayout implements LayoutManager2
 		return preferredLayoutSize(parent);
 	} //}}}
 
-	//{{{ maximumLayoutSize() method
+	// maximumLayoutSize() method
 	@Override
 	public Dimension maximumLayoutSize(Container parent)
 	{
 		return new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE);
 	} //}}}
 
-	//{{{ layoutContainer() method
+	// layoutContainer() method
 	@Override
 	public void layoutContainer(Container parent)
 	{
@@ -202,7 +200,7 @@ public class DockableLayout implements LayoutManager2
 
 		if(alternateLayout)
 		{
-			//{{{ Lay out independent buttons
+			// Lay out independent buttons
 			int _width = size.width;
 
 			int padding = (leftEmpty&&rightEmpty)
@@ -228,9 +226,8 @@ public class DockableLayout implements LayoutManager2
 			int _height = size.height
 				- topButtonHeight
 				- bottomButtonHeight;
-			//}}}
 
-			//{{{ Lay out dependent buttons
+			// Lay out dependent buttons
 			leftButtonWidth = left.getWindowContainer()
 				.getWrappedDimension(left.getSize().height);
 			leftButtons.setBounds(
@@ -246,7 +243,6 @@ public class DockableLayout implements LayoutManager2
 				topHeight + topButtonHeight,
 				rightButtonWidth,
 				_height - topHeight - bottomHeight);
-			//}}}
 
 			int[] dimensions = adjustDockingAreasToFit(
 				size,
@@ -266,7 +262,7 @@ public class DockableLayout implements LayoutManager2
 			bottomHeight = dimensions[2];
 			rightWidth = dimensions[3];
 
-			//{{{ Lay out docking areas
+			// Lay out docking areas
 			top.setBounds(
 				0,
 				topButtonHeight,
@@ -295,7 +291,7 @@ public class DockableLayout implements LayoutManager2
 		}
 		else
 		{
-			//{{{ Lay out independent buttons
+			// Lay out independent buttons
 			int _height = size.height;
 
 			int padding = (topEmpty && bottomEmpty
@@ -321,9 +317,8 @@ public class DockableLayout implements LayoutManager2
 			int _width = size.width
 				- leftButtonWidth
 				- rightButtonWidth;
-			//}}}
 
-			//{{{ Lay out dependent buttons
+			// Lay out dependent buttons
 			topButtonHeight = top.getWindowContainer()
 				.getWrappedDimension(top.getSize().width);
 			topButtons.setBounds(
@@ -358,7 +353,7 @@ public class DockableLayout implements LayoutManager2
 			bottomHeight = dimensions[2];
 			rightWidth = dimensions[3];
 
-			//{{{ Lay out docking areas
+			// Lay out docking areas
 			top.setBounds(
 				leftButtonWidth + leftWidth,
 				topButtonHeight,
@@ -384,7 +379,7 @@ public class DockableLayout implements LayoutManager2
 				_height); //}}}
 		}
 
-		//{{{ Position center (edit pane, or split pane)
+		// Position center (edit pane, or split pane)
 		if(center != null)
 		{
 			center.setBounds(
@@ -406,7 +401,7 @@ public class DockableLayout implements LayoutManager2
 		} //}}}
 	} //}}}
 
-	//{{{ adjustDockingAreasToFit() method
+	// adjustDockingAreasToFit() method
 	private int[] adjustDockingAreasToFit(
 		Dimension size,
 		int topHeight,
@@ -450,22 +445,21 @@ public class DockableLayout implements LayoutManager2
 		};
 	} //}}}
 
-	//{{{ getLayoutAlignmentX() method
+	// getLayoutAlignmentX() method
 	@Override
 	public float getLayoutAlignmentX(Container target)
 	{
 		return 0.5f;
 	} //}}}
 
-	//{{{ getLayoutAlignmentY() method
+	// getLayoutAlignmentY() method
 	@Override
 	public float getLayoutAlignmentY(Container target)
 	{
 		return 0.5f;
 	} //}}}
 
-	//{{{ invalidateLayout() method
+	// invalidateLayout() method
 	@Override
 	public void invalidateLayout(Container target) {}
-	//}}}
 }

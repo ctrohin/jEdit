@@ -1,7 +1,6 @@
 /*
  * ErrorsWidgetFactory.java - The error widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008-2011 Matthieu Casanova
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.JEditActionSet;
 import org.gjt.sp.jedit.JEditBeanShellAction;
 import org.gjt.sp.jedit.Registers;
@@ -45,7 +44,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
-//}}}
 
 /**
  * This widget will show you in the status bar the last errors reported in jEdit.
@@ -54,7 +52,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class ErrorsWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
@@ -62,7 +60,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 		return errorWidget;
 	} //}}}
 
-	//{{{ ErrorWidget class
+	// ErrorWidget class
 	private static class ErrorWidget implements Widget
 	{
 		private final ErrorHighlight errorHighlight;
@@ -90,13 +88,13 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 		}
 	} //}}}
 
-	//{{{ ErrorHighlight class
+	// ErrorHighlight class
 	private static class ErrorHighlight extends JLabel implements ActionListener
 	{
 		private int currentSize;
 		private final Color foregroundColor;
 
-		//{{{ ErrorHighlight constructor
+		// ErrorHighlight constructor
 		ErrorHighlight(View view)
 		{
 			String defaultFont = jEdit.getProperty("view.font");
@@ -110,7 +108,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			addMouseListener(new MyMouseAdapter(view));
 		} //}}}
 
-		//{{{ addNotify() method
+		// addNotify() method
 		@Override
 		public void addNotify()
 		{
@@ -124,7 +122,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 		} //}}}
 
 
-		//{{{ removeNotify() method
+		// removeNotify() method
 		@Override
 		public void removeNotify()
 		{
@@ -133,14 +131,14 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			super.removeNotify();
 		} //}}}
 
-		//{{{ getToolTipLocation() method
+		// getToolTipLocation() method
 		@Override
 		public Point getToolTipLocation(MouseEvent event)
 		{
 			return new Point(event.getX(), -20);
 		} //}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
@@ -149,7 +147,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 
 		private Timer timer;
 
-		//{{{ update() method
+		// update() method
 		private void update()
 		{
 			int size = Log.throwables.size();
@@ -170,7 +168,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			}
 		} //}}}
 
-		//{{{ MyMouseAdapter class
+		// MyMouseAdapter class
 		private class MyMouseAdapter extends MouseAdapter
 		{
 			private final View view;
@@ -199,7 +197,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 
 	} //}}}
 
-	//{{{ ErrorDialog class
+	// ErrorDialog class
 	private static class ErrorDialog extends EnhancedDialog
 	{
 		private final TextArea textArea;
@@ -210,7 +208,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 		private final Throwable[] throwables;
 		private final JComboBox<Throwable> combo;
 
-		//{{{ ErrorDialog constructor
+		// ErrorDialog constructor
 		private ErrorDialog(Frame view)
 		{
 			super(view, "Errors", false);
@@ -278,7 +276,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			setVisible(true);
 		} //}}}
 
-		//{{{ setThrowable() method
+		// setThrowable() method
 		private void setThrowable(Throwable throwable)
 		{
 			textArea.getBuffer().setReadOnly(false);
@@ -296,7 +294,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			textArea.getBuffer().setReadOnly(true);
 		} //}}}
 
-		//{{{ dispose() method
+		// dispose() method
 		@Override
 		public void dispose()
 		{
@@ -304,21 +302,21 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			super.dispose();
 		} //}}}
 
-		//{{{ ok() method
+		// ok() method
 		@Override
 		public void ok()
 		{
 			dispose();
 		} //}}}
 
-		//{{{ cancel() method
+		// cancel() method
 		@Override
 		public void cancel()
 		{
 			dispose();
 		} //}}}
 
-		//{{{ MyActionListener class
+		// MyActionListener class
 		private class MyActionListener implements ActionListener
 		{
 			@Override
@@ -349,7 +347,7 @@ public class ErrorsWidgetFactory implements StatusWidgetFactory
 			}
 		} //}}}
 	} //}}}
-	//{{{ KeyMapPropertyManager class
+	// KeyMapPropertyManager class
 	/**
 	 * Provide the StandaloneTextArea with current key bindings.
 	 * Otherwise moving left/right with the keyboard doesn't work.

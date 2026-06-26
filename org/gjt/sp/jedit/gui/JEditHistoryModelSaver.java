@@ -1,7 +1,6 @@
 /*
  * JEditHistoryModelSaver.java -
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -43,7 +42,7 @@ import java.util.*;
  */
 public class JEditHistoryModelSaver implements HistoryModelSaver
 {
-	//{{{ load() method
+	// load() method
 	@Override
 	public Map<String, HistoryModel> load(Map<String, HistoryModel> models)
 	{
@@ -105,7 +104,7 @@ public class JEditHistoryModelSaver implements HistoryModelSaver
 		return models;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	@Override
 	public boolean save(Map<String, HistoryModel> models)
 	{
@@ -176,12 +175,12 @@ public class JEditHistoryModelSaver implements HistoryModelSaver
 		return true;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final String TO_ESCAPE = "\r\n\t\\\"'[]";
 	private static File history;
 	private static long historyModTime;
 
-	//{{{ loadFromReader() method
+	// loadFromReader() method
 	private static Map<String, HistoryModel> loadFromReader(BufferedReader in)
 		throws IOException
 	{
@@ -226,6 +225,5 @@ public class JEditHistoryModelSaver implements HistoryModelSaver
 		return result;
 	} //}}}
 
-	//}}}
 
 }

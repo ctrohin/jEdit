@@ -1,7 +1,6 @@
 /*
  * ParserRule.java - Parser rule for the token marker
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 mike dillon
  * Portions copyright (C) 2002 Slava Pestov
@@ -37,16 +36,15 @@ import java.util.regex.PatternSyntaxException;
 public class ParserRule
 {
 
-	//{{{ Major actions
+	// Major actions
 	public static final int MAJOR_ACTIONS = 0x000000FF;
 	public static final int SEQ = 0;
 	public static final int SPAN = 1 << 1;
 	public static final int MARK_PREVIOUS = 1 << 2;
 	public static final int MARK_FOLLOWING = 1 << 3;
 	public static final int EOL_SPAN = 1 << 4;
-	//}}}
 
-	//{{{ Action hints
+	// Action hints
 	public static final int ACTION_HINTS = 0x0000FF00;
 
 	public static final int NO_LINE_BREAK = 1 << 9;
@@ -55,20 +53,17 @@ public class ParserRule
 
 	public static final int REGEXP = 1 << 13;
 	public static final int END_REGEXP = 1 << 14;
-	//}}}
 
-	//{{{ Special Match Token Types
+	// Special Match Token Types
 	public static final byte MATCH_TYPE_CONTEXT 	= -1;
 	public static final byte MATCH_TYPE_RULE 	= -2;
-	//}}}
 
-	//{{{ Position match hints
+	// Position match hints
 	public static final int AT_LINE_START = 1 << 1;
 	public static final int AT_WHITESPACE_END = 1 << 2;
 	public static final int AT_WORD_START = 1 << 3;
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	/**
 	 * The upHashChar should be a String but it is stored
 	 * in an array making iterations much faster
@@ -106,9 +101,8 @@ public class ParserRule
 	public final ParserRule escapeRule;
 
 	public ParserRuleSet delegate;
-	//}}}
 
-	//{{{ createSequenceRule() method
+	// createSequenceRule() method
 	public static ParserRule createSequenceRule(
 		int posMatch, String seq, ParserRuleSet delegate, byte id)
 	{
@@ -117,7 +111,7 @@ public class ParserRule
 			0, null, null, delegate, id, MATCH_TYPE_CONTEXT, null);
 	} //}}}
 
-	//{{{ createRegexpSequenceRule() method
+	// createRegexpSequenceRule() method
 	public static ParserRule createRegexpSequenceRule(
 		String hashChar, int posMatch, String seq,
 		ParserRuleSet delegate, byte id, boolean ignoreCase)
@@ -128,7 +122,7 @@ public class ParserRule
 			0, null, null, delegate, id, MATCH_TYPE_CONTEXT, null);
 	} //}}}
 
-	//{{{ createRegexpSequenceRule() method
+	// createRegexpSequenceRule() method
 	public static ParserRule createRegexpSequenceRule(
 		int posMatch, char[] hashChars, String seq,
 		ParserRuleSet delegate, byte id, boolean ignoreCase)
@@ -139,7 +133,7 @@ public class ParserRule
 			0, null, null, delegate, id, MATCH_TYPE_CONTEXT, null);
 	} //}}}
 
-	//{{{ createSpanRule() method
+	// createSpanRule() method
 	public static ParserRule createSpanRule(
 		int startPosMatch, String start, int endPosMatch, String end,
 		ParserRuleSet delegate, byte id, byte matchType,
@@ -155,7 +149,7 @@ public class ParserRule
 			null, delegate, id, matchType, escape);
 	} //}}}
 
-	//{{{ createRegexpSpanRule() method
+	// createRegexpSpanRule() method
 	public static ParserRule createRegexpSpanRule(
 		String hashChar, int startPosMatch, String start,
 		int endPosMatch, String end, ParserRuleSet delegate, byte id,
@@ -187,7 +181,7 @@ public class ParserRule
 			escape);
 	} //}}}
 
-	//{{{ createRegexpSpanRule() method
+	// createRegexpSpanRule() method
 	public static ParserRule createRegexpSpanRule(
 		int startPosMatch, char[] hashChars, String start,
 		int endPosMatch, String end, ParserRuleSet delegate, byte id,
@@ -219,7 +213,7 @@ public class ParserRule
 			matchType, escape);
 	} //}}}
 
-	//{{{ createEOLSpanRule() method
+	// createEOLSpanRule() method
 	public static ParserRule createEOLSpanRule(
 		int posMatch, String seq, ParserRuleSet delegate, byte id,
 		byte matchType)
@@ -231,7 +225,7 @@ public class ParserRule
 			delegate, id, matchType, null);
 	} //}}}
 
-	//{{{ createRegexpEOLSpanRule() method
+	// createRegexpEOLSpanRule() method
 	public static ParserRule createRegexpEOLSpanRule(
 		String hashChar, int posMatch, String seq, ParserRuleSet delegate,
 		byte id, byte matchType, boolean ignoreCase)
@@ -244,7 +238,7 @@ public class ParserRule
 			0, null, null, delegate, id, matchType, null);
 	} //}}}
 
-	//{{{ createRegexpEOLSpanRule() method
+	// createRegexpEOLSpanRule() method
 	public static ParserRule createRegexpEOLSpanRule(
 		int posMatch, char[] hashChars, String seq, ParserRuleSet delegate,
 		byte id, byte matchType, boolean ignoreCase)
@@ -257,7 +251,7 @@ public class ParserRule
 			0, null, null, delegate, id, matchType, null);
 	} //}}}
 
-	//{{{ createMarkFollowingRule() method
+	// createMarkFollowingRule() method
 	public static ParserRule createMarkFollowingRule(
 		int posMatch, String seq, byte id, byte matchType)
 	{
@@ -268,7 +262,7 @@ public class ParserRule
 			null);
 	} //}}}
 
-	//{{{ createMarkPreviousRule() method
+	// createMarkPreviousRule() method
 	public static ParserRule createMarkPreviousRule(
 		int posMatch, String seq, byte id, byte matchType)
 	{
@@ -279,7 +273,7 @@ public class ParserRule
 			null);
 	} //}}}
 
-	//{{{ createEscapeRule() method
+	// createEscapeRule() method
 	public static ParserRule createEscapeRule(String seq)
 	{
 		int ruleAction = IS_ESCAPE;
@@ -289,7 +283,7 @@ public class ParserRule
 			null, Token.NULL, MATCH_TYPE_CONTEXT, null);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		StringBuilder result = new StringBuilder();
@@ -328,7 +322,7 @@ public class ParserRule
 		return result.toString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private ParserRule(int action, String hashChar,
 		int startPosMatch, char[] start, Pattern startRegexp,
 		int endPosMatch, char[] end, Pattern endRegexp,

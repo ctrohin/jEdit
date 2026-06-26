@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2021 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.ServiceManager;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
@@ -31,7 +30,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.StringTokenizer;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -44,7 +42,7 @@ public class StatsBarWidgetPanel extends Box
 
 	private String statusBarProperty;
 
-	//{{{ StatsBarWidgetPanel constructor
+	// StatsBarWidgetPanel constructor
 	public StatsBarWidgetPanel(String propertyName, View view)
 	{
 		super(BoxLayout.X_AXIS);
@@ -53,7 +51,7 @@ public class StatsBarWidgetPanel extends Box
 		widgets = new ArrayList<>();
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged()
 	{
 		Color fg = jEdit.getColorProperty("view.status.foreground");
@@ -82,7 +80,7 @@ public class StatsBarWidgetPanel extends Box
 		}
 	} //}}}
 
-	//{{{ updateEvent() method
+	// updateEvent() method
 	/**
 	 * Update the widgets that are interested in the given event type
 	 * @param statusBarEventType the event type
@@ -95,7 +93,7 @@ public class StatsBarWidgetPanel extends Box
 			.forEach(Widget::update);
 	} //}}}
 
-	//{{{ getWidget() method
+	// getWidget() method
 	private Widget getWidget(String name)
 	{
 		StatusWidgetFactory widgetFactory = ServiceManager.getService(StatusWidgetFactory.class, name);

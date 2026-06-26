@@ -1,7 +1,6 @@
 /*
  * UrlVFS.java - URL VFS
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.io.*;
 import java.net.*;
 
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * URL VFS.
@@ -38,13 +36,13 @@ import org.gjt.sp.util.Log;
  */
 public class UrlVFS extends VFS
 {
-	//{{{ UrlVFS constructor
+	// UrlVFS constructor
 	public UrlVFS()
 	{
 		super("url", READ_CAP | NON_AWT_SESSION_CAP);
 	} //}}}
 
-	//{{{ constructPath() method
+	// constructPath() method
 	@Override
 	public String constructPath(String parent, String path)
 	{
@@ -54,7 +52,7 @@ public class UrlVFS extends VFS
 			return parent + '/' + path;
 	} //}}}
 
-	//{{{ _createInputStream() method
+	// _createInputStream() method
 	@Override
 	public InputStream _createInputStream(Object session, String path, boolean ignoreErrors, Component comp)
 		throws IOException
@@ -72,7 +70,7 @@ public class UrlVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ _createOutputStream() method
+	// _createOutputStream() method
 	@Override
 	public OutputStream _createOutputStream(Object session, String path, Component comp) throws IOException
 	{
@@ -90,7 +88,7 @@ public class UrlVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ getFileName() method
+	// getFileName() method
 	@Override
 	public String getFileName(String path)
 	{
@@ -102,7 +100,7 @@ public class UrlVFS extends VFS
 			return result.substring(0, index);
 	} //}}}
 
-	//{{{ getFilePath() method
+	// getFilePath() method
 	@Override
 	public String getFilePath(String vfsPath)
 	{
@@ -117,7 +115,7 @@ public class UrlVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ isRemotePath() method
+	// isRemotePath() method
 	@Override
 	public boolean isRemotePath(String path)
 	{

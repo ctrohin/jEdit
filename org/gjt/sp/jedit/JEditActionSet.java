@@ -1,7 +1,6 @@
 /*
  * JEditActionSet.java - A set of actions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  * Portions copyright (C) 2007 Matthieu Casanova
@@ -147,7 +146,7 @@ import static org.gjt.sp.util.StandardUtilities.EMPTY_STRING_ARRAY;
  */
 public abstract class JEditActionSet<E extends JEditAbstractEditAction> implements InputHandlerProvider
 {
-	//{{{ JEditActionSet constructor
+	// JEditActionSet constructor
 	/**
 	 * Creates a new action set.
 	 * @since jEdit 4.3pre13
@@ -158,7 +157,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		loaded = true;
 	} //}}}
 	
-	//{{{ JEditActionSet constructor
+	// JEditActionSet constructor
 	/**
 	 * Creates a new action set.
 	 * @param cachedActionNames The list of cached action names
@@ -177,7 +176,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		loaded = false;
 	} //}}}
 
-	//{{{ addAction() method
+	// addAction() method
 	/**
 	 * Adds an action to the action set.
 	 * @param action The action
@@ -194,7 +193,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		}
 	} //}}}
 
-	//{{{ removeAction() method
+	// removeAction() method
 	/**
 	 * Removes an action from the action set.
 	 * @param name The action name
@@ -210,7 +209,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		}
 	} //}}}
 
-	//{{{ removeAllActions() method
+	// removeAllActions() method
 	/**
 	 * Removes all actions from the action set.
 	 * @since jEdit 4.0pre1
@@ -227,7 +226,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		actions.clear();
 	} //}}}
 
-	//{{{ getAction() method
+	// getAction() method
 	/**
 	 * @return an action with the specified name.<p>
 	 *
@@ -254,7 +253,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return (E) obj;
 	} //}}}
 
-	//{{{ getActionCount() method
+	// getActionCount() method
 	/**
 	 * @return the number of actions in the set.
 	 * @since jEdit 4.0pre1
@@ -264,7 +263,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return actions.size();
 	} //}}}
 
-	//{{{ getActionNames() method
+	// getActionNames() method
 	/**
 	 * @return an array of all action names in this action set.
 	 * @since jEdit 4.2pre1
@@ -281,7 +280,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return retVal;
 	} //}}}
 
-	//{{{ getCacheableActionNames() method
+	// getCacheableActionNames() method
 	/**
 	 * @return an array of all action names in this action set that should
 	 * be cached; namely, <code>BeanShellAction</code>s.
@@ -305,7 +304,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return retVal.toArray(EMPTY_STRING_ARRAY);
 	} //}}}
 	
-	//{{{ getArray() method
+	// getArray() method
 	/**
 	 * Returns an empty array E[].
 	 * I know it is bad, if you find a method to instantiate a generic Array,
@@ -314,9 +313,8 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 	 * @return the empty array
 	 */
 	protected abstract E[] getArray(int size);		
-	//}}}
 
-	//{{{ getActions() method
+	// getActions() method
 	/**
 	 * @return an array of all actions in this action set.<p>
 	 *
@@ -338,7 +336,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return retVal;
 	} //}}}
 
-	//{{{ contains() method
+	// contains() method
 	/**
 	 * @return if this action set contains the specified action.
 	 * @param action The action
@@ -351,7 +349,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 //		return actions.containsKey(action);
 	} //}}}
 
-	//{{{ size() method
+	// size() method
 	/**
 	 * @return the number of actions in this action set.
 	 * @since jEdit 4.2pre2
@@ -361,7 +359,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		return actions.size();
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	/**
 	 * Forces the action set to be loaded. Plugins and macros should not
 	 * call this method.
@@ -408,7 +406,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		}
 	} //}}}
 	
-	//{{{ createBeanShellAction() method
+	// createBeanShellAction() method
 	/**
 	 * This method should be implemented to return an action that will execute
 	 * the given code
@@ -427,9 +425,8 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 									   boolean noRepeat,
 									   boolean noRecord,
 									   boolean noRememberLast);
-	//}}}
 	
-	//{{{ initKeyBindings() method
+	// initKeyBindings() method
 	/**
 	 * Initializes the action set's key bindings.
 	 * jEdit calls this method for all registered action sets when the
@@ -459,7 +456,7 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		}
 	} //}}}
 	
-	//{{{ getProperty() method
+	// getProperty() method
 	/**
 	 * Returns a property for the given name.
 	 * In jEdit it will returns a jEdit.getProperty(name), but it can
@@ -469,20 +466,18 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 	 * @since 4.3pre13
 	 */
 	protected abstract String getProperty(String name);
-	//}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	JEditActionContext context;
 
-	//{{{ getActionNames() method
+	// getActionNames() method
 	void getActionNames(List<String> list)
 	{
 		list.addAll(actions.keySet());
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	protected HashMap<String, JEditAbstractEditAction> actions;
 	protected URL uri;
 	protected boolean loaded;
@@ -494,5 +489,4 @@ public abstract class JEditActionSet<E extends JEditAbstractEditAction> implemen
 		public void invoke(Object arg) {}
 	};
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * FontSelector.java - Font selector
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  * Portions copyright (C) 1999 Jason Ginchereau
@@ -24,15 +23,14 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
-//{{{ FontSelector class
+// FontSelector class
 /**
  * A font chooser widget.
  * @author Slava Pestov
@@ -40,7 +38,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class FontSelector extends JButton
 {
-	//{{{ FontSelector constructor
+	// FontSelector constructor
 	/**
 	 * Creates a new font selector control.
 	 * @param font The font
@@ -55,7 +53,7 @@ public class FontSelector extends JButton
 		this(font,false, false);
 	} //}}}
 
-	//{{{ FontSelector constructor
+	// FontSelector constructor
 	/**
 	 * Creates a new font selector control.
 	 * @param font The font
@@ -75,7 +73,7 @@ public class FontSelector extends JButton
 		addActionListener(new ActionHandler());
 	} //}}}
 
-	//{{{ paintComponent() method
+	// paintComponent() method
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -83,19 +81,19 @@ public class FontSelector extends JButton
 		super.paintComponent(g);
 	} //}}}
 
-	//{{{ isAntiAliasEnabled() method
+	// isAntiAliasEnabled() method
 	public boolean isAntiAliasEnabled()
 	{
 		return antiAlias;
 	} //}}}
 
-	//{{{ setAntiAliasEnabled() method
+	// setAntiAliasEnabled() method
 	public void setAntiAliasEnabled(boolean antiAlias)
 	{
 		this.antiAlias = antiAlias;
 	} //}}}
 
-	//{{{ updateText() method
+	// updateText() method
 	private void updateText()
 	{
 		Font font = getFont();
@@ -122,7 +120,7 @@ public class FontSelector extends JButton
 		setText(font.getName() + ' ' + font.getSize() + ' ' + styleString);
 	} //}}}
 
-	//{{{ setAntiAliasEnabled() method
+	// setAntiAliasEnabled() method
 	void setAntiAliasEnabled(Graphics g)
 	{
 		if (antiAlias)
@@ -136,7 +134,7 @@ public class FontSelector extends JButton
 	private boolean antiAlias;
 	private boolean monospacedOnly;
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener
 	{
 		@Override

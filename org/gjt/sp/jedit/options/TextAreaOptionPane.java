@@ -1,7 +1,6 @@
 /*
  * TextAreaOptionPane.java - Text area options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +36,6 @@ import org.gjt.sp.jedit.gui.FontSelector;
 import org.gjt.sp.jedit.gui.FontSelectorDialog;
 import org.gjt.sp.jedit.gui.ColorWellButton;
 import org.gjt.sp.jedit.gui.RolloverButton;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -45,13 +43,13 @@ import org.gjt.sp.jedit.gui.RolloverButton;
  */
 public class TextAreaOptionPane extends AbstractOptionPane
 {
-	//{{{ TextAreaOptionPane constructor
+	// TextAreaOptionPane constructor
 	public TextAreaOptionPane()
 	{
 		super("textarea");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	public void _init()
 	{
@@ -245,7 +243,7 @@ public class TextAreaOptionPane extends AbstractOptionPane
 		addComponent(insertCompletionWithDigit);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -345,7 +343,7 @@ public class TextAreaOptionPane extends AbstractOptionPane
 		p.add(BorderLayout.WEST, themes);
 		return p;
 	}
-	//{{{ Private members
+	// Private members
 	private FontSelector font;
 	private JCheckBox fontSubst;
 	private FontList fontSubstList;
@@ -377,9 +375,8 @@ public class TextAreaOptionPane extends AbstractOptionPane
 	private JCheckBox completeFromAllBuffers;
 	private JCheckBox insertCompletionWithDigit;
 	private JTextField lineSpacing;
-	//}}}
 
-	//{{{ FontList class
+	// FontList class
 	/**
 	 * The substitution font list widget. Shows a JList with the
 	 * list of fonts and buttons that allow the user to manipulate

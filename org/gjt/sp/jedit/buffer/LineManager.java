@@ -1,7 +1,6 @@
 /*
  * LineManager.java - Manages line info, line start offsets, positions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2004 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.buffer;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.util.IntegerArray;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * A class internal to jEdit's document model. You should not use it
@@ -42,7 +40,7 @@ import org.gjt.sp.util.Log;
  */
 public class LineManager
 {
-	//{{{ LineManager constructor
+	// LineManager constructor
 	public LineManager()
 	{
 		endOffsets = new int[1];
@@ -52,13 +50,13 @@ public class LineManager
 		lineCount = 1;
 	} //}}}
 
-	//{{{ getLineCount() method
+	// getLineCount() method
 	public final int getLineCount()
 	{
 		return lineCount;
 	} //}}}
 
-	//{{{ getLineOfOffset() method
+	// getLineOfOffset() method
 	public int getLineOfOffset(int offset)
 	{
 		/*
@@ -116,7 +114,7 @@ public class LineManager
 		}
 	} //}}}
 
-	//{{{ getLineEndOffset() method
+	// getLineEndOffset() method
 	public final int getLineEndOffset(int line)
 	{
 		if(gapLine != -1 && line >= gapLine)
@@ -125,13 +123,13 @@ public class LineManager
 			return endOffsets[line];
 	} //}}}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	public final int getFoldLevel(int line)
 	{
 		return foldLevels[line];
 	} //}}}
 
-	//{{{ setFoldLevel() method
+	// setFoldLevel() method
 	// Also sets 'fold level valid' flag
 	public final void setFoldLevel(int line, int level)
 	{
@@ -144,43 +142,43 @@ public class LineManager
 		foldLevels[line] = (short)level;
 	} //}}}
 
-	//{{{ setFirstInvalidFoldLevel() method
+	// setFirstInvalidFoldLevel() method
 	public void setFirstInvalidFoldLevel(int firstInvalidFoldLevel)
 	{
 		this.firstInvalidFoldLevel = firstInvalidFoldLevel;
 	} //}}}
 
-	//{{{ getFirstInvalidFoldLevel() method
+	// getFirstInvalidFoldLevel() method
 	public int getFirstInvalidFoldLevel()
 	{
 		return firstInvalidFoldLevel;
 	} //}}}
 
-	//{{{ getLineContext() method
+	// getLineContext() method
 	public final TokenMarker.LineContext getLineContext(int line)
 	{
 		return lineContext[line];
 	} //}}}
 
-	//{{{ setLineContext() method
+	// setLineContext() method
 	public final void setLineContext(int line, TokenMarker.LineContext context)
 	{
 		lineContext[line] = context;
 	} //}}}
 
-	//{{{ setFirstInvalidLineContext() method
+	// setFirstInvalidLineContext() method
 	public void setFirstInvalidLineContext(int firstInvalidLineContext)
 	{
 		this.firstInvalidLineContext = firstInvalidLineContext;
 	} //}}}
 
-	//{{{ getFirstInvalidLineContext() method
+	// getFirstInvalidLineContext() method
 	public int getFirstInvalidLineContext()
 	{
 		return firstInvalidLineContext;
 	} //}}}
 
-	//{{{ _contentInserted() method
+	// _contentInserted() method
 	public void _contentInserted(IntegerArray endOffsets)
 	{
 		gapLine = -1;
@@ -193,13 +191,13 @@ public class LineManager
 		lineContext = new TokenMarker.LineContext[lineCount];
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	public void contentInserted(int startLine, int offset,
 		int numLines, int length, IntegerArray endOffsets)
 	{
 		int endLine = startLine + numLines;
 
-		//{{{ Update line info and line context arrays
+		// Update line info and line context arrays
 		if(numLines > 0)
 		{
 			//moveGap(-1,0,"contentInserted");
@@ -258,13 +256,13 @@ public class LineManager
 		moveGap(endLine,length,"contentInserted");
 	} //}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	public void contentRemoved(int startLine, int offset,
 		int numLines, int length)
 	{
 		int endLine = startLine + numLines;
 
-		//{{{ Update line info and line context arrays
+		// Update line info and line context arrays
 		if(numLines > 0)
 		{
 			//moveGap(-1,0,"contentRemoved");
@@ -292,9 +290,9 @@ public class LineManager
 		moveGap(startLine,-length,"contentRemoved");
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private int[] endOffsets;
 	private short[] foldLevels;
 	private TokenMarker.LineContext[] lineContext;
@@ -325,15 +323,14 @@ public class LineManager
 	 * Performance helper for {@link #getLineOfOffset}. 
 	 */
 	private int getLineOfOffsetLine = -1;
-	//}}}
 
-	//{{{ setLineEndOffset() method
+	// setLineEndOffset() method
 	private void setLineEndOffset(int line, int end)
 	{
 		endOffsets[line] = end;
 	} //}}}
 
-	//{{{ moveGap() method
+	// moveGap() method
 	private void moveGap(int newGapLine, int newGapWidth, String method)
 	{
 		if(gapLine == -1)
@@ -380,5 +377,4 @@ public class LineManager
 			gapLine = newGapLine;
 	} //}}}
 
-	//}}}
 }

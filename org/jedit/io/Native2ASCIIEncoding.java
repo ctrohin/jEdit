@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2012 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.FilterReader;
 import java.io.FilterWriter;
 import java.io.IOException;
@@ -40,7 +39,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.gjt.sp.jedit.io.CharsetEncoding;
 import org.gjt.sp.jedit.io.Encoding;
-//}}}
 
 /**
  * ISO-8859-1 with Unicode escapes as e.g. needed for https://docs.oracle.com/javase/6/docs/api/java/util/Properties.html
@@ -50,7 +48,7 @@ import org.gjt.sp.jedit.io.Encoding;
  */
 public class Native2ASCIIEncoding implements Encoding
 {
-	//{{{ implements Encoding
+	// implements Encoding
 	@Override
 	
 	public Reader getTextReader( InputStream in) throws IOException
@@ -148,9 +146,8 @@ public class Native2ASCIIEncoding implements Encoding
 	{
 		return new Native2ASCIIReader(in, true);
 	}
-	//}}}
 
-	//{{{ Package private members
+	// Package private members
 	
 	Reader getTextReader( InputStream in,  Class<? extends PushbackReader> clazz)
 		throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException,
@@ -166,14 +163,12 @@ public class Native2ASCIIEncoding implements Encoding
 	{
 		return new Native2ASCIIReader(in, true, clazz);
 	}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final CharsetEncoder asciiEncoder = StandardCharsets.US_ASCII.newEncoder();
 	private final CharsetEncoding asciiEncoding = new CharsetEncoding(StandardCharsets.US_ASCII);
-	//}}}
 
 	private static class Native2ASCIIReader extends FilterReader
 	{
@@ -458,20 +453,17 @@ outer:
 			return toSkip - remaining;
 		}
 
-		//{{{ Private members
+		// Private members
 
 		private static final int MAX_SKIP_BUFFER_SIZE = 8192;
 		private static final Encoding iso_8859_1Encoding = new CharsetEncoding(StandardCharsets.ISO_8859_1);
 
-		//{{{ Instance variables
+		// Instance variables
 		private final PushbackReader in;
 		private final boolean permissive;
 		private char[] skipBuffer;
 		private boolean escaped;
-		//}}}
 
-		//}}}
 	}
 
-	//}}}
 }

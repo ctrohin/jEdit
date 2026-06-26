@@ -1,7 +1,6 @@
 /*
  * TaskListener
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010-2023 Matthieu Casanova
  *

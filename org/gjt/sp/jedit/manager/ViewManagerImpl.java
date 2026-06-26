@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2020 jEdit contributors
  *
@@ -45,7 +44,7 @@ public class ViewManagerImpl implements ViewManager
 	private View viewsLast;
 	private View activeView;
 
-	//{{{ getViews() method
+	// getViews() method
 	/**
 	 * Returns an array of all open views.
 	 */
@@ -57,7 +56,7 @@ public class ViewManagerImpl implements ViewManager
 		return buffers;
 	} //}}}
 
-	//{{{ forEach() method
+	// forEach() method
 	/**
 	 * Performs the given action for each view.
 	 *
@@ -75,7 +74,7 @@ public class ViewManagerImpl implements ViewManager
 		}
 	} //}}}
 
-	//{{{ size() method
+	// size() method
 	/**
 	 * Returns the number of open views.
 	 */
@@ -85,21 +84,21 @@ public class ViewManagerImpl implements ViewManager
 		return viewCount;
 	} //}}}
 
-	//{{{ getFirst() method
+	// getFirst() method
 	@Override
 	public View getFirst()
 	{
 		return viewsFirst;
 	} //}}}
 
-	//{{{ getLast() method
+	// getLast() method
 	@Override
 	public View getLast()
 	{
 		return viewsLast;
 	} //}}}
 
-	//{{{ getActiveView() method
+	// getActiveView() method
 	/**
 	 * Returns the currently focused view.
 	 */
@@ -121,7 +120,7 @@ public class ViewManagerImpl implements ViewManager
 		activeView = view;
 	}
 
-	//{{{ getActiveViewInternal() method
+	// getActiveViewInternal() method
 	/**
 	 * Returns the internal active view, which might be null.
 	 */
@@ -132,7 +131,7 @@ public class ViewManagerImpl implements ViewManager
 		return activeView;
 	} //}}}
 
-	//{{{ addViewToList() method
+	// addViewToList() method
 	public void addViewToList(View view)
 	{
 		viewCount++;
@@ -147,7 +146,7 @@ public class ViewManagerImpl implements ViewManager
 		}
 	} //}}}
 
-	//{{{ removeViewFromList() method
+	// removeViewFromList() method
 	public void remove(View view)
 	{
 		viewCount--;

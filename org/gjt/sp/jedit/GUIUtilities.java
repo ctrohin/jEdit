@@ -1,7 +1,6 @@
 /*
  * GUIUtilities.java - Various GUI utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import io.vavr.control.Try;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
@@ -80,7 +79,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
-//}}}
 
 /** Various GUI utility functions related to icons, menus, toolbars, keyboard shortcuts, etc.
  *
@@ -101,11 +99,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  */
 public class GUIUtilities extends GenericGUIUtilities
 {
-	//{{{ Icon methods
+	// Icon methods
 
 
 
-	//{{{ getEditorIcon() method
+	// getEditorIcon() method
 	/**
 	 * @return the default editor window image.
 	 */
@@ -114,7 +112,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return ((ImageIcon) IconManager.loadIcon(jEdit.getProperty("logo.icon.medium"))).getImage();
 	} //}}}
 
-	//{{{ getPluginIcon() method
+	// getPluginIcon() method
 	/**
 	 * @return the default plugin window image.
 	 */
@@ -123,11 +121,10 @@ public class GUIUtilities extends GenericGUIUtilities
 		return getEditorIcon();
 	} //}}}
 
-	//}}}
 
-	//{{{ Menus, tool bars
+	// Menus, tool bars
 
-	//{{{ loadMenuBar() method
+	// loadMenuBar() method
 	/**
 	 * Creates a menubar. Plugins should not need to call this method.
 	 * @param name The menu bar name
@@ -139,7 +136,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadMenuBar(jEdit.getActionContext(),name);
 	} //}}}
 
-	//{{{ loadMenuBar() method
+	// loadMenuBar() method
 	/**
 	 * Creates a menubar. Plugins should not need to call this method.
 	 * @param context An action context
@@ -163,7 +160,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return mbar;
 	} //}}}
 
-	//{{{ loadMenu() method
+	// loadMenu() method
 	/**
 	 * Creates a menu. The menu label is set from the
 	 * <code><i>name</i>.label</code> property. The menu contents is taken
@@ -180,7 +177,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadMenu(jEdit.getActionContext(),name);
 	} //}}}
 
-	//{{{ loadMenu() method
+	// loadMenu() method
 	/**
 	 * Creates a menu. The menu label is set from the
 	 * <code><i>name</i>.label</code> property. The menu contents is taken
@@ -205,7 +202,7 @@ public class GUIUtilities extends GenericGUIUtilities
 			context);
 	} //}}}
 
-	//{{{ loadPopupMenu() method
+	// loadPopupMenu() method
 	/**
 	 * Creates a popup menu.
 	 * @param name The menu name
@@ -219,7 +216,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadPopupMenu(jEdit.getActionContext(), name, textArea, evt);
 	} //}}}
 
-	//{{{ loadPopupMenu() method
+	// loadPopupMenu() method
 	/**
 	 * @return a popup menu.
 	 * @param name The menu name
@@ -230,7 +227,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadPopupMenu(jEdit.getActionContext(),name);
 	} //}}}
 
-	//{{{ loadPopupMenu() method
+	// loadPopupMenu() method
 	/**
 	 * Creates a popup menu.
 
@@ -246,7 +243,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadPopupMenu(context, name, null, null);
 	} //}}}
 
-	//{{{ loadPopupMenu() method
+	// loadPopupMenu() method
 	/**
 	 * Creates a popup menu.
 	 * @param context An action context; either
@@ -293,7 +290,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return menu;
 	} //}}}
 
-	//{{{ addServiceContextMenuItems() method
+	// addServiceContextMenuItems() method
 	/**
 	 * @return a list of menu items defined by services.
 	 *
@@ -325,7 +322,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return list;
 	} //}}}
 
-	//{{{ loadMenuItem() method
+	// loadMenuItem() method
 	/**
 	 * Creates a menu item. The menu item is bound to the action named by
 	 * <code>name</code> with label taken from the return value of the
@@ -341,7 +338,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadMenuItem(jEdit.getActionContext(),name,true);
 	} //}}}
 
-	//{{{ loadMenuItem() method
+	// loadMenuItem() method
 	/**
 	 * Creates a menu item.
 	 * @param name The menu item name
@@ -354,7 +351,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadMenuItem(jEdit.getActionContext(),name,setMnemonic);
 	} //}}}
 
-	//{{{ loadMenuItem() method
+	// loadMenuItem() method
 	/**
 	 * Creates a menu item.
 	 * @param context An action context; either
@@ -374,7 +371,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return _loadMenuItem(name, context, setMnemonic);
 	} //}}}
 
-	//{{{ loadMenuItem(EditAction, boolean)
+	// loadMenuItem(EditAction, boolean)
 	public static JMenuItem loadMenuItem(EditAction editAction,
 		boolean setMnemonic)
 	{
@@ -384,7 +381,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return _loadMenuItem(name, context, setMnemonic);
 	} //}}}
 
-	//{{{ loadToolBar() method
+	// loadToolBar() method
 	/**
 	 * @return a toolbar.
 	 * @param name The toolbar name
@@ -395,7 +392,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadToolBar(jEdit.getActionContext(),name);
 	} //}}}
 
-	//{{{ loadToolBar() method
+	// loadToolBar() method
 	/**
 	 * Creates a toolbar.
 	 * @param context An action context; either
@@ -433,7 +430,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return toolB;
 	} //}}}
 
-	//{{{ loadToolButton() method
+	// loadToolButton() method
 	/**
 	 * Loads a tool bar button. The tooltip is constructed from
 	 * the <code><i>name</i>.label</code> and
@@ -449,7 +446,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return loadToolButton(jEdit.getActionContext(),name);
 	} //}}}
 
-	//{{{ loadToolButton() method
+	// loadToolButton() method
 	/**
 	 * Loads a tool bar button. The tooltip is constructed from
 	 * the <code><i>name</i>.label</code> and
@@ -495,7 +492,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return b;
 	} //}}}
 
-	//{{{ getPlatformShortcutLabel() method
+	// getPlatformShortcutLabel() method
 	/**
 	* Translates a shortcut description string (e.g. "CS+SEMICOLON") to
 	* a platform-localized description. On macOS this puts in the pretty
@@ -518,7 +515,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return out.toString();
         } //}}}
 
-	//{{{ getShortcutLabel() method
+	// getShortcutLabel() method
 	/**
 	 * Returns a label string to show users what shortcut are
 	 * assigned to the action.
@@ -554,11 +551,10 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Canned dialog boxes
+	// Canned dialog boxes
 
-	//{{{ message() method
+	// message() method
 	/**
 	 * Displays a dialog box.
 	 * The title of the dialog is fetched from
@@ -595,7 +591,7 @@ public class GUIUtilities extends GenericGUIUtilities
                 }
 	} //}}}
 
-	//{{{ error() method
+	// error() method
 	/**
 	 * Displays an error dialog box.
 	 * The title of the dialog is fetched from
@@ -636,7 +632,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ input() method
+	// input() method
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
 	 * The title of the dialog is fetched from
@@ -651,7 +647,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return input(comp,name,null,def);
 	} //}}}
 
-	//{{{ inputProperty() method
+	// inputProperty() method
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
 	 * The title of the dialog is fetched from
@@ -667,7 +663,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return inputProperty(comp,name,null,def);
 	} //}}}
 
-	//{{{ input() method
+	// input() method
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
 	 * The title of the dialog is fetched from
@@ -712,7 +708,7 @@ public class GUIUtilities extends GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ inputProperty() method
+	// inputProperty() method
 	/**
 	 * Displays an input dialog box and returns any text the user entered.
 	 * The title of the dialog is fetched from
@@ -754,7 +750,7 @@ public class GUIUtilities extends GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ confirm() method
+	// confirm() method
 	/**
 	 * Displays a confirm dialog box and returns the button pushed by the
 	 * user. The title of the dialog is fetched from the
@@ -793,7 +789,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return retValue[0];
 	} //}}}
 
-	//{{{ option() method
+	// option() method
 	 /**
 	 * Displays an option dialog dialog box and returns the button pushed by the
 	 * user. The title of the dialog is fetched from the
@@ -834,7 +830,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return retValue[0];
 	} //}}}
 
-	//{{{ listConfirm() method
+	// listConfirm() method
 	/**
 	 * Displays a confirm dialog box and returns the button pushed by the
 	 * user. The title of the dialog is fetched from the
@@ -881,7 +877,7 @@ public class GUIUtilities extends GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ listConfirm() method
+	// listConfirm() method
 	/**
 	 * Displays a confirm dialog box and returns the button pushed by the
 	 * user. The title of the dialog is fetched from the
@@ -935,7 +931,7 @@ public class GUIUtilities extends GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ showVFSFileDialog() methods
+	// showVFSFileDialog() methods
 	/**
 	 * Displays a VFS file selection dialog box.
 	 * @param view The view, should be non-null
@@ -1017,9 +1013,8 @@ public class GUIUtilities extends GenericGUIUtilities
 		return fileChooser.getSelectedFiles();
 	} //}}}
 
-	//}}}
 
-	//{{{ menuAcceleratorFont() method
+	// menuAcceleratorFont() method
 	/**
 	 * Menu accelerator font according to L&amp;F defaults, with workarounds.
 	 */
@@ -1047,9 +1042,9 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ Colors and styles
+	// Colors and styles
 
-	//{{{ getStyleString() method
+	// getStyleString() method
 	/**
 	 * Converts a style into it's string representation.
 	 * @param style The style
@@ -1081,11 +1076,10 @@ public class GUIUtilities extends GenericGUIUtilities
 		return buf.toString();
 	} //}}}
 
-	//}}}
 
-	//{{{ Loading, saving window geometry
+	// Loading, saving window geometry
 
-	//{{{ loadGeometry() method
+	// loadGeometry() method
 	/**
 	 * Loads a windows's geometry from the properties.
 	 * The geometry is loaded from the <code><i>name</i>.x</code>,
@@ -1135,7 +1129,7 @@ public class GUIUtilities extends GenericGUIUtilities
 
 	} //}}}
 
-	//{{{ loadGeometry() method
+	// loadGeometry() method
 	/**
 	 * Loads a windows's geometry from the properties.
 	 * The geometry is loaded from the <code><i>name</i>.x</code>,
@@ -1150,7 +1144,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		loadGeometry(win, win.getParent(), name);
 	} //}}}
 
-	//{{{ UnixWorkaround class
+	// UnixWorkaround class
 	public static class UnixWorkaround
 	{
 		Window win;
@@ -1160,7 +1154,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		long start;
 		boolean windowOpened;
 
-		//{{{ UnixWorkaround constructor
+		// UnixWorkaround constructor
 		public UnixWorkaround(Window win, String name, Rectangle desired,
 			int extState)
 		{
@@ -1194,10 +1188,10 @@ public class GUIUtilities extends GenericGUIUtilities
 			win.addWindowListener(new WindowHandler());
 		} //}}}
 
-		//{{{ ComponentHandler class
+		// ComponentHandler class
 		private class ComponentHandler extends ComponentAdapter
 		{
-			//{{{ componentMoved() method
+			// componentMoved() method
 			@Override
 			public void componentMoved(ComponentEvent evt)
 			{
@@ -1218,7 +1212,7 @@ public class GUIUtilities extends GenericGUIUtilities
 				win.removeComponentListener(this);
 			} //}}}
 
-			//{{{ componentResized() method
+			// componentResized() method
 			@Override
 			public void componentResized(ComponentEvent evt)
 			{
@@ -1240,10 +1234,10 @@ public class GUIUtilities extends GenericGUIUtilities
 			} //}}}
 		} //}}}
 
-		//{{{ WindowHandler class
+		// WindowHandler class
 		private class WindowHandler extends WindowAdapter
 		{
-			//{{{ windowOpened() method
+			// windowOpened() method
 			@Override
 			public void windowOpened(WindowEvent evt)
 			{
@@ -1267,7 +1261,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		} //}}}
 	} //}}}
 
-	//{{{ saveGeometry() method
+	// saveGeometry() method
 	/**
 	 * Saves a window's geometry to the properties.
 	 * The geometry is saved to the <code><i>name</i>.x</code>,
@@ -1284,7 +1278,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		saveGeometry (win, win.getParent(), name);
 	} //}}}
 
-	//{{{ saveGeometry() method
+	// saveGeometry() method
 	/**
 	 * Saves a window's geometry to the properties.
 	 * The geometry is saved to the <code><i>name</i>.x</code>,
@@ -1320,9 +1314,8 @@ public class GUIUtilities extends GenericGUIUtilities
 		jEdit.setIntegerProperty(name + ".height", bounds.height);
 	} //}}}
 
-	//}}}
 
-	//{{{ hideSplashScreen() method
+	// hideSplashScreen() method
 	/**
 	 * Ensures that the splash screen is not visible. This should be
 	 * called before displaying any dialog boxes or windows at
@@ -1337,7 +1330,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ applyTextAreaColors() method
+	// applyTextAreaColors() method
 	/**
 	 * experimental - applies the text area colors on a Component
 	 * (such as a dockable window) and its children.
@@ -1358,7 +1351,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ createMultilineLabel() method
+	// createMultilineLabel() method
 	/**
 	 * Creates a component that displays a multiple line message. This
 	 * is implemented by assembling a number of <code>JLabels</code> in
@@ -1390,7 +1383,7 @@ public class GUIUtilities extends GenericGUIUtilities
 			return panel;
 	} //}}}
 
-	//{{{ getComponentParent() method
+	// getComponentParent() method
 	/**
 	 * Finds a parent of the specified component.
 	 * @param comp The component
@@ -1428,7 +1421,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return null;
 	} //}}}
 
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Finds the view parent of the specified component.
 	 * @param comp the component from which you want to get the parent view
@@ -1440,7 +1433,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		return (View)getComponentParent(comp,View.class);
 	} //}}}
 
-	//{{{ addSizeSaver() method
+	// addSizeSaver() method
 	/**
 	* Adds a SizeSaver to the specified Frame. For non-Frame's use {@link #saveGeometry(Window,String)}
 	 *
@@ -1454,7 +1447,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		addSizeSaver(frame,frame.getParent(),name);
 	} //}}}
 
-	//{{{ addSizeSaver() method
+	// addSizeSaver() method
 	/**
 	 * Adds a SizeSaver to the specified Frame. For non-Frame's use {@link #saveGeometry(Window,Container,String)}
 	 *
@@ -1471,13 +1464,13 @@ public class GUIUtilities extends GenericGUIUtilities
 		frame.addComponentListener(ss);
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ initializeDeprecatedIcons() method
+	// initializeDeprecatedIcons() method
 
 
 
-	//{{{ showSplashScreen() method
+	// showSplashScreen() method
 	static void showSplashScreen()
 	{
 		// Have to do it in the EDT, since it creates gui components
@@ -1492,26 +1485,25 @@ public class GUIUtilities extends GenericGUIUtilities
 		}
 	} //}}}
 
-	//{{{ advanceSplashProgress() method
+	// advanceSplashProgress() method
 	static void advanceSplashProgress()
 	{
 		if(splash != null)
 			splash.advance();
 	} //}}}
 
-	//{{{ advanceSplashProgress() method
+	// advanceSplashProgress() method
 	static void advanceSplashProgress(String label)
 	{
 		if(splash != null)
 			splash.advance(label);
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private static SplashScreen splash;
 
-	//{{{ _loadMenuItem() method
+	// _loadMenuItem() method
 	private static JMenuItem _loadMenuItem(String name, ActionContext context, boolean setMnemonic)
 	{
 
@@ -1577,7 +1569,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		macKeySymbols.put("SPACE",         "\u2423");
 	}
 
-	//{{{ getMacShortcutLabel() method
+	// getMacShortcutLabel() method
 	/**
 	 * Convert a shortcut label to a Mac-friendly version by changing written-out
 	 * names and modifiers (e.g. C+PERIOD) to symbols.
@@ -1641,14 +1633,13 @@ public class GUIUtilities extends GenericGUIUtilities
 	} //}}}
 
 	private GUIUtilities() {}
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
 	private static final AtomicLong executorThreadsCounter = new AtomicLong();
 	private static final ScheduledExecutorService schedExecutor =
 		Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "SizeSaver-" + executorThreadsCounter.incrementAndGet()));
-	//{{{ SizeSaver class
+	// SizeSaver class
 	/**
 	 * A combined ComponentListener and WindowStateListener to continually save a Frames size.<br />
 	 * For non-Frame's use {@link GUIUtilities#saveGeometry(Window,String)}
@@ -1665,7 +1656,7 @@ public class GUIUtilities extends GenericGUIUtilities
 		private final String name;
 		private Future<?> resizeDelayFuture;
 
-		//{{{ SizeSaver constructors
+		// SizeSaver constructors
 		/**
 		 * Constructs a new SizeSaver.
 		 *
@@ -1682,7 +1673,7 @@ public class GUIUtilities extends GenericGUIUtilities
 			this.name = name;
 		} //}}}
 
-		//{{{ windowStateChanged() method
+		// windowStateChanged() method
 		@Override
 		public void windowStateChanged(WindowEvent wse)
 		{
@@ -1692,7 +1683,7 @@ public class GUIUtilities extends GenericGUIUtilities
 			save(extendedState, bounds);
 		} //}}}
 
-		//{{{ save() method
+		// save() method
 		private void save(int extendedState, Rectangle bounds)
 		{
 			cancelResizeSave();
@@ -1715,7 +1706,7 @@ public class GUIUtilities extends GenericGUIUtilities
 			}
 		} //}}}
 
-		//{{{ cancelResizeSave() method
+		// cancelResizeSave() method
 		private void cancelResizeSave()
 		{
 			if (resizeDelayFuture != null) {
@@ -1723,16 +1714,15 @@ public class GUIUtilities extends GenericGUIUtilities
 				resizeDelayFuture = null;
 			}
 		}
-		//}}}
 
-		//{{{ componentResized() method
+		// componentResized() method
 		@Override
 		public void componentResized(ComponentEvent ce)
 		{
 			componentMoved(ce);
 		} //}}}
 
-		//{{{ componentMoved() method
+		// componentMoved() method
 		@Override
 		public void componentMoved(ComponentEvent ce)
 		{
@@ -1744,7 +1734,6 @@ public class GUIUtilities extends GenericGUIUtilities
 		} //}}}
 	} //}}}
 
-	//}}}
 
 	public static double getScaleFactor(Graphics g) {
 		var g2d = (Graphics2D) g;

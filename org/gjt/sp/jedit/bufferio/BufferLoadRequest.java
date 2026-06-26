@@ -1,7 +1,6 @@
 /*
  * BufferLoadRequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.bufferio;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
@@ -31,7 +30,6 @@ import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * A buffer load request.
@@ -42,7 +40,7 @@ public class BufferLoadRequest extends BufferIORequest
 {
 	private final boolean untitled;
 	
-	//{{{ BufferLoadRequest constructor
+	// BufferLoadRequest constructor
 	/**
 	 * Creates a new buffer I/O request.
 	 * @param view The view
@@ -58,7 +56,7 @@ public class BufferLoadRequest extends BufferIORequest
 		this.untitled = untitled;
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -128,7 +126,7 @@ public class BufferLoadRequest extends BufferIORequest
 		}
 	} //}}}
 
-	//{{{ getNakedStream() method
+	// getNakedStream() method
 	/**
 	 * Returns the raw contents stream for this load request.
 	 * This stream is not buffered or unzipped.
@@ -143,7 +141,7 @@ public class BufferLoadRequest extends BufferIORequest
 		throw new IOException("Unable to get a Stream for " + path);
 	} //}}}
 
-	//{{{ getContentLength() method
+	// getContentLength() method
 	/**
 	 * Returns content length of this load request.
 	 */
@@ -156,7 +154,7 @@ public class BufferLoadRequest extends BufferIORequest
 			return 0L;
 	} //}}}
 
-	//{{{ rewindContentsStream() method
+	// rewindContentsStream() method
 	/**
 	 * Returns rewinded contents stream.
 	 * This method assumes the marked stream was made by
@@ -195,7 +193,7 @@ public class BufferLoadRequest extends BufferIORequest
 		}
 	} //}}}
 
-	//{{{ readContents() method
+	// readContents() method
 	/**
 	 * Read the contents of this load request.
 	 * Some auto detection is performed if enabled.
@@ -290,7 +288,7 @@ public class BufferLoadRequest extends BufferIORequest
 		}
 	} //}}}
 
-	//{{{ isGzipped() method
+	// isGzipped() method
 	/**
 	 * Decide by settings or detection if the stream is gzipped
 	 * @param markedStream the stream to check
@@ -312,7 +310,7 @@ public class BufferLoadRequest extends BufferIORequest
 		return gzipped;
 	} //}}}
 
-	//{{{ getEncodingDetectors() method
+	// getEncodingDetectors() method
 	private List<EncodingDetector> getEncodingDetectors()
 	{
 		List<EncodingDetector> encodingProviders = new ArrayList<>();
@@ -340,7 +338,7 @@ public class BufferLoadRequest extends BufferIORequest
 		return encodingProviders;
 	} //}}}
 
-	//{{{ readMarkers() method
+	// readMarkers() method
 	private static void readMarkers(Buffer buffer, InputStream _in) throws IOException, InterruptedException
 	{
 		// For `reload' command

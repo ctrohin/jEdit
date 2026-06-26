@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2000, 2001 Slava Pestov
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +19,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,14 +63,14 @@ import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
  */
 public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 {
-	//{{{ BrowserAdditionalUncRootsOptionPane constructor
+	// BrowserAdditionalUncRootsOptionPane constructor
 	public BrowserAdditionalUncRootsOptionPane()
 	{
 		super("browser.additional-unc-roots");
 		caption = new JLabel(jEdit.getProperty("options.browser.additional-unc-roots.caption"));
 	} // }}}
 
-	//{{{ _init method
+	// _init method
 	@Override
 	protected void _init()
 	{
@@ -114,7 +113,7 @@ public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 		add(BorderLayout.SOUTH, buttons);
 	} // }}}
 
-	//{{{ _save method
+	// _save method
 	@Override
 	protected void _save()
 	{
@@ -124,7 +123,7 @@ public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 		jEdit.setProperty("vfs.browser.additionalUncRoots", joiner.toString());
 	} // }}}
 
-	//{{{ Private members
+	// Private members
 	private List<String> listData;
 	private SortedListModel listModel;
 	private JList<String> list;
@@ -134,14 +133,14 @@ public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 	private final JLabel caption;
 	// }}}
 
-	//{{{ updateButtons method
+	// updateButtons method
 	private void updateButtons()
 	{
 		int index = list.getSelectedIndex();
 		remove.setEnabled((index != -1) && !listData.isEmpty());
 	} // }}}
 
-	//{{{ reloadUncRootsList method
+	// reloadUncRootsList method
 	private void reloadUncRootsList(String uncRoots)
 	{
 		listData.clear();
@@ -156,7 +155,7 @@ public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 		listModel.fireContentsChanged(listModel, 0, listData.size() - 1);
 	} // }}}
 
-	//{{{ SortedListModel class
+	// SortedListModel class
 	private class SortedListModel extends AbstractListModel<String>
 	{
 		@Override
@@ -178,7 +177,7 @@ public class BrowserAdditionalUncRootsOptionPane extends AbstractOptionPane
 		}
 	} // }}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override

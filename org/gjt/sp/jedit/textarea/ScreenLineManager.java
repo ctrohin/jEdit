@@ -1,7 +1,6 @@
 /*
  * ScreenLineManager.java - Manage screen line counts
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,11 +21,10 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.buffer.*;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * Performs the Mapping between physical lines and screen lines.
@@ -37,7 +35,7 @@ import org.gjt.sp.util.Log;
  */
 class ScreenLineManager
 {
-	//{{{ ScreenLineManager constructor
+	// ScreenLineManager constructor
 	ScreenLineManager(JEditBuffer buffer)
 	{
 		this.buffer = buffer;
@@ -45,7 +43,7 @@ class ScreenLineManager
 			reset();
 	} //}}}
 	
-	//{{{ isScreenLineCountValid() method
+	// isScreenLineCountValid() method
 	boolean isScreenLineCountValid(int line)
 	{
 		if (screenLines == null || line < 0 || line >= screenLines.length)
@@ -53,7 +51,7 @@ class ScreenLineManager
 		return screenLines[line] > 0;
 	} //}}}
 
-	//{{{ getScreenLineCount() method
+	// getScreenLineCount() method
 	/**
 	 * Returns how many screen lines contains the given physical line.
 	 * It can be greater than 1 when using soft wrap
@@ -67,7 +65,7 @@ class ScreenLineManager
 		return screenLines[line];
 	} //}}}
 
-	//{{{ setScreenLineCount() method
+	// setScreenLineCount() method
 	/**
 	 * Sets the number of screen lines that the specified physical line
 	 * is split into.
@@ -92,7 +90,7 @@ class ScreenLineManager
 		screenLines[line] = (char)count;
 	} //}}}
 
-	//{{{ invalidateScreenLineCounts() method
+	// invalidateScreenLineCounts() method
 	/**
 	 * Invalidate all screenlines
 	 */
@@ -101,26 +99,26 @@ class ScreenLineManager
 		invalidateScreenLineCountRange(0, buffer.getLineCount());
 	} //}}}
 
-	//{{{ invalidateScreenLineCounts() method
+	// invalidateScreenLineCounts() method
 	private void invalidateScreenLineCount(int physicalLineNo)
 	{
 		screenLines[physicalLineNo] = 0;
 	} //}}}
 
-	//{{{ invalidateScreenLineCounts() method
+	// invalidateScreenLineCounts() method
 	private void invalidateScreenLineCountRange(int physicalLineStart, int physicalLineEnd)
 	{
 		for (int i = physicalLineStart; i < physicalLineEnd; i++)
 			screenLines[i] = 0;
 	} //}}}
 
-	//{{{ reset() method
+	// reset() method
 	void reset()
 	{
 		screenLines = new char[buffer.getLineCount()];
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	public void contentInserted(int startLine, int numLines)
 	{
 		int lineCount = buffer.getLineCount();
@@ -161,7 +159,7 @@ class ScreenLineManager
 		}
 	} //}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	public void contentRemoved(int startLine, int numLines)
 	{
 		int endLine = startLine + numLines;
@@ -175,7 +173,7 @@ class ScreenLineManager
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final JEditBuffer buffer;
 
 	/** This array contains the screen line count for each physical line.
@@ -183,5 +181,4 @@ class ScreenLineManager
 	 * screenLines[physicalLineNo] > 0 -> valid entry - No. of screen lines already calculated 
 	 */
 	private char[] screenLines;
-	//}}}
 }

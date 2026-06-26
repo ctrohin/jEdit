@@ -1,7 +1,6 @@
 /*
  * BracketIndentRule.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -34,28 +33,28 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  */
 public abstract class BracketIndentRule implements IndentRule
 {
-	//{{{ BracketIndentRule constructor
+	// BracketIndentRule constructor
 	BracketIndentRule(char openBracket, char closeBracket)
 	{
 		this.openBracket = openBracket;
 		this.closeBracket = closeBracket;
 	} //}}}
 
-	//{{{ Brackets class
+	// Brackets class
 	public static class Brackets
 	{
 		int openCount;
 		int closeCount;
 	} //}}}
 
-	//{{{ getBrackets() method
+	// getBrackets() method
 	public Brackets getBrackets(JEditBuffer buffer, int lineIndex)
 	{
 		return getBrackets(buffer, lineIndex,
 			0, buffer.getLineLength(lineIndex));
 	} //}}}
 
-	//{{{ getBrackets() method
+	// getBrackets() method
 	public Brackets getBrackets(JEditBuffer buffer, int lineIndex,
 		int begin, int end)
 	{
@@ -64,7 +63,7 @@ public abstract class BracketIndentRule implements IndentRule
 		return scanner.result;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + "[" + openBracket + ","
@@ -73,7 +72,7 @@ public abstract class BracketIndentRule implements IndentRule
 
 	protected char openBracket, closeBracket;
 
-	//{{{ class LineScanner
+	// class LineScanner
 	private class LineScanner implements TokenHandler
 	{
 		public final Brackets result;

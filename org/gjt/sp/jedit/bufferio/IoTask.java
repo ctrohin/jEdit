@@ -1,7 +1,6 @@
 /*
  * BufferIORequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2013 jEdit contributors
  *

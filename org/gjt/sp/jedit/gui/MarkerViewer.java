@@ -1,7 +1,6 @@
 /*
  * MarkerViewer.java - Dockable view of markers in the current buffer
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Nicholas O'Leary
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -34,11 +33,10 @@ import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
 import org.gjt.sp.jedit.msg.ViewUpdate;
-//}}}
 /** Dockable view of markers in the current buffer */
 public class MarkerViewer extends JPanel implements ActionListener
 {
-	//{{{ MarkerViewer constructor
+	// MarkerViewer constructor
 	public MarkerViewer(View view)
 	{
 		super(new BorderLayout());
@@ -93,7 +91,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		refreshList();
 	} //}}}
 
-	//{{{ requestDefaultFocus() method
+	// requestDefaultFocus() method
 	@Override
 	@SuppressWarnings("deprecation")
 	public boolean requestDefaultFocus()
@@ -102,7 +100,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		return true;
 	} //}}}
 
-	//{{{ actionPerformed() method
+	// actionPerformed() method
 	@Override
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -126,7 +124,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 
-	//{{{ handleEditPaneUpdate() method
+	// handleEditPaneUpdate() method
 	@EBHandler
 	public void handleEditPaneUpdate(EditPaneUpdate epu)
 	{
@@ -137,7 +135,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 
-	//{{{ handleViewUpdate() method
+	// handleViewUpdate() method
 	@EBHandler
 	public void handleViewUpdate(ViewUpdate vu)
 	{
@@ -148,7 +146,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 
-	//{{{ handleBufferUpdate() method
+	// handleBufferUpdate() method
 	@EBHandler
 	public void handleBufferUpdate(BufferUpdate bu)
 	{
@@ -159,7 +157,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	}//}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -167,7 +165,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -175,18 +173,17 @@ public class MarkerViewer extends JPanel implements ActionListener
 		EditBus.removeFromBus(this);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final JList<Marker> markerList;
 	private final JScrollPane markerListScroller;
 	private final View view;
 	private final RolloverButton previous;
 	private final RolloverButton next;
 	private final RolloverButton clear;
-	//}}}
 
-	//{{{ refreshList() method
+	// refreshList() method
 	private void refreshList()
 	{
 		java.util.Vector<Marker> markers = view.getBuffer().getMarkers();
@@ -209,7 +206,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 
 	} //}}}
 
-	//{{{ goToSelectedMarker() method
+	// goToSelectedMarker() method
 	private void goToSelectedMarker()
 	{
 		Marker mark = markerList.getSelectedValue();
@@ -222,7 +219,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		view.getTextArea().requestFocus();
 	} //}}}
 
-	//{{{ updateSelection() method
+	// updateSelection() method
 	private void updateSelection()
 	{
 		ListModel<Marker> model = markerList.getModel();
@@ -240,11 +237,10 @@ public class MarkerViewer extends JPanel implements ActionListener
 
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Renderer Class
+	// Renderer Class
 	private class Renderer extends DefaultListCellRenderer
 	{
 		@Override
@@ -279,7 +275,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 
-	//{{{ MouseHandler Class
+	// MouseHandler Class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -295,7 +291,7 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 	
-	//{{{ KeyHandler Class
+	// KeyHandler Class
 	private class KeyHandler extends KeyAdapter
 	{
 		@Override
@@ -310,5 +306,4 @@ public class MarkerViewer extends JPanel implements ActionListener
 		}
 	} //}}}
 
-	//}}}
 }

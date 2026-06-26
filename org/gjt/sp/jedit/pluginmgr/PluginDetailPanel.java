@@ -1,7 +1,6 @@
 /*
  * PluginDetailPanel.java - Displays the details of a plugin
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008-2013 Matthieu Casanova, Dale Anson, Alan Ezust 
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.io.File;
 
@@ -36,7 +35,6 @@ import javax.swing.*;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.PluginJAR;
 import org.gjt.sp.jedit.pluginmgr.ManagePanel.Entry;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -50,7 +48,7 @@ class PluginDetailPanel extends JPanel
 	/** The current entry. */
 	private Entry entry;
 	
-	//{{{ PluginDetailPanel constructor
+	// PluginDetailPanel constructor
 	PluginDetailPanel()
 	{
 		setLayout(new BorderLayout());
@@ -67,7 +65,7 @@ class PluginDetailPanel extends JPanel
 		add(scroll);
 	} //}}}
 
-	//{{{ setPlugin() method
+	// setPlugin() method
 	void setPlugin(Entry entry)
 	{
 		if (entry != this.entry)
@@ -117,7 +115,7 @@ class PluginDetailPanel extends JPanel
 		}
 	} //}}}
 	
-	//{{{ getDepends() method
+	// getDepends() method
 	private String getDepends(Entry entry) 
 	{
 		StringBuilder builder = new StringBuilder();

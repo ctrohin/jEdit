@@ -1,7 +1,6 @@
 /*
  * ScrollLayout.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,11 +21,10 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import javax.swing.border.Border;
 import javax.swing.JComponent;
-//}}}
 
 /**
  * Similar to a javax.swing.ScrollPaneLayout, but not as restrictive on the
@@ -54,7 +52,7 @@ public class ScrollLayout implements LayoutManager
 	public static final String BOTTOM_LEFT = "bottomLeft";
 	public static final String BOTTOM_RIGHT = "bottomRight";
 
-	//{{{ addLayoutComponent() method
+	// addLayoutComponent() method
 	/**
  	 * Adds a component to the layout using the <code>name</code> parameter to
  	 * position the component.
@@ -97,7 +95,7 @@ public class ScrollLayout implements LayoutManager
 		}
 	} //}}}
 
-	//{{{ removeLayoutComponent() method
+	// removeLayoutComponent() method
 	/**
  	 * Removes the specified component from the layout.
  	 * @param comp The component to be removed.
@@ -125,7 +123,7 @@ public class ScrollLayout implements LayoutManager
 			bottomRight = null;
 	} //}}}
 
-	//{{{ preferredLayoutSize() method
+	// preferredLayoutSize() method
 	@Override
 	public Dimension preferredLayoutSize(Container parent)
 	{
@@ -145,7 +143,7 @@ public class ScrollLayout implements LayoutManager
 		return dim;
 	} //}}}
 	
-	//{{{ preferred widths
+	// preferred widths
 	// constrained by left component preferred width
 	private int getLeftPreferredWidth() 
 	{
@@ -179,9 +177,8 @@ public class ScrollLayout implements LayoutManager
 		int brw = bottomRight == null ? 0 : bottomRight.getPreferredSize().width;
 		return Math.max(rw, Math.max(trw, brw));
 	}
-	//}}}
 	
-	//{{{ preferred heights
+	// preferred heights
 	// constrained by top component preferred height
 	private int getTopPreferredHeight()
 	{
@@ -215,9 +212,8 @@ public class ScrollLayout implements LayoutManager
 		int brh = bottomRight == null ? 0 : bottomRight.getPreferredSize().height;
 		return Math.max(bh, Math.max(brh, blh));
 	}
-	//}}}
 	
-	//{{{ minimumLayoutSize() method
+	// minimumLayoutSize() method
 	@Override
 	public Dimension minimumLayoutSize(Container parent)
 	{
@@ -260,7 +256,7 @@ public class ScrollLayout implements LayoutManager
 		return dim;
 	} //}}}
 
-	//{{{ layoutContainer() method
+	// layoutContainer() method
 	@Override
 	public void layoutContainer(Container parent)
 	{
@@ -356,7 +352,7 @@ public class ScrollLayout implements LayoutManager
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private Component center;
 	private Component left;
 	private Component right;
@@ -367,7 +363,7 @@ public class ScrollLayout implements LayoutManager
 	private Component bottomLeft;
 	private Component bottomRight;
 
-	//{{{ getInsets() method
+	// getInsets() method
 	private static Insets getInsets(Component parent)
 	{
 		Border border = ((JComponent)parent).getBorder();
@@ -377,5 +373,4 @@ public class ScrollLayout implements LayoutManager
 			return border.getBorderInsets(parent);
 	} //}}}
 	
-	//}}}
 }

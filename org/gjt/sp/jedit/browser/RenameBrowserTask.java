@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  * Portions Copyright (C) 2000, 2003 Slava Pestov
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.io.FavoritesVFS;
 import org.gjt.sp.jedit.io.VFS;
@@ -32,7 +31,6 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 
 import java.io.IOException;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -40,7 +38,7 @@ import java.io.IOException;
  */
 class RenameBrowserTask extends AbstractBrowserTask
 {
-	//{{{ BrowserIORequest constructor
+	// BrowserIORequest constructor
 	/**
 	 * Creates a new browser I/O request.
 	 *
@@ -56,7 +54,7 @@ class RenameBrowserTask extends AbstractBrowserTask
 		this.path2 = path2;
 	} //}}}
 
-	//{{{ _run() method
+	// _run() method
 	@Override
 	public void _run()
 	{
@@ -117,7 +115,7 @@ class RenameBrowserTask extends AbstractBrowserTask
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + "[type=RENAME"
@@ -125,7 +123,6 @@ class RenameBrowserTask extends AbstractBrowserTask
 		    + ",path2=" + path2 + ']';
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private String path2;
-	//}}}
 }

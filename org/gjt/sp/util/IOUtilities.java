@@ -1,7 +1,6 @@
 /*
  * IOUtilities.java - IO related functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -36,7 +35,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class IOUtilities
 {
-	//{{{ moveFile() method
+	// moveFile() method
 	/**
 	 * Moves the source file to the destination.
 	 *
@@ -83,7 +82,7 @@ public class IOUtilities
 		return ok;
 	} //}}}
 
-	//{{{ copyStream() methods
+	// copyStream() methods
 	/**
 	 * Copy an input stream to an output stream.
 	 *
@@ -177,7 +176,7 @@ public class IOUtilities
 		return copyStream(4096, progress, progressPrefix, in, out, canStop);
 	} //}}}
 
-	//{{{ toByteArray() method
+	// toByteArray() method
 	/**
 	 * Convert an InputStream into a byte array
 	 *
@@ -192,7 +191,7 @@ public class IOUtilities
 		return out.toByteArray();
 	} //}}}
 
-	//{{{ toString() methods
+	// toString() methods
 	/**
 	 * Convert an InputStream into a String with UTF-8 encoding
 	 *
@@ -205,7 +204,7 @@ public class IOUtilities
 		return toString(in, StandardCharsets.UTF_8);
 	} //}}}
 
-	//{{{ toString() methods
+	// toString() methods
 	/**
 	 * Convert an InputStream into a String
 	 *
@@ -221,7 +220,7 @@ public class IOUtilities
 		return out.toString(charset);
 	} //}}}
 
-	//{{{ fileLength() method
+	// fileLength() method
 	/**
 	 * Returns the length of a file. If it is a directory it will calculate recursively the length.
 	 *
@@ -246,7 +245,7 @@ public class IOUtilities
 		return length;
 	} // }}}
 
-	//{{{ closeQuietly() methods
+	// closeQuietly() methods
 	/**
 	 * Method that will close an {@link AutoCloseable} ignoring it if it is null and ignoring exceptions.
 	 *
@@ -317,7 +316,7 @@ public class IOUtilities
 		closeQuietly((AutoCloseable)out);
 	} //}}}
 
-	//{{{ IOUtilities() constructor
+	// IOUtilities() constructor
 	private IOUtilities()
 	{
 	} //}}}

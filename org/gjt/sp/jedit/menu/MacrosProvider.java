@@ -1,7 +1,6 @@
 /*
  * MacrosProvider.java - Macros menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  * Portions copyright (C) 2011 Matthieu Casanova
@@ -23,24 +22,23 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class MacrosProvider implements DynamicMenuProvider
 {
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return false;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
@@ -59,7 +57,7 @@ public class MacrosProvider implements DynamicMenuProvider
 		}
 	} //}}}
 
-	//{{{ createMacrosMenu() method
+	// createMacrosMenu() method
 	private void createMacrosMenu(JMenu menu, List list, int start)
 	{
 		List<JMenuItem> menuItems = new ArrayList<>();

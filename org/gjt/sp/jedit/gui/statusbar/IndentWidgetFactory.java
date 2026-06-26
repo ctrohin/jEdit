@@ -1,7 +1,6 @@
 /*
  * IndentWidgetFactory.java - The indent widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2011 Evan Wright
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.event.MouseEvent;
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
-//}}}
 
 /**
  * @author Evan Wright
@@ -42,7 +40,7 @@ public class IndentWidgetFactory implements StatusWidgetFactory
 		return indent;
 	}
 
-	//{{{ IndentWidget class
+	// IndentWidget class
 	private static class IndentWidget extends AbstractLabelWidget
 	{
 		IndentWidget(View view)

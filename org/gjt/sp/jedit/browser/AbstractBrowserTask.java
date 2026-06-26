@@ -1,7 +1,6 @@
 /*
  * AbstractBrowserTask
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010 Matthieu Casanova
  * Portions Copyright (C) 2000, 2003 Slava Pestov
@@ -22,10 +21,9 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -33,7 +31,7 @@ import org.gjt.sp.util.*;
  */
 abstract class AbstractBrowserTask extends Task
 {
-	//{{{ BrowserIORequest constructor
+	// BrowserIORequest constructor
 	/**
 	 * Creates a new browser I/O request.
 	 * @param browser The VFS browser instance
@@ -53,12 +51,11 @@ abstract class AbstractBrowserTask extends Task
 		}
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	protected VFSBrowser browser;
 	protected Object session;
 	protected VFS vfs;
 	protected String path;
-	//}}}
 
 	private class MyTaskListener implements TaskListener
 	{

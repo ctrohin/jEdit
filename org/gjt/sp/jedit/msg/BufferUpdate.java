@@ -1,7 +1,6 @@
 /*
  * BufferUpdate.java - Buffer update message
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2001 Slava Pestov
  *
@@ -36,7 +35,7 @@ import java.util.Objects;
  */
 public class BufferUpdate extends EBMessage
 {
-	//{{{ Message types
+	// Message types
 	/**
 	 * Buffer created.
 	 */
@@ -89,9 +88,8 @@ public class BufferUpdate extends EBMessage
 	 * @since jEdit 4.1pre1
 	 */
 	public static final Object PROPERTIES_CHANGED = "PROPERTIES_CHANGED";
-	//}}}
 
-	//{{{ BufferUpdate constructor
+	// BufferUpdate constructor
 	/**
 	 * Creates a new buffer update message.
 	 * @param buffer The buffer
@@ -105,7 +103,7 @@ public class BufferUpdate extends EBMessage
 		this.what = what;
 	} //}}}
 
-	//{{{ getWhat() method
+	// getWhat() method
 	/**
 	 * Returns what caused this buffer update.
 	 */
@@ -114,7 +112,7 @@ public class BufferUpdate extends EBMessage
 		return what;
 	} //}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the buffer involved.
 	 */
@@ -123,7 +121,7 @@ public class BufferUpdate extends EBMessage
 		return (Buffer)getSource();
 	} //}}}
 
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Returns the view involved, which may be null.
 	 */
@@ -132,7 +130,7 @@ public class BufferUpdate extends EBMessage
 		return view;
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	@Override
 	public String paramString()
 	{
@@ -140,8 +138,7 @@ public class BufferUpdate extends EBMessage
 			+ super.paramString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Object what;
 	private final View view;
-	//}}}
 }

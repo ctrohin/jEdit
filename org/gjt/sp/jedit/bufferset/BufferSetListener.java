@@ -1,7 +1,6 @@
 /*
  * BufferSetListener.java - the listener for buffersets change
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  *

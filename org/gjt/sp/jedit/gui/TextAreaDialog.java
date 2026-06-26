@@ -1,7 +1,6 @@
 /*
  * TextAreaDialog.java - A dialog box with a text area
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,17 +21,16 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /** A dialog box with a text area */
 public class TextAreaDialog extends EnhancedDialog
 {
-	//{{{ TextAreaDialog constructor
+	// TextAreaDialog constructor
 	public TextAreaDialog(Frame frame, String title, String caption,
 		Icon icon, String text)
 	{
@@ -41,7 +39,7 @@ public class TextAreaDialog extends EnhancedDialog
 		init(caption,icon,text);
 	} //}}}
 
-	//{{{ TextAreaDialog constructor
+	// TextAreaDialog constructor
 	public TextAreaDialog(Frame frame, String name, Throwable t)
 	{
 		this(frame,jEdit.getProperty(name + ".title"),
@@ -50,7 +48,7 @@ public class TextAreaDialog extends EnhancedDialog
 			MiscUtilities.throwableToString(t));
 	} //}}}
 
-	//{{{ TextAreaDialog constructor
+	// TextAreaDialog constructor
 	public TextAreaDialog(Dialog frame, String title, String caption,
 		Icon icon, String text)
 	{
@@ -59,7 +57,7 @@ public class TextAreaDialog extends EnhancedDialog
 		init(caption,icon,text);
 	} //}}}
 
-	//{{{ TextAreaDialog constructor
+	// TextAreaDialog constructor
 	public TextAreaDialog(Dialog frame, String name, Throwable t)
 	{
 		this(frame,jEdit.getProperty(name + ".title"),
@@ -68,7 +66,7 @@ public class TextAreaDialog extends EnhancedDialog
 			MiscUtilities.throwableToString(t));
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	private void init(String caption,
 		Icon icon, String text)
 	{
@@ -110,14 +108,14 @@ public class TextAreaDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
     public void ok()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
     public void cancel()
 	{

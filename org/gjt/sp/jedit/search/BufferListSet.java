@@ -1,7 +1,6 @@
 /*
  * BufferListSet.java - Buffer list matcher
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * A file set for searching a user-specified list of buffers.
@@ -36,7 +34,7 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public abstract class BufferListSet implements SearchFileSet
 {
-	//{{{ getFirstFile() method
+	// getFirstFile() method
 	@Override
 	public synchronized String getFirstFile(View view)
 	{
@@ -49,7 +47,7 @@ public abstract class BufferListSet implements SearchFileSet
 			return files[0];
 	} //}}}
 	
-	//{{{ getLastFile() method
+	// getLastFile() method
 	@Override
 	public synchronized String getLastFile(View view)
 	{
@@ -62,21 +60,21 @@ public abstract class BufferListSet implements SearchFileSet
 			return files[files.length - 1];
 	} //}}}
 
-	//{{{ getNextFile() method
+	// getNextFile() method
 	@Override
 	public synchronized String getNextFile(View view, String path)
 	{
 		return getPrevOrNextFile(view, path, Direction.NEXT);
 	} //}}}
 	
-	//{{{ getPrevFile() method
+	// getPrevFile() method
 	@Override
 	public synchronized String getPrevFile(View view, String path)
 	{
 		return getPrevOrNextFile(view, path, Direction.PREV);
 	} //}}}
 
-	//{{{ getFiles() method
+	// getFiles() method
 	@Override
 	public synchronized String[] getFiles(View view)
 	{
@@ -89,7 +87,7 @@ public abstract class BufferListSet implements SearchFileSet
 			return files;
 	} //}}}
 
-	//{{{ getFileCount() method
+	// getFileCount() method
 	@Override
 	public synchronized int getFileCount(View view)
 	{
@@ -102,7 +100,7 @@ public abstract class BufferListSet implements SearchFileSet
 			return files.length;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	@Override
 	public String getCode()
 	{
@@ -110,13 +108,13 @@ public abstract class BufferListSet implements SearchFileSet
 		return null;
 	} //}}}
 
-	//{{{ invalidateCachedList() method
+	// invalidateCachedList() method
 	public void invalidateCachedList()
 	{
 		files = null;
 	} //}}}
 
-	//{{{ getPrevOrNextFile method()
+	// getPrevOrNextFile method()
 	private enum Direction {PREV, NEXT}
 
 	private String getPrevOrNextFile(View view, String path, Direction direction)

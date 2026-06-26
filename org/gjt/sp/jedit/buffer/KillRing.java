@@ -1,7 +1,6 @@
 /*
  * KillRing.java - Stores deleted text
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -34,19 +33,19 @@ import org.gjt.sp.jedit.gui.MutableListModel;
  */
 public class KillRing implements MutableListModel<String>
 {
-	//{{{ getInstance() method
+	// getInstance() method
 	public static KillRing getInstance()
 	{
 		return killRing;
 	} //}}}
 
-	//{{{ setInstance() method
+	// setInstance() method
 	public static void setInstance(KillRing killRing)
 	{
 		KillRing.killRing = killRing;
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged(int historySize)
 	{
 		int newSize = Math.max(1, historySize);
@@ -76,7 +75,7 @@ public class KillRing implements MutableListModel<String>
 
 	public void save() {}
 
-	//{{{ reset() method
+	// reset() method
 	/**
 	 * This method is made to be used by implementation of load()
 	 * method to initialize (or reset) the killring by a loaded
@@ -104,21 +103,21 @@ public class KillRing implements MutableListModel<String>
 		wrap = true;
 	} //}}}
 
-	//{{{ MutableListModel implementation
+	// MutableListModel implementation
 	@Override
 	public void addListDataListener(ListDataListener listener) {}
 
 	@Override
 	public void removeListDataListener(ListDataListener listener) {}
 
-	//{{{ getElementAt() method
+	// getElementAt() method
 	@Override
 	public String getElementAt(int index)
 	{
 		return ring[virtualToPhysicalIndex(index)];
 	} //}}}
 
-	//{{{ getSize() method
+	// getSize() method
 	@Override
 	public int getSize()
 	{
@@ -128,7 +127,7 @@ public class KillRing implements MutableListModel<String>
 			return count;
 	} //}}}
 
-	//{{{ removeElement() method
+	// removeElement() method
 	@Override
 	public boolean removeElement(Object value)
 	{
@@ -143,7 +142,7 @@ public class KillRing implements MutableListModel<String>
 		return false;
 	} //}}}
 
-	//{{{ insertElementAt() method
+	// insertElementAt() method
 	@Override
 	public void insertElementAt(String value, int index)
 	{
@@ -154,11 +153,10 @@ public class KillRing implements MutableListModel<String>
 		add(value);
 	} //}}}
 
-	//}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ changed() method
+	// changed() method
 	void changed(String oldStr, String newStr)
 	{
 		int i = indexOf(oldStr);
@@ -168,7 +166,7 @@ public class KillRing implements MutableListModel<String>
 			add(newStr);
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	void add(String removed)
 	{
 		// we don't want duplicate entries
@@ -198,7 +196,7 @@ public class KillRing implements MutableListModel<String>
 		}
 	} //}}}
 
-	//{{{ remove() method
+	// remove() method
 	void remove(int i)
 	{
 		if(wrap)
@@ -227,15 +225,14 @@ public class KillRing implements MutableListModel<String>
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private String[] ring;
 	private int count;
 	private boolean wrap;
 	private static KillRing killRing = new KillRing();
 
-	//{{{ virtualToPhysicalIndex() method
+	// virtualToPhysicalIndex() method
 	/**
 	 * Since the kill ring has a wrap-around representation, we need to
 	 * convert user-visible indices to actual indices in the array.
@@ -253,7 +250,7 @@ public class KillRing implements MutableListModel<String>
 			return count - index - 1;
 	} //}}}
 
-	//{{{ indexOf() method
+	// indexOf() method
 	private int indexOf(String str)
 	{
 		int length = (wrap ? ring.length : count);
@@ -267,5 +264,4 @@ public class KillRing implements MutableListModel<String>
 		return -1;
 	} //}}}
 
-	//}}}
 }

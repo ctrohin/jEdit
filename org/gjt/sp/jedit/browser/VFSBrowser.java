@@ -1,7 +1,6 @@
 /*
  * VFSBrowser.java - VFS browser
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.bsh.*;
 
@@ -56,7 +55,6 @@ import org.gjt.sp.util.*;
 import org.gjt.sp.jedit.menu.MenuItemTextComparator;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /**
  * The main class of the VFS browser.
@@ -71,7 +69,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 {
 	public static final String NAME = "vfs.browser";
 
-	//{{{ Browser modes
+	// Browser modes
 	/**
 	 * Open file dialog mode. Equals JFileChooser.OPEN_DIALOG for
 	 * backwards compatibility.
@@ -96,9 +94,8 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 	 * Stand-alone dockable browser mode.
 	 */
 	public static final int BROWSER = 2;
-	//}}}
 
-	//{{{ browseDirectoryInNewWindow() method
+	// browseDirectoryInNewWindow() method
 	/**
 	 * Opens the specified directory in a new, floating, file system browser.
 	 * @param view The view
@@ -117,7 +114,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		jEdit.unsetProperty("vfs.browser.path.tmp");
 	} //}}}
 
-	//{{{ browseDirectory() method
+	// browseDirectory() method
 	/**
 	 * Opens the specified directory in a file system browser.
 	 * @param view The view
@@ -145,7 +142,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ getActionContext() method
+	// getActionContext() method
 	/**
 	 * Returns the browser action context.
 	 * @since jEdit 4.2pre1
@@ -155,7 +152,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		return actionContext;
 	} //}}}
 
-	//{{{ VFSBrowser constructor
+	// VFSBrowser constructor
 	/**
 	 * Creates a new VFS browser.
 	 * @param view The view to open buffers in by default
@@ -165,7 +162,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		this(view,null,BROWSER,true,position);
 	} //}}}
 
-	//{{{ VFSBrowser constructor
+	// VFSBrowser constructor
 	/**
 	 * Creates a new VFS browser.
 	 * @param view The view to open buffers in by default
@@ -402,7 +399,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		});
 	} //}}}
 
-	//{{{ focusOnDefaultComponent() method
+	// focusOnDefaultComponent() method
 	@Override
 	public void focusOnDefaultComponent()
 	{
@@ -418,7 +415,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		defaultFocusComponent = c;
 	}// }}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -426,7 +423,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -445,14 +442,14 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		EditBus.removeFromBus(this);
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{
 		propertiesChanged();
 	} //}}}
 
-	//{{{ handleBufferUpdate() method
+	// handleBufferUpdate() method
 	@EBHandler
 	public void handleBufferUpdate(BufferUpdate bmsg)
 	{
@@ -463,7 +460,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ handlePluginUpdate() method
+	// handlePluginUpdate() method
 	@EBHandler
 	public void handlePluginUpdate(PluginUpdate pmsg)
 	{
@@ -475,50 +472,50 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ handleVFSUpdate() method
+	// handleVFSUpdate() method
 	@EBHandler
 	public void handleVFSUpdate(VFSUpdate msg)
 	{
 		maybeReloadDirectory(msg.getPath());
 	} //}}}
 
-	//{{{ getView() method
+	// getView() method
 	public View getView()
 	{
 		return view;
 	} //}}}
 
-	//{{{ getMode() method
+	// getMode() method
 	public int getMode()
 	{
 		return mode;
 	} //}}}
 
-	//{{{ isMultipleSelectionEnabled() method
+	// isMultipleSelectionEnabled() method
 	public boolean isMultipleSelectionEnabled()
 	{
 		return multipleSelection;
 	} //}}}
 
-	//{{{ isHorizontalLayout() method
+	// isHorizontalLayout() method
 	public boolean isHorizontalLayout()
 	{
 		return horizontalLayout;
 	} //}}}
 
-	//{{{ getShowHiddenFiles() method
+	// getShowHiddenFiles() method
 	public boolean getShowHiddenFiles()
 	{
 		return showHiddenFiles;
 	} //}}}
 
-	//{{{ setShowHiddenFiles() method
+	// setShowHiddenFiles() method
 	public void setShowHiddenFiles(boolean showHiddenFiles)
 	{
 		this.showHiddenFiles = showHiddenFiles;
 	} //}}}
 
-	//{{{ getVFSFileFilter() method
+	// getVFSFileFilter() method
 	/**
 	 * Returns the currently active VFSFileFilter.
 	 *
@@ -531,7 +528,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		return 	(VFSFileFilter) filterField.getSelectedItem();
 	} //}}}
 
-	//{{{ addVFSFileFilter() method
+	// addVFSFileFilter() method
 	/**
 	 * Adds a file filter to the browser.
 	 *
@@ -560,7 +557,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ setFilenameFilter() method
+	// setFilenameFilter() method
 	public void setFilenameFilter( String filter)
 	{
 		if(filter == null || filter.isEmpty() || "*".equals(filter))
@@ -572,13 +569,13 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ getDirectoryField() method
+	// getDirectoryField() method
 	public HistoryTextField getDirectoryField()
 	{
 		return pathField;
 	} //}}}
 
-	//{{{ getDirectory() method
+	// getDirectory() method
 	public String getDirectory()
 	{
 		return path;
@@ -612,7 +609,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 	}
 	// }}}
 
-	//{{{ getLastVisitedPath() method
+	// getLastVisitedPath() method
 	/**
 	 * Returns the last path visited by VFSBrowser. If no path was ever
 	 * visited, returns <code>null</code>,
@@ -627,7 +624,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 			return pathModel.getItem(0);
 	} //}}}
 
-	//{{{ setDirectory() method
+	// setDirectory() method
 	public void setDirectory(String path)
 	{
 		setDirectory(path, null);
@@ -655,7 +652,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		this.path = path;
 	} //}}}
 
-	//{{{ getRootDirectory() method
+	// getRootDirectory() method
 	public static String getRootDirectory()
 	{
 		if(OperatingSystem.isMacOS() || OperatingSystem.isWindows())
@@ -664,7 +661,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 			return "/";
 	} //}}}
 
-	//{{{ rootDirectory() method
+	// rootDirectory() method
 	/**
 	 * Goes to the local drives directory.
 	 * @since jEdit 4.0pre4
@@ -674,7 +671,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		setDirectory(getRootDirectory());
 	} //}}}
 
-	//{{{ reloadDirectory() method
+	// reloadDirectory() method
 	public void reloadDirectory()
 	{
 		// used by FTP plugin to clear directory cache
@@ -684,7 +681,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		browserView.loadDirectory(null,path,false);
 	} //}}}
 
-	//{{{ delete() method
+	// delete() method
 	/**
 	 * Note that all files must be on the same VFS.
 	 * @since jEdit 4.3pre2
@@ -773,7 +770,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		EventQueue.invokeLater(this::endRequest);
 	} //}}}
 
-	//{{{ rename() methods
+	// rename() methods
 	/**
 	 * Rename a file.
 	 * It will prompt for the new name.
@@ -870,7 +867,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		rename(vfs, from, newname);
 	} //}}}
 
-	//{{{ mkdir() method
+	// mkdir() method
 	public void mkdir()
 	{
 		String newDirectory = GUIUtilities.input(this,"vfs.browser.mkdir",null);
@@ -925,7 +922,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		ThreadUtilities.runInBackground(mkdirTask);
 	} //}}}
 
-	//{{{ newFile() method
+	// newFile() method
 	/**
 	 * Creates a new file in the current directory.
 	 * @since jEdit 4.0pre2
@@ -948,7 +945,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 			jEdit.newFile(view,path);
 	} //}}}
 
-	//{{{ fileProperties() method
+	// fileProperties() method
 	/**
 	 * Show selected file's properties.
 	 */
@@ -957,7 +954,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		new FilePropertiesDialog(view, this, files);
 	} //}}}
 
-	//{{{ searchInDirectory() method
+	// searchInDirectory() method
 	/**
 	 * Opens a directory search in the current directory.
 	 * @since jEdit 4.0pre2
@@ -976,7 +973,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ searchInDirectory() method
+	// searchInDirectory() method
 	/**
 	 * Opens a directory search in the specified directory.
 	 * @param path The path name
@@ -1005,13 +1002,13 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		SearchDialog.showSearchDialog(view,null,SearchDialog.DIRECTORY);
 	} //}}}
 
-	//{{{ getBrowserView() method
+	// getBrowserView() method
 	BrowserView getBrowserView()
 	{
 		return browserView;
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 	/**
 	 * Return the selected files in the lower browser tree.
 	 * @since jEdit 4.3pre2
@@ -1021,7 +1018,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		return browserView.getSelectedFiles();
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 	/**
 	 * Return the selected files from the point of view of the
 	 * given component. This may be the selected directory from the
@@ -1053,7 +1050,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ paste() method
+	// paste() method
 	/**
 	 * Paste the file contained in the clipboard.
 	 * If the clipboard do not contains files, nothing happens.
@@ -1117,7 +1114,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		}
 	} //}}}
 
-	//{{{ locateFile() method
+	// locateFile() method
 	/**
 	 * Goes to the given file's directory and selects the file in the list.
 	 * @param path The file
@@ -1135,7 +1132,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		AwtRunnableQueue.INSTANCE.runAfterIoTasks(() -> browserView.getTable().selectFile(path));
 	} //}}}
 
-	//{{{ createPluginsMenu() method
+	// createPluginsMenu() method
 	public JComponent createPluginsMenu(JComponent pluginMenu, boolean showManagerOptions)
 	{
 		if(showManagerOptions && getMode() == BROWSER)
@@ -1152,7 +1149,7 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 
 		List<JMenuItem> list = new ArrayList<>();
 
-		//{{{ new API
+		// new API
 		EditPlugin[] plugins = jEdit.getPlugins();
 		for (EditPlugin plugin : plugins)
 		{
@@ -1178,19 +1175,19 @@ public class VFSBrowser extends JPanel implements DefaultFocusComponent,
 		return pluginMenu;
 	} //}}}
 
-	//{{{ addBrowserListener() method
+	// addBrowserListener() method
 	public void addBrowserListener(BrowserListener l)
 	{
 		listenerList.add(BrowserListener.class,l);
 	} //}}}
 
-	//{{{ removeBrowserListener() method
+	// removeBrowserListener() method
 	public void removeBrowserListener(BrowserListener l)
 	{
 		listenerList.remove(BrowserListener.class,l);
 	} //}}}
 
-	//{{{ filesActivated() method
+	// filesActivated() method
 	// canDoubleClickClose set to false when ENTER pressed
 	public static final int M_OPEN = 0;
 	public static final int M_OPEN_NEW_VIEW = 1;
@@ -1294,7 +1291,7 @@ check_selected:
 		}
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	/** Disposes the browser, regardless of whether it is a dialog or a dockable
 	*/
 	public void dispose()
@@ -1309,7 +1306,7 @@ check_selected:
 		}
 	}//}}}
 
-	//{{{ move() method
+	// move() method
 	@Override
 	public void move(String newPosition)
 	{
@@ -1327,7 +1324,7 @@ check_selected:
 		propertiesChanged();
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
 	// This can be null untill an user explicitly selects an encoding
 	// so that this don't overwrite more accurate encoding information
@@ -1336,7 +1333,7 @@ check_selected:
 
 	boolean autoDetectEncoding;
 
-	//{{{ directoryLoaded() method
+	// directoryLoaded() method
 	void directoryLoaded(Object node, Object[] loadInfo,
 		boolean addToHistory)
 	{
@@ -1417,7 +1414,7 @@ check_selected:
 			filesSelected();
 	} //}}}
 
-	//{{{ filesSelected() method
+	// filesSelected() method
 	void filesSelected()
 	{
 		VFSFile[] selectedFiles = browserView.getSelectedFiles();
@@ -1446,15 +1443,14 @@ check_selected:
 		}
 	} //}}}
 
-	//{{{ endRequest() method
+	// endRequest() method
 	void endRequest()
 	{
 		requestRunning = false;
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
 	private static final ActionContext actionContext;
 
@@ -1469,7 +1465,7 @@ check_selected:
 		actionContext.addActionSet(builtInActionSet);
 	}
 
-	//{{{ Instance variables
+	// Instance variables
 	private final EventListenerList listenerList;
 	private final View view;
 	private boolean horizontalLayout;
@@ -1498,9 +1494,8 @@ check_selected:
 
 	private final Stack<String> historyStack = new Stack<String>();
 	private final Stack<String> nextDirectoryStack = new Stack<String>();
-	//}}}
 
-	//{{{ createMenuBar() method
+	// createMenuBar() method
 	private Container createMenuBar()
 	{
 		JToolBar menuBar = new JToolBar();
@@ -1515,7 +1510,7 @@ check_selected:
 		return menuBar;
 	} //}}}
 
-	//{{{ createToolBar() method
+	// createToolBar() method
 	private Container createToolBar()
 	{
 		if(mode == BROWSER)
@@ -1526,7 +1521,7 @@ check_selected:
 				"vfs.browser.toolbar-dialog");
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	private void propertiesChanged()
 	{
 		showHiddenFiles = jEdit.getBooleanProperty("vfs.browser.showHiddenFiles");
@@ -1572,7 +1567,7 @@ check_selected:
 	/* We do this stuff because the browser is not able to handle
 	 * more than one request yet */
 
-	//{{{ startRequest() method
+	// startRequest() method
 	private boolean startRequest()
 	{
 		if(requestRunning)
@@ -1590,14 +1585,14 @@ check_selected:
 		}
 	} //}}}
 
-	//{{{ updateFilterEnabled() method
+	// updateFilterEnabled() method
 	private void updateFilterEnabled()
 	{
 		filterField.setEnabled(filterCheckbox.isSelected());
 		filterEditor.setEnabled(filterCheckbox.isSelected());
 	} //}}}
 
-	//{{{ maybeReloadDirectory() method
+	// maybeReloadDirectory() method
 	private void maybeReloadDirectory(String dir)
 	{
 		if(MiscUtilities.isURL(dir)
@@ -1648,11 +1643,10 @@ check_selected:
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener, ItemListener
 	{
 		@Override
@@ -1761,7 +1755,7 @@ check_selected:
 	{
 		JPopupMenu popup;
 
-		//{{{ MenuButton constructor
+		// MenuButton constructor
 		MenuButton()
 		{
 			setIcon(IconManager.loadIcon(jEdit.getProperty("dropdown-arrow.icon")));
@@ -1795,7 +1789,7 @@ check_selected:
 
 		abstract void doPopup();
 
-		//{{{ MouseHandler class
+		// MouseHandler class
 		class MouseHandler extends MouseAdapter
 		{
 			@Override
@@ -1812,7 +1806,7 @@ check_selected:
 			}
 		} //}}}
 
-		//{{{ Action class
+		// Action class
 		class Action extends AbstractAction
 		{
 			@Override
@@ -1825,10 +1819,10 @@ check_selected:
 
 
 
-	//{{{ CommandsMenuButton class
+	// CommandsMenuButton class
 	class CommandsMenuButton extends MenuButton
 	{
-		//{{{ CommandsMenuButton constructor
+		// CommandsMenuButton constructor
 		CommandsMenuButton()
 		{
 			setText(jEdit.getProperty("vfs.browser.commands.label"));
@@ -1845,10 +1839,10 @@ check_selected:
 		}
 	} //}}}
 
-	//{{{ PluginsMenuButton class
+	// PluginsMenuButton class
 	class PluginsMenuButton extends MenuButton
 	{
-		//{{{ PluginsMenuButton constructor
+		// PluginsMenuButton constructor
 		PluginsMenuButton()
 		{
 			setText(jEdit.getProperty("vfs.browser.plugins.label"));
@@ -1861,7 +1855,7 @@ check_selected:
 
 		} //}}}
 
-		//{{{ updatePopupMenu() method
+		// updatePopupMenu() method
 		void updatePopupMenu()
 		{
 			popup = null;
@@ -1875,7 +1869,7 @@ check_selected:
 			GenericGUIUtilities.showPopupMenu(popup, this, 0, getHeight(), false);
 		}
 
-		//{{{ createPopupMenu() method
+		// createPopupMenu() method
 		private void createPopupMenu()
 		{
 			if(popup != null)
@@ -1886,10 +1880,10 @@ check_selected:
 
 	} //}}}
 
-	//{{{ FavoritesMenuButton class
+	// FavoritesMenuButton class
 	class FavoritesMenuButton extends MenuButton
 	{
-		//{{{ FavoritesMenuButton constructor
+		// FavoritesMenuButton constructor
 		FavoritesMenuButton()
 		{
 			setText(jEdit.getProperty("vfs.browser.favorites.label"));
@@ -1906,7 +1900,7 @@ check_selected:
 			GenericGUIUtilities.showPopupMenu(popup, this, 0, getHeight(), false);
 		}
 
-		//{{{ createPopupMenu() method
+		// createPopupMenu() method
 		void createPopupMenu()
 		{
 			popup = new JPopupMenu();
@@ -1954,7 +1948,7 @@ check_selected:
 			}
 		} //}}}
 
-		//{{{ ActionHandler class
+		// ActionHandler class
 		class ActionHandler implements ActionListener
 		{
 			@Override
@@ -2010,7 +2004,7 @@ check_selected:
 		} //}}}
 	} //}}}
 
-	//{{{ BrowserActionContext class
+	// BrowserActionContext class
 	static class BrowserActionContext extends ActionContext
 	{
 		@Override
@@ -2068,7 +2062,7 @@ check_selected:
 		}
 	} //}}}
 
-	//{{{ HistoryComboBoxEditor class
+	// HistoryComboBoxEditor class
 	private static class HistoryComboBoxEditor
 				extends HistoryTextField
 				implements ComboBoxEditor
@@ -2161,7 +2155,7 @@ check_selected:
 
 	} //}}}
 
-	//{{{ VFSFileFilterRenderer class
+	// VFSFileFilterRenderer class
 	private static class VFSFileFilterRenderer extends DefaultListCellRenderer
 	{
 
@@ -2179,7 +2173,7 @@ check_selected:
 
 	} //}}}
 
-	//{{{ DirectoriesOnlyFilter class
+	// DirectoriesOnlyFilter class
 	public static class DirectoriesOnlyFilter implements VFSFileFilter
 	{
 		@Override
@@ -2202,5 +2196,4 @@ check_selected:
 		}
 
 	} //}}}
-	//}}}
 }

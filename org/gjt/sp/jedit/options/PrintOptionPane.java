@@ -1,7 +1,6 @@
 /*
  * PrintOptionPane.java - Printing options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2002 Slava Pestov
  *
@@ -22,22 +21,21 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import org.gjt.sp.jedit.gui.FontSelector;
 import org.gjt.sp.jedit.gui.NumericTextField;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class PrintOptionPane extends AbstractOptionPane
 {
-	//{{{ PrintOptionPane constructor
+	// PrintOptionPane constructor
 	public PrintOptionPane()
 	{
 		super("print");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -106,7 +104,7 @@ public class PrintOptionPane extends AbstractOptionPane
 		addComponent(useSystemDialog);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -122,7 +120,7 @@ public class PrintOptionPane extends AbstractOptionPane
 		jEdit.setBooleanProperty("print.useSystemDialog", useSystemDialog.isSelected());
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private FontSelector font;
 	private JCheckBox printHeader;
 	private JCheckBox printFooter;
@@ -133,5 +131,4 @@ public class PrintOptionPane extends AbstractOptionPane
 	private JCheckBox glyphVector;
 	private JCheckBox force13;
 	private JCheckBox useSystemDialog;
-	//}}}
 }

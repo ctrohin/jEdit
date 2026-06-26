@@ -1,7 +1,6 @@
 /*
  * BufferPrintable.java - Printable implementation
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2016 Dale Anson
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.print;
 
-//{{{ Imports
+// Imports
 import javax.swing.text.TabExpander;
 import java.awt.font.*;
 import java.awt.geom.*;
@@ -39,7 +38,6 @@ import javax.print.attribute.standard.PageRanges;
 
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * A new buffer printable that does a lot more than the old one, like properly

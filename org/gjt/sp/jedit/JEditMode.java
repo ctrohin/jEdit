@@ -1,7 +1,6 @@
 /*
  * JEditMode.java - jEdit editing mode
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
  *
@@ -31,13 +30,13 @@ import org.gjt.sp.util.Log;
  */
 class JEditMode extends Mode
 {
-	//{{{ JEditMode constructor
+	// JEditMode constructor
 	JEditMode(String name)
 	{
 		super(name);
 	} //}}}
 
-	//{{{ setProperty() method
+	// setProperty() method
 	/**
 	 * Sets a mode property.
 	 * @param key The property name
@@ -53,7 +52,7 @@ class JEditMode extends Mode
 		props.put(key,value);
 	} //}}}
 
-	//{{{ unsetProperty() method
+	// unsetProperty() method
 	/**
 	 * Unsets a mode property.
 	 * @param key The property name
@@ -68,7 +67,7 @@ class JEditMode extends Mode
 		props.remove(key);
 	} //}}}
 
-	//{{{ getProperty() method
+	// getProperty() method
 	/**
 	 * Returns a mode property.
 	 *
@@ -113,7 +112,7 @@ class JEditMode extends Mode
 			return null;
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Keeps track of mode initialization, to avoid overwriting
 	 * custom mode properties in the user's settings.
@@ -125,7 +124,7 @@ class JEditMode extends Mode
 		super.init();
 	} //}}}
 
-	//{{{ loadIfNecessary() method
+	// loadIfNecessary() method
 	/**
 	 * Loads the mode from disk if it hasn't been loaded already.
 	 * @since jEdit 4.3pre10

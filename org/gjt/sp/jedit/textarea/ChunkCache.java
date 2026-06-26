@@ -2,7 +2,6 @@
  * ChunkCache.java - Intermediate layer between token lists from a TokenMarker
  * and what you see on screen
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 
 import javax.swing.text.TabExpander;
@@ -32,7 +31,6 @@ import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * Manages low-level text display tasks - the visible lines in the TextArea.
@@ -46,7 +44,7 @@ import org.gjt.sp.util.Log;
  */
 class ChunkCache
 {
-	//{{{ ChunkCache constructor
+	// ChunkCache constructor
 	ChunkCache(TextArea textArea)
 	{
 		this.textArea = textArea;
@@ -55,7 +53,7 @@ class ChunkCache
 		tokenHandler = new DisplayTokenHandler();
 	} //}}}
 
-	//{{{ getMaxHorizontalScrollWidth() method
+	// getMaxHorizontalScrollWidth() method
 	/**
 	 * Returns the max line width of the textarea.
 	 * It will check all lines in the line info array.
@@ -73,7 +71,7 @@ class ChunkCache
 		return max;
 	} //}}}
 
-	//{{{ getScreenLineOfOffset() method
+	// getScreenLineOfOffset() method
 	/**
 	 * @param line physical line number of document 
 	 * @param offset number of characters from the left of the line. 
@@ -133,7 +131,7 @@ class ChunkCache
 		return screenLine;
 	} //}}}
 
-	//{{{ recalculateVisibleLines() method
+	// recalculateVisibleLines() method
 	/**
 	 * Recalculate visible lines.
 	 * This is called when the TextArea geometry is changed or when the font is changed.
@@ -159,14 +157,14 @@ class ChunkCache
 		lastScreenLine = lastScreenLineP = -1;
 	} //}}}
 
-	//{{{ setBuffer() method
+	// setBuffer() method
 	void setBuffer(JEditBuffer buffer)
 	{
 		this.buffer = buffer;
 		lastScreenLine = lastScreenLineP = -1;
 	} //}}}
 
-	//{{{ scrollDown() method
+	// scrollDown() method
 	void scrollDown(int amount)
 	{
 		int visibleLines = textArea.getVisibleLines();
@@ -191,7 +189,7 @@ class ChunkCache
 		lastScreenLine = lastScreenLineP = -1;
 	} //}}}
 
-	//{{{ scrollUp() method
+	// scrollUp() method
 	void scrollUp(int amount)
 	{
 		System.arraycopy(lineInfo,0,lineInfo,amount,
@@ -219,7 +217,7 @@ class ChunkCache
 		lastScreenLine = lastScreenLineP = -1;
 	} //}}}
 
-	//{{{ invalidateAll() method
+	// invalidateAll() method
 	void invalidateAll()
 	{
 		firstInvalidLine = 0;
@@ -233,7 +231,7 @@ class ChunkCache
 		outFull.clear();
 	}
 
-	//{{{ invalidateChunksFromPhys() method
+	// invalidateChunksFromPhys() method
 	void invalidateChunksFromPhys(int physicalLine)
 	{
 		if(physicalLine == outFullPhysicalLine)
@@ -252,7 +250,7 @@ class ChunkCache
 		}
 	} //}}}
 
-	//{{{ getLineInfo() method
+	// getLineInfo() method
 	/**
 	 * Returns the line informations for a given screen line or a non-null
 	 * new LineInfo if the requested <code>screenLine</code> is out of range.
@@ -267,7 +265,7 @@ class ChunkCache
 		return lineInfo[screenLine];
 	} //}}}
 
-	//{{{ getLineSubregionCount() method
+	// getLineSubregionCount() method
 	/**
 	 * Returns the number of subregions of a physical line
 	 * @param physicalLine a physical line
@@ -287,7 +285,7 @@ class ChunkCache
 			return size;
 	} //}}}
 
-	//{{{ getSubregionOfOffset() method
+	// getSubregionOfOffset() method
 	/**
 	 * Returns the subregion containing the specified offset. A subregion
 	 * is a subset of a physical line. Each screen line corresponds to one
@@ -312,7 +310,7 @@ class ChunkCache
 		return -1;
 	} //}}}
 
-	//{{{ xToSubregionOffset() method
+	// xToSubregionOffset() method
 	/**
 	 * Converts an x co-ordinate within a subregion into an offset from the
 	 * start of that subregion.
@@ -333,7 +331,7 @@ class ChunkCache
 		return xToSubregionOffset(infos[subregion],x,round);
 	} //}}}
 
-	//{{{ xToSubregionOffset() method
+	// xToSubregionOffset() method
 	/**
 	 * Converts an x co-ordinate within a subregion into an offset from the
 	 * start of that subregion.
@@ -353,7 +351,7 @@ class ChunkCache
 		return offset;
 	} //}}}
 
-	//{{{ subregionOffsetToX() method
+	// subregionOffsetToX() method
 	/**
 	 * Converts an offset within a subregion into an x co-ordinate.
 	 * @param physicalLine The physical line
@@ -367,7 +365,7 @@ class ChunkCache
 		return subregionOffsetToX(info,offset);
 	} //}}}
 
-	//{{{ subregionOffsetToX() method
+	// subregionOffsetToX() method
 	/**
 	 * Converts an offset within a subregion into an x co-ordinate.
 	 * @param info The line info object
@@ -379,7 +377,7 @@ class ChunkCache
 		return (int)Chunk.offsetToX(info.chunks,offset);
 	} //}}}
 
-	//{{{ getSubregionStartOffset() method
+	// getSubregionStartOffset() method
 	/**
 	 * Returns the start offset of the specified subregion of the specified
 	 * physical line.
@@ -395,7 +393,7 @@ class ChunkCache
 			+ info.offset;
 	} //}}}
 
-	//{{{ getSubregionEndOffset() method
+	// getSubregionEndOffset() method
 	/**
 	 * Returns the end offset of the specified subregion of the specified
 	 * physical line.
@@ -411,7 +409,7 @@ class ChunkCache
 			+ info.offset + info.length;
 	} //}}}
 
-	//{{{ getBelowPosition() method
+	// getBelowPosition() method
 	/**
 	 * @param physicalLine The physical line number
 	 * @param offset The offset
@@ -448,7 +446,7 @@ class ChunkCache
 		}
 	} //}}}
 
-	//{{{ getAbovePosition() method
+	// getAbovePosition() method
 	/**
 	 * @param physicalLine The physical line number
 	 * @param offset The offset
@@ -485,7 +483,7 @@ class ChunkCache
 		}
 	} //}}}
 
-	//{{{ needFullRepaint() method
+	// needFullRepaint() method
 	/**
 	 * The needFullRepaint variable becomes true when the number of screen
 	 * lines in a physical line changes.
@@ -498,7 +496,7 @@ class ChunkCache
 		return retVal;
 	} //}}}
 
-	//{{{ getLineInfosForPhysicalLine() method
+	// getLineInfosForPhysicalLine() method
 	LineInfo[] getLineInfosForPhysicalLine(int physicalLine)
 	{
 		if(!buffer.isLoading())
@@ -520,9 +518,9 @@ class ChunkCache
 		return returnValue.toArray(new LineInfo[chunkList.size()]);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final TextArea textArea;
 	private JEditBuffer buffer;
 	/**
@@ -554,9 +552,8 @@ class ChunkCache
 	private boolean needFullRepaint;
 
 	private final DisplayTokenHandler tokenHandler;
-	//}}}
 
-	//{{{ getLineInfosForPhysicalLine() method
+	// getLineInfosForPhysicalLine() method
 	private void getLineInfosForPhysicalLine(int physicalLine, List<LineInfo> list, List<Chunk> chunkList)
 	{
 		assert outFullPhysicalLine == physicalLine;
@@ -592,7 +589,7 @@ class ChunkCache
 		}
 	} //}}}
 
-	//{{{ getFirstScreenLine() method
+	// getFirstScreenLine() method
 	/**
 	 * Find a valid line closest to the last screen line.
 	 */
@@ -607,7 +604,7 @@ class ChunkCache
 		return 0;
 	} //}}}
 
-	//{{{ getUpdateStartLine() method
+	// getUpdateStartLine() method
 	/**
 	 * Return a physical line number.
 	 */
@@ -637,7 +634,7 @@ class ChunkCache
 		}
 	} //}}}
 
-	//{{{ updateChunksUpTo() method
+	// updateChunksUpTo() method
 	private void updateChunksUpTo(int lastScreenLine)
 	{
 		// this method is a nightmare
@@ -808,7 +805,7 @@ class ChunkCache
 		firstInvalidLine = Math.max(lastScreenLine + 1,firstInvalidLine);
 	} //}}}
 
-	//{{{ lineToChunkList() method
+	// lineToChunkList() method
 	/** chunks the line and fill outFull array with the chunks for the given physical line */
 	private void lineToChunkList(int physicalLine)
 	{
@@ -830,9 +827,8 @@ class ChunkCache
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ LineInfo class
+	// LineInfo class
 	/**
 	 * The informations on a line. (for fast access)
 	 * When using softwrap, a line is divided in n

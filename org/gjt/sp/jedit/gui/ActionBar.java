@@ -1,7 +1,6 @@
 /*
  * ActionBar.java - For invoking actions directly
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.bsh.NameSpace;
 import java.awt.event.*;
 import java.awt.*;
@@ -33,13 +32,12 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /** Action invocation bar.
  */
 public class ActionBar extends JToolBar
 {
-	//{{{ ActionBar constructor
+	// ActionBar constructor
 	public ActionBar(View view, boolean temp)
 	{
 		this.view = view;
@@ -73,13 +71,13 @@ public class ActionBar extends JToolBar
 		this.temp = temp;
 	} //}}}
 
-	//{{{ getField() method
+	// getField() method
 	public HistoryTextField getField()
 	{
 		return action;
 	} //}}}
 
-	//{{{ goToActionBar() method
+	// goToActionBar() method
 	public void goToActionBar()
 	{
 		repeatCount = view.getInputHandler().getRepeatCount();
@@ -87,20 +85,19 @@ public class ActionBar extends JToolBar
 		action.requestFocus();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	private static final NameSpace namespace = new NameSpace(
 		BeanShell.getNameSpace(),"action bar namespace");
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private boolean temp;
 	private int repeatCount;
 	private final HistoryTextField action;
 	private CompletionPopup popup;
-	//}}}
 
-	//{{{ invoke() method
+	// invoke() method
 	private void invoke()
 	{
 		String cmd;
@@ -204,7 +201,7 @@ public class ActionBar extends JToolBar
 		});
 	} //}}}
 
-	//{{{ getCompletions() method
+	// getCompletions() method
 	private static String[] getCompletions(String str)
 	{
 		str = str.toLowerCase();
@@ -219,7 +216,7 @@ public class ActionBar extends JToolBar
 		return returnValue.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//{{{ complete() method
+	// complete() method
 	private void complete(boolean insertLongestPrefix)
 	{
 		String text = action.getText().trim();
@@ -253,13 +250,12 @@ public class ActionBar extends JToolBar
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
-	//{{{ DocumentHandler class
+	// Inner classes
+	// DocumentHandler class
 	private class DocumentHandler implements DocumentListener
 	{
-		//{{{ insertUpdate() method
+		// insertUpdate() method
 		@Override
 		public void insertUpdate(DocumentEvent evt)
 		{
@@ -267,7 +263,7 @@ public class ActionBar extends JToolBar
 				complete(false);
 		} //}}}
 
-		//{{{ removeUpdate() method
+		// removeUpdate() method
 		@Override
 		public void removeUpdate(DocumentEvent evt)
 		{
@@ -275,13 +271,12 @@ public class ActionBar extends JToolBar
 				complete(false);
 		} //}}}
 
-		//{{{ changedUpdate() method
+		// changedUpdate() method
 		@Override
 		public void changedUpdate(DocumentEvent evt) {}
-		//}}}
 	} //}}}
 
-	//{{{ ActionTextField class
+	// ActionTextField class
 	private class ActionTextField extends HistoryTextField
 	{
 		boolean repeat;
@@ -402,12 +397,12 @@ public class ActionBar extends JToolBar
 		}
 	} //}}}
 
-	//{{{ CompletionPopup class
+	// CompletionPopup class
 	private class CompletionPopup extends JWindow
 	{
 		CompletionList<String> list;
 
-		//{{{ CompletionPopup constructor
+		// CompletionPopup constructor
 		CompletionPopup(String[] actions)
 		{
 			super(view);
@@ -451,14 +446,14 @@ public class ActionBar extends JToolBar
 			list.addKeyListener(keyHandler);
 		} //}}}
 
-		//{{{ setModel() method
+		// setModel() method
 		void setModel(String[] actions)
 		{
 			list.setListData(actions);
 			list.setSelectedIndex(0);
 		} //}}}
 
-		//{{{ MouseHandler class
+		// MouseHandler class
 		private class MouseHandler extends MouseAdapter
 		{
 			@Override
@@ -468,7 +463,7 @@ public class ActionBar extends JToolBar
 			}
 		} //}}}
 
-		//{{{ CompletionList class
+		// CompletionList class
 		class CompletionList<E> extends JList<E>
 		{
 			CompletionList(E[] data)
@@ -484,7 +479,7 @@ public class ActionBar extends JToolBar
 			}
 		} //}}}
 
-		//{{{ KeyHandler class
+		// KeyHandler class
 		private class KeyHandler extends KeyAdapter
 		{
 			@Override
@@ -525,5 +520,4 @@ public class ActionBar extends JToolBar
 		} //}}}
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * SyntaxUtilities.java - Utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -31,7 +30,7 @@ import javax.swing.text.Segment;
  */
 public class SyntaxUtilities
 {
-	//{{{ regionMatches() method
+	// regionMatches() method
 	/**
 	 * Checks if a subregion of a <code>Segment</code> is equal to a
 	 * character array.

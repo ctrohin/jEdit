@@ -1,7 +1,6 @@
 /*
  * ShortcutsOptionPane.java - Shortcuts options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  * Copyright (C) 2001 Dirk Moebius
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.FilteredTableModel;
 import org.gjt.sp.jedit.gui.GrabKeyDialog;
@@ -44,7 +43,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-//}}}
 
 /**
  * Key binding editor.
@@ -54,13 +52,13 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class ShortcutsOptionPane extends AbstractOptionPane
 {
-	//{{{ ShortcutsOptionPane constructor
+	// ShortcutsOptionPane constructor
 	public ShortcutsOptionPane()
 	{
 		super("shortcuts");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -172,7 +170,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		catch (IllegalArgumentException eae) {}
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -187,7 +185,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		selectedKeymap.save();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	/** The selected keymap. It is a copy of the current keymap in the beginning, but it may be another one */
 	private Keymap selectedKeymap;
 	private JButton duplicateKeymap;
@@ -201,13 +199,13 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 	private List<KeyBinding> allBindings;
 	private JTextField filterTF;
 
-	//{{{ setFilter() method
+	// setFilter() method
 	private void setFilter()
 	{
 		filteredModel.setFilter(filterTF.getText());
 	} //}}}
 
-	//{{{ initModels() method
+	// initModels() method
 	private void initModels()
 	{
 		filteredModel = new FilteredTableModel<>()
@@ -229,7 +227,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		reloadModels();
 	} //}}}
 
-	//{{{ reloadModels() method
+	// reloadModels() method
 	private void reloadModels()
 	{
 		models.clear();
@@ -285,7 +283,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		filteredModel.fireTableDataChanged();
 	} //}}}
 
-	//{{{ createModel() method
+	// createModel() method
 	private ShortcutsModel createModel(String actionSet, String modelLabel, String[] actions)
 	{
 		List<KeyBinding[]> bindings = new ArrayList<>(actions.length);
@@ -306,7 +304,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		return new ShortcutsModel(modelLabel,bindings);
 	} //}}}
 
-	//{{{ addBindings() method
+	// addBindings() method
 	private void addBindings(String actionSet, String name, String label, String tooltip, Collection<KeyBinding[]> bindings)
 	{
 		KeyBinding[] b = new KeyBinding[2];
@@ -319,7 +317,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		bindings.add(b);
 	} //}}}
 
-	//{{{ createBinding() method
+	// createBinding() method
 	private KeyBinding createBinding(String actionSet, String name, String label, String tooltip, String shortcut)
 	{
 		if(shortcut != null && shortcut.isEmpty())
@@ -341,10 +339,10 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		deleteKeymap.setEnabled(state == KeymapManager.State.User);
 	} //}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
 
-	//{{{ HeaderMouseHandler class
+	// HeaderMouseHandler class
 	private class HeaderMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -367,7 +365,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ TableMouseHandler class
+	// TableMouseHandler class
 	private class TableMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -389,7 +387,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -487,7 +485,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ ShortcutsModel class
+	// ShortcutsModel class
 	private class ShortcutsModel extends AbstractTableModel
 	{
 		public static final String ALL = "All";
@@ -654,20 +652,20 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ KeymapsModel class
+	// KeymapsModel class
 	private static class KeymapsModel extends AbstractListModel<String> implements ComboBoxModel<String>
 	{
 		private String[] keymaps;
 
 		private Object selectedItem;
 
-		//{{{ KeymapsModel() constructor
+		// KeymapsModel() constructor
 		private KeymapsModel()
 		{
 			reset();
 		} //}}}
 
-		//{{{ reset() method
+		// reset() method
 		void reset()
 		{
 			KeymapManager keymapManager = jEdit.getKeymapManager();
@@ -678,21 +676,21 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 			fireContentsChanged(this, 0, keymaps.length-1);
 		} //}}}
 
-		//{{{ getSize() method
+		// getSize() method
 		@Override
 		public int getSize()
 		{
 			return keymaps.length;
 		} //}}}
 
-		//{{{ getElementAt() method
+		// getElementAt() method
 		@Override
 		public String getElementAt(int index)
 		{
 			return keymaps[index];
 		} //}}}
 
-		//{{{ setSelectedItem() method
+		// setSelectedItem() method
 		@Override
 		public void setSelectedItem(Object anItem)
 		{
@@ -702,14 +700,14 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 				selectedItem = keymaps[0];
 		} //}}}
 
-		//{{{ getSelectedItem() method
+		// getSelectedItem() method
 		@Override
 		public Object getSelectedItem()
 		{
 			return selectedItem;
 		} //}}}
 
-		//{{{ isValidName() method
+		// isValidName() method
 		private boolean isValidName(Object name)
 		{
 			for (String keymap : keymaps)
@@ -721,7 +719,7 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		} //}}}
 	} //}}}
 
-	//{{{ KeymapsModel class
+	// KeymapsModel class
 	private static class KeymapCellRenderer extends DefaultListCellRenderer
 	{
 		@Override
@@ -736,6 +734,4 @@ public class ShortcutsOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//}}}
-	//}}}
 }

@@ -19,7 +19,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -28,14 +28,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
-//}}}
 
 /**
  * @version $Id$
  */
 class PluginListHandler extends DefaultHandler
 {
-	//{{{ PluginListHandler constructor
+	// PluginListHandler constructor
 	PluginListHandler(PluginList pluginList)
 	{
 		this.pluginList = pluginList;
@@ -47,14 +46,14 @@ class PluginListHandler extends DefaultHandler
 		downloadSource = new StringBuilder();
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return XMLUtilities.findEntity(systemId, "plugins.dtd", getClass());
 	} //}}}
 
-	//{{{ attribute() method
+	// attribute() method
 	public void attribute(String aname, String value, boolean isSpecified)
 	{
 		switch (aname)
@@ -94,7 +93,7 @@ class PluginListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ characters() method
+	// characters() method
 	@Override
 	public void characters(char[] c, int off, int len)
 	{
@@ -122,7 +121,7 @@ class PluginListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName,
 				 String tag, Attributes attrs)
@@ -163,7 +162,7 @@ class PluginListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endElement() method
+	// endElement() method
 	@Override
 	public void endElement(String uri, String localName, String tag)
 	{
@@ -217,7 +216,7 @@ class PluginListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startDocument() method
+	// startDocument() method
 	@Override
 	public void startDocument()
 	{
@@ -231,7 +230,7 @@ class PluginListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endDocument() method
+	// endDocument() method
 	@Override
 	public void endDocument()
 	{
@@ -240,9 +239,9 @@ class PluginListHandler extends DefaultHandler
 
 	// end HandlerBase implementation
 
-	//{{{ private members
+	// private members
 	
-	//{{{ Instance variables
+	// Instance variables
 	private final PluginList pluginList;
 
 	private PluginList.PluginSet pluginSet;
@@ -270,26 +269,24 @@ class PluginListHandler extends DefaultHandler
 	private final StringBuilder description;
 
 	private final Stack<String> stateStack = new Stack<>();
-	//}}}
 
-	//{{{ pushElement() method
+	// pushElement() method
 	private String pushElement(String name)
 	{
 		stateStack.push(name);
 		return name;
 	} //}}}
 
-	//{{{ peekElement() method
+	// peekElement() method
 	private String peekElement()
 	{
 		return stateStack.peek();
 	} //}}}
 
-	//{{{ popElement() method
+	// popElement() method
 	private String popElement()
 	{
 		return stateStack.pop();
 	} //}}}
 
-	//}}}
 }

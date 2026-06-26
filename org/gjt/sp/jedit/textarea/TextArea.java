@@ -1,7 +1,6 @@
 /*
  * TextArea.java - Abstract jEdit Text Area component
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov
  * Portions copyright (C) 2000 Ollie Rutherfurd
@@ -23,7 +22,7 @@
  */
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 import java.text.BreakIterator;
 import java.text.CharacterIterator;
@@ -59,7 +58,6 @@ import org.gjt.sp.util.ThreadUtilities;
 
 import static org.gjt.sp.jedit.buffer.WordWrap.hard;
 import static org.gjt.sp.jedit.buffer.WordWrap.soft;
-//}}}
 
 /** Abstract TextArea component.
  *
@@ -74,7 +72,7 @@ import static org.gjt.sp.jedit.buffer.WordWrap.soft;
  */
 public abstract class TextArea extends JPanel
 {
-	//{{{ TextArea constructor
+	// TextArea constructor
 	/**
 	 * Creates a new JEditTextArea.
 	 * @param propertyManager the property manager that contains informations like shortcut bindings
@@ -85,7 +83,7 @@ public abstract class TextArea extends JPanel
 		this.inputHandlerProvider = inputHandlerProvider;
 		enableEvents(AWTEvent.FOCUS_EVENT_MASK | AWTEvent.KEY_EVENT_MASK);
 
-		//{{{ Initialize some misc. stuff
+		// Initialize some misc. stuff
 		selectionManager = new SelectionManager(this);
 		chunkCache = new ChunkCache(this);
 		painter = new TextAreaPainter(this);
@@ -105,9 +103,8 @@ public abstract class TextArea extends JPanel
 		offsetXY = new Point();
 		structureMatchers = new LinkedList<>();
 		structureMatchers.add(new StructureMatcher.BracketMatcher());
-		//}}}
 
-		//{{{ Initialize the GUI
+		// Initialize the GUI
 		setLayout(new ScrollLayout());
 		add(ScrollLayout.CENTER,painter);
 		add(ScrollLayout.LEFT,gutterStrip);
@@ -123,9 +120,8 @@ public abstract class TextArea extends JPanel
 		horizontal.setRequestFocusEnabled(false);
 
 		horizontal.setValues(0,0,0,0);
-		//}}}
 
-		//{{{ this ensures that the text area's look is slightly
+		// this ensures that the text area's look is slightly
 		// more consistent with the rest of the metal l&f.
 		// while it depends on not-so-well-documented portions
 		// of Swing, it only affects appearance, so future
@@ -139,9 +135,8 @@ public abstract class TextArea extends JPanel
 				Boolean.FALSE);
 			//horizontal.setBorder(null);
 		}
-		//}}}
 
-		//{{{ Add some event listeners
+		// Add some event listeners
 		vertical.addAdjustmentListener(new AdjustHandler());
 		horizontal.addAdjustmentListener(new AdjustHandler());
 
@@ -149,7 +144,6 @@ public abstract class TextArea extends JPanel
 		addFocusListener(new FocusHandler());
 		addMouseWheelListener(new MouseWheelHandler());
 
-		//}}}
 
 		// This doesn't seem very correct, but it fixes a problem
 		// when setting the initial caret position for a buffer
@@ -157,13 +151,13 @@ public abstract class TextArea extends JPanel
 		focusedComponent = this;
 	} //}}}
 
-	//{{{ getFoldPainter() method
+	// getFoldPainter() method
 	public FoldPainter getFoldPainter()
 	{
 		return new TriangleFoldPainter();
 	} //}}}
 
-	//{{{ initInputHandler() method
+	// initInputHandler() method
 	/**
 	 * Creates an actionContext and initializes the input
 	 * handler for this textarea. Called when creating
@@ -191,13 +185,13 @@ public abstract class TextArea extends JPanel
 		});
 	} //}}}
 
-	//{{{ getActionContext() method
+	// getActionContext() method
 	public JEditActionContext<JEditBeanShellAction,JEditActionSet<JEditBeanShellAction>> getActionContext()
 	{
 		return actionContext;
 	} //}}}
 
-	//{{{ setMouseHandler() method
+	// setMouseHandler() method
 	public void setMouseHandler(MouseInputAdapter mouseInputAdapter)
 	{
 		mouseHandler = mouseInputAdapter;
@@ -205,7 +199,7 @@ public abstract class TextArea extends JPanel
 		painter.addMouseMotionListener(mouseHandler);
 	} //}}}
 
-	//{{{ setTransferHandler() method
+	// setTransferHandler() method
 	@Override
 	public void setTransferHandler(TransferHandler newHandler)
 	{
@@ -221,7 +215,7 @@ public abstract class TextArea extends JPanel
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -245,7 +239,7 @@ public abstract class TextArea extends JPanel
 		return builder.toString();
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	/**
 	 * Plugins and macros should not call this method.
 	 * @since jEdit 4.2pre1
@@ -256,7 +250,7 @@ public abstract class TextArea extends JPanel
 		gutter.dispose();
 	} //}}}
 
-	//{{{ getInputHandler() method
+	// getInputHandler() method
 	/**
 	 * @since jEdit 4.3pre1
 	 */
@@ -265,7 +259,7 @@ public abstract class TextArea extends JPanel
 		return inputHandlerProvider.getInputHandler();
 	} //}}}
 
-	//{{{ getPainter() method
+	// getPainter() method
 	/**
 	 * Returns the object responsible for painting this text area.
 	 */
@@ -274,7 +268,7 @@ public abstract class TextArea extends JPanel
 		return painter;
 	} //}}}
 
-	//{{{ getGutter() method
+	// getGutter() method
 	/**
 	 * Returns the gutter to the left of the text area or null if the gutter
 	 * is disabled
@@ -284,7 +278,7 @@ public abstract class TextArea extends JPanel
 		return gutter;
 	} //}}}
 
-	//{{{ getBlameGutter() method
+	// getBlameGutter() method
 	/**
 	 * Returns the git blame gutter to the right of the main gutter.
 	 *
@@ -295,7 +289,7 @@ public abstract class TextArea extends JPanel
 		return blameGutter;
 	} //}}}
 
-	//{{{ getTestGutter() method
+	// getTestGutter() method
 	/**
 	 * Returns the test runner gutter to the right of the blame gutter.
 	 *
@@ -306,7 +300,7 @@ public abstract class TextArea extends JPanel
 		return testGutter;
 	} //}}}
 
-	//{{{ syncGutterStripBorders() method
+	// syncGutterStripBorders() method
 	/**
 	 * Places the gutter/text area separator on the rightmost visible strip column.
 	 *
@@ -331,7 +325,7 @@ public abstract class TextArea extends JPanel
 		testGutter.updateBorder();
 	} //}}}
 
-	//{{{ getDisplayManager() method
+	// getDisplayManager() method
 	/**
 	 * @return the display manager used by this text area.
 	 * @since jEdit 4.2pre1
@@ -341,7 +335,7 @@ public abstract class TextArea extends JPanel
 		return displayManager;
 	} //}}}
 
-	//{{{ isCaretBlinkEnabled() method
+	// isCaretBlinkEnabled() method
 	/**
 	 * @return true if the caret is blinking, false otherwise.
 	 */
@@ -350,7 +344,7 @@ public abstract class TextArea extends JPanel
 		return caretBlinks;
 	} //}}}
 
-	//{{{ setCaretBlinkEnabled() method
+	// setCaretBlinkEnabled() method
 	/**
 	 * Toggles caret blinking.
 	 * @param caretBlinks True if the caret should blink, false otherwise
@@ -365,7 +359,7 @@ public abstract class TextArea extends JPanel
 			invalidateLine(caretLine);
 	} //}}}
 
-	//{{{ getElectricScroll() method
+	// getElectricScroll() method
 
 	/**
 	 * @return the minimum distance (in number of lines)
@@ -377,7 +371,7 @@ public abstract class TextArea extends JPanel
 		return electricScroll;
 	} //}}}
 
-	//{{{ setElectricScroll() method
+	// setElectricScroll() method
 	/**
 	 * Sets the number of lines from the top and bottom of the text
 	 * area that are always visible
@@ -389,7 +383,7 @@ public abstract class TextArea extends JPanel
 		this.electricScroll = electricScroll;
 	} //}}}
 
-	//{{{ isQuickCopyEnabled() method
+	// isQuickCopyEnabled() method
 	/**
 	 * Returns if clicking the middle mouse button pastes the most
 	 * recent selection (% register), and if Control-dragging inserts
@@ -400,7 +394,7 @@ public abstract class TextArea extends JPanel
 		return quickCopy;
 	} //}}}
 
-	//{{{ setQuickCopyEnabled() method
+	// setQuickCopyEnabled() method
 	/**
 	 * Sets if clicking the middle mouse button pastes the most
 	 * recent selection (% register), and if Control-dragging inserts
@@ -412,7 +406,7 @@ public abstract class TextArea extends JPanel
 		this.quickCopy = quickCopy;
 	} //}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the buffer this text area is editing.
 	 * @since jedit 4.3pre3
@@ -427,7 +421,7 @@ public abstract class TextArea extends JPanel
 		return buffer;
 	} //}}}
 
-	//{{{ setBuffer() method
+	// setBuffer() method
 	/**
 	 * Sets the buffer this text area is editing.
 	 * If you don't run a standalone textarea in jEdit please do not call this method -
@@ -499,7 +493,7 @@ public abstract class TextArea extends JPanel
 		}
 	} //}}}
 
-	//{{{ isEditable() method
+	// isEditable() method
 	/**
 	 * Returns true if this text area is editable, false otherwise.
 	 */
@@ -508,7 +502,7 @@ public abstract class TextArea extends JPanel
 		return buffer.isEditable();
 	} //}}}
 
-	//{{{ isDragEnabled() method
+	// isDragEnabled() method
 	/**
 	 * Returns if drag and drop of text is enabled.
 	 * @since jEdit 4.2pre5
@@ -518,7 +512,7 @@ public abstract class TextArea extends JPanel
 		return dndEnabled;
 	} //}}}
 
-	//{{{ setDragEnabled() method
+	// setDragEnabled() method
 	/**
 	 * Sets if drag and drop of text is enabled.
 	 * @since jEdit 4.2pre5
@@ -528,7 +522,7 @@ public abstract class TextArea extends JPanel
 		this.dndEnabled = dndEnabled;
 	} //}}}
 
-	//{{{ getJoinNonWordChars() method
+	// getJoinNonWordChars() method
 	/**
 	 * If set, double clicking will join non-word characters to form one "word".
 	 * @since jEdit 4.3pre2
@@ -538,7 +532,7 @@ public abstract class TextArea extends JPanel
 		return joinNonWordChars;
 	} //}}}
 
-	//{{{ setJoinNonWordChars() method
+	// setJoinNonWordChars() method
 	/**
 	 * If set, double clicking will join non-word characters to form one "word".
 	 * @since jEdit 4.3pre2
@@ -548,7 +542,7 @@ public abstract class TextArea extends JPanel
 		this.joinNonWordChars = joinNonWordChars;
 	} //}}}
 
-	//{{{ getCtrlForRectangularSelection() method
+	// getCtrlForRectangularSelection() method
 	/**
 	 * If set, CTRL enables rectangular selection mode while pressed.
 	 * @since jEdit 4.3pre10
@@ -558,7 +552,7 @@ public abstract class TextArea extends JPanel
 		return ctrlForRectangularSelection;
 	} //}}}
 
-	//{{{ setCtrlForRectangularSelection() method
+	// setCtrlForRectangularSelection() method
 	/**
 	 * If set, CTRL enables rectangular selection mode while pressed.
 	 * @since jEdit 4.3pre10
@@ -568,9 +562,9 @@ public abstract class TextArea extends JPanel
 		this.ctrlForRectangularSelection = ctrlForRectangularSelection;
 	} //}}}
 
-	//{{{ Scrolling
+	// Scrolling
 
-	//{{{ getFirstLine() method
+	// getFirstLine() method
 	/**
 	 * Returns the vertical scroll bar position.
 	 * @since jEdit 4.2pre1
@@ -580,7 +574,7 @@ public abstract class TextArea extends JPanel
 		return displayManager.firstLine.getScrollLine() + displayManager.firstLine.getSkew();
 	} //}}}
 
-	//{{{ setFirstLine() method
+	// setFirstLine() method
 	/**
 	 * Sets the vertical scroll bar position
 	 *
@@ -588,14 +582,13 @@ public abstract class TextArea extends JPanel
 	 */
 	public void setFirstLine(int firstLine)
 	{
-		//{{{ ensure we don't have empty space at the bottom or top, etc
+		// ensure we don't have empty space at the bottom or top, etc
 		int max = displayManager.getScrollLineCount() - visibleLines
 			+ (lastLinePartial ? 1 : 0);
 		if(firstLine > max)
 			firstLine = max;
 		if(firstLine < 0)
 			firstLine = 0;
-		//}}}
 
 		int oldFirstLine = getFirstLine();
 		if(Debug.SCROLL_DEBUG)
@@ -614,7 +607,7 @@ public abstract class TextArea extends JPanel
 		fireScrollEvent(true);
 	} //}}}
 
-	//{{{ getFirstPhysicalLine() method
+	// getFirstPhysicalLine() method
 	/**
 	 * Returns the first visible physical line index.
 	 * @since jEdit 4.0pre4
@@ -628,7 +621,7 @@ public abstract class TextArea extends JPanel
 		return 0;
 	} //}}}
 
-	//{{{ setFirstPhysicalLine() methods
+	// setFirstPhysicalLine() methods
 	/**
 	 * Sets the vertical scroll bar position.
 	 * @param physFirstLine The first physical line to display
@@ -664,7 +657,7 @@ public abstract class TextArea extends JPanel
 		fireScrollEvent(true);
 	} //}}}
 
-	//{{{ getLastPhysicalLine() method
+	// getLastPhysicalLine() method
 	/**
 	 * Returns the last visible physical line index.
 	 * @since jEdit 4.0pre4
@@ -674,7 +667,7 @@ public abstract class TextArea extends JPanel
 		return physLastLine;
 	} //}}}
 
-	//{{{ getLastScreenLine() method
+	// getLastScreenLine() method
 	/**
 	 * Returns the last screen line index, it is different from
 	 * {@link #getVisibleLines()} because the buffer can have less lines than
@@ -687,7 +680,7 @@ public abstract class TextArea extends JPanel
 		return screenLastLine;
 	} //}}}
 
-	//{{{ getVisibleLines() method
+	// getVisibleLines() method
 	/**
 	 * Returns the number of lines visible in this text area.
 	 * @return the number of visible lines in the textarea
@@ -697,7 +690,7 @@ public abstract class TextArea extends JPanel
 		return visibleLines;
 	} //}}}
 
-	//{{{ getHorizontalOffset() method
+	// getHorizontalOffset() method
 	/**
 	 * Returns the horizontal offset of drawn lines.
 	 */
@@ -706,7 +699,7 @@ public abstract class TextArea extends JPanel
 		return horizontalOffset;
 	} //}}}
 
-	//{{{ setHorizontalOffset() method
+	// setHorizontalOffset() method
 	/**
 	 * Sets the horizontal offset of drawn lines. This can be used to
 	 * implement horizontal scrolling.
@@ -726,7 +719,7 @@ public abstract class TextArea extends JPanel
 		fireScrollEvent(false);
 	} //}}}
 
-	//{{{ scrollUpLine() method
+	// scrollUpLine() method
 	/**
 	 * Scrolls up by one line.
 	 * @since jEdit 2.7pre2
@@ -736,7 +729,7 @@ public abstract class TextArea extends JPanel
 		setFirstLine(getFirstLine() - 1);
 	} //}}}
 
-	//{{{ scrollUpPage() method
+	// scrollUpPage() method
 	/**
 	 * Scrolls up by one page.
 	 * @since jEdit 2.7pre2
@@ -747,7 +740,7 @@ public abstract class TextArea extends JPanel
 			+ (lastLinePartial ? 1 : 0));
 	} //}}}
 
-	//{{{ scrollDownLine() method
+	// scrollDownLine() method
 	/**
 	 * Scrolls down by one line.
 	 * @since jEdit 2.7pre2
@@ -757,7 +750,7 @@ public abstract class TextArea extends JPanel
 		setFirstLine(getFirstLine() + 1);
 	} //}}}
 
-	//{{{ scrollDownPage() method
+	// scrollDownPage() method
 	/**
 	 * Scrolls down by one page.
 	 * @since jEdit 2.7pre2
@@ -768,7 +761,7 @@ public abstract class TextArea extends JPanel
 			- (lastLinePartial ? 1 : 0));
 	} //}}}
 
-	//{{{ scrollToCaret() method
+	// scrollToCaret() method
 	/**
 	 * Ensures that the caret is visible by scrolling the text area if
 	 * necessary.
@@ -780,7 +773,7 @@ public abstract class TextArea extends JPanel
 			doElectricScroll);
 	} //}}}
 
-	//{{{ scrollTo() methods
+	// scrollTo() methods
 	/**
 	 * Ensures that the specified location in the buffer is visible.
 	 * @param offset The offset from the start of the buffer
@@ -825,7 +818,7 @@ public abstract class TextArea extends JPanel
 			return;
 		}
 
-		//{{{ Get ready
+		// Get ready
 		int extraEndVirt;
 		int lineLength = buffer.getLineLength(line);
 		if(offset > lineLength)
@@ -839,9 +832,8 @@ public abstract class TextArea extends JPanel
 		int _electricScroll = doElectricScroll
 			&& visibleLines - 1 > (electricScroll << 1)
 				      ? electricScroll : 0;
-		//}}}
 
-		//{{{ Scroll vertically
+		// Scroll vertically
 		int screenLine = chunkCache.getScreenLineOfOffset(line,offset);
 		int visibleLines = getVisibleLines();
 		if(screenLine == -1)
@@ -915,7 +907,7 @@ public abstract class TextArea extends JPanel
 			setFirstLine(getFirstLine() + _electricScroll - visibleLines + screenLine + (lastLinePartial ? 2 : 1));
 		} //}}}
 
-		//{{{ Scroll horizontally
+		// Scroll horizontally
 		if(!displayManager.isLineVisible(line))
 			return;
 
@@ -936,7 +928,7 @@ public abstract class TextArea extends JPanel
 		} //}}}
 	} //}}}
 
-	//{{{ addScrollListener() method
+	// addScrollListener() method
 	/**
 	 * Adds a scroll listener to this text area.
 	 * @param listener The listener
@@ -947,7 +939,7 @@ public abstract class TextArea extends JPanel
 		listenerList.add(ScrollListener.class,listener);
 	} //}}}
 
-	//{{{ removeScrollListener() method
+	// removeScrollListener() method
 	/**
 	 * Removes a scroll listener from this text area.
 	 * @param listener The listener
@@ -958,11 +950,10 @@ public abstract class TextArea extends JPanel
 		listenerList.remove(ScrollListener.class,listener);
 	} //}}}
 
-	//}}}
 
-	//{{{ Screen line stuff
+	// Screen line stuff
 
-	//{{{ getPhysicalLineOfScreenLine() method
+	// getPhysicalLineOfScreenLine() method
 	/**
 	 * Returns the physical line number that contains the specified screen
 	 * line.
@@ -974,7 +965,7 @@ public abstract class TextArea extends JPanel
 		return chunkCache.getLineInfo(screenLine).physicalLine;
 	} //}}}
 
-	//{{{ getScreenLineOfOffset() method
+	// getScreenLineOfOffset() method
 	/**
 	 * Returns the screen (wrapped) line containing the specified offset.
 	 * Returns -1 if the line is not currently visible on the screen.
@@ -988,7 +979,7 @@ public abstract class TextArea extends JPanel
 		return chunkCache.getScreenLineOfOffset(line,offset);
 	} //}}}
 
-	//{{{ getScreenLineStartOffset() method
+	// getScreenLineStartOffset() method
 	/**
 	 * Returns the start offset of the specified screen (wrapped) line.
 	 * @param line The line
@@ -1004,7 +995,7 @@ public abstract class TextArea extends JPanel
 			+ lineInfo.offset;
 	} //}}}
 
-	//{{{ getScreenLineEndOffset() method
+	// getScreenLineEndOffset() method
 	/**
 	 * Returns the end offset of the specified screen (wrapped) line.
 	 * @param line The line
@@ -1020,11 +1011,10 @@ public abstract class TextArea extends JPanel
 			+ lineInfo.offset + lineInfo.length;
 	} //}}}
 
-	//}}}
 
-	//{{{ Offset conversion
+	// Offset conversion
 
-	//{{{ xyToOffset() methods
+	// xyToOffset() methods
 	/**
 	 * Converts a point to an offset.
 	 * Note that unlike in previous jEdit versions, this method now returns
@@ -1059,7 +1049,7 @@ public abstract class TextArea extends JPanel
 		return xToScreenLineOffset(line,x,round);
 	} //}}}
 
-	//{{{ xToScreenLineOffset() method
+	// xToScreenLineOffset() method
 	/**
 	 * Converts a point in a given screen line to an offset.
 	 *
@@ -1107,7 +1097,7 @@ public abstract class TextArea extends JPanel
 		}
 	} //}}}
 
-	//{{{ offsetToXY() methods
+	// offsetToXY() methods
 	/**
 	 * Converts an offset into a point in the text area painter's
 	 * co-ordinate space.
@@ -1164,11 +1154,10 @@ public abstract class TextArea extends JPanel
 		return retVal;
 	} //}}}
 
-	//}}}
 
-	//{{{ Painting
+	// Painting
 
-	//{{{ invalidateScreenLineRange() method
+	// invalidateScreenLineRange() method
 	/**
 	 * Marks a range of screen lines as needing a repaint.
 	 * @param start The first line
@@ -1198,7 +1187,7 @@ public abstract class TextArea extends JPanel
 		testGutter.repaint(0,y,testGutter.getWidth(),height);
 	} //}}}
 
-	//{{{ invalidateLine() method
+	// invalidateLine() method
 	/**
 	 * Marks a line as needing a repaint.
 	 * @param line The physical line to invalidate
@@ -1239,7 +1228,7 @@ public abstract class TextArea extends JPanel
 		invalidateScreenLineRange(startLine,endLine);
 	} //}}}
 
-	//{{{ invalidateLineRange() method
+	// invalidateLineRange() method
 	/**
 	 * Marks a range of physical lines as needing a repaint.
 	 * @param start The first line to invalidate
@@ -1290,11 +1279,10 @@ public abstract class TextArea extends JPanel
 		invalidateScreenLineRange(startScreenLine,endScreenLine);
 	} //}}}
 
-	//}}}
 
-	//{{{ Convenience methods
+	// Convenience methods
 
-	//{{{ getBufferLength() method
+	// getBufferLength() method
 	/**
 	 * Returns the length of the buffer.
 	 */
@@ -1303,7 +1291,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLength();
 	} //}}}
 
-	//{{{ getLineCount() method
+	// getLineCount() method
 	/**
 	 * Returns the number of physical lines in the buffer.
 	 */
@@ -1312,7 +1300,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLineCount();
 	} //}}}
 
-	//{{{ getLineOfOffset() method
+	// getLineOfOffset() method
 	/**
 	 * Returns the line containing the specified offset.
 	 * @param offset The offset
@@ -1322,7 +1310,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLineOfOffset(offset);
 	} //}}}
 
-	//{{{ getLineStartOffset() method
+	// getLineStartOffset() method
 	/**
 	 * Returns the start offset of the specified line.
 	 * @param line The line (physical line)
@@ -1334,7 +1322,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLineStartOffset(line);
 	} //}}}
 
-	//{{{ getLineEndOffset() method
+	// getLineEndOffset() method
 	/**
 	 * Returns the end offset of the specified line.
 	 * @param line The line (physical line)
@@ -1346,7 +1334,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLineEndOffset(line);
 	} //}}}
 
-	//{{{ getLineLength() method
+	// getLineLength() method
 	/**
 	 * Returns the length of the specified line.
 	 * @param line The line
@@ -1356,7 +1344,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getLineLength(line);
 	} //}}}
 
-	//{{{ getText() methods
+	// getText() methods
 	/**
 	 * Returns the specified substring of the buffer.
 	 * @param start The start offset
@@ -1387,7 +1375,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getText(0,buffer.getLength());
 	} //}}}
 
-	//{{{ getLineText() methods
+	// getLineText() methods
 	/**
 	 * Returns the text on the specified line.
 	 * @param lineIndex the line number
@@ -1409,7 +1397,7 @@ public abstract class TextArea extends JPanel
 		buffer.getLineText(lineIndex,segment);
 	} //}}}
 
-	//{{{ getVisibleLineText() methods
+	// getVisibleLineText() methods
 	/**
 	 * Returns the visible part of the given line
 	 * @param screenLine the screenLine
@@ -1448,7 +1436,7 @@ public abstract class TextArea extends JPanel
 		buffer.getText(begin, end - begin, segment);
 	}//}}}
 
-	//{{{ getVisibleLineSegment() method
+	// getVisibleLineSegment() method
 	/**
 	 * Returns the visible part of the given line in a CharSequence.
 	 * The buffer data are not copied. so this should be used in EDT
@@ -1470,7 +1458,7 @@ public abstract class TextArea extends JPanel
 		return buffer.getSegment(begin, end - begin);
 	} //}}}
 
-	//{{{ setText() method
+	// setText() method
 	/**
 	 * Sets the entire text of this text area.
 	 * @param text the new content of the buffer
@@ -1489,9 +1477,9 @@ public abstract class TextArea extends JPanel
 		}
 	} //}}}
 
-	//{{{ Selection
+	// Selection
 
-	//{{{ selectAll() method
+	// selectAll() method
 	/**
 	 * Selects all text in the buffer. Preserves the scroll position.
 	 */
@@ -1507,7 +1495,7 @@ public abstract class TextArea extends JPanel
 		setHorizontalOffset(horizOffset);
 	} //}}}
 
-	//{{{ selectLine() method
+	// selectLine() method
 	/**
 	 * Selects the current line.
 	 * @since jEdit 2.7pre2
@@ -1525,7 +1513,7 @@ public abstract class TextArea extends JPanel
 		moveCaretPosition(end);
 	} //}}}
 
-	//{{{ selectParagraph() method
+	// selectParagraph() method
 	/**
 	 * Selects the paragraph at the caret position.
 	 * @since jEdit 2.7pre2
@@ -1569,7 +1557,7 @@ public abstract class TextArea extends JPanel
 		moveCaretPosition(selectionEnd);
 	} //}}}
 
-	//{{{ selectWord() method
+	// selectWord() method
 	/**
 	 * Selects the word at the caret position.
 	 * @since jEdit 2.7pre2
@@ -1603,7 +1591,7 @@ public abstract class TextArea extends JPanel
 		moveCaretPosition(lineStart + wordEnd);
 	} //}}}
 
-	//{{{ selectToMatchingBracket() method
+	// selectToMatchingBracket() method
 	/**
 	 * Selects from the bracket at the specified position to the
 	 * corresponding bracket.
@@ -1657,7 +1645,7 @@ public abstract class TextArea extends JPanel
 		selectToMatchingBracket(caret,false);
 	} //}}}
 
-	//{{{ selectBlock() method
+	// selectBlock() method
 	/**
 	 * Selects the code block surrounding the caret.
 	 * @since jEdit 2.7pre2
@@ -1740,7 +1728,7 @@ forward_scan:	do
 		moveCaretPosition(end);
 	} //}}}
 
-	//{{{ lineInStructureScope() method
+	// lineInStructureScope() method
 	/**
 	 * Returns if the specified line is contained in the currently
 	 * matched structure's scope.
@@ -1757,7 +1745,7 @@ forward_scan:	do
 			return line <= match.endLine && line >= caretLine;
 	} //}}}
 
-	//{{{ invertSelection() method
+	// invertSelection() method
 	/**
 	 * Inverts the selection.
 	 * @since jEdit 4.0pre1
@@ -1767,7 +1755,7 @@ forward_scan:	do
 		selectionManager.invertSelection();
 	} //}}}
 
-	//{{{ getSelectionCount() method
+	// getSelectionCount() method
 	/**
 	 * Returns the number of selections. This can be used to test
 	 * for the existence of selections.
@@ -1778,7 +1766,7 @@ forward_scan:	do
 		return selectionManager.getSelectionCount();
 	} //}}}
 
-	//{{{ getSelection() methods
+	// getSelection() methods
 	/**
 	 * Returns the current selection.
 	 * @since jEdit 3.2pre1
@@ -1800,7 +1788,7 @@ forward_scan:	do
 		return selectionManager.selection.get(index);
 	} //}}}
 
-	//{{{ getSelectionIterator() method
+	// getSelectionIterator() method
 	/**
 	 * Returns the current selection.
 	 * @since jEdit 4.3pre1
@@ -1810,7 +1798,7 @@ forward_scan:	do
 		return selectionManager.selection.iterator();
 	} //}}}
 
-	//{{{ selectNone() method
+	// selectNone() method
 	/**
 	 * Deselects everything.
 	 */
@@ -1819,7 +1807,7 @@ forward_scan:	do
 		setSelection((Selection)null);
 	} //}}}
 
-	//{{{ setSelection() methods
+	// setSelection() methods
 	/**
 	 * Sets the selection. Nested and overlapping selections are merged
 	 * where possible. Null elements of the array are ignored.
@@ -1847,7 +1835,7 @@ forward_scan:	do
 		finishCaretUpdate(caretLine,NO_SCROLL,true);
 	} //}}}
 
-	//{{{ addToSelection() methods
+	// addToSelection() methods
 	/**
 	 * Adds to the selection. Nested and overlapping selections are merged
 	 * where possible.
@@ -1874,7 +1862,7 @@ forward_scan:	do
 		finishCaretUpdate(caretLine,NO_SCROLL,true);
 	} //}}}
 
-	//{{{ getSelectionAtOffset() method
+	// getSelectionAtOffset() method
 	/**
 	 * Returns the selection containing the specific offset, or <code>null</code>
 	 * if there is no selection at that offset.
@@ -1886,7 +1874,7 @@ forward_scan:	do
 		return selectionManager.getSelectionAtOffset(offset);
 	} //}}}
 
-	//{{{ removeFromSelection() methods
+	// removeFromSelection() methods
 	/**
 	 * Deactivates the specified selection.
 	 * @param sel The selection
@@ -1916,7 +1904,7 @@ forward_scan:	do
 		finishCaretUpdate(caretLine,NO_SCROLL,true);
 	} //}}}
 
-	//{{{ resizeSelection() method
+	// resizeSelection() method
 	/**
 	 * Resizes the selection at the specified offset, or creates a new
 	 * one if there is no selection at the specified offset. This is a
@@ -1944,7 +1932,7 @@ forward_scan:	do
 		fireCaretEvent();
 	} //}}}
 
-	//{{{ extendSelection() methods
+	// extendSelection() methods
 	/**
 	 * Extends the selection at the specified offset, or creates a new
 	 * one if there is no selection at the specified offset. This is
@@ -2019,7 +2007,7 @@ forward_scan:	do
 		}
 	} //}}}
 
-	//{{{ getSelectedText() methods
+	// getSelectedText() methods
 	/**
 	 * Returns the text in the specified selection.
 	 * @param s The selection
@@ -2065,7 +2053,7 @@ forward_scan:	do
 		return getSelectedText("\n");
 	} //}}}
 
-	//{{{ setSelectedText() methods
+	// setSelectedText() methods
 	/**
 	 * Replaces the selection with the specified text.
 	 * @param s The selection
@@ -2126,7 +2114,7 @@ forward_scan:	do
 		selectNone();
 	} //}}}
 
-	//{{{ replaceSelection() method
+	// replaceSelection() method
 	/**
 	 * Set the selection, but does not deactivate it, and does not move the
 	 * caret.
@@ -2167,7 +2155,7 @@ forward_scan:	do
 		return newCaret;
 	} //}}}
 
-	//{{{ getSelectedLines() method
+	// getSelectedLines() method
 	/**
 	 * Returns a sorted array of line numbers on which a selection or
 	 * selections are present.<p>
@@ -2189,11 +2177,10 @@ forward_scan:	do
 		return selectionManager.getSelectedLines();
 	} //}}}
 
-	//}}}
 
-	//{{{ Caret
+	// Caret
 
-	//{{{ caretAutoScroll() method
+	// caretAutoScroll() method
 	/**
 	 * Return if change in buffer should scroll this text area.
 	 * @since jEdit 4.3pre2
@@ -2203,7 +2190,7 @@ forward_scan:	do
 		return focusedComponent == this;
 	} //}}}
 
-	//{{{ addStructureMatcher() method
+	// addStructureMatcher() method
 	/**
 	 * Adds a structure matcher.
 	 * @since jEdit 4.2pre3
@@ -2213,7 +2200,7 @@ forward_scan:	do
 		structureMatchers.add(matcher);
 	} //}}}
 
-	//{{{ removeStructureMatcher() method
+	// removeStructureMatcher() method
 	/**
 	 * Removes a structure matcher.
 	 * @since jEdit 4.2pre3
@@ -2223,7 +2210,7 @@ forward_scan:	do
 		structureMatchers.remove(matcher);
 	} //}}}
 
-	//{{{ getStructureMatchStart() method
+	// getStructureMatchStart() method
 	/**
 	 * Returns the structure element (bracket, or XML tag, etc) matching the
 	 * one before the caret.
@@ -2234,7 +2221,7 @@ forward_scan:	do
 		return match;
 	} //}}}
 
-	//{{{ blinkCaret() method
+	// blinkCaret() method
 	/**
 	 * Blinks the caret.
 	 */
@@ -2249,7 +2236,7 @@ forward_scan:	do
 			blink = true;
 	} //}}}
 
-	//{{{ centerCaret() method
+	// centerCaret() method
 	/**
 	 * Centers the caret on the screen.
 	 * @since jEdit 2.7pre2
@@ -2282,7 +2269,7 @@ forward_scan:	do
 		requestFocus();
 	} // }}}
 
-	//{{{ setCaretPosition() methods
+	// setCaretPosition() methods
 	/**
 	 * Sets the caret position and deactivates the selection.
 	 * @param newCaret The caret position
@@ -2304,7 +2291,7 @@ forward_scan:	do
 		moveCaretPosition(newCaret,doElectricScroll);
 	} //}}}
 
-	//{{{ moveCaretPosition() methods
+	// moveCaretPosition() methods
 	/**
 	 * Sets the caret position without deactivating the selection.
 	 * @param newCaret The caret position
@@ -2358,7 +2345,7 @@ forward_scan:	do
 		}
 	} //}}}
 
-	//{{{ getCaretPosition() method
+	// getCaretPosition() method
 	/**
 	 * Returns a zero-based index of the caret position.
 	 */
@@ -2367,7 +2354,7 @@ forward_scan:	do
 		return caret;
 	} //}}}
 
-	//{{{ getCaretLine() method
+	// getCaretLine() method
 	/**
 	 * Returns the line number containing the caret.
 	 */
@@ -2376,7 +2363,7 @@ forward_scan:	do
 		return caretLine;
 	} //}}}
 
-	//{{{ getMagicCaretPosition() method
+	// getMagicCaretPosition() method
 	/**
 	 * Returns an internal position used to keep the caret in one
 	 * column while moving around lines of varying lengths.
@@ -2393,7 +2380,7 @@ forward_scan:	do
 		return magicCaret;
 	} //}}}
 
-	//{{{ setMagicCaretPosition() method
+	// setMagicCaretPosition() method
 	/**
 	 * Sets the `magic' caret position. This can be used to preserve
 	 * the column position when moving up and down lines.
@@ -2405,7 +2392,7 @@ forward_scan:	do
 		this.magicCaret = magicCaret;
 	} //}}}
 
-	//{{{ addCaretListener() method
+	// addCaretListener() method
 	/**
 	 * Adds a caret change listener to this text area.
 	 * @param listener The listener
@@ -2415,7 +2402,7 @@ forward_scan:	do
 		listenerList.add(CaretListener.class,listener);
 	} //}}}
 
-	//{{{ removeCaretListener() method
+	// removeCaretListener() method
 	/**
 	 * Removes a caret change listener from this text area.
 	 * @param listener The listener
@@ -2425,7 +2412,7 @@ forward_scan:	do
 		listenerList.remove(CaretListener.class,listener);
 	} //}}}
 
-	//{{{ goToNextBracket() method
+	// goToNextBracket() method
 	/**
 	 * Moves the caret to the next closing bracket.
 	 * @param select true if you want to extend selection
@@ -2463,7 +2450,7 @@ loop:			for(int i = 0; i < text.length(); i++)
 		}
 	} //}}}
 
-	//{{{ goToNextCharacter() method
+	// goToNextCharacter() method
 	/**
 	 * Moves the caret to the next character.
 	 * @param select true if you want to extend selection
@@ -2551,7 +2538,7 @@ loop:			for(int i = 0; i < text.length(); i++)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToNextLine() method
+	// goToNextLine() method
 	/**
 	 * Move the caret to the next line.
 	 * @param select true if you want to extend selection
@@ -2583,7 +2570,7 @@ loop:			for(int i = 0; i < text.length(); i++)
 		setMagicCaretPosition(magic);
 	}//}}}
 
-	//{{{ goToNextPage() method
+	// goToNextPage() method
 	/**
 	 * Moves the caret to the next screenful.
 	 * @param select true if you want to extend selection
@@ -2628,7 +2615,7 @@ loop:			for(int i = 0; i < text.length(); i++)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ goToNextParagraph() method
+	// goToNextParagraph() method
 	/**
 	 * Moves the caret to the start of the next paragraph.
 	 * @param select true if you want to extend selection
@@ -2678,7 +2665,7 @@ loop:		for(int i = lineNo + 1; i < getLineCount(); i++)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToNextWord() methods
+	// goToNextWord() methods
 	/**
 	 * Moves the caret to the start of the next word.
 	 * Note that if the "view.eatWhitespace" boolean propery is false,
@@ -2732,7 +2719,7 @@ loop:		for(int i = lineNo + 1; i < getLineCount(); i++)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToPrevBracket() method
+	// goToPrevBracket() method
 	/**
 	 * Moves the caret to the previous bracket.
 	 * @param select true if you want to extend selection
@@ -2766,7 +2753,7 @@ loop:		for(int i = getCaretPosition() - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ goToPrevCharacter() method
+	// goToPrevCharacter() method
 	/**
 	 * Moves the caret to the previous character.
 	 * @param select true if you want to extend selection
@@ -2847,7 +2834,7 @@ loop:		for(int i = getCaretPosition() - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToPrevLine() method
+	// goToPrevLine() method
 	/**
 	 * Moves the caret to the previous line.
 	 * @param select true if you want to extend selection
@@ -2880,7 +2867,7 @@ loop:		for(int i = getCaretPosition() - 1; i >= 0; i--)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ goToPrevPage() method
+	// goToPrevPage() method
 	/**
 	 * Moves the caret to the previous screenful.
 	 * @param select true if you want to extend selection
@@ -2924,7 +2911,7 @@ loop:		for(int i = getCaretPosition() - 1; i >= 0; i--)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ goToPrevParagraph() method
+	// goToPrevParagraph() method
 	/**
 	 * Moves the caret to the start of the previous paragraph.
 	 * @param select true if you want to extend selection
@@ -2973,7 +2960,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToPrevWord() method
+	// goToPrevWord() method
 	/**
 	 * Moves the caret to the start of the previous word.
 	 * @param select true if you want to extend selection
@@ -2984,7 +2971,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		goToPrevWord(select,false);
 	} //}}}
 
-	//{{{ goToPrevWord() method
+	// goToPrevWord() method
 	/**
 	 * Moves the caret to the start of the previous word.
 	 * @param eatWhitespace If true, will eat whitespace
@@ -2995,7 +2982,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		goToPrevWord(select,eatWhitespace,false);
 	} //}}}
 
-	//{{{ goToPrevWord() method
+	// goToPrevWord() method
 	/**
 	 * Moves the caret to the start of the previous word.
 	 * @param eatWhitespace If true, will eat whitespace
@@ -3048,7 +3035,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ home() method
+	// home() method
 	/**
 	 * A "dumb home" action which only has 2 states:
 	 *     start of the whitespace or start of line
@@ -3068,7 +3055,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ end() method
+	// end() method
 	/**
 	 * a dumb end action which only has 2 states:
 	 * 	end of whitespace or end of line
@@ -3088,7 +3075,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ smartHome() method
+	// smartHome() method
 	/**
 	 * On subsequent invocations, first moves the caret to the first
 	 * non-whitespace character of the line, then the beginning of the
@@ -3112,7 +3099,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ smartEnd() method
+	// smartEnd() method
 	/**
 	 * Has 4 states based on # of invocations:
 	 *   1. last character of code (before inline comment)
@@ -3144,7 +3131,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ goToStartOfLine() method
+	// goToStartOfLine() method
 	/**
 	 * Moves the caret to the beginning of the current line.
 	 * @param select true if you want to extend selection
@@ -3162,7 +3149,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToEndOfLine() method
+	// goToEndOfLine() method
 	/**
 	 * Moves the caret to the end of the current line.
 	 * @param select true if you want to extend selection
@@ -3184,7 +3171,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		//setMagicCaretPosition(Integer.MAX_VALUE);
 	} //}}}
 
-	//{{{ goToEndOfCode() method
+	// goToEndOfCode() method
 	/**
 	 * Moves the caret to the end of the code present on the current line, before the comments and whitespace.
 	 * @param select true if you want to extend selection
@@ -3229,7 +3216,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ goToStartOfWhiteSpace() method
+	// goToStartOfWhiteSpace() method
 	/**
 	 * Moves the caret to the first non-whitespace character of the current
 	 * line.
@@ -3269,7 +3256,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(firstIndent);
 	} //}}}
 
-	//{{{ goToEndOfWhiteSpace() method
+	// goToEndOfWhiteSpace() method
 	/**
 	 * Moves the caret to the last non-whitespace character of the current
 	 * line.
@@ -3314,7 +3301,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(lastIndent);
 	} //}}}
 
-	//{{{ goToFirstVisibleLine() method
+	// goToFirstVisibleLine() method
 	/**
 	 * Moves the caret to the first visible line.
 	 * @param select true if you want to extend selection
@@ -3337,7 +3324,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(firstVisible);
 	} //}}}
 
-	//{{{ goToLastVisibleLine() method
+	// goToLastVisibleLine() method
 	/**
 	 * Moves the caret to the last visible line.
 	 * @param select true if you want to extend selection
@@ -3375,7 +3362,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(lastVisible);
 	} //}}}
 
-	//{{{ goToBufferStart() method
+	// goToBufferStart() method
 	/**
 	 * Moves the caret to the beginning of the buffer.
 	 * @param select true if you want to extend selection
@@ -3392,7 +3379,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(start);
 	} //}}}
 
-	//{{{ goToBufferEnd() method
+	// goToBufferEnd() method
 	/**
 	 * Moves the caret to the end of the buffer.
 	 * @param select true if you want to extend selection
@@ -3409,7 +3396,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(end);
 	} //}}}
 
-	//{{{ goToMatchingBracket() method
+	// goToMatchingBracket() method
 	/**
 	 * Moves the caret to the bracket matching the one before the caret.
 	 * @since jEdit 2.7pre3
@@ -3433,11 +3420,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null); 
 	} //}}}
 
-	//}}}
 
-	//{{{ User input
+	// User input
 
-	//{{{ userInput() method
+	// userInput() method
 	/**
 	 * Handles the insertion of the specified character. It performs the
 	 * following operations above and beyond simply inserting the text:
@@ -3494,7 +3480,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ isOverwriteEnabled() method
+	// isOverwriteEnabled() method
 	/**
 	 * Returns true if overwrite mode is enabled, false otherwise.
 	 */
@@ -3503,7 +3489,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return overwrite;
 	} //}}}
 
-	//{{{ setOverwriteEnabled() method
+	// setOverwriteEnabled() method
 	/**
 	 * Sets overwrite mode.
 	 */
@@ -3517,7 +3503,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		fireStatusChanged(StatusListener.OVERWRITE_CHANGED,overwrite);
 	} //}}}
 
-	//{{{ toggleOverwriteEnabled() method
+	// toggleOverwriteEnabled() method
 	/**
 	 * Toggles overwrite mode.
 	 * @since jEdit 2.7pre2
@@ -3527,7 +3513,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setOverwriteEnabled(!overwrite);
 	} //}}}
 
-	//{{{ backspace() method
+	// backspace() method
 	/**
 	 * Deletes the character before the caret, or the selection, if one is
 	 * active.
@@ -3538,7 +3524,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		delete(false);
 	} //}}}
 
-	//{{{ backspaceWord() methods
+	// backspaceWord() methods
 	/**
 	 * Deletes the word before the caret.
 	 * @since jEdit 2.7pre2
@@ -3558,7 +3544,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		backspaceWord(eatWhitespace,false);
 	} //}}}
 
-	//{{{ backspaceWord() method
+	// backspaceWord() method
 	/**
 	 * Deletes the word before the caret.
 	 * @param eatWhitespace If true, will eat whitespace
@@ -3606,7 +3592,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.remove(_caret + lineStart, caret - (_caret + lineStart));
 	} //}}}
 
-	//{{{ delete() method
+	// delete() method
 	/**
 	 * Deletes the character after the caret.
 	 * @since jEdit 2.7pre2
@@ -3616,7 +3602,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		delete(true);
 	} //}}}
 
-	//{{{ deleteToEndOfLine() method
+	// deleteToEndOfLine() method
 	/**
 	 * Deletes from the caret to the end of the current line.
 	 * @since jEdit 2.7pre2
@@ -3633,7 +3619,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			- caret - 1);
 	} //}}}
 
-	//{{{ deleteLine() method
+	// deleteLine() method
 	/**
 	 * Deletes the line containing the caret.
 	 * @since jEdit 2.7pre2
@@ -3686,7 +3672,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ deleteParagraph() method
+	// deleteParagraph() method
 	/**
 	 * Deletes the paragraph containing the caret.
 	 * @since jEdit 2.7pre2
@@ -3727,7 +3713,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.remove(start,end - start);
 	} //}}}
 
-	//{{{ deleteToStartOfLine() method
+	// deleteToStartOfLine() method
 	/**
 	 * Deletes from the caret to the beginning of the current line.
 	 * @since jEdit 2.7pre2
@@ -3744,7 +3730,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			caret - getLineStartOffset(caretLine));
 	} //}}}
 
-	//{{{ deleteWord() methods
+	// deleteWord() methods
 	/**
 	 * Deletes the word in front of the caret.
 	 * @since jEdit 2.7pre2
@@ -3799,7 +3785,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.remove(caret,(_caret + lineStart) - caret);
 	} //}}}
 
-	//{{{ isMultipleSelectionEnabled() method
+	// isMultipleSelectionEnabled() method
 	/**
 	 * Returns if multiple selection is enabled.
 	 * @since jEdit 3.2pre1
@@ -3809,7 +3795,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return multi;
 	} //}}}
 
-	//{{{ toggleMultipleSelectionEnabled() method
+	// toggleMultipleSelectionEnabled() method
 	/**
 	 * Toggles multiple selection.
 	 * @since jEdit 3.2pre1
@@ -3819,7 +3805,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setMultipleSelectionEnabled(!multi);
 	} //}}}
 
-	//{{{ setMultipleSelectionEnabled() method
+	// setMultipleSelectionEnabled() method
 	/**
 	 * Set multiple selection on or off according to the value of
 	 * <code>multi</code>. This only affects the ability to
@@ -3837,7 +3823,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		painter.repaint();
 	} //}}}
 
-	//{{{ isRectangularSelectionEnabled() method
+	// isRectangularSelectionEnabled() method
 	/**
 	 * Returns if rectangular selection is enabled.
 	 * @since jEdit 4.2pre1
@@ -3847,7 +3833,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return rectangularSelectionMode;
 	} //}}}
 
-	//{{{ toggleRectangularSelectionEnabled() method
+	// toggleRectangularSelectionEnabled() method
 	/**
 	 * Toggles rectangular selection.
 	 * @since jEdit 4.2pre1
@@ -3873,7 +3859,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ setRectangularSelectionEnabled() method
+	// setRectangularSelectionEnabled() method
 	/**
 	 * Set rectangular selection on or off according to the value of
 	 * <code>rectangularSelectionMode</code>. This only affects the ability
@@ -3894,11 +3880,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		painter.repaint();
 	} //}}}
 
-	//}}}
 
-	//{{{ Folding
+	// Folding
 
-	//{{{ goToParentFold() method
+	// goToParentFold() method
 	/**
 	 * Moves the caret to the fold containing the one at the caret
 	 * position.
@@ -3934,7 +3919,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ goToNextFold() method
+	// goToNextFold() method
 	/**
 	 * Moves the caret to the next fold.
 	 * @param select true if you want to extend selection
@@ -3972,7 +3957,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ goToPrevFold() method
+	// goToPrevFold() method
 	/**
 	 * Moves the caret to the previous fold.
 	 * @param select true if you want to extend selection
@@ -4010,7 +3995,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setMagicCaretPosition(magic);
 	} //}}}
 
-	//{{{ collapseFold() methods
+	// collapseFold() methods
 	/**
 	 * Like {@link DisplayManager#collapseFold(int)}, but
 	 * also moves the caret to the first line of the fold.
@@ -4032,7 +4017,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		displayManager.collapseFold(line);
 	} //}}}
 
-	//{{{ expandFold() method
+	// expandFold() method
 	/**
 	 * Like {@link DisplayManager#expandFold(int,boolean)}, but
 	 * also moves the caret to the first sub-fold.
@@ -4055,7 +4040,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ selectFold() methods
+	// selectFold() methods
 	/**
 	 * Selects the fold that contains the caret line number.
 	 * @since jEdit 3.1pre3
@@ -4083,7 +4068,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	} //}}}
 
-	//{{{ narrowToFold() method
+	// narrowToFold() method
 	/**
 	 * Hides all lines except those in the fold containing the caret.
 	 * @since jEdit 4.0pre1
@@ -4097,7 +4082,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			displayManager.narrow(lines[0],lines[1]);
 	} //}}}
 
-	//{{{ narrowToSelection() method
+	// narrowToSelection() method
 	/**
 	 * Hides all lines except those in the selection.
 	 * @since jEdit 4.0pre1
@@ -4116,7 +4101,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		selectNone();
 	} //}}}
 
-	//{{{ addExplicitFold() method
+	// addExplicitFold() method
 	/**
 	 * Surrounds the selection with explicit fold markers.
 	 * @throws TextAreaException an exception thrown if the folding mode is
@@ -4166,11 +4151,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			buffer.endCompoundEdit();
 		}
 	} //}}}
-	//}}}
 
-	//{{{ Text editing
+	// Text editing
 
-	//{{{ lineComment() method
+	// lineComment() method
 	/**
 	 * Prepends each line of the selection with the line comment string.
 	 * @since jEdit 3.2pre1
@@ -4212,7 +4196,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		selectNone();
 	} //}}}
 
-	//{{{ rangeComment() method
+	// rangeComment() method
 	/**
 	 * Adds comment start and end strings to the beginning and end of the
 	 * selection.
@@ -4275,7 +4259,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ formatParagraph() method
+	// formatParagraph() method
 	/**
 	 * Formats the paragraph containing the caret.
 	 * @since jEdit 2.7pre2
@@ -4358,7 +4342,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ spacesToTabs() method
+	// spacesToTabs() method
 	/**
 	 * Converts spaces to tabs in the selection.
 	 * @since jEdit 2.7pre2
@@ -4392,7 +4376,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.endCompoundEdit();
 	} //}}}
 
-	//{{{ tabsToSpaces() method
+	// tabsToSpaces() method
 	/**
 	 * Converts tabs to spaces in the selection.
 	 * @since jEdit 2.7pre2
@@ -4426,7 +4410,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.endCompoundEdit();
 	} //}}}
 
-	//{{{ toUpperCase() method
+	// toUpperCase() method
 	/**
 	 * Converts the selected text to upper case.
 	 * @since jEdit 2.7pre2
@@ -4465,7 +4449,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			setCaretPosition(caret);
 	} //}}}
 
-	//{{{ toLowerCase() method
+	// toLowerCase() method
 	/**
 	 * Converts the selected text to lower case.
 	 * @since jEdit 2.7pre2
@@ -4504,7 +4488,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			setCaretPosition(caret);
 	} //}}}
 
-	//{{{ removeTrailingWhiteSpace() method
+	// removeTrailingWhiteSpace() method
 	/**
 	 * Removes trailing whitespace from all lines in the selection.
 	 * @since jEdit 2.7pre2
@@ -4519,7 +4503,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ insertEnterAndIndent() method
+	// insertEnterAndIndent() method
 	/**
 	 * Inserts a line break and indents the new line. Moves the caret to
 	 * the first non-whitespace character of the new line. If the newline
@@ -4569,7 +4553,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ insertTabAndIndent() method
+	// insertTabAndIndent() method
 	public void insertTabAndIndent()
 	{
 		if(!isEditable())
@@ -4594,7 +4578,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		userInput('\t');
 	} //}}}
 
-	//{{{ indentSelectedLines() method
+	// indentSelectedLines() method
 	/**
 	 * Indents all selected lines.
  	 * @since jEdit 3.1pre3
@@ -4610,7 +4594,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
  		}
  	} //}}}
 
-	//{{{ turnOnElasticTabstops() method
+	// turnOnElasticTabstops() method
 	/**
 	 * Turn ON elastic tab stops.
 	 */
@@ -4622,7 +4606,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.setElasticTabstopsOn(true);
 	} //}}}
 
-	//{{{ shiftIndentLeft() method
+	// shiftIndentLeft() method
 	/**
 	 * Shifts the indent to the left.
 	 * @since jEdit 2.7pre2
@@ -4637,7 +4621,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ shiftIndentRight() method
+	// shiftIndentRight() method
 	/**
 	 * Shifts the indent to the right.
 	 * @since jEdit 2.7pre2
@@ -4650,7 +4634,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			buffer.shiftIndentRight(getSelectedLines());
 	} //}}}
 
-	//{{{ joinLines() method
+	// joinLines() method
 	/**
 	 * Joins the current and the next line, or joins all lines in
 	 * selections.
@@ -4704,11 +4688,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			buffer.endCompoundEdit();
 		}
 	} //}}}
-	//}}}
 
-	//{{{ AWT stuff
+	// AWT stuff
 
-	//{{{ addLeftOfScrollBar() method
+	// addLeftOfScrollBar() method
 	/**
 	 * Adds a component to the left side of the box left of the vertical
 	 * scroll bar. The ErrorList plugin uses this to show a global error
@@ -4725,7 +4708,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		verticalBox.add(comp, 0);
 	} //}}}
 
-	//{{{ removeLeftOfScrollBar() method
+	// removeLeftOfScrollBar() method
 	/**
 	 * Removes a component from the box left of the vertical scroll bar.
 	 *
@@ -4737,7 +4720,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		verticalBox.remove(comp);
 	} //}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	/**
 	 * Called by the AWT when this component is added to a parent.
 	 * Adds document listener.
@@ -4758,7 +4741,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		propertiesChanged();
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	/**
 	 * Called by the AWT when this component is removed from it's parent.
 	 * This clears the pointer to the currently focused component.
@@ -4780,7 +4763,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		caretTimer.stop();
 	} //}}}
 
-	//{{{ getFocusTraversalKeysEnabled() method
+	// getFocusTraversalKeysEnabled() method
 	/**
 	 * Java 1.4 compatibility fix to make Tab key work.
 	 * @since jEdit 3.2pre4
@@ -4791,7 +4774,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return false;
 	} //}}}
 
-	//{{{ getFocusCycleRoot() method
+	// getFocusCycleRoot() method
 	/**
 	 * Java 1.4 compatibility fix to make Tab traversal work in a sane
 	 * manner.
@@ -4802,7 +4785,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return true;
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	public void processKeyEvent(KeyEvent evt)
 	{
@@ -4812,7 +4795,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 
 	} //}}}
 
-	//{{{ addTopComponent() method
+	// addTopComponent() method
 	/**
 	 * Adds a component above the gutter, text area, and vertical scroll bar.
 	 *
@@ -4823,7 +4806,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		add(ScrollLayout.TOP,comp);
 	} //}}}
 
-	//{{{ removeTopComponent() method
+	// removeTopComponent() method
 	/**
 	 * Removes a component from above the gutter, text area, and vertical scroll bar.
 	 *
@@ -4834,7 +4817,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		remove(comp);
 	} //}}}
 
-	//{{{ addTopLeftComponent() method
+	// addTopLeftComponent() method
 	/**
 	 * Adds a component above the gutter.
 	 *
@@ -4845,7 +4828,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		add(ScrollLayout.TOP_LEFT, comp);
 	} //}}}
 
-	//{{{ addTopRightComponent() method
+	// addTopRightComponent() method
 	/**
 	 * Adds a component above the vertical scroll bar.
 	 *
@@ -4856,7 +4839,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		add(ScrollLayout.TOP_RIGHT, comp);
 	} //}}}
 
-	//{{{ addBottomLeftComponent() method
+	// addBottomLeftComponent() method
 	/**
 	 * Adds a component below the gutter.
 	 *
@@ -4867,7 +4850,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		add(ScrollLayout.BOTTOM_LEFT, comp);
 	} //}}}
 
-	//{{{ addBottomLeftComponent() method
+	// addBottomLeftComponent() method
 	/**
 	 * Adds a component below the vertical scroll bar.
 	 *
@@ -4878,7 +4861,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		add(ScrollLayout.BOTTOM_RIGHT, comp);
 	} //}}}
 
-	//{{{ getInputMethodRequests() method
+	// getInputMethodRequests() method
 	@Override
 	public InputMethodRequests getInputMethodRequests()
 	{
@@ -4889,9 +4872,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 		return inputMethodSupport;
 	} //}}}
-	//}}}
 
-	//{{{ addStatusListener() method
+	// addStatusListener() method
 	/**
 	 * Adds a scroll listener to this text area.
 	 * @param listener The listener
@@ -4902,7 +4884,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		listenerList.add(StatusListener.class,listener);
 	} //}}}
 
-	//{{{ removeStatusListener() method
+	// removeStatusListener() method
 	/**
 	 * Removes a scroll listener from this text area.
 	 * @param listener The listener
@@ -4913,7 +4895,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		listenerList.remove(StatusListener.class,listener);
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	/**
 	 * Called by jEdit when necessary. Plugins should not call this method.
 	 */
@@ -4977,7 +4959,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		painter.repaint();
 	} //}}}
 
-	//{{{ addActionSet() method
+	// addActionSet() method
 	/**
 	 * Adds a new action set to the textarea's list of ActionSets.
 	 * Call this only on standalone textarea
@@ -4990,7 +4972,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		actionContext.addActionSet(actionSet);
 	} //}}}
 
-	//{{{ getMarkPosition() method
+	// getMarkPosition() method
 	/**
 	 * @deprecated Do not use.
 	 */
@@ -5009,11 +4991,11 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			return caret;
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
 	static TextArea focusedComponent;
 
-	//{{{ Instance variables
+	// Instance variables
 	MouseInputAdapter mouseHandler;
 	final ChunkCache chunkCache;
 	DisplayManager displayManager;
@@ -5048,9 +5030,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 	boolean lastLinePartial;
 
 	boolean blink;
-	//}}}
 
-	//{{{ isCaretVisible() method
+	// isCaretVisible() method
 	/**
 	 * Returns true if the caret is visible, false otherwise.
 	 */
@@ -5059,7 +5040,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return blink && hasFocus();
 	} //}}}
 
-	//{{{ isStructureHighlightVisible() method
+	// isStructureHighlightVisible() method
 	/**
 	 * Returns true if the structure highlight is visible, false otherwise.
 	 * @since jEdit 4.2pre3
@@ -5072,7 +5053,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			&& displayManager.isLineVisible(match.endLine);
 	} //}}}
 
-	//{{{ updateMaxHorizontalScrollWidth() method
+	// updateMaxHorizontalScrollWidth() method
 	void updateMaxHorizontalScrollWidth()
 	{
 		maxHorizontalScrollWidth = chunkCache.getMaxHorizontalScrollWidth();
@@ -5086,7 +5067,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		horizontal.setBlockIncrement(painter.getWidth());
 	} //}}}
 
-	//{{{ recalculateVisibleLines() method
+	// recalculateVisibleLines() method
 	void recalculateVisibleLines()
 	{
 		if(painter == null)
@@ -5117,7 +5098,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		updateScrollBar();
 	} //}}}
 
-	//{{{ foldStructureChanged() method
+	// foldStructureChanged() method
 	void foldStructureChanged()
 	{
 		chunkCache.invalidateAll();
@@ -5141,7 +5122,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		repaint();
 	} //}}}
 
-	//{{{ updateScrollBar() method
+	// updateScrollBar() method
 	/**
 	 * Updates the state of the scroll bars. This should be called
 	 * if the number of lines in the buffer changes, or when the
@@ -5173,7 +5154,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ _finishCaretUpdate() method
+	// _finishCaretUpdate() method
 	/* called by DisplayManager.BufferChangeHandler.transactionComplete() */
 	void _finishCaretUpdate()
 	{
@@ -5246,14 +5227,14 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ invalidateStructureMatch() method
+	// invalidateStructureMatch() method
 	void invalidateStructureMatch()
 	{
 		if(match != null)
 			invalidateLineRange(match.startLine,match.endLine);
 	} //}}}
 
-	//{{{ startDragAndDrop() method
+	// startDragAndDrop() method
 	void startDragAndDrop(InputEvent evt, boolean copy)
 	{
 		TransferHandler transferHandler = getTransferHandler();
@@ -5266,7 +5247,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ fireNarrowActive() method
+	// fireNarrowActive() method
 	void fireNarrowActive()
 	{
 		Object[] listeners = listenerList.getListenerList();
@@ -5287,16 +5268,14 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static final Timer caretTimer;
 	private static final Timer structureTimer;
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	protected JPopupMenu popup;
 
 	private boolean popupEnabled;
@@ -5362,9 +5341,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 
 	private boolean joinNonWordChars;
 	private boolean ctrlForRectangularSelection;
-	//}}}
 
-	//{{{ _setHorizontalOffset() method
+	// _setHorizontalOffset() method
 	/**
 	 * Sets the horizontal offset of drawn lines. This method will
 	 * check if the offset do not go too far after the last character
@@ -5386,7 +5364,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		setHorizontalOffset(horizontalOffset);
 	} //}}}
 
-	//{{{ invalidateSelectedLines() method
+	// invalidateSelectedLines() method
 	/**
 	 * Repaints the lines containing the selection.
 	 */
@@ -5399,7 +5377,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			invalidateLineRange(s.startLine,s.endLine);
 	} //}}}
 
-	//{{{ finishCaretUpdate() method
+	// finishCaretUpdate() method
 	/**
 	 * the collapsing of scrolling/event firing inside compound edits
 	 * greatly speeds up replace-all.
@@ -5421,7 +5399,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		/* otherwise DisplayManager.BufferChangeHandler calls */
 	} //}}}
 
-	//{{{ fireCaretEvent() method
+	// fireCaretEvent() method
 	private void fireCaretEvent()
 	{
 		Object[] listeners = listenerList.getListenerList();
@@ -5441,7 +5419,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ fireScrollEvent() method
+	// fireScrollEvent() method
 	private void fireScrollEvent(boolean vertical)
 	{
 		Object[] listeners = listenerList.getListenerList();
@@ -5464,7 +5442,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ fireStatusChanged() method
+	// fireStatusChanged() method
 	private void fireStatusChanged(int flag, boolean value)
 	{
 		Object[] listeners = listenerList.getListenerList();
@@ -5485,7 +5463,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ fireBracketSelected() method
+	// fireBracketSelected() method
 	private void fireBracketSelected(int line, String text)
 	{
 		Object[] listeners = listenerList.getListenerList();
@@ -5506,7 +5484,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ _changeLine() method
+	// _changeLine() method
 	private void _changeLine(boolean select, int newCaret)
 	{
 		if(select)
@@ -5533,7 +5511,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		moveCaretPosition(newCaret);
 	}//}}}
 
-	//{{{ lineContainsSpaceAndTabs() method
+	// lineContainsSpaceAndTabs() method
 	/**
 	 * Check if the line contains only spaces and tabs.
 	 *
@@ -5559,7 +5537,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return true;
 	} //}}}
 
-	//{{{ insert() method
+	// insert() method
 	protected void insert(String str, boolean indent)
 	{
 		try
@@ -5588,7 +5566,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ insertTab() method
+	// insertTab() method
 	private void insertTab()
 	{
 		int tabSize = buffer.getTabSize();
@@ -5621,7 +5599,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			replaceSelection("\t");
 	} //}}}
 
-	//{{{ userInputTab() method
+	// userInputTab() method
 	protected void userInputTab()
 	{
 		if(getSelectionCount() == 1)
@@ -5643,7 +5621,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			insertTab();
 	} //}}}
 
-	//{{{ doWordWrap() method
+	// doWordWrap() method
 	/**
 	 * Does hard wrap.
 	 */
@@ -5759,14 +5737,14 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return returnValue;
 	} //}}}
 
-	//{{{ updateStructureHighlightWithDelay() method
+	// updateStructureHighlightWithDelay() method
 	private static void updateBracketHighlightWithDelay()
 	{
 		structureTimer.stop();
 		structureTimer.start();
 	} //}}}
 
-	//{{{ updateStructureHighlight() method
+	// updateStructureHighlight() method
 	private void updateStructureHighlight()
 	{
 		if(!painter.isStructureHighlightEnabled()
@@ -5797,7 +5775,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ showStructureStatusMessage() method
+	// showStructureStatusMessage() method
 	private void showStructureStatusMessage(boolean backward)
 	{
 		String text = buffer.getLineText(match.startLine).trim();
@@ -5817,7 +5795,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		fireBracketSelected(match.startLine + 1,text.replace('\t',' '));
 	} //}}}
 
-	//{{{ recalculateLastPhysicalLine() method
+	// recalculateLastPhysicalLine() method
 	void recalculateLastPhysicalLine()
 	{
 		int oldScreenLastLine = screenLastLine;
@@ -5834,7 +5812,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		invalidateScreenLineRange(oldScreenLastLine, screenLastLine);
 	} //}}}
 
-	//{{{ getRectParams() method
+	// getRectParams() method
 	private static class RectParams
 	{
 		final int extraStartVirt;
@@ -5912,7 +5890,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ deleteNextCharacter() method
+	// deleteNextCharacter() method
 	// Delete a code point or combining character sequence at once.
 	private void deleteNextCharacter(int offset)
 	{
@@ -5921,7 +5899,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.remove(offset, length);
 	} //}}}
 
-	//{{{ deletePrevCodePoint() method
+	// deletePrevCodePoint() method
 	// Delete a code point.
 	// This is the behavior of backward removal on Windows Notepad.
 	private void deletePrevCodePoint(int offset)
@@ -5946,7 +5924,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		buffer.remove(offset - length, length);
 	} //}}}
 
-	//{{{ delete() method
+	// delete() method
 	private void delete(boolean forward)
 	{
 		if(!buffer.isEditable())
@@ -5998,7 +5976,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ tallCaretDelete() method
+	// tallCaretDelete() method
 	private void tallCaretDelete(Selection.Rect s, boolean forward)
 	{
 		try
@@ -6041,7 +6019,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ shiftTallCaretLeft() method
+	// shiftTallCaretLeft() method
 	private void shiftTallCaretLeft(Selection.Rect s)
 	{
 		removeFromSelection(s);
@@ -6051,7 +6029,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			s.getEndLine(),s.getEndColumn(buffer) - 1));
 	} //}}}
 
-	//{{{ setMaxLineLength() method
+	// setMaxLineLength() method
 	private void setMaxLineLength(int maxLineLen)
 	{
 		this.maxLineLen = maxLineLen;
@@ -6085,7 +6063,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ addExplicitFold() method
+	// addExplicitFold() method
 	/**
 	 * Add an explicit fold.
 	 * You should call this method inside a compoundEdit in the buffer.
@@ -6196,7 +6174,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return caretBack;
 	} //}}}
 
-	//{{{ rangeLineComment() method
+	// rangeLineComment() method
 	/**
 	 * This method will surround each selected line with a range comment.
 	 * This is used when calling line comment if the edit mode doesn't have
@@ -6239,7 +6217,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ joinLine() method
+	// joinLine() method
 	/**
 	 * Join a line with the next line.
 	 * If you use this method you have to lock the buffer in compound edit mode.
@@ -6256,9 +6234,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		if (nextLineText.length() != 0)
 			buffer.insert(end - 1, " ");
 	} //}}}
-	//}}}
 
-	//{{{ isRightClickPopupEnabled() method
+	// isRightClickPopupEnabled() method
 	/**
 	 * Returns if the right click popup menu is enabled. The Gestures
 	 * plugin uses this API.
@@ -6269,7 +6246,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return popupEnabled;
 	} //}}}
 
-	//{{{ setRightClickPopupEnabled() method
+	// setRightClickPopupEnabled() method
 	/**
 	 * Sets if the right click popup menu is enabled. The Gestures
 	 * plugin uses this API.
@@ -6280,7 +6257,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		this.popupEnabled = popupEnabled;
 	} //}}}
 
-	//{{{ getRightClickPopup() method
+	// getRightClickPopup() method
 	/**
 	 * Returns the right click popup menu.
 	 */
@@ -6289,7 +6266,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return popup;
 	} //}}}
 
-	//{{{ setRightClickPopup() method
+	// setRightClickPopup() method
 	/**
 	 * Sets the right click popup menu.
 	 * @param popup The popup
@@ -6299,7 +6276,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		this.popup = popup;
 	} //}}}
 
-	//{{{ handlePopupTrigger() method
+	// handlePopupTrigger() method
 	/**
 	 * Do the same thing as right-clicking on the text area. The Gestures
 	 * plugin uses this API.
@@ -6322,7 +6299,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		GenericGUIUtilities.showPopupMenu(popup,this,x,y,false);
 	} //}}}
 
-	//{{{ createPopupMenu() method
+	// createPopupMenu() method
 	/**
 	 * Creates the popup menu.
 	 * If you want a popup menu, don't forget in your class to
@@ -6334,7 +6311,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 	{
 	} //}}}
 
-	//{{{ showPopupMenu() method
+	// showPopupMenu() method
 	/**
 	 * Shows the popup menu below the current caret position.
 	 * @since 4.3pre10
@@ -6354,8 +6331,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ Character boundary staffs
-	//{{{ LineCharacterBreaker class
+	// Character boundary staffs
+	// LineCharacterBreaker class
 	// Shared context among some operations which are aware of
 	// characters above BMP and combining character sequence.
 	public static class LineCharacterBreaker
@@ -6410,7 +6387,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			return preceding + index0Offset;
 		}
 
-		//{{{ CharIterator class
+		// CharIterator class
 		// This class adapt CharSequence, which is used to avoid
 		// text copy, to CharacterIterator, which is used to pass
 		// a text to BreakIterator.
@@ -6538,14 +6515,13 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		return charBreaker.offsetIsBoundary(offset) ?
 			offset : charBreaker.previousOf(offset);
 	}
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ CaretBlinker class
+	// CaretBlinker class
 	private static class CaretBlinker implements ActionListener
 	{
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -6554,23 +6530,23 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		} //}}}
 	} //}}}
 
-	//{{{ MutableCaretEvent class
+	// MutableCaretEvent class
 	private class MutableCaretEvent extends CaretEvent
 	{
-		//{{{ MutableCaretEvent constructor
+		// MutableCaretEvent constructor
 		MutableCaretEvent()
 		{
 			super(TextArea.this);
 		} //}}}
 
-		//{{{ getDot() method
+		// getDot() method
 		@Override
 		public int getDot()
 		{
 			return getCaretPosition();
 		} //}}}
 
-		//{{{ getMark() method
+		// getMark() method
 		@Override
 		public int getMark()
 		{
@@ -6578,10 +6554,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		} //}}}
 	} //}}}
 
-	//{{{ AdjustHandler class
+	// AdjustHandler class
 	private class AdjustHandler implements AdjustmentListener
 	{
-		//{{{ adjustmentValueChanged() method
+		// adjustmentValueChanged() method
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent evt)
 		{
@@ -6595,10 +6571,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		} //}}}
 	} //}}}
 
-	//{{{ FocusHandler class
+	// FocusHandler class
 	private class FocusHandler implements FocusListener
 	{
-		//{{{ focusGained() method
+		// focusGained() method
 		@Override
 		public void focusGained(FocusEvent evt)
 		{
@@ -6618,7 +6594,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			focusedComponent = TextArea.this;
 		} //}}}
 
-		//{{{ focusLost() method
+		// focusLost() method
 		@Override
 		public void focusLost(FocusEvent evt)
 		{
@@ -6637,7 +6613,7 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		} //}}}
 	} //}}}
 
-	//{{{ MouseWheelHandler class
+	// MouseWheelHandler class
 	private class MouseWheelHandler implements MouseWheelListener
 	{
 		@Override
@@ -6719,10 +6695,10 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		}
 	} //}}}
 
-	//{{{ RequestFocusLayerUI class
+	// RequestFocusLayerUI class
 	private class RequestFocusLayerUI extends LayerUI<JComponent>
 	{
-		//{{{ processMouseEvent() method
+		// processMouseEvent() method
 		@Override
 		protected void processMouseEvent(MouseEvent e, JLayer<? extends JComponent> l)
 		{
@@ -6732,14 +6708,14 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 			}
 		} //}}}
 
-		//{{{ installUI() method
+		// installUI() method
 		@Override
 		public void installUI(JComponent c) {
 			super.installUI(c);
 			((JLayer)c).setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK);
 		} //}}}
 
-		//{{{ uninstallUI() method
+		// uninstallUI() method
 		@Override
 		public void uninstallUI(JComponent c) {
 			super.uninstallUI(c);
@@ -6747,9 +6723,8 @@ loop:		for(int i = lineNo - 1; i >= 0; i--)
 		} //}}}
 	} //}}}
 
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		caretTimer = new Timer(500,new CaretBlinker());

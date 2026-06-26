@@ -1,7 +1,6 @@
 /*
  * PingPongList.java - Ping Pong List
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010, 2011 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.util.Log;
 
 
@@ -44,7 +43,6 @@ import java.util.List;
 import static javax.swing.Box.createHorizontalBox;
 import static javax.swing.Box.createHorizontalStrut;
 import static org.gjt.sp.jedit.jEdit.getProperty;
-//}}}
 
 /** A panel with two lists, allowing the user to move items between them.
  * All methods ensure that an element cannot appear in both lists simultaneously.
@@ -66,7 +64,7 @@ public class PingPongList<E> extends JPanel
 	private final JButton selectNoneButton;
 	private final Box buttonsBox;
 
-	//{{{ PingPongList constructors
+	// PingPongList constructors
 	public PingPongList(List<E> leftData, List<E> rightData)
 	{
 		this(JSplitPane.HORIZONTAL_SPLIT, leftData, rightData);
@@ -169,19 +167,19 @@ public class PingPongList<E> extends JPanel
 	}
 	// }}}
 
-	//{{{ setLeftTooltip() method
+	// setLeftTooltip() method
 	public void setLeftTooltip(String leftTooltip)
 	{
 		left.setToolTipText(leftTooltip);
 	} //}}}
 
-	//{{{ setRightTooltip() method
+	// setRightTooltip() method
 	public void setRightTooltip(String rightTooltip)
 	{
 		right.setToolTipText(rightTooltip);
 	} //}}}
 
-	//{{{ setLeftTitle() method
+	// setLeftTitle() method
 	public void setLeftTitle(String leftTitle)
 	{
 		if (leftTitle == null)
@@ -197,7 +195,7 @@ public class PingPongList<E> extends JPanel
 		leftPanel.add(leftLabel, BorderLayout.NORTH);
 	} //}}}
 
-	//{{{ setRightTitle() method
+	// setRightTitle() method
 	public void setRightTitle(String rightTitle)
 	{
 		if (rightTitle == null)
@@ -213,7 +211,7 @@ public class PingPongList<E> extends JPanel
 		rightPanel.add(rightLabel, BorderLayout.NORTH);
 	} //}}}
 
-	//{{{ removeLeftTitle() method
+	// removeLeftTitle() method
 	public void removeLeftTitle()
 	{
 		if (leftLabel != null)
@@ -223,7 +221,7 @@ public class PingPongList<E> extends JPanel
 		}
 	} //}}}
 
-	//{{{ removeRightTitle() method
+	// removeRightTitle() method
 	public void removeRightTitle()
 	{
 		if (rightLabel != null)
@@ -233,38 +231,38 @@ public class PingPongList<E> extends JPanel
 		}
 	} //}}}
 
-	//{{{ getLeftSize() method
+	// getLeftSize() method
 	public int getLeftSize()
 	{
 		return leftModel.getSize();
 	} //}}}
 
-	//{{{ getRightSize() method
+	// getRightSize() method
 	public int getRightSize()
 	{
 		return rightModel.getSize();
 	} //}}}
 
-	//{{{ getLeftDataIterator() method
+	// getLeftDataIterator() method
 	public Iterator<E> getLeftDataIterator()
 	{
 		return leftModel.iterator();
 	} //}}}
 
-	//{{{ getRightDataIterator() method
+	// getRightDataIterator() method
 	public Iterator<E> getRightDataIterator()
 	{
 		return rightModel.iterator();
 	} //}}}
 
-	//{{{ moveAllToLeft() method
+	// moveAllToLeft() method
 	public void moveAllToLeft()
 	{
 		leftModel.addAll(rightModel.getData());
 		rightModel.clear();
 	} //}}}
 
-	//{{{ moveAllToRight() method
+	// moveAllToRight() method
 	public void moveAllToRight()
 	{
 		rightModel.addAll(leftModel.getData());
@@ -299,9 +297,9 @@ public class PingPongList<E> extends JPanel
 			right.addListSelectionListener(listener);
 	} // }}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ MyListModel class
+	// MyListModel class
 	private static class MyListModel<E> extends AbstractListModel<E> implements Iterable<E>
 	{
 		private final List<E> data;
@@ -367,7 +365,7 @@ public class PingPongList<E> extends JPanel
 		}
 	} //}}}
 
-	//{{{ MyTransferHandler class
+	// MyTransferHandler class
 	private class MyTransferHandler extends TransferHandler
 	{
 		private JList<E> sourceList;
@@ -452,7 +450,7 @@ public class PingPongList<E> extends JPanel
 		}
 	} //}}}
 
-	//{{{ MyTransferable class
+	// MyTransferable class
 	private static class MyTransferable<E> implements Transferable
 	{
 		public static final DataFlavor javaListFlavor = new DataFlavor(Collection.class, "java.util.Collection");
@@ -489,7 +487,7 @@ public class PingPongList<E> extends JPanel
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -537,5 +535,4 @@ public class PingPongList<E> extends JPanel
 			selectNoneButton.setEnabled(getRightSize() != 0);
 		}
 	}
-	//}}}
 }

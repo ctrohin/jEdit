@@ -4,7 +4,7 @@
  * Copyright (C) 2004 Nicholas O'Leary nol@deferential.net
  * 
  * :mode=beanshell:tabSize=3:indentSize=3:maxLineLen=0:noTabs=true:
- * :indentOnTab=true:indentOnEnter=true:folding=explicit:collapseFolds=1:
+ * :indentOnTab=true:indentOnEnter=true
  *
  * {{{ License
  * This program is free software; you can redistribute it and/or

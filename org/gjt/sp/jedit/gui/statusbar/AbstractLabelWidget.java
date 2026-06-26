@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2021 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.util.GenericGUIUtilities;
 
@@ -30,7 +29,6 @@ import java.awt.event.MouseEvent;
 
 import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 
-//}}}
 
 /**
  * @author Matthieu Casanova

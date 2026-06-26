@@ -1,7 +1,6 @@
 /*
  * Roster.java - A list of things to do, used in various places
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.SwingUtilities;
 import java.awt.Component;
@@ -40,7 +39,6 @@ import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.ProgressObserver;
 
 import static org.gjt.sp.jedit.io.FileVFS.recursiveDelete;
-//}}}
 
 /**
  * @author $Id$
@@ -49,7 +47,7 @@ class Roster
 {
 	private static final Pattern HOST_REGEX = Pattern.compile("(?<=/)\\w++(?=\\.dl\\.sourceforge\\.net)");
 
-	//{{{ Roster constructor
+	// Roster constructor
 	Roster()
 	{
 		abortWorkThreadOperations = new AtomicBoolean(false);
@@ -57,7 +55,7 @@ class Roster
 		toLoad = new ArrayList<>();
 	} //}}}
 
-	//{{{ addRemove() method
+	// addRemove() method
 	/**
 	 * Add a remove operation for the given jar
 	 * @param jar the jar name
@@ -67,43 +65,43 @@ class Roster
 		addOperation(new Remove(jar));
 	} //}}}
 
-	//{{{ addInstall() method
+	// addInstall() method
 	void addInstall(String installed, String url, String installDirectory, int size)
 	{
 		addOperation(new Install(installed,url,installDirectory,size));
 	} //}}}
 
-	//{{{ addLoad() method
+	// addLoad() method
 	void addLoad(String path)
 	{
 		toLoad.add(path);
 	} //}}}
 
-	//{{{ abortWorkThreadOperations() method
+	// abortWorkThreadOperations() method
 	void abortWorkThreadOperations()
 	{
 		abortWorkThreadOperations.set(true);
 	} //}}}
 
-	//{{{ getOperation() method
+	// getOperation() method
 	public Operation getOperation(int i)
 	{
 		return operations.get(i);
 	} //}}}
 
-	//{{{ getOperationCount() method
+	// getOperationCount() method
 	int getOperationCount()
 	{
 		return operations.size();
 	} //}}}
 
-	//{{{ isEmpty() method
+	// isEmpty() method
 	boolean isEmpty()
 	{
 		return operations.isEmpty();
 	} //}}}
 
-	//{{{ performOperationsInWorkThread() method
+	// performOperationsInWorkThread() method
 	void performOperationsInWorkThread(PluginManagerProgress progress)
 	{
 		for (Operation op : operations)
@@ -116,7 +114,7 @@ class Roster
 		}
 	} //}}}
 
-	//{{{ performOperationsInAWTThread() method
+	// performOperationsInAWTThread() method
 	void performOperationsInAWTThread(Component comp)
 	{
 		for (Operation op : operations)
@@ -148,14 +146,14 @@ class Roster
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static File downloadDir;
 
 	private final AtomicBoolean abortWorkThreadOperations;
 	private final List<Operation> operations;
 	private final List<String> toLoad;
 
-	//{{{ addOperation() method
+	// addOperation() method
 	private void addOperation(Operation op)
 	{
 		for (Operation operation : operations)
@@ -167,7 +165,7 @@ class Roster
 		operations.add(op);
 	} //}}}
 
-	//{{{ getDownloadDir() method
+	// getDownloadDir() method
 	private static String getDownloadDir()
 	{
 		if(downloadDir == null)
@@ -183,9 +181,8 @@ class Roster
 		return downloadDir.getPath();
 	} //}}}
 
-	//}}}
 
-	//{{{ Operation interface
+	// Operation interface
 	abstract static class Operation
 	{
 		public void runInWorkThread(PluginManagerProgress progress)
@@ -202,16 +199,16 @@ class Roster
 		}
 	} //}}}
 
-	//{{{ Remove class
+	// Remove class
 	class Remove extends Operation
 	{
-		//{{{ Remove constructor
+		// Remove constructor
 		Remove(String jar)
 		{
 			this.jar = jar;
 		} //}}}
 
-		//{{{ runInAWTThread() method
+		// runInAWTThread() method
 		@Override
 		public void runInAWTThread(Component comp)
 		{
@@ -250,7 +247,7 @@ class Roster
 			}
 		} //}}}
 
-		//{{{ unloadPluginJAR() method
+		// unloadPluginJAR() method
 		/**
 		 * This should go into a public method somewhere.
 		 * @param jar the jar of the plugin
@@ -270,24 +267,23 @@ class Roster
 			jEdit.removePluginJAR(jar,false);
 		} //}}}
 
-		//{{{ equals() method
+		// equals() method
 		public boolean equals(Object o)
 		{
 			return o instanceof Remove
 			       && ((Remove) o).jar.equals(jar);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final String jar;
-		//}}}
 	} //}}}
 
-	//{{{ Install class
+	// Install class
 	class Install extends Operation
 	{
 		int size;
 
-		//{{{ Install constructor
+		// Install constructor
 		Install(String installed,  String url, String installDirectory, int size)
 		{
 			// catch those hooligans passing null urls
@@ -299,21 +295,21 @@ class Roster
 			this.size = size;
 		} //}}}
 
-		//{{{ getMaximum() method
+		// getMaximum() method
 		@Override
 		public int getMaximum()
 		{
 			return size;
 		} //}}}
 
-		//{{{ runInWorkThread() method
+		// runInWorkThread() method
 		@Override
 		public void runInWorkThread(PluginManagerProgress progress)
 		{
 			path = download(progress,url);
 		} //}}}
 
-		//{{{ runInAWTThread() method
+		// runInAWTThread() method
 		@Override
 		public void runInAWTThread(Component comp)
 		{
@@ -429,20 +425,20 @@ class Roster
 			}
 		} //}}}
 
-		//{{{ equals() method
+		// equals() method
 		public boolean equals(Object o)
 		{
 			return o instanceof Install
 			       && ((Install) o).url.equals(url);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final String installed;
 		private final String url;
 		private final String installDirectory;
 		private String path;
 
-		//{{{ download() method
+		// download() method
 		private String download(ProgressObserver progress, String url)
 		{
 			try
@@ -519,6 +515,5 @@ class Roster
 				return null;
 			}
 		} //}}}
-		//}}}
 	} //}}}
 }

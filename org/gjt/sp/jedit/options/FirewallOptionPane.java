@@ -1,7 +1,6 @@
 /*
  * FirewallOptionPane.java - Firewall options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 Dirk Moebius
  * Portions copyright (C) 2002 Slava Pestov
@@ -23,21 +22,20 @@
 
 package org.gjt.sp.jedit.options;
 
- //{{{ Imports
+ // Imports
 import java.awt.event.*;
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class FirewallOptionPane extends AbstractOptionPane {
 
-	//{{{ FirewallOptionPane constructor
+	// FirewallOptionPane constructor
 	public FirewallOptionPane()
 	{
 		super("firewall");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	public void _init()
 	{
@@ -89,7 +87,7 @@ public class FirewallOptionPane extends AbstractOptionPane {
 		socksEnabled.addActionListener(actionHandler);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -105,7 +103,7 @@ public class FirewallOptionPane extends AbstractOptionPane {
 		jEdit.setProperty("firewall.socks.port", socksPort.getText());
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JCheckBox httpEnabled;
 	private JTextField httpHost;
 	private JTextField httpPort;
@@ -115,9 +113,8 @@ public class FirewallOptionPane extends AbstractOptionPane {
 	private JCheckBox socksEnabled;
 	private JTextField socksHost;
 	private JTextField socksPort;
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override

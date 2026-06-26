@@ -1,7 +1,6 @@
 /*
  * StandardUtilities.java - Miscelaneous XML utility functions.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2006 Marcelo Vanzin, Slava Pestov
  * Portions copyright (C) 2000 Richard S. Hall
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
@@ -38,7 +37,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-//}}}
 
 /**
  * XML utility methods that only depend on the JDK.
@@ -50,7 +48,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class XMLUtilities
 {
 
-	//{{{ charsToEntities() method
+	// charsToEntities() method
 	/**
 	 * Converts &lt;, &gt;, &amp; in the string to their HTML entity
 	 * equivalents.
@@ -109,7 +107,7 @@ public class XMLUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ parseXML() method
+	// parseXML() method
 	/**
 	 * Convenience method for parsing an XML file. This method will
 	 * wrap the resource in an InputSource and set the source's
@@ -160,7 +158,7 @@ public class XMLUtilities
 		return false;
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	/**
 	 * Tries to find the given systemId in the context of the given
 	 * class. If the given systemId ends with the given test string,

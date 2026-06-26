@@ -1,7 +1,6 @@
 /*
  * HyperSearchTreeNodeCallback - Callback interface for recursive tree traversal
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Slava Pestov
  *

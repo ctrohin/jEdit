@@ -1,7 +1,6 @@
 /*
  * MirrorList.java - Mirrors list
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
@@ -41,14 +40,13 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.ProgressObserver;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * @version $Id$
  */
 public class MirrorList
 {
-	//{{{ mirrorListFromDisk method
+	// mirrorListFromDisk method
 	public static MirrorList mirrorListFromDisk(ProgressObserver progressObserver) throws IOException, SAXException, ParserConfigurationException
 	{
 		Log.log(Log.NOTICE, MirrorList.class, "Loading mirror list from cache");
@@ -56,7 +54,7 @@ public class MirrorList
 		return new MirrorList(xml, progressObserver);
 	} //}}}
 
-	//{{{ mirrorListFromInternet method
+	// mirrorListFromInternet method
 	public static MirrorList mirrorListFromInternet(ProgressObserver progressObserver) throws IOException, ParserConfigurationException, SAXException
 	{
 		Log.log(Log.NOTICE, MirrorList.class, "Loading mirror list from internet");
@@ -65,7 +63,7 @@ public class MirrorList
 		return new MirrorList(xml, progressObserver);
 	} //}}}
 
-	//{{{ MirrorList constructor
+	// MirrorList constructor
 	public MirrorList(String xml, ProgressObserver observer) throws ParserConfigurationException, SAXException, IOException
 	{
 		this.xml = xml;
@@ -93,26 +91,26 @@ public class MirrorList
 		observer.setValue(2L);
 	} //}}}
 
-	//{{{ getXml() method
+	// getXml() method
 	public String getXml()
 	{
 		return xml;
 	} //}}}
 
-	//{{{ getMirrors() method
+	// getMirrors() method
 	public List<Mirror> getMirrors()
 	{
 		return mirrors;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	/** The xml mirror list. */
 	private final String xml;
 	private final List<Mirror> mirrors;
 
 
-	//{{{ readXml() method
+	// readXml() method
 	/**
 	 * Read the mirror list xml.
 	 * @return
@@ -167,7 +165,7 @@ public class MirrorList
 		return Optional.of(mirrorList);
 	}
 
-	//{{{ downloadXml() method
+	// downloadXml() method
 	/**
 	 * Read and store the mirror list xml.
 	 *
@@ -186,23 +184,22 @@ public class MirrorList
 		}
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	void add(Mirror mirror)
 	{
 		mirrors.add(mirror);
 	} //}}}
 
-	//{{{ finished() method
+	// finished() method
 	void finished()
 	{
 		mirrors.sort(new MirrorCompare());
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Mirror class
+	// Mirror class
 	public static class Mirror
 	{
 		public static final String NONE = "NONE";
@@ -214,7 +211,7 @@ public class MirrorList
 		public String continent;
 	} //}}}
 
-	//{{{ MirrorCompare class
+	// MirrorCompare class
 	private static class MirrorCompare implements Comparator<Mirror>
 	{
 		@Override
@@ -234,5 +231,4 @@ public class MirrorList
 		}
 	} //}}}
 
-	//}}}
 }

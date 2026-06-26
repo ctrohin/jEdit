@@ -1,7 +1,6 @@
 /*
  * TestGutter.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2026 jEdit contributors
  *

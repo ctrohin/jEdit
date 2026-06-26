@@ -1,7 +1,6 @@
 /*
  * ExplicitFoldHandler.java - Explicit fold handler
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -28,19 +27,23 @@ import javax.swing.text.Segment;
  * A fold handler that folds lines based on markers ("{{{" and "}}}")
  * embedded in the text.
  *
+ * <p>Legacy mode retained for buffers that still declare
+ * {@code :folding=explicit:} in a local property. New buffers use
+ * indent-based folding by default.</p>
+ *
  * @author Slava Pestov
  * @version $Id$
  * @since jEdit 4.0pre1
  */
 public class ExplicitFoldHandler extends FoldHandler
 {
-	//{{{ ExplicitFoldHandler constructor
+	// ExplicitFoldHandler constructor
 	public ExplicitFoldHandler()
 	{
 		super("explicit");
 	} //}}}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	/**
 	 * Returns the fold level of the specified line.
 	 * @param buffer The buffer in question

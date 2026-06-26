@@ -2,7 +2,6 @@
  * DynamicMenuChanged.java - Message that causes dynamic menus to be
  * reconstructed
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -35,7 +34,7 @@ import org.gjt.sp.jedit.*;
  */
 public class DynamicMenuChanged extends EBMessage
 {
-	//{{{ DynamicMenuChanged constructor
+	// DynamicMenuChanged constructor
 	/**
 	 * Creates a new dynamic menu changed message.
 	 * @param name The menu name. All dynamic menus with this name will be
@@ -48,7 +47,7 @@ public class DynamicMenuChanged extends EBMessage
 		this.name = name;
 	} //}}}
 
-	//{{{ getMenuName() method
+	// getMenuName() method
 	/**
 	 * Returns the name of the menu in question.
 	 */
@@ -57,14 +56,13 @@ public class DynamicMenuChanged extends EBMessage
 		return name;
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	@Override
 	public String paramString()
 	{
 		return "menu=" + name + "," + super.paramString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final String name;
-	//}}}
 }

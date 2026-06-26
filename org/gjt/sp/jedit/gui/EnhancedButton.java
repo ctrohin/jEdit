@@ -1,7 +1,6 @@
 /*
  * EnhancedButton.java - Tool bar button
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,15 +21,14 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.statusbar.HoverSetStatusMouseHandler;
-//}}}
 /** A toolbar button */
 public class EnhancedButton extends RolloverButton
 {
-	//{{{ EnhancedButton constructor
+	// EnhancedButton constructor
 	public EnhancedButton(Icon icon, String toolTip, String action,
 		ActionContext context)
 	{
@@ -62,14 +60,13 @@ public class EnhancedButton extends RolloverButton
 		setToolTipText(toolTip);
 	} //}}}
 
-	//{{{ isFocusable() method
+	// isFocusable() method
 	@Override
 	public boolean isFocusable()
 	{
 		return false;
 	} //}}}
 
-	//{{{ Private members
-	//}}}
+	// Private members
 
 }

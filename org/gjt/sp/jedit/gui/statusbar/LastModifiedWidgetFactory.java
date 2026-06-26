@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  *
@@ -20,7 +19,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSFile;
@@ -31,7 +30,6 @@ import org.gjt.sp.util.Log;
 
 import javax.swing.*;
 import java.io.IOException;
-//}}}
 
 /**
  * A Statusbar widget that show the time of last save of the current buffer.
@@ -41,14 +39,14 @@ import java.io.IOException;
  */
 public class LastModifiedWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new LastModifiedWidget(view);
 	} //}}}
 
-	//{{{ BufferSetWidget class
+	// BufferSetWidget class
 	public static class LastModifiedWidget implements Widget
 	{
 		private final JLabel label;
@@ -78,14 +76,14 @@ public class LastModifiedWidgetFactory implements StatusWidgetFactory
 			update();
 		}
 
-		//{{{ getComponent() method
+		// getComponent() method
 		@Override
 		public JComponent getComponent()
 		{
 			return label;
 		} //}}}
 
-		//{{{ update() method
+		// update() method
 		@Override
 		public void update()
 		{
@@ -126,7 +124,7 @@ public class LastModifiedWidgetFactory implements StatusWidgetFactory
 			}
 		} //}}}
 
-		//{{{ handleMessage() methods
+		// handleMessage() methods
 		@EditBus.EBHandler
 		public void handleMessage(EditPaneUpdate message)
 		{

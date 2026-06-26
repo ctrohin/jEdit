@@ -1,7 +1,6 @@
 /*
  * ToolBarManager.java - Handles tool bars for the View
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 mike dillon
  *
@@ -22,25 +21,24 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 /** Handles toolbars for a single View */
 public class ToolBarManager
 {
-	//{{{ ToolBarManager constructor
+	// ToolBarManager constructor
 	public ToolBarManager(Container top, Container bottom)
 	{
 		this.top = top;
 		this.bottom = bottom;
 	} //}}}
 
-	//{{{ addToolBar() method
+	// addToolBar() method
 	public void addToolBar(int group, int layer, Component toolbar)
 	{
 		Entry entry = new Entry(layer, toolbar);
@@ -53,24 +51,23 @@ public class ToolBarManager
 			throw new InternalError("Invalid tool bar group");
 	} //}}}
 
-	//{{{ removeToolBar() method
+	// removeToolBar() method
 	public void removeToolBar(Component toolbar)
 	{
 		removeToolBar(top, topToolBars, toolbar);
 		removeToolBar(bottom, bottomToolBars, toolbar);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final Container top;
 	private final Container bottom;
 
 	private final List<Entry> topToolBars = new ArrayList<>();
 	private final List<Entry> bottomToolBars = new ArrayList<>();
-	//}}}
 
-	//{{{ addToolBar() method
+	// addToolBar() method
 	private static void addToolBar(Container group, List<Entry> toolbars,
 		Entry entry)
 	{
@@ -90,7 +87,7 @@ public class ToolBarManager
 		group.add(entry.toolbar);
 	} //}}}
 
-	//{{{ removeToolBar() method
+	// removeToolBar() method
 	private static void removeToolBar(Container group, List<Entry> toolbars,
 		Component toolbar)
 	{
@@ -106,9 +103,8 @@ public class ToolBarManager
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Entry class
+	// Entry class
 	private static class Entry
 	{
 		int layer;

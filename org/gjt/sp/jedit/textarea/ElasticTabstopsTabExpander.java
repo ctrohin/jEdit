@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010 jEdit contributors
  *
@@ -34,14 +33,14 @@ public class ElasticTabstopsTabExpander implements TabExpander
 	private final TextArea textArea;
 	private final TextAreaPainter painter;
 
-	//{{{ ElasticTabstopsTabExpander() method
+	// ElasticTabstopsTabExpander() method
 	public ElasticTabstopsTabExpander(TextArea textArea)
 	{
 		this.textArea = textArea;
 		painter = textArea.getPainter();
 	}//}}}
 	
-	//{{{ nextTabStop() method
+	// nextTabStop() method
 	@Override
 	public float nextTabStop(float x, int tabOffset) 
 	{
@@ -61,7 +60,7 @@ public class ElasticTabstopsTabExpander implements TabExpander
 		return (x+_tabSize);
 	}//}}}
 	
-	//{{{ getTabSize() method
+	// getTabSize() method
 	private float getTabSize(ColumnBlock columnBlock, int line) 
 	{
 		float ret = -5;

@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -141,7 +140,7 @@ import org.gjt.sp.util.Log;
 public abstract class DockableWindowManager extends JPanel
 {
 
-	//{{{ Constants
+	// Constants
 	/**
 	 * Floating position.
 	 * @since jEdit 2.6pre3
@@ -171,9 +170,8 @@ public abstract class DockableWindowManager extends JPanel
 	 * @since jEdit 2.6pre3
 	 */
 	public static final String RIGHT = "right";
-	//}}}
 
-	//{{{ normalizeDockPosition() method
+	// normalizeDockPosition() method
 	/**
 	 * Returns a supported docking position, mapping legacy or unknown values
 	 * to a valid one.
@@ -211,7 +209,6 @@ public abstract class DockableWindowManager extends JPanel
 			|| BOTTOM.equals(position)
 			|| RIGHT.equals(position);
 	}
-	//}}}
 
 	// {{{ data members
 	private final Map<PluginJAR, Set<String>> plugins = new HashMap<PluginJAR, Set<String>>();
@@ -312,7 +309,7 @@ public abstract class DockableWindowManager extends JPanel
 		}
 	} //}}}
 
-	//{{{ addDockableWindow() method
+	// addDockableWindow() method
 	/**
 	 * Opens the specified dockable window. As of jEdit 4.0pre1, has the
 	 * same effect as calling showDockableWindow().
@@ -324,7 +321,7 @@ public abstract class DockableWindowManager extends JPanel
 		showDockableWindow(name);
 	} //}}}
 
-	//{{{ removeDockableWindow() method
+	// removeDockableWindow() method
 	/**
 	 * Hides the specified dockable window. As of jEdit 4.2pre1, has the
 	 * same effect as calling hideDockableWindow().
@@ -336,7 +333,7 @@ public abstract class DockableWindowManager extends JPanel
 		hideDockableWindow(name);
 	} //}}}
 
-	//{{{ toggleDockableWindow() method
+	// toggleDockableWindow() method
 	/**
 	 * Toggles the visibility of the specified dockable window.
 	 * @param name The dockable window name
@@ -349,7 +346,7 @@ public abstract class DockableWindowManager extends JPanel
 			addDockableWindow(name);
 	} //}}}
 
-	//{{{ getDockableWindow() method
+	// getDockableWindow() method
 	/**
 	 * Returns the specified dockable window.
 	 *
@@ -437,7 +434,7 @@ public abstract class DockableWindowManager extends JPanel
 	}
 	// }}}
 
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Returns this dockable window manager's view.
 	 * @since jEdit 4.0pre2
@@ -447,7 +444,7 @@ public abstract class DockableWindowManager extends JPanel
 		return view;
 	} //}}}
 
-	//{{{ getDockable method
+	// getDockable method
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -456,7 +453,7 @@ public abstract class DockableWindowManager extends JPanel
 		return windows.get(name);
 	} // }}}
 
-	//{{{ getDockableTitle() method
+	// getDockableTitle() method
 	/**
 	 * Returns the title of the specified dockable window.
 	 * @param name The name of the dockable window.
@@ -467,7 +464,7 @@ public abstract class DockableWindowManager extends JPanel
 		return longTitle(name);
 	}//}}}
 
-	//{{{ setDockableTitle() method
+	// setDockableTitle() method
 	/**
 	 * Changes the .longtitle property of a dockable window, which corresponds to the
 	 * title shown when it is floating (not docked). Fires a change event that makes sure
@@ -488,14 +485,14 @@ public abstract class DockableWindowManager extends JPanel
 	}
 	// }}}
 
-	//{{{ getRegisteredDockableWindows() method
+	// getRegisteredDockableWindows() method
 	public static String[] getRegisteredDockableWindows()
 	{
 		return DockableWindowFactory.getInstance()
 			.getRegisteredDockableWindows();
 	} //}}}
 
-	//{{{ getDockableWindowPluginClassName() method
+	// getDockableWindowPluginClassName() method
 	public static String getDockableWindowPluginName(String name)
 	{
 		String pluginClass =
@@ -699,7 +696,7 @@ public abstract class DockableWindowManager extends JPanel
 	}
 	// }}}
 
-	//{{{ KeyHandler class
+	// KeyHandler class
 	/**
 	 * This keyhandler responds to only two key events - those corresponding to
 	 * the close-docking-area action event.
@@ -834,5 +831,4 @@ public abstract class DockableWindowManager extends JPanel
 		}
 	} // }}}
 
-	//}}}
 } // }}}

@@ -1,7 +1,6 @@
 /*
  * EditingOptionPane.java - Mode-specific options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2002 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * Panel to load three option panes into tabs: EditModesPane, ModeSettingsPane,
@@ -39,14 +37,14 @@ import org.gjt.sp.jedit.*;
  */
 public class EditingOptionPane extends AbstractOptionPane
 {
-	//{{{ EditingOptionPane constructor
+	// EditingOptionPane constructor
 	public EditingOptionPane()
 	{
 		super("editing");
 		setLayout(new BorderLayout());
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -64,7 +62,7 @@ public class EditingOptionPane extends AbstractOptionPane
 	} //}}}
 	
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -73,12 +71,11 @@ public class EditingOptionPane extends AbstractOptionPane
 		undoSettings._save();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	EditModesPane editModes;
 	ModeSettingsPane modeSettings;
 	UndoPane undoSettings;
-	//}}}
 
 }

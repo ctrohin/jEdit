@@ -1,7 +1,6 @@
 /*
  * HelpTOCPanel.java - Help table of contents
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
@@ -37,11 +36,10 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
-//}}}
 
 public class HelpTOCPanel extends JPanel
 {
-	//{{{ HelpTOCPanel constructor
+	// HelpTOCPanel constructor
 	public HelpTOCPanel(HelpViewerInterface helpViewer)
 	{
 		super(new BorderLayout());
@@ -65,7 +63,7 @@ public class HelpTOCPanel extends JPanel
 		load();
 	} //}}}
 
-	//{{{ selectNode() method
+	// selectNode() method
 	public void selectNode(String shortURL)
 	{
 		if(tocModel == null)
@@ -86,7 +84,7 @@ public class HelpTOCPanel extends JPanel
 		});
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	public void load()
 	{
 		DefaultTreeModel empty = new DefaultTreeModel(
@@ -111,24 +109,23 @@ public class HelpTOCPanel extends JPanel
 		});
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final HelpViewerInterface helpViewer;
 	private DefaultTreeModel tocModel;
 	private final JTree toc;
 	private final Map<String, DefaultMutableTreeNode> nodes;
-	//}}}
 
-	//{{{ TOCTree class
+	// TOCTree class
 	class TOCTree extends JTree
 	{
-		//{{{ TOCTree constructor
+		// TOCTree constructor
 		TOCTree()
 		{
 			ToolTipManager.sharedInstance().registerComponent(this);
 			selectionModel.setSelectionMode(SINGLE_TREE_SELECTION);
 		} //}}}
 
-		//{{{ getToolTipText() method
+		// getToolTipText() method
 		@Override
 		public final String getToolTipText(MouseEvent evt)
 		{
@@ -142,7 +139,7 @@ public class HelpTOCPanel extends JPanel
 			return null;
 		} //}}}
 
-		//{{{ processKeyEvent() method
+		// processKeyEvent() method
 		@Override
 		public void processKeyEvent(KeyEvent evt)
 		{
@@ -160,7 +157,7 @@ public class HelpTOCPanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ processMouseEvent() method
+		// processMouseEvent() method
 		@Override
 		protected void processMouseEvent(MouseEvent evt)
 		{
@@ -179,7 +176,7 @@ public class HelpTOCPanel extends JPanel
 			}
 		} //}}}
 
-		//{{{ cellRectIsVisible() method
+		// cellRectIsVisible() method
 		private boolean cellRectIsVisible(Rectangle cellRect)
 		{
 			Rectangle vr = TOCTree.this.getVisibleRect();
@@ -188,7 +185,7 @@ public class HelpTOCPanel extends JPanel
 				cellRect.y + cellRect.height);
 		} //}}}
 		
-		//{{{ expandOrGotoPath() method
+		// expandOrGotoPath() method
 		private void expandOrGotoPath(TreePath path)
 		{
 			if(path != null)
@@ -213,7 +210,7 @@ public class HelpTOCPanel extends JPanel
 
 	} //}}}
 
-	//{{{ TOCCellRenderer class
+	// TOCCellRenderer class
 	static class TOCCellRenderer extends EnhancedTreeCellRenderer
 	{
 		@Override

@@ -28,6 +28,7 @@
     <PROPERTY NAME="tabSize" VALUE="4" />
     <PROPERTY NAME="indentSize" VALUE="4" />
     <PROPERTY NAME="maxLineLen" VALUE="120" />
+    <PROPERTY NAME="folding" VALUE="none" />
     <PROPERTY NAME="commentStart" VALUE="&lt;!--" />
     <PROPERTY NAME="commentEnd" VALUE="--&gt;" />
   </PROPS>

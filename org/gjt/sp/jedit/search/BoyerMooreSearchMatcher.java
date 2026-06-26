@@ -2,7 +2,6 @@
  * BoyerMooreSearchMatcher.java - Literal pattern String matcher utilizing the
  *         Boyer-Moore algorithm
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000 mike dillon
  * Portions copyright (C) 2001 Tom Locke
@@ -31,7 +30,7 @@ package org.gjt.sp.jedit.search;
  */
 public class BoyerMooreSearchMatcher extends SearchMatcher
 {
-	//{{{ BoyerMooreSearchMatcher constructors
+	// BoyerMooreSearchMatcher constructors
 	/**
 	 * Creates a new string literal matcher.
 	 * @param pattern the search pattern
@@ -66,9 +65,8 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		pattern_end = this.pattern.length - 1;
 		this.wholeWord = wholeWord;
 	}
-	//}}}
 
-	//{{{ nextMatch() method
+	// nextMatch() method
 	@Override
 	public SearchMatcher.Match nextMatch(CharSequence text,
 		boolean start, boolean end, boolean firstTime,
@@ -103,7 +101,7 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		}
 	} //}}}
 
-	//{{{ match() method
+	// match() method
 	/**
 	 *  a good introduction to the Boyer-Moore fast string matching
 	 *  algorithm may be found on Moore's website at:
@@ -118,7 +116,7 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		if(Thread.interrupted())
 			throw new InterruptedException();
 
-		//{{{
+		// 
 		// lazily create skip and suffix arrays for either the
 		// search pattern, or the reversed search pattern
 		int[] skip, suffix;
@@ -208,13 +206,13 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		return -1;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return "BoyerMooreSearchMatcher[" + new String(pattern) + ',' + ignoreCase + ']';
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final char[] pattern;
 	private final int pattern_end;
 	private final boolean ignoreCase;
@@ -227,7 +225,7 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 
 	// Boyer-Moore helper methods
 
-	//{{{ generateSkipArray() method
+	// generateSkipArray() method
 	/*
 	 *  the 'skip' array is used to determine for each index in the
 	 *  hashed alphabet how many characters can be skipped if
@@ -253,7 +251,7 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		return skip;
 	} //}}}
 
-	//{{{ getSkipIndex() method
+	// getSkipIndex() method
 	/*
 	 *  to avoid our skip table having a length of 2 ^ 16, we hash each
 	 *  character of the input into a character in the alphabet [\x00-\xFF]
@@ -275,7 +273,7 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		return ch & 0x000000FF;
 	} //}}}
 
-	//{{{ generateSuffixArray() method
+	// generateSuffixArray() method
 	/*
 	 *  XXX: hairy code that is basically just a functional(?) port of some
 	 *  other code i barely understood
@@ -327,5 +325,4 @@ public class BoyerMooreSearchMatcher extends SearchMatcher
 		return suffix;
 	} //}}}
 
-	//}}}
 }

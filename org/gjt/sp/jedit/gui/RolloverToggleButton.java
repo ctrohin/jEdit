@@ -1,7 +1,6 @@
 /*
  * RolloverToggleButton.java - Class for buttons that implement rollovers
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki
  * Portions copyright (C) 2003 Slava Pestov
@@ -23,13 +22,12 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-//}}}
 
 /** Class for buttons that implement rollovers
  *
@@ -48,7 +46,7 @@ public class RolloverToggleButton extends JToggleButton
 	private final Border originalBorder;
 	private final Border rolloverBorder;
 	
-	//{{{ RolloverButton constructor
+	// RolloverButton constructor
 	/**
 	 * Setup the border
 	 */
@@ -64,7 +62,7 @@ public class RolloverToggleButton extends JToggleButton
 		addMouseListener(new MouseOverHandler());
 	} //}}}
 
-	//{{{ RolloverToggleButton constructor
+	// RolloverToggleButton constructor
 	/**
 	 * Setup the border (invisible initially)
 	 *
@@ -77,7 +75,7 @@ public class RolloverToggleButton extends JToggleButton
 		setIcon(icon);
 	} //}}}
 
-	//{{{ updateUI() method
+	// updateUI() method
 	@Override
 	public void updateUI()
 	{
@@ -86,7 +84,7 @@ public class RolloverToggleButton extends JToggleButton
 		setRequestFocusEnabled(false);
 	} //}}}
 
-	//{{{ setEnabled() method
+	// setEnabled() method
 	@Override
 	public void setEnabled(boolean b)
 	{
@@ -95,7 +93,7 @@ public class RolloverToggleButton extends JToggleButton
 		repaint();
 	} //}}}
 
-	//{{{ setBorderPainted() method
+	// setBorderPainted() method
 	@Override
 	public void setBorderPainted(boolean b)
 	{
@@ -111,7 +109,7 @@ public class RolloverToggleButton extends JToggleButton
 		}
 	} //}}}
 
-	//{{{ revalidate() method
+	// revalidate() method
 	/**
 	 * We block calls to revalidate() from a setBorderPainted(), for
 	 * performance reasons.
@@ -123,7 +121,7 @@ public class RolloverToggleButton extends JToggleButton
 			super.revalidate();
 	} //}}}
 
-	//{{{ paint() method
+	// paint() method
 	@Override
 	public void paint(Graphics g)
 	{
@@ -137,13 +135,13 @@ public class RolloverToggleButton extends JToggleButton
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final AlphaComposite c = AlphaComposite.getInstance(
 		AlphaComposite.SRC_OVER, 0.5f);
 
 	private boolean revalidateBlocked;
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	/**
 	 * Make the border visible/invisible on rollovers
 	 */
@@ -165,5 +163,4 @@ public class RolloverToggleButton extends JToggleButton
 			setBorderPainted(true);
 		}
 	} //}}}
-	//}}}
 }

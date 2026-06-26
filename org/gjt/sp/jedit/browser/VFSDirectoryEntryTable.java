@@ -1,7 +1,6 @@
 /*
  * VFSDirectoryEntryTable.java - VFS directory entry table
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.*;
@@ -48,7 +47,6 @@ import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -57,7 +55,7 @@ import org.gjt.sp.util.ThreadUtilities;
  */
 public class VFSDirectoryEntryTable extends JTable
 {
-	//{{{ VFSDirectoryEntryTable constructor
+	// VFSDirectoryEntryTable constructor
 	VFSDirectoryEntryTable(BrowserView browserView)
 	{
 		super(new VFSDirectoryEntryTableModel());
@@ -109,7 +107,7 @@ public class VFSDirectoryEntryTable extends JTable
 		return header;
 	}
 
-	//{{{ selectFile() method
+	// selectFile() method
 	public boolean selectFile(String path)
 	{
 		for(int i = 0; i < getRowCount(); i++)
@@ -125,7 +123,7 @@ public class VFSDirectoryEntryTable extends JTable
 		return false;
 	} //}}}
 
-	//{{{ doTypeSelect() method
+	// doTypeSelect() method
 	public void doTypeSelect(String str, boolean dirsOnly)
 	{
 		if(str.isEmpty())
@@ -147,7 +145,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 	public VFSFile[] getSelectedFiles()
 	{
 		VFSDirectoryEntryTableModel model
@@ -160,7 +158,7 @@ public class VFSDirectoryEntryTable extends JTable
 		return returnValue.toArray(new VFSFile[0]);
 	} //}}}
 
-	//{{{ getExpandedDirectories() method
+	// getExpandedDirectories() method
 	public void getExpandedDirectories(Set<String> set)
 	{
 		VFSDirectoryEntryTableModel model
@@ -176,7 +174,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ toggleExpanded() method
+	// toggleExpanded() method
 	public void toggleExpanded(final int row)
 	{
 		VFSDirectoryEntryTableModel model
@@ -201,7 +199,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ setDirectory() method
+	// setDirectory() method
 	public void setDirectory(VFS vfs, Object node, java.util.List<VFSFile> list,
 		Set<String> tmpExpanded)
 	{
@@ -239,7 +237,7 @@ public class VFSDirectoryEntryTable extends JTable
 		resizeColumns();
 	} //}}}
 
-	//{{{ maybeReloadDirectory() method
+	// maybeReloadDirectory() method
 	public void maybeReloadDirectory(String path)
 	{
 		VFSDirectoryEntryTableModel model
@@ -267,7 +265,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged()
 	{
 		renderer.propertiesChanged();
@@ -282,7 +280,7 @@ public class VFSDirectoryEntryTable extends JTable
 			getRowHeight() * 12));
 	} //}}}
 
-	//{{{ scrollRectToVisible() method
+	// scrollRectToVisible() method
 	@Override
 	public void scrollRectToVisible(Rectangle rect)
 	{
@@ -291,7 +289,7 @@ public class VFSDirectoryEntryTable extends JTable
 		super.scrollRectToVisible(rect);
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	public void processKeyEvent(KeyEvent evt)
 	{
@@ -477,14 +475,14 @@ public class VFSDirectoryEntryTable extends JTable
 			super.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ setSelectedRow() method
+	// setSelectedRow() method
 	public void setSelectedRow(int row)
 	{
 		getSelectionModel().setSelectionInterval(row,row);
 		scrollRectToVisible(getCellRect(row,0,true));
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final BrowserView browserView;
 	private final JTableHeader header;
 	private final FileCellRenderer renderer;
@@ -492,7 +490,7 @@ public class VFSDirectoryEntryTable extends JTable
 	private final Timer timer = new Timer(0, e -> typeSelectBuffer.setLength(0));
 	private boolean resizingColumns;
 
-	//{{{ doTypeSelect() method
+	// doTypeSelect() method
 	private boolean doTypeSelect(String str, int start, int end,
 		boolean dirsOnly)
 	{
@@ -512,7 +510,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ resizeColumns() method
+	// resizeColumns() method
 	private void resizeColumns()
 	{
 		VFSDirectoryEntryTableModel model = (VFSDirectoryEntryTableModel)getModel();
@@ -568,7 +566,7 @@ public class VFSDirectoryEntryTable extends JTable
 		doLayout();
 	} //}}}
 
-	//{{{ saveWidths() method
+	// saveWidths() method
 	private void saveWidths()
 	{
 		if(resizingColumns)
@@ -581,9 +579,8 @@ public class VFSDirectoryEntryTable extends JTable
 			model.saveColumnWidth(i,columns.getColumn(i).getWidth());
 	} //}}}
 
-	//}}}
 
-	//{{{ ColumnHandler class
+	// ColumnHandler class
 	private class ColumnHandler implements TableColumnModelListener
 	{
 		@Override
@@ -604,7 +601,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ class MainMouseHandler
+	// class MainMouseHandler
 	private class MainMouseHandler extends MouseInputAdapter
 	{
 		@Override
@@ -622,7 +619,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseInputAdapter
 	{
 		@Override
@@ -656,7 +653,7 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ HeaderRenderer
+	// HeaderRenderer
 	private static class HeaderRenderer extends DefaultTableCellRenderer
 	{
 		private final DefaultTableCellRenderer tcr;
@@ -681,12 +678,11 @@ public class VFSDirectoryEntryTable extends JTable
 		}
 	} //}}}
 
-	//{{{ SortOrder Icons
+	// SortOrder Icons
 
 	static final Icon ASC_ICON  = IconManager.loadIcon("MatIcons.CHEVRON_UP:10");
 	static final Icon DESC_ICON = IconManager.loadIcon("MatIcons.CHEVRON_DOWN:10");
 
-	//}}}
 
 
 	/**

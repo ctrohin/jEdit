@@ -1,7 +1,6 @@
 /*
  * HelpViewerDialog.java - HTML Help viewer
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov, Nicholas O'Leary
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -89,7 +88,6 @@ import org.gjt.sp.jedit.msg.PluginUpdate;
 import org.gjt.sp.util.Log;
 
 import static org.gjt.sp.jedit.help.HelpHistoryModel.HistoryEntry;
-//}}}
 
 /**
  * jEdit's searchable help viewer. It uses a Swing JEditorPane to display the HTML,
@@ -102,7 +100,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 	private static final long serialVersionUID = 1L;
 	private static final RegexEncodingDetector ENCODING_DETECTOR = new RegexEncodingDetector(":encoding=([^:]+):", "$1");
 
-	//{{{ HelpViewer constructor
+	// HelpViewer constructor
 	/**
 	 * Creates a new help viewer with the default help page.
 	 * @since jEdit 4.0pre4
@@ -112,7 +110,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		this("welcome.html");
 	} //}}}
 
-	//{{{ HelpViewer constructor
+	// HelpViewer constructor
 	/**
 	 * Creates a new help viewer for the specified URL.
 	 * @param url The URL
@@ -122,7 +120,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		this(url.toString());
 	} //}}}
 
-	//{{{ HelpViewer constructor
+	// HelpViewer constructor
 	/**
 	 * Creates a new help viewer for the specified URL.
 	 * @param url The URL
@@ -218,7 +216,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		});
 	} //}}}
 
-	//{{{ gotoURL() method
+	// gotoURL() method
 	/**
 	 * Displays the specified URL in the HTML component.
 	 * 
@@ -368,17 +366,17 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		}
 	} //}}}
 
-	//{{{ getCurrentScrollPosition() method
+	// getCurrentScrollPosition() method
 	int getCurrentScrollPosition() {
 		return viewerScrollPane.getVerticalScrollBar().getValue();
 	} //}}}
 
-	//{{{ getCurrentPage() method
+	// getCurrentPage() method
 	URL getCurrentPage() {
 		return viewer.getPage();
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -388,7 +386,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		super.dispose();
 	} //}}}
 
-	//{{{ handlePluginUpdate() method
+	// handlePluginUpdate() method
 	@EBHandler
 	public void handlePluginUpdate(PluginUpdate pmsg)
 	{
@@ -404,21 +402,21 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 			}
 	} //}}}
 
-	//{{{ getBaseURL() method
+	// getBaseURL() method
 	@Override
 	public String getBaseURL()
 	{
 		return baseURL;
 	} //}}}
 
-	//{{{ getShortURL() method
+	// getShortURL() method
 	@Override
 	public String getShortURL()
 	{
 		return shortURL;
 	} //}}}
 
-	//{{{ historyUpdated() method
+	// historyUpdated() method
 	@Override
 	public void historyUpdated()
 	{
@@ -426,16 +424,16 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		forward.setEnabled(historyModel.hasNext());
 	} //}}}
 
-	//{{{ getComponent method
+	// getComponent method
 	@Override
 	public Component getComponent()
 	{
 		return getRootPane();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance members
+	// Instance members
 	private String baseURL;
 	private String shortURL;
 	private final HistoryButton back;
@@ -447,9 +445,8 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 	private final HelpHistoryModel historyModel;
 	private final HelpTOCPanel toc;
 	private boolean queuedTOCReload;
-	//}}}
 
-	//{{{ queueTOCReload() method
+	// queueTOCReload() method
 	@Override
 	public void queueTOCReload()
 	{
@@ -460,14 +457,13 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		});
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	class ActionHandler implements ActionListener
 	{
-		//{{{ actionPerformed() class
+		// actionPerformed() class
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -519,10 +515,10 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		} //}}}
 	} //}}}
 
-	//{{{ LinkHandler class
+	// LinkHandler class
 	class LinkHandler implements HyperlinkListener
 	{
-		//{{{ hyperlinkUpdate() method
+		// hyperlinkUpdate() method
 		@Override
 		public void hyperlinkUpdate(HyperlinkEvent evt)
 		{
@@ -555,7 +551,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		} //}}}
 	} //}}}
 
-	//{{{ PropertyChangeHandler class
+	// PropertyChangeHandler class
 	class PropertyChangeHandler implements PropertyChangeListener
 	{
 		@Override
@@ -577,7 +573,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		}
 	} //}}}
 
-	//{{{ KeyHandler class
+	// KeyHandler class
 	private class KeyHandler extends KeyAdapter
 	{
 		@Override
@@ -623,7 +619,7 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
 		}
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -674,5 +670,4 @@ public class HelpViewer extends JFrame implements HelpViewerInterface, HelpHisto
             }
 		}
 	} //}}}
-	//}}}
 }

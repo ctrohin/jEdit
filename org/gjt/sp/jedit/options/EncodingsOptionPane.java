@@ -1,7 +1,6 @@
 /*
  * EncodingsOptionPane.java - Encodings options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Björn Kautler
  * Portions copyright (C) 2010 Matthieu Casanova
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,9 +42,8 @@ import static org.gjt.sp.jedit.jEdit.getProperty;
 import static org.gjt.sp.jedit.jEdit.setBooleanProperty;
 import static org.gjt.sp.jedit.jEdit.unsetProperty;
 import static org.gjt.sp.jedit.MiscUtilities.getEncodings;
-//}}}
 
-//{{{ EncodingsOptionPane class
+// EncodingsOptionPane class
 /**
  * Encodings options.
  *
@@ -56,22 +54,21 @@ import static org.gjt.sp.jedit.MiscUtilities.getEncodings;
  */
 public class EncodingsOptionPane extends AbstractOptionPane
 {
-	//{{{ Instance variables
+	// Instance variables
 	private JComboBox<String> defaultEncoding;
 	private JCheckBox encodingAutodetect;
 	private JTextField encodingDetectors;
 	private JTextField fallbackEncodings;
 	private JComboBox<String> lineSeparator;
 	private PingPongList<String> pingPongList;
-	//}}}
 
-	//{{{ EncodingsOptionPane constructor
+	// EncodingsOptionPane constructor
 	public EncodingsOptionPane()
 	{
 		super("encodings");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -143,7 +140,7 @@ public class EncodingsOptionPane extends AbstractOptionPane
 		addComponent(pingPongList,BOTH);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{

@@ -1,7 +1,6 @@
 /*
  * FilteredTableModel.java - A Filtered table model decorator
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Shlomy Reinstein
  * Copyright (C) 2007 Matthieu Casanova
@@ -82,7 +81,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 
 	private JTable table;
 
-	//{{{ FilteredTableModel() constructors
+	// FilteredTableModel() constructors
 	protected FilteredTableModel(E delegated)
 	{
 		this.delegated = delegated;
@@ -94,7 +93,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 	{
 	} //}}}
 
-	//{{{ setTable() method
+	// setTable() method
 	/**
 	 * Set the JTable that uses this model.
 	 * It is used to restore the selection after the filter has been applied
@@ -110,13 +109,13 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 	} //}}}
 
 
-	//{{{ getDelegated() method
+	// getDelegated() method
 	public E getDelegated()
 	{
 		return delegated;
 	} //}}}
 
-	//{{{ setDelegated() method
+	// setDelegated() method
 	public void setDelegated(E delegated)
 	{
 		if (this.delegated != null)
@@ -126,13 +125,13 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		fireTableStructureChanged();
 	} //}}}
 
-	//{{{ resetFilter() method
+	// resetFilter() method
 	private void resetFilter()
 	{
 		filteredIndices = null;
 	} //}}}
 
-	//{{{ setFilter() method
+	// setFilter() method
 	public void setFilter(String filter)
 	{
 		Set<Integer> selectedIndices = saveSelection();
@@ -163,13 +162,13 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		restoreSelection(selectedIndices);
 	} //}}}
 
-	//{{{ prepareFilter() method
+	// prepareFilter() method
 	public String prepareFilter(String filter)
 	{
 		return filter;
 	} //}}}
 
-	//{{{ passFilter() method
+	// passFilter() method
 	/**
 	 * This callback indicates if a row passes the filter.
 	 *
@@ -178,9 +177,8 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 	 * @return true if the row must be visible
 	 */
 	public abstract boolean passFilter(int row, String filter);
-	//}}}
 
-	//{{{ saveSelection()
+	// saveSelection()
 
 	private Set<Integer> saveSelection()
 	{
@@ -198,7 +196,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		return selectedRows;
 	} //}}}
 
-	//{{{ restoreSelection() method
+	// restoreSelection() method
 	private void restoreSelection(Set<Integer> selectedIndices)
 	{
 		if (selectedIndices == null || getRowCount() == 0)
@@ -212,7 +210,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		}
 	}  //}}}
 
-	//{{{ getRowCount() method
+	// getRowCount() method
 	@Override
 	public int getRowCount()
 	{
@@ -221,28 +219,28 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		return filteredIndices.size();
 	} //}}}
 
-	//{{{ getColumnCount() method
+	// getColumnCount() method
 	@Override
 	public int getColumnCount()
 	{
 		return delegated.getColumnCount();
 	} //}}}
 
-	//{{{ getColumnName() method
+	// getColumnName() method
 	@Override
 	public String getColumnName(int columnIndex)
 	{
 		return delegated.getColumnName(columnIndex);
 	} //}}}
 
-	//{{{ getColumnClass() method
+	// getColumnClass() method
 	@Override
 	public Class<?> getColumnClass(int columnIndex)
 	{
 		return delegated.getColumnClass(columnIndex);
 	} //}}}
 
-	//{{{ isCellEditable() method
+	// isCellEditable() method
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex)
 	{
@@ -250,7 +248,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		return delegated.isCellEditable(trueRowIndex, columnIndex);
 	} //}}}
 
-	//{{{ getValueAt() method
+	// getValueAt() method
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex)
 	{
@@ -258,7 +256,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		return delegated.getValueAt(trueRowIndex, columnIndex);
 	} //}}}
 
-	//{{{ setValueAt() method
+	// setValueAt() method
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex)
 	{
@@ -266,7 +264,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		delegated.setValueAt(aValue, trueRowIndex, columnIndex);
 	} //}}}
 
-	//{{{ getTrueRow() method
+	// getTrueRow() method
 	/**
 	 * Converts a row index from the JTable to an internal row index from the delegated model.
 	 *
@@ -280,7 +278,7 @@ public abstract class FilteredTableModel<E extends TableModel> extends AbstractT
 		return filteredIndices.get(rowIndex).intValue();
 	} //}}}
 
-	//{{{ getInternal2ExternalRow() method
+	// getInternal2ExternalRow() method
 	/**
 	 * Converts a row index from the delegated table model into a row index of the JTable.
 	 *

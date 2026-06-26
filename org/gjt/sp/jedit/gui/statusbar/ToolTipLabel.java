@@ -1,7 +1,6 @@
 /*
  * ToolTipLabel.java - a label that has his tooltip on the top 
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2004 Slava Pestov
  * Portions copyright (C) 2001 Mike Dillon
@@ -23,19 +22,18 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
-//}}}
 
 /**
  * @author Slava Pestov
  */
 public class ToolTipLabel extends JLabel
 {
-	//{{{ ToolTipLabel() constructor
+	// ToolTipLabel() constructor
 	public ToolTipLabel()
 	{
 		setBorder(new EmptyBorder(0, 10, 0, 10));
@@ -43,7 +41,7 @@ public class ToolTipLabel extends JLabel
 		setHorizontalAlignment(CENTER);
 	} //}}}
 
-	//{{{ getToolTipLocation() method
+	// getToolTipLocation() method
 	@Override
 	public Point getToolTipLocation(MouseEvent event)
 	{

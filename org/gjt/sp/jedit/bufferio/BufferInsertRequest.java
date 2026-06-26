@@ -1,7 +1,6 @@
 /*
  * BufferInsertRequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.bufferio;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * A buffer insert request.
@@ -37,7 +35,7 @@ import org.gjt.sp.util.*;
  */
 public class BufferInsertRequest extends BufferIORequest
 {
-	//{{{ BufferInsertRequest constructor
+	// BufferInsertRequest constructor
 	/**
 	 * Creates a new buffer I/O request.
 	 * @param view The view
@@ -51,7 +49,7 @@ public class BufferInsertRequest extends BufferIORequest
 		super(view,buffer,session,vfs,path);
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{

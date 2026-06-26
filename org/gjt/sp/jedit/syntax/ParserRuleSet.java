@@ -1,7 +1,6 @@
 /*
  * ParserRuleSet.java - A set of parser rules
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 mike dillon
  * Portions copyright (C) 2001, 2002 Slava Pestov
@@ -23,14 +22,13 @@
 
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /**
  * A set of parser rules.
@@ -39,7 +37,7 @@ import static org.gjt.sp.util.StandardUtilities.castUnchecked;
  */
 public class ParserRuleSet
 {
-	//{{{ getStandardRuleSet() method
+	// getStandardRuleSet() method
 	/**
 	 * Returns a parser rule set that highlights everything with the
 	 * specified token type.
@@ -50,7 +48,7 @@ public class ParserRuleSet
 		return standard[id];
 	} //}}}
 
-	//{{{ ParserRuleSet constructor
+	// ParserRuleSet constructor
 	public ParserRuleSet(String modeName, String setName)
 	{
 		this.modeName = modeName;
@@ -61,38 +59,38 @@ public class ParserRuleSet
 		imports = new ArrayList<>();
 	} //}}}
 
-	//{{{ getModeName() method
+	// getModeName() method
 	public String getModeName()
 	{
 		return modeName;
 	} //}}}
 
-	//{{{ getSetName() method
+	// getSetName() method
 	public String getSetName()
 	{
 		return setName;
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	public String getName()
 	{
 		return modeName + "::" + setName;
 	} //}}}
 
-	//{{{ getProperties() method
+	// getProperties() method
 	public Hashtable<String, String> getProperties()
 	{
 		return props;
 	} //}}}
 
-	//{{{ setProperties() method
+	// setProperties() method
 	public void setProperties(Hashtable<String, String> props)
 	{
 		this.props = props;
 		_noWordSep = null;
 	} //}}}
 
-	//{{{ resolveImports() method
+	// resolveImports() method
 	/**
 	 * Resolves all rulesets added with {@link #addRuleSet(ParserRuleSet)}.
 	 * @since jEdit 4.2pre3
@@ -120,7 +118,7 @@ public class ParserRuleSet
 		imports.clear();
 	} //}}}
 
-	//{{{ addRuleSet() method
+	// addRuleSet() method
 	/**
 	 * Adds all rules contained in the given ruleset.
 	 * @param ruleset The ruleset
@@ -131,7 +129,7 @@ public class ParserRuleSet
 		imports.add(ruleset);
 	} //}}}
 
-	//{{{ addRule() method
+	// addRule() method
 	public void addRule(ParserRule parserRule)
 	{
 		ruleCount++;
@@ -162,7 +160,7 @@ public class ParserRuleSet
 		}
 	} //}}}
 
-	//{{{ addRule() method
+	// addRule() method
 	private void addRule(char ch, ParserRule parserRule)
 	{
 		if (ch >= ruleArray.length)
@@ -181,7 +179,7 @@ public class ParserRuleSet
 		parserRules.add(parserRule);
 	} //}}}
 
-	//{{{ getRules() method
+	// getRules() method
 	
 	public List<ParserRule> getRules(char key)
 	{
@@ -208,13 +206,13 @@ public class ParserRuleSet
 		return mixed;
 	} //}}}
 
-	//{{{ getRuleCount() method
+	// getRuleCount() method
 	public int getRuleCount()
 	{
 		return ruleCount;
 	} //}}}
 
-	//{{{ getTerminateChar() method
+	// getTerminateChar() method
 	/**
 	 * Returns the number of chars that can be read before the rule parsing stops.
 	 *
@@ -225,86 +223,86 @@ public class ParserRuleSet
 		return terminateChar;
 	} //}}}
 
-	//{{{ setTerminateChar() method
+	// setTerminateChar() method
 	public void setTerminateChar(int atChar)
 	{
 		terminateChar = (atChar >= 0) ? atChar : -1;
 	} //}}}
 
-	//{{{ getIgnoreCase() method
+	// getIgnoreCase() method
 	public boolean getIgnoreCase()
 	{
 		return ignoreCase;
 	} //}}}
 
-	//{{{ setIgnoreCase() method
+	// setIgnoreCase() method
 	public void setIgnoreCase(boolean b)
 	{
 		ignoreCase = b;
 	} //}}}
 
-	//{{{ getKeywords() method
+	// getKeywords() method
 	public KeywordMap getKeywords()
 	{
 		return keywords;
 	} //}}}
 
-	//{{{ setKeywords() method
+	// setKeywords() method
 	public void setKeywords(KeywordMap km)
 	{
 		keywords = km;
 		_noWordSep = null;
 	} //}}}
 
-	//{{{ getHighlightDigits() method
+	// getHighlightDigits() method
 	public boolean getHighlightDigits()
 	{
 		return highlightDigits;
 	} //}}}
 
-	//{{{ setHighlightDigits() method
+	// setHighlightDigits() method
 	public void setHighlightDigits(boolean highlightDigits)
 	{
 		this.highlightDigits = highlightDigits;
 	} //}}}
 
-	//{{{ getDigitRegexp() method
+	// getDigitRegexp() method
 	public Pattern getDigitRegexp()
 	{
 		return digitRE;
 	} //}}}
 
-	//{{{ setDigitRegexp() method
+	// setDigitRegexp() method
 	public void setDigitRegexp(Pattern digitRE)
 	{
 		this.digitRE = digitRE;
 	} //}}}
 
-	//{{{ getEscapeRule() method
+	// getEscapeRule() method
 	public ParserRule getEscapeRule()
 	{
 		return escapeRule;
 	} //}}}
 
-	//{{{ setEscapeRule() method
+	// setEscapeRule() method
 	public void setEscapeRule(ParserRule escapeRule)
 	{
 		this.escapeRule = escapeRule;
 	} //}}}
 
-	//{{{ getDefault() method
+	// getDefault() method
 	public byte getDefault()
 	{
 		return defaultToken;
 	} //}}}
 
-	//{{{ setDefault() method
+	// setDefault() method
 	public void setDefault(byte def)
 	{
 		defaultToken = def;
 	} //}}}
 
-	//{{{ getNoWordSep() method
+	// getNoWordSep() method
 	public String getNoWordSep()
 	{
 		if(_noWordSep == null)
@@ -318,14 +316,14 @@ public class ParserRuleSet
 		return noWordSep;
 	} //}}}
 
-	//{{{ setNoWordSep() method
+	// setNoWordSep() method
 	public void setNoWordSep(String noWordSep)
 	{
 		this.noWordSep = noWordSep;
 		_noWordSep = null;
 	} //}}}
 
-	//{{{ isBuiltIn() method
+	// isBuiltIn() method
 	/**
 	 * Returns if this is a built-in ruleset.
 	 * @since jEdit 4.2pre1
@@ -335,14 +333,14 @@ public class ParserRuleSet
 		return builtIn;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
 		return getClass().getName() + '[' + modeName + "::" + setName + ']';
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final ParserRuleSet[] standard;
 	/**
 	 * The base size for the rule array, after that value, chars are less frequent.
@@ -390,5 +388,4 @@ public class ParserRuleSet
 	private String noWordSep;
 
 	private boolean builtIn;
-	//}}}
 }

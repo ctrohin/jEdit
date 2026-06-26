@@ -1,7 +1,6 @@
 /*
  * ActionSet.java - A set of actions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ imports
+// imports
 import java.net.URL;
 import java.util.*;
 
@@ -32,7 +31,6 @@ import org.jedit.keymap.Keymap;
 import org.gjt.sp.util.Log;
 
 
-//}}}
 
 /**
  * A set of actions, either loaded from an XML file, or constructed at runtime
@@ -147,7 +145,7 @@ import org.gjt.sp.util.Log;
  */
 public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 {
-	//{{{ ActionSet constructor
+	// ActionSet constructor
 	/**
 	 * Creates a new action set.
 	 * @since jEdit 4.0pre1
@@ -157,7 +155,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		label = "<no label set; plugin bug>";
 	} //}}}
 
-	//{{{ ActionSet constructor
+	// ActionSet constructor
 	/**
 	 * Creates a new action set.
 	 * @param plugin The plugin
@@ -185,7 +183,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		loaded = false;
 	} //}}}
 
-	//{{{ addAction() method
+	// addAction() method
 	/**
 	 * Adds an action to the action set.
 	 * It exists for binary compatibility issues
@@ -198,14 +196,14 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		super.addAction(action);
 	} //}}}
 
-	//{{{ getArray() method
+	// getArray() method
 	@Override
 	protected EditAction[] getArray(int size)
 	{
 		return new EditAction[size];
 	} //}}}
 
-	//{{{ getActions() method
+	// getActions() method
 	/**
 	 * Returns an array of all actions in this action set.<p>
 	 *
@@ -219,7 +217,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		return super.getActions();
 	} //}}}
 
-	//{{{ ActionSet constructor
+	// ActionSet constructor
 	/**
 	 * Creates a new action set.
 	 * @param label The label, shown in the shortcuts option pane
@@ -231,7 +229,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		setLabel(label);
 	} //}}}
 
-	//{{{ getLabel() method
+	// getLabel() method
 	/**
 	 * @return the action source label.
 	 * @since jEdit 4.0pre1
@@ -241,7 +239,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		return label;
 	} //}}}
 
-	//{{{ setLabel() method
+	// setLabel() method
 	/**
 	 * Sets the action source label.
 	 * @param label The label
@@ -253,7 +251,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		this.label = label;
 	} //}}}
 
-	//{{{ getPluginJAR() method
+	// getPluginJAR() method
 	/**
 	 * @return the plugin this action set was loaded from, or null.
 	 * @since jEdit 4.2pre13
@@ -263,7 +261,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		return plugin;
 	} //}}}
 
-	//{{{ getCacheableActionNames() method
+	// getCacheableActionNames() method
 	/**
 	 * Returns an array of all action names in this action set that should
 	 * be cached; namely, <code>BeanShellAction</code>s.
@@ -288,7 +286,7 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		return retVal.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//{{{ getProperty() method
+	// getProperty() method
 	@Override
 	public String getProperty(String name)
 	{
@@ -296,28 +294,28 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 		return keymap.getShortcut(name);
 	} //}}}
 
-	//{{{ getInputHandler() method
+	// getInputHandler() method
 	@Override
 	public AbstractInputHandler getInputHandler()
 	{
 		return jEdit.getInputHandler();
 	} //}}}
 
-	//{{{ compareTo() method
+	// compareTo() method
 	@Override
 	public int compareTo(Object o)
 	{
 		return label.compareTo(((ActionSet)o).label);
 	}//}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
 		return label;
 	} //}}}
 
-	//{{{ createBeanShellAction() method
+	// createBeanShellAction() method
 	/**
 	 * Creates a BeanShellAction.
 	 * @since 4.3pre13
@@ -332,11 +330,9 @@ public class ActionSet extends JEditActionSet<EditAction> implements Comparable
 	{
 		return new BeanShellAction(actionName,code,selected,noRepeat,noRecord,noRememberLast);
 	}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private String label;
 	private PluginJAR plugin;
-	//}}}
 
 }

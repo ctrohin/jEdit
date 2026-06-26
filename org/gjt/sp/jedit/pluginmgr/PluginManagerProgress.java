@@ -1,7 +1,6 @@
 /*
  * PluginManagerProgress.java - Plugin download progress meter
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001 Slava Pestov
  *
@@ -22,18 +21,17 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.ProgressObserver;
-//}}}
 
 class PluginManagerProgress extends JDialog implements ProgressObserver
 {
-	//{{{ PluginManagerProgress constructor
+	// PluginManagerProgress constructor
 	PluginManagerProgress(PluginManager dialog, Roster roster)
 	{
 		super(dialog,jEdit.getProperty("plugin-manager.progress.title"),true);
@@ -76,7 +74,7 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 		setVisible(true);
 	} //}}}
 
-	//{{{ setValue() method
+	// setValue() method
 	/**
 	 * Update the progress value.
 	 *
@@ -89,7 +87,7 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 		SwingUtilities.invokeLater(() -> progress.setValue(valueSoFar + (int) value));
 	} //}}}
 
-	//{{{ setMaximum() method
+	// setMaximum() method
 	/**
 	 * This method is unused with the plugin manager.
 	 *
@@ -101,7 +99,7 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 	{
 	} //}}}
 
-	//{{{ setStatus() method
+	// setStatus() method
 	/**
 	 * This method is unused with the plugin manager.
 	 *
@@ -114,7 +112,7 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 		SwingUtilities.invokeLater(() -> progress.setString(status));
 	} //}}}
 
-	//{{{ done() method
+	// done() method
 	public void done()
 	{
 		try
@@ -139,9 +137,9 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private Thread thread;
 
 	private final JProgressBar progress;
@@ -152,9 +150,8 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 	private int valueSoFar;
 
 	private final Roster roster;
-	//}}}
 
-	//{{{ WindowHandler class
+	// WindowHandler class
 	class WindowHandler extends WindowAdapter
 	{
 		boolean done;
@@ -178,5 +175,4 @@ class PluginManagerProgress extends JDialog implements ProgressObserver
 			thread.interrupt();
 		}
 	} //}}}
-	//}}}
 }

@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Kazutoshi Satoda
  *
@@ -20,7 +19,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -35,7 +34,6 @@ import java.util.Arrays;
 
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.ServiceManager;
-//}}}
 
 /**
  * A class for some static methods to deal with encodings.
@@ -45,7 +43,7 @@ import org.gjt.sp.jedit.ServiceManager;
  */
 public class EncodingServer
 {
-	//{{{ getEncoding() method
+	// getEncoding() method
 	/**
 	 * Returns an instance of Encoding for specified name.
 	 * The name is used for search the following domains in the
@@ -76,7 +74,7 @@ public class EncodingServer
 		throw new UnsupportedCharsetException("No such encoding: \"" + name + "\"");
 	} //}}}
 
-	//{{{ getAvailableNames() method
+	// getAvailableNames() method
 	/**
 	 * Returns the set of all available encoding names.
 	 */
@@ -88,7 +86,7 @@ public class EncodingServer
 		return set;
 	} //}}}
 
-	//{{{ getSelectedNames() method
+	// getSelectedNames() method
 	/**
 	 * Returns the set of user selected encoding names.
 	 */
@@ -99,7 +97,7 @@ public class EncodingServer
 		return set;
 	} //}}}
 
-	//{{{ getTextReader() method
+	// getTextReader() method
 	/**
 	 * Returns a Reader object that reads the InputStream with
 	 * the encoding. This method is same with
@@ -111,7 +109,7 @@ public class EncodingServer
 		return getEncoding(encoding).getTextReader(in);
 	} //}}}
 
-	//{{{ getTextWriter() method
+	// getTextWriter() method
 	/**
 	 * Returns a Writer object that writes to the OutputStream with
 	 * the encoding. This method is same with
@@ -123,7 +121,7 @@ public class EncodingServer
 		return getEncoding(encoding).getTextWriter(out);
 	} //}}}
 
-	//{{{ hasEncoding() method
+	// hasEncoding() method
 	/**
 	 * Returns if the specified name is supported as a name for an Encoding.
 	 */
@@ -145,7 +143,6 @@ public class EncodingServer
 		return Arrays.asList(ServiceManager.getServiceNames(serviceClass)).contains(name);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final String serviceClass = "org.gjt.sp.jedit.io.Encoding";
-	//}}}
 }

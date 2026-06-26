@@ -1,7 +1,6 @@
 /*
  * RectSelectWidgetFactory.java - The rectangular selection widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,13 +23,12 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.event.MouseEvent;
 
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -38,14 +36,14 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
  */
 public class RectSelectWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new RectSelectWidget(view);
 	} //}}}
 
-	//{{{ RectSelectWidget class
+	// RectSelectWidget class
 	private static class RectSelectWidget extends AbstractLabelWidget
 	{
 		RectSelectWidget(View view)

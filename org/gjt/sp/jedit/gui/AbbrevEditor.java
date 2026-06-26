@@ -1,7 +1,6 @@
 /*
  * AbbrevEditor.java - Panel for editing abbreviations
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -22,19 +21,18 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
 
 import static java.awt.GridBagConstraints.*;
-//}}}
 
 /** Panel for editing abbreviations */
 public class AbbrevEditor extends JPanel
 {
-	//{{{ AbbrevEditor constructor
+	// AbbrevEditor constructor
 	public AbbrevEditor()
 	{
 		GridBagLayout layout = new GridBagLayout();
@@ -90,19 +88,19 @@ public class AbbrevEditor extends JPanel
 		add(scroller);
 	} //}}}
 
-	//{{{ getAbbrev() method
+	// getAbbrev() method
 	public String getAbbrev()
 	{
 		return abbrev.getText();
 	} //}}}
 
-	//{{{ setAbbrev() method
+	// setAbbrev() method
 	public void setAbbrev(String abbrev)
 	{
 		this.abbrev.setText(abbrev);
 	} //}}}
 
-	//{{{ getExpansion() method
+	// getExpansion() method
 	public String getExpansion()
 	{
 		StringBuilder buf = new StringBuilder();
@@ -158,7 +156,7 @@ public class AbbrevEditor extends JPanel
 		return buf.toString();
 	} //}}}
 
-	//{{{ setExpansion() method
+	// setExpansion() method
 	public void setExpansion(String expansion)
 	{
 		if(expansion == null)
@@ -209,27 +207,26 @@ public class AbbrevEditor extends JPanel
 		afterCaret.setText(afterCaretText);
 	} //}}}
 
-	//{{{ getAbbrevField() method
+	// getAbbrevField() method
 	public JTextField getAbbrevField()
 	{
 		return abbrev;
 	} //}}}
 
-	//{{{ getBeforeCaretTextArea() method
+	// getBeforeCaretTextArea() method
 	public JTextArea getBeforeCaretTextArea()
 	{
 		return beforeCaret;
 	} //}}}
 
-	//{{{ getAfterCaretTextArea() method
+	// getAfterCaretTextArea() method
 	public JTextArea getAfterCaretTextArea()
 	{
 		return afterCaret;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final JTextField abbrev;
 	private final JTextArea beforeCaret;
 	private final JTextArea afterCaret;
-	//}}}
 }

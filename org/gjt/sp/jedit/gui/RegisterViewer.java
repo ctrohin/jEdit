@@ -1,7 +1,6 @@
 /*
  * RegisterViewer.java - Dockable view of register contents
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004, 2005 Nicholas O'Leary
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -34,13 +33,12 @@ import org.gjt.sp.jedit.Registers.Register;
 import org.gjt.sp.jedit.msg.RegisterChanged;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.swing.event.UniqueActionDocumentListener;
-//}}}
 
 /** Dockable view of register contents */
 public class RegisterViewer extends JPanel
 	implements DockableWindow, DefaultFocusComponent
 {
-	//{{{ RegisterViewer constructor
+	// RegisterViewer constructor
 	public RegisterViewer(View view, String position)
 	{
 		super(new BorderLayout());
@@ -114,14 +112,14 @@ public class RegisterViewer extends JPanel
 		refreshList();
 	} //}}}
 
-	//{{{ focusOnDefaultComponent() method
+	// focusOnDefaultComponent() method
 	@Override
 	public void focusOnDefaultComponent()
 	{
 		registerList.requestFocusInWindow();
 	} //}}}
 
-	//{{{ handleRegisterChanged() method
+	// handleRegisterChanged() method
 	@EBHandler
 	public void handleRegisterChanged(RegisterChanged msg)
 	{
@@ -129,7 +127,7 @@ public class RegisterViewer extends JPanel
 			refreshList();
 	} //}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -137,7 +135,7 @@ public class RegisterViewer extends JPanel
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -145,7 +143,7 @@ public class RegisterViewer extends JPanel
 		EditBus.removeFromBus(this);
 	} //}}}
 
-	//{{{ move() method
+	// move() method
 	@Override
 	public void move(String newPosition)
 	{
@@ -157,9 +155,9 @@ public class RegisterViewer extends JPanel
 		revalidate();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	/** contains either a
 	 *  - String object (no Register is registered yet,
 	 *                   "view-registers.none") or
@@ -177,9 +175,8 @@ public class RegisterViewer extends JPanel
 	private boolean editing;
 	private final JSplitPane splitPane;
 	private JPopupMenu popup;
-	//}}}
 
-	//{{{ refreshList
+	// refreshList
 	private void refreshList()
 	{
 		DefaultListModel<String> registerModel = (DefaultListModel<String>)registerList.getModel();
@@ -218,7 +215,7 @@ public class RegisterViewer extends JPanel
 		registerList.setSelectedIndex(index);
 	} //}}}
 
-	//{{{ insertRegister
+	// insertRegister
 	private void insertRegister()
 	{
 		String o = registerList.getSelectedValue();
@@ -237,7 +234,7 @@ public class RegisterViewer extends JPanel
 		}
 	} //}}}
 
-	//{{{ clearSelectedIndex() method
+	// clearSelectedIndex() method
 	private void clearSelectedIndex()
 	{
 		String o = registerList.getSelectedValue();
@@ -270,11 +267,10 @@ public class RegisterViewer extends JPanel
 		Registers.setRegister(name,contentTextArea.getText());
 	}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ Renderer Class
+	// Renderer Class
 	private static class Renderer extends DefaultListCellRenderer
 	{
 		@Override
@@ -325,7 +321,7 @@ public class RegisterViewer extends JPanel
 		}
 	} //}}}
 
-	//{{{ ListHandler Class
+	// ListHandler Class
 	private class ListHandler implements ListSelectionListener
 	{
 		@Override
@@ -364,7 +360,7 @@ public class RegisterViewer extends JPanel
 		}
 	} //}}}
 
-	//{{{ MouseHandler Class
+	// MouseHandler Class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -391,7 +387,7 @@ public class RegisterViewer extends JPanel
 		}
 	} //}}}
 
-	//{{{ FocusHandler Class
+	// FocusHandler Class
 	private class FocusHandler implements FocusListener
 	{
 		@Override

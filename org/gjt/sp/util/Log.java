@@ -1,7 +1,6 @@
 /*
  * Log.java - A class for logging events
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,7 +39,6 @@ import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 import static java.text.DateFormat.MEDIUM;
-//}}}
 
 /**
  * This class provides methods for logging events. In terms of functionality,
@@ -61,7 +59,7 @@ import static java.text.DateFormat.MEDIUM;
  */
 public class Log
 {
-	//{{{ Constants
+	// Constants
 	/**
 	 * The maximum number of log messages that will be kept in memory.
 	 * @since jEdit 2.6pre5
@@ -102,9 +100,8 @@ public class Log
 	 * @since jEdit 2.2pre2
 	 */
 	public static final int ERROR = 9;
-	//}}}
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Initializes the log.
 	 * @param stdio If true, standard output and error will be
@@ -143,7 +140,7 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ setLogWriter() method
+	// setLogWriter() method
 	/**
 	 * Writes all currently logged messages to this stream if there was no
 	 * stream set previously, and sets the stream to write future log
@@ -182,7 +179,7 @@ public class Log
 		Log.stream = stream;
 	} //}}}
 
-	//{{{ get/setBeepOnOutput method
+	// get/setBeepOnOutput method
 	/**
 	 * @since jEdit 5.1pre1
 	 */
@@ -239,7 +236,7 @@ public class Log
 		return MAXLINES;	
 	}
 
-	//{{{ flushStream() method
+	// flushStream() method
 	/**
 	 * Flushes the log stream.
 	 * @since jEdit 2.6pre5
@@ -259,7 +256,7 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ closeStream() method
+	// closeStream() method
 	/**
 	 * Closes the log stream. Should be done before your program exits.
 	 * @since jEdit 2.6pre5
@@ -280,7 +277,7 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ getLogListModel() method
+	// getLogListModel() method
 	/**
 	 * Returns the list model for viewing the log contents.
 	 * @since jEdit 4.2pre1
@@ -290,7 +287,7 @@ public class Log
 		return listModel;
 	} //}}}
 
-	//{{{ log() method
+	// log() method
 	/**
 	 * Logs an exception with a message.
 	 *
@@ -309,7 +306,7 @@ public class Log
 		log(urgency,source,exception);
 	} //}}}
 
-	//{{{ log() method
+	// log() method
 	/**
 	 * Logs a message. This method is thread-safe.<p>
 	 *
@@ -377,9 +374,9 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private static final Object LOCK;
 	private static String[] log;
 	private static int logLineCount;
@@ -397,9 +394,8 @@ public class Log
 	private static boolean beepOnOutput = false;
 	// to prevent too much beeping we remember last beep time
 	private static long lastBeepTime = 0;
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		LOCK = new Object();
@@ -416,14 +412,14 @@ public class Log
 		throwables = Collections.synchronizedList(new ArrayList<Throwable>(MAX_THROWABLES));
 	} //}}}
 
-	//{{{ createPrintStream() method
+	// createPrintStream() method
 	private static PrintStream createPrintStream(final int urgency,
 		final Object source)
 	{
 		return new LogPrintStream(urgency, source);
 	} //}}}
 
-	//{{{ _logException() method
+	// _logException() method
 	private static void _logException(final int urgency,
 		final Object source,
 		final Throwable message)
@@ -446,7 +442,7 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ _log() method
+	// _log() method
 	private static void _log(int urgency, String source, String message)
 	{
 		String fullMessage = timeFormat.format(new Date()) + " ["+Thread.currentThread().getName()+"] [" + urgencyToString(urgency) + "] " + source
@@ -492,7 +488,7 @@ public class Log
 		}
 	} //}}}
 
-	//{{{ urgencyToString() method
+	// urgencyToString() method
 	private static String urgencyToString(int urgency)
 	{
 		switch(urgency)
@@ -512,14 +508,13 @@ public class Log
 		throw new IllegalArgumentException("Invalid urgency: " + urgency);
 	} //}}}
 
-	//}}}
 
-	//{{{ LogListModel class
+	// LogListModel class
 	static class LogListModel implements ListModel<String>
 	{
 		final List<ListDataListener> listeners = new ArrayList<>();
 
-		//{{{ fireIntervalAdded() method
+		// fireIntervalAdded() method
 		private void fireIntervalAdded(int index1, int index2)
 		{
 			for (ListDataListener listener : listeners)
@@ -529,7 +524,7 @@ public class Log
 			}
 		} //}}}
 
-		//{{{ fireIntervalRemoved() method
+		// fireIntervalRemoved() method
 		private void fireIntervalRemoved(int index1, int index2)
 		{
 			for (ListDataListener listener : listeners)
@@ -539,21 +534,21 @@ public class Log
 			}
 		} //}}}
 
-		//{{{ addListDataListener() method
+		// addListDataListener() method
 		@Override
 		public void addListDataListener(ListDataListener listener)
 		{
 			listeners.add(listener);
 		} //}}}
 
-		//{{{ removeListDataListener() method
+		// removeListDataListener() method
 		@Override
 		public void removeListDataListener(ListDataListener listener)
 		{
 			listeners.remove(listener);
 		} //}}}
 
-		//{{{ getElementAt() method
+		// getElementAt() method
 		@Override
 		public String getElementAt(int index)
 		{
@@ -568,7 +563,7 @@ public class Log
 				return log[index];
 		} //}}}
 
-		//{{{ getSize() method
+		// getSize() method
 		@Override
 		public int getSize()
 		{
@@ -578,7 +573,7 @@ public class Log
 				return logLineCount;
 		} //}}}
 
-		//{{{ update() method
+		// update() method
 		void update(final int lineCount, final boolean oldWrap)
 		{
 			if(lineCount == 0 || listeners.isEmpty())
@@ -609,7 +604,7 @@ public class Log
 		} //}}}
 	} //}}}
 
-	//{{{ LogPrintStream class
+	// LogPrintStream class
 	/**
 	 * A print stream that uses the "Log" class to output the messages,
 	 * and has special treatment for the printf() function. Using this
@@ -621,7 +616,7 @@ public class Log
 		private final ByteArrayOutputStream buffer;
 		private final OutputStream orig;
 
-		//{{{ LogPrintStream constructor
+		// LogPrintStream constructor
 		LogPrintStream(int urgency, Object source)
 		{
 			super(new LogOutputStream(urgency, source));
@@ -629,7 +624,7 @@ public class Log
 			orig = out;
 		} //}}}
 
-		//{{{ printf() method
+		// printf() method
 		/**
 		 * This is a hack to allow "printf" to not print weird
 		 * stuff to the output. Since "printf" doesn't seem to
@@ -668,20 +663,20 @@ public class Log
 		} //}}}
 	} //}}}
 
-	//{{{ LogOutputStream class
+	// LogOutputStream class
 	private static class LogOutputStream extends OutputStream
 	{
 		private final int 	urgency;
 		private final Object 	source;
 
-		//{{{ LogOutputStream constructor
+		// LogOutputStream constructor
 		LogOutputStream(int urgency, Object source)
 		{
 			this.urgency 	= urgency;
 			this.source 	= source;
 		} //}}}
 
-		//{{{ write() method
+		// write() method
 		@Override
 		public synchronized void write(int b)
 		{
@@ -689,7 +684,7 @@ public class Log
 			write(barray,0,1);
 		} //}}}
 
-		//{{{ write() method
+		// write() method
 		@Override
 		public synchronized void write(byte[] b, int off, int len)
 		{

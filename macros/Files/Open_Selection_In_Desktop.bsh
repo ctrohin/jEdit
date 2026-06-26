@@ -103,4 +103,4 @@ for (String sPath: getSelectedWords())
         MiscUtilities.openInDesktop(sPath);
 }
 
-// :tabSize=4:indentSize=4:noTabs=true:folding=explicit:collapseFolds=1:
+// :tabSize=4:indentSize=4:noTabs=true

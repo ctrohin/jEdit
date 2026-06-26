@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Kazutoshi Satoda
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -35,14 +34,13 @@ import org.gjt.sp.jedit.bufferio.BufferIORequest;
 import org.gjt.sp.util.Log;
 
 
-//}}}
 
 /**
  * Some functions for auto detection of I/O stream properties.
  */
 public class AutoDetection
 {
-	//{{{ getMarkedStream() method
+	// getMarkedStream() method
 	/**
 	 * Returns a marked, rewindable stream.
 	 * Calling reset() method rewinds the stream to its beginning.
@@ -58,7 +56,7 @@ public class AutoDetection
 		return markable;
 	} //}}}
 
-	//{{{ isGzipped() method
+	// isGzipped() method
 	/**
 	 * Returns wheather the stream is gzipped.
 	 * This method reads a few bytes from the sample. So a caller
@@ -74,7 +72,7 @@ public class AutoDetection
 			&& sample.read() == magic2;
 	} //}}}
 
-	//{{{ getEncodingDetectors() method
+	// getEncodingDetectors() method
 	/**
 	 * Returns the user configured ordered list of encoding detectors.
 	 * This method reads property "encodingDetectors".
@@ -107,7 +105,7 @@ public class AutoDetection
 		return detectors;
 	} //}}}
 
-	//{{{ getDetectedEncoding() method
+	// getDetectedEncoding() method
 	/**
 	 * Returns an auto detected encoding from content of markedStream.
 	 * This method assumes that markedStream is wrapped by
@@ -136,13 +134,13 @@ public class AutoDetection
 		return null;
 	} //}}}
 
-	//{{{ class Result
+	// class Result
 	/**
 	 * An utility class to hold the result of some auto detections.
 	 */
 	public static class Result
 	{
-		//{{{ Constructor
+		// Constructor
 		/**
 		 * Do some auto detection for a stream and hold the
 		 * result in this instance.
@@ -166,7 +164,7 @@ public class AutoDetection
 			markedStream = marked;
 		} //}}}
 
-		//{{{ getRewindedStream()
+		// getRewindedStream()
 		/**
 		 * Returns the stream which can be read the contents of
 		 * the original stream.
@@ -180,7 +178,7 @@ public class AutoDetection
 			return markedStream;
 		} //}}}
 
-		//{{{ streamIsGzipped()
+		// streamIsGzipped()
 		/**
 		 * Returns true if the stream is gzipped.
 		 */
@@ -189,7 +187,7 @@ public class AutoDetection
 			return gzipped;
 		} //}}}
 
-		//{{{ getDetectedEncoding()
+		// getDetectedEncoding()
 		/**
 		 * Returns the auto detected encoding.
 		 * Returns null if no encoding was detected.
@@ -199,14 +197,13 @@ public class AutoDetection
 			return encoding;
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final BufferedInputStream markedStream;
 		private final boolean gzipped;
 		private final String encoding;
-		//}}}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	/**
 	 * Returns a service of EncodingDetector for name.
 	 */
@@ -224,5 +221,4 @@ public class AutoDetection
 			return null;
 		}
 	}
-	//}}}
 }

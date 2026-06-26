@@ -3,9 +3,6 @@
  * jEdit - Programmer's Text Editor
 
  * :tabSize=8:indentSize=8:noTabs=false:
-
- * :folding=explicit:collapseFolds=1:
-
  *
 
  * Copyright © 2026 jEdit contributors
@@ -50,6 +47,7 @@ import org.gjt.sp.jedit.textarea.Gutter;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
 import org.gjt.sp.jedit.textarea.TextAreaMouseHandler;
+import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.ThreadUtilities;
 
 
@@ -67,6 +65,9 @@ public final class GitBlameSupport implements EBComponent {
     private static final String ENABLED_PROPERTY = "git.blame.enabled";
 
     private static final int HORIZONTAL_PADDING = 4;
+
+    /** Reserved width while blame data is loading (avoids 0-width deadlock with test gutter). */
+    private static final String BLAME_PLACEHOLDER = "author";
 
     private static GitBlameSupport instance;
 
@@ -176,11 +177,19 @@ public final class GitBlameSupport implements EBComponent {
 
         BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
 
-        blameGutter.setColumnWidth(computeBlameColumnWidth(blameGutter,
+        Buffer buffer = editPane.getBuffer();
 
-            cacheFor(editPane.getBuffer())));
+        BlameCache cache = cacheFor(buffer);
+
+        blameGutter.setColumnWidth(computeBlameColumnWidth(blameGutter, cache));
 
         blameGutter.setBlameEnabled(isEnabled());
+
+        if (isEnabled() && buffer != null) {
+
+            cache.scheduleLoad(buffer, this::repaintBuffer);
+
+        }
 
     }
 
@@ -392,13 +401,33 @@ public final class GitBlameSupport implements EBComponent {
 
         int maxAuthorWidth = cache != null ? cache.maxAuthorWidth(fm) : 0;
 
-        if (maxAuthorWidth <= 0) {
+        if (maxAuthorWidth > 0) {
 
-            return 0;
+            return maxAuthorWidth + HORIZONTAL_PADDING;
 
         }
 
-        return maxAuthorWidth + HORIZONTAL_PADDING;
+        if (isEnabled()) {
+
+            return placeholderBlameWidth(fm);
+
+        }
+
+        return 0;
+
+    }
+
+
+
+    private static int placeholderBlameWidth(FontMetrics fm) {
+
+        if (fm == null) {
+
+            return 48;
+
+        }
+
+        return fm.stringWidth(BLAME_PLACEHOLDER) + HORIZONTAL_PADDING;
 
     }
 
@@ -496,7 +525,15 @@ public final class GitBlameSupport implements EBComponent {
 
             BlameCache cache = cacheFor(buffer);
 
-            BlameLine blameLine = cache.lineForLine(physicalLine + 1);
+            int blameLineIndex = physicalLine + 1;
+
+            if (cache.needsReload(buffer, blameLineIndex)) {
+
+                cache.invalidate();
+
+            }
+
+            BlameLine blameLine = cache.lineForLine(blameLineIndex);
 
             if (blameLine == null) {
 
@@ -712,7 +749,7 @@ public final class GitBlameSupport implements EBComponent {
 
         }
 
-        return GitRepository.findRoot(new File(buffer.getPath()).getParentFile());
+        return GitRepository.resolveRoot(buffer);
 
     }
 
@@ -735,6 +772,22 @@ public final class GitBlameSupport implements EBComponent {
             loading = false;
 
             loadAttempted = false;
+
+        }
+
+
+
+        boolean needsReload(Buffer buffer, int line) {
+
+            if (buffer == null || line <= 0) {
+
+                return false;
+
+            }
+
+            BlameLine[] data = lines;
+
+            return data != null && line > data.length;
 
         }
 
@@ -792,7 +845,13 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            String path = buffer.getPath();
+            String path = buffer.getSymlinkPath();
+
+            if (path == null || path.isBlank()) {
+
+                path = buffer.getPath();
+
+            }
 
             if (path == null) {
 
@@ -802,9 +861,9 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            File file = new File(path);
+            File file = new File(MiscUtilities.resolveSymlinks(path));
 
-            File repo = GitRepository.findRoot(file.getParentFile());
+            File repo = GitRepository.resolveRoot(buffer);
 
             if (repo == null) {
 
@@ -824,7 +883,19 @@ public final class GitBlameSupport implements EBComponent {
 
                 GitRunner runner = new GitRunner();
 
-                String relative = relativize(repo, file);
+                String relative = GitBufferTabStatus.relativeGitPath(repo, file);
+
+                if (relative == null) {
+
+                    lines = new BlameLine[0];
+
+                    loading = false;
+
+                    SwingUtilities.invokeLater(() -> repaint.accept(buffer));
+
+                    return;
+
+                }
 
                 GitRunner.Result result = runner.run(
 
@@ -843,34 +914,6 @@ public final class GitBlameSupport implements EBComponent {
                 SwingUtilities.invokeLater(() -> repaint.accept(buffer));
 
             });
-
-        }
-
-
-
-        private static String relativize(File repo, File file) {
-
-            String repoPath = repo.getAbsolutePath();
-
-            String filePath = file.getAbsolutePath();
-
-            if (filePath.length() >= repoPath.length()
-
-                && filePath.regionMatches(true, 0, repoPath, 0, repoPath.length())) {
-
-                String relative = filePath.substring(repoPath.length());
-
-                if (relative.startsWith(File.separator)) {
-
-                    relative = relative.substring(1);
-
-                }
-
-                return relative.replace('\\', '/');
-
-            }
-
-            return file.getName();
 
         }
 

@@ -1,7 +1,6 @@
 /*
  * IntegerArray.java - Automatically growing array of ints
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -29,19 +28,19 @@ import java.util.Arrays;
  */
 public class IntegerArray
 {
-	//{{{ IntegerArray constructor
+	// IntegerArray constructor
 	public IntegerArray()
 	{
 		this(2000);
 	} //}}}
 
-	//{{{ IntegerArray constructor
+	// IntegerArray constructor
 	public IntegerArray(int initialSize)
 	{
 		array = new int[initialSize];
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	public void add(int num)
 	{
 		if(len >= array.length)
@@ -52,13 +51,13 @@ public class IntegerArray
 		array[len++] = num;
 	} //}}}
 
-	//{{{ get() method
+	// get() method
 	public final int get(int index)
 	{
 		return array[index];
 	} //}}}
 
-	//{{{ isEmpty() method
+	// isEmpty() method
 	/**
 	 * Returns {@code true} if this collection contains no elements.
 	 *
@@ -69,32 +68,31 @@ public class IntegerArray
 		return len == 0;
 	} //}}}
 
-	//{{{ getSize() method
+	// getSize() method
 	public final int getSize()
 	{
 		return len;
 	} //}}}
 
-	//{{{ setSize() method
+	// setSize() method
 	public final void setSize(int len)
 	{
 		this.len = len;
 	} //}}}
 
-	//{{{ clear() method
+	// clear() method
 	public final void clear()
 	{
 		len = 0;
 	} //}}}
 
-	//{{{ getArray() method
+	// getArray() method
 	public int[] getArray()
 	{
 		return array;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private int[] array;
 	private int len;
-	//}}}
 }

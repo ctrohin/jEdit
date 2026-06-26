@@ -1,7 +1,6 @@
 /*
  * FirstLine.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -42,7 +41,7 @@ class FirstLine extends Anchor
 	private int skew;
 	private int preContentRemovedNumLines;
 
-	//{{{ FirstLine constructor
+	// FirstLine constructor
 	FirstLine(DisplayManager displayManager,
 		TextArea textArea)
 	{
@@ -71,7 +70,7 @@ class FirstLine extends Anchor
 		preContentInsertedScrollLines = scrollLines;
 	}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	/**
 	 * Some content is inserted.
 	 *
@@ -139,7 +138,7 @@ class FirstLine extends Anchor
 		preContentRemovedNumLines = numLinesVisible;
 	}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	/**
 	 * Method called before a content is removed from a buffer.
 	 *
@@ -179,11 +178,11 @@ class FirstLine extends Anchor
 			scrollVerify();
 	} //}}}
 
-	//{{{ changed() method
+	// changed() method
 	@Override
 	public void changed()
 	{
-		//{{{ Debug code
+		// Debug code
 		if(Debug.SCROLL_DEBUG)
 		{
 			Log.log(Log.DEBUG,this,"changed() before: "
@@ -201,7 +200,7 @@ class FirstLine extends Anchor
 		if(getSkew() >= screenLines)
 			setSkew(screenLines - 1);
 
-		//{{{ Debug code
+		// Debug code
 		if(Debug.SCROLL_VERIFY)
 			scrollVerify();
 
@@ -233,7 +232,7 @@ class FirstLine extends Anchor
 		}
 	}
 
-	//{{{ reset() method
+	// reset() method
 	@Override
 	public void reset()
 	{
@@ -269,7 +268,7 @@ class FirstLine extends Anchor
 		getTextArea().updateScrollBar();
 	} //}}}
 
-	//{{{ physDown() method
+	// physDown() method
 	// scroll down by physical line amount
 	void physDown(int amount, int screenAmount)
 	{
@@ -333,7 +332,7 @@ class FirstLine extends Anchor
 			scrollDown(screenAmount);
 	} //}}}
 
-	//{{{ physUp() method
+	// physUp() method
 	// scroll up by physical line amount
 	void physUp(int amount, int screenAmount)
 	{
@@ -391,7 +390,7 @@ class FirstLine extends Anchor
 			scrollDown(screenAmount);
 	} //}}}
 
-	//{{{ scrollDown() method
+	// scrollDown() method
 	// scroll down by screen line amount
 	void scrollDown(int amount)
 	{
@@ -432,7 +431,7 @@ class FirstLine extends Anchor
 		moveScrollLine(screenLinesSum);
 	} //}}}
 
-	//{{{ scrollUp() method
+	// scrollUp() method
 	// scroll up by screen line amount
 	void scrollUp(int amount)
 	{
@@ -484,7 +483,7 @@ class FirstLine extends Anchor
 			Log.log(Log.DEBUG,this,"scrollUp() after:" + this);
 	} //}}}
 
-	//{{{ ensurePhysicalLineIsVisible() method
+	// ensurePhysicalLineIsVisible() method
 	void ensurePhysicalLineIsVisible()
 	{
 		int physicalLine = getPhysicalLine();
@@ -512,7 +511,7 @@ class FirstLine extends Anchor
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{

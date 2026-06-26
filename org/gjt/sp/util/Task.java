@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010 Matthieu Casanova
  *
@@ -47,13 +46,13 @@ public abstract class Task implements Runnable, ProgressObserver
 
 	private volatile boolean cancellable = true;
 
-	//{{{ Task Constructor
+	// Task Constructor
 	protected Task()
 	{
 		state = SwingWorker.StateValue.PENDING;
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public final void run()
 	{
@@ -140,7 +139,7 @@ public abstract class Task implements Runnable, ProgressObserver
 		this.cancellable = cancellable;
 	}
 
-	//{{{ cancel() method
+	// cancel() method
 	/**
 	 * Cancel the task
 	 */

@@ -1,7 +1,6 @@
 /*
  * ListDirectoryBrowserTask
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010 Matthieu Casanova
  * Portions Copyright (C) 2000, 2003 Slava Pestov
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSFile;
 import org.gjt.sp.jedit.io.VFSManager;
@@ -31,7 +30,6 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
 
 import java.io.IOException;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -40,7 +38,7 @@ import java.io.IOException;
 class ListDirectoryBrowserTask extends AbstractBrowserTask
 {
 	private final Object[] loadInfo;
-	//{{{ BrowserIORequest constructor
+	// BrowserIORequest constructor
 	/**
 	 * Creates a new browser I/O request.
 	 * @param browser The VFS browser instance
@@ -56,7 +54,7 @@ class ListDirectoryBrowserTask extends AbstractBrowserTask
 		this.loadInfo = loadInfo;
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -101,7 +99,7 @@ class ListDirectoryBrowserTask extends AbstractBrowserTask
 		loadInfo[1] = directory;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + "[type=LIST_DIRECTORY"

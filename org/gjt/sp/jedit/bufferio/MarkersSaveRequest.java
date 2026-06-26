@@ -1,6 +1,5 @@
 /* {{{ MarkersSaveRequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * based on jEdit.buffer.BufferSaveRequest (Copyright (C) 2000, 2005 Slava Pestov)
  * Copyright (C) 2005 Martin Raspe
@@ -21,14 +20,13 @@
 
 package org.gjt.sp.jedit.bufferio;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.util.List;
 
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * A save request for markers. Factored out from BufferSaveRequest.java
@@ -39,11 +37,10 @@ import org.gjt.sp.util.*;
  */
 public class MarkersSaveRequest extends Task
 {
-	//{{{ Constants
+	// Constants
 	public static final String ERROR_OCCURRED = "MarkersSaveRequest__error";
-	//}}}
 
-	//{{{ MarkersSaveRequest constructor
+	// MarkersSaveRequest constructor
 	/**
 	 * Creates a new I/O request for markers.
 	 * @param view The view
@@ -64,7 +61,7 @@ public class MarkersSaveRequest extends Task
 
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -101,7 +98,7 @@ public class MarkersSaveRequest extends Task
 		}
 	} //}}}
 
-	//{{{ writeMarkers() method
+	// writeMarkers() method
 	private void writeMarkers(OutputStream out)
 		throws IOException
 	{
@@ -134,13 +131,12 @@ public class MarkersSaveRequest extends Task
 		}
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	protected View view;
 	protected Buffer buffer;
 	protected Object session;
 	protected VFS vfs;
 	protected String path;
 	protected String markersPath;
-	//}}}
 
 }

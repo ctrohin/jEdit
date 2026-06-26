@@ -1,7 +1,6 @@
 /*
  * DefaultInputHandler.java - Default implementation of an input handler
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.event.InputEvent;
 import java.util.Hashtable;
 import java.util.Objects;
@@ -30,7 +29,6 @@ import java.util.Objects;
 import org.gjt.sp.jedit.*;
 
 
-//}}}
 
 /** The default input handler maps sequences of keystrokes into actions and inserts key typed events into the text area.
  *
@@ -39,7 +37,7 @@ import org.gjt.sp.jedit.*;
  */
 public class DefaultInputHandler extends InputHandler
 {
-	//{{{ DefaultInputHandler constructor
+	// DefaultInputHandler constructor
 	/**
 	 * Creates a new input handler with no key bindings defined.
 	 * @param view The view
@@ -54,7 +52,7 @@ public class DefaultInputHandler extends InputHandler
 		this.bindings = this.currentBindings = bindings;
 	} //}}}
 
-	//{{{ DefaultInputHandler constructor
+	// DefaultInputHandler constructor
 	/**
 	 * Creates a new input handler with no key bindings defined.
 	 * @param view The view
@@ -64,7 +62,7 @@ public class DefaultInputHandler extends InputHandler
 		this(view,new Hashtable());
 	} //}}}
 
-	//{{{ DefaultInputHandler constructor
+	// DefaultInputHandler constructor
 	/**
 	 * Creates a new input handler with the same set of key bindings
 	 * as the one specified. Note that both input handlers share
@@ -78,7 +76,7 @@ public class DefaultInputHandler extends InputHandler
 		this(view,copy.bindings);
 	} //}}}
 
-	//{{{ isPrefixActive() method
+	// isPrefixActive() method
 	/**
 	 * Returns if a prefix key has been pressed.
 	 */
@@ -89,7 +87,7 @@ public class DefaultInputHandler extends InputHandler
 			|| super.isPrefixActive();
 	} //}}}
 
-	//{{{ setCurrentBindings() method
+	// setCurrentBindings() method
 	@Override
 	public void setCurrentBindings(Hashtable bindings)
 	{
@@ -97,7 +95,7 @@ public class DefaultInputHandler extends InputHandler
 		currentBindings = bindings;
 	} //}}}
 
-	//{{{ handleKey() method
+	// handleKey() method
 	/**
 	 * Handles the given keystroke.
 	 * @param keyStroke The key stroke
@@ -209,7 +207,7 @@ public class DefaultInputHandler extends InputHandler
 		return false;
 	} //}}}
 
-	//{{{ getSymbolicModifierName() method
+	// getSymbolicModifierName() method
 	/**
 	 * Returns a the symbolic modifier name for the specified Java modifier
 	 * flag.
@@ -223,7 +221,7 @@ public class DefaultInputHandler extends InputHandler
 		return KeyEventTranslator.getSymbolicModifierName(mod);
 	} //}}}
 
-	//{{{ getModifierString() method
+	// getModifierString() method
 	/**
 	 * Returns a string containing symbolic modifier names set in the
 	 * specified event.

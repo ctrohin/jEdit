@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 KazutoshiSatoda
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -48,7 +47,6 @@ import javax.swing.ScrollPaneConstants;
 
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.jedit.View;
-//}}}
 
 /** Popup window for word completion in text area.
  * This class provides basic UI of completion popup.
@@ -58,7 +56,7 @@ import org.gjt.sp.jedit.View;
 @SuppressWarnings({"unchecked"})	// The CandidateListModel needs work 
 public class CompletionPopup extends JWindow
 {
-	//{{{ interface Candidates
+	// interface Candidates
 	/**
 	 * Candidates of completion.
 	 */
@@ -94,7 +92,7 @@ public class CompletionPopup extends JWindow
 		String getDescription(int index);
 	} //}}}
 
-	//{{{ CompletionPopup constructor
+	// CompletionPopup constructor
 	/**
 	 * Create a completion popup.
 	 * It is not shown until reset() method is called with valid
@@ -137,7 +135,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	/**
 	 * Quit completion.
 	 */
@@ -166,7 +164,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ reset() method
+	// reset() method
 	/**
 	 * Start completion.
 	 * @param candidates The candidates of this completion
@@ -205,7 +203,7 @@ public class CompletionPopup extends JWindow
 		view.setKeyEventInterceptor(keyHandler);
 	} //}}}
 
-	//{{{ reposition() method
+	// reposition() method
 	/**
 	 * Reposition the popup near the caret while keeping it on screen.
 	 */
@@ -216,7 +214,7 @@ public class CompletionPopup extends JWindow
 			view.getTextArea().getPainter().getLineHeight()));
 	} //}}}
 
-	//{{{ getCandidates() method
+	// getCandidates() method
 	/**
 	 * Current candidates of completion.
 	 */
@@ -225,7 +223,7 @@ public class CompletionPopup extends JWindow
 		return candidates;
 	} //}}}
 
-	//{{{ setListCellWidth() method
+	// setListCellWidth() method
 	/**
 	 * Sets a fixed width for list cells and repacks the popup.
 	 */
@@ -237,7 +235,7 @@ public class CompletionPopup extends JWindow
 			view.getTextArea().getPainter().getLineHeight()));
 	} //}}}
 
-	//{{{ getSelectedIndex() method
+	// getSelectedIndex() method
 	/**
 	 * Returns index of current selection.
 	 * Returns -1 if nothing is selected.
@@ -247,7 +245,7 @@ public class CompletionPopup extends JWindow
 		return list.getSelectedIndex();
 	} //}}}
 
-	//{{{ setSelectedIndex() method
+	// setSelectedIndex() method
 	/**
 	 * Set selection.
 	 */
@@ -262,7 +260,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ onCandidateSelected() method
+	// onCandidateSelected() method
 	/**
 	 * Called when the selected completion candidate changes.
 	 */
@@ -274,7 +272,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ doSelectedCompletion() method
+	// doSelectedCompletion() method
 	/**
 	 * Do completion with current selection and quit.
 	 */
@@ -291,7 +289,7 @@ public class CompletionPopup extends JWindow
 		return false;
 	} //}}}
 
-	//{{{ keyPressed() medhod
+	// keyPressed() medhod
 	/**
 	 * Handle key pressed events.
 	 * Override this method to make additional key handing.
@@ -300,7 +298,7 @@ public class CompletionPopup extends JWindow
 	{
 	} //}}}
 
-	//{{{ keyTyped() medhod
+	// keyTyped() medhod
 	/**
 	 * Handle key typed events.
 	 * Override this method to make additional key handing.
@@ -309,18 +307,17 @@ public class CompletionPopup extends JWindow
 	{
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private final KeyHandler keyHandler;
 	private final WindowFocusHandler windowFocusHandler;
 	private Candidates candidates;
 	private final JList list;
 	private boolean editorFocusedCompletion;
-	//}}}
 
-	//{{{ fitInScreen() method
+	// fitInScreen() method
 	private static Point fitInScreen(Point p, Window w, int lineHeight)
 	{
 		Rectangle screenSize = w.getGraphicsConfiguration().getBounds();
@@ -329,7 +326,7 @@ public class CompletionPopup extends JWindow
 		return p;
 	} //}}}
 
-	//{{{ moveRelative method()
+	// moveRelative method()
 	private void moveRelative(int n)
 	{
 		int selected = list.getSelectedIndex();
@@ -358,14 +355,14 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ moveRelativePages() method
+	// moveRelativePages() method
 	private void moveRelativePages(int n)
 	{
 		int pageSize = list.getVisibleRowCount() - 1;
 		moveRelative(pageSize * n);
 	} //}}}
 
-	//{{{ passKeyEventToView() method
+	// passKeyEventToView() method
 	private void passKeyEventToView(KeyEvent e)
 	{
 		// Remove intercepter to avoid infinite recursion.
@@ -385,7 +382,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ CandidateListModel class
+	// CandidateListModel class
 	private class CandidateListModel extends AbstractListModel
 	{
 		@Override
@@ -404,7 +401,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ CellRenderer class
+	// CellRenderer class
 	private class CellRenderer implements ListCellRenderer
 	{
 		@Override
@@ -417,10 +414,10 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ KeyHandler class
+	// KeyHandler class
 	private class KeyHandler extends KeyAdapter
 	{
-		//{{{ keyPressed() method
+		// keyPressed() method
 		@Override
 		public void keyPressed(KeyEvent e)
 		{
@@ -497,7 +494,7 @@ public class CompletionPopup extends JWindow
 			}
 		} //}}}
 
-		//{{{ keyTyped() method
+		// keyTyped() method
 		@Override
 		public void keyTyped(KeyEvent e)
 		{
@@ -522,7 +519,7 @@ public class CompletionPopup extends JWindow
 		} //}}}
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -539,7 +536,7 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//{{{ WindowFocusHandler class
+	// WindowFocusHandler class
 	private class WindowFocusHandler implements WindowFocusListener
 	{
 		@Override
@@ -557,5 +554,4 @@ public class CompletionPopup extends JWindow
 		}
 	} //}}}
 
-	//}}}
 }

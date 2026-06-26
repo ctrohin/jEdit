@@ -1,7 +1,6 @@
 /*
  * KeyEventWorkaround.java - Works around bugs in Java event handling
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.event.*;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.jedit.input.AbstractInputHandler;
 import org.gjt.sp.util.Log;
-//}}}
 
 /** Various hacks to get keyboard event handling to behave in a consistent manner
  * across Java implementations. This type of stuff should not be necessary, but
@@ -38,7 +36,7 @@ import org.gjt.sp.util.Log;
  */
 public class KeyEventWorkaround
 {
-	//{{{ isBindable() method
+	// isBindable() method
 	public static boolean isBindable(int keyCode)
 	{
 		switch(keyCode)
@@ -70,7 +68,7 @@ public class KeyEventWorkaround
 		}
 	} //}}}
 
-	//{{{ isPrintable() method
+	// isPrintable() method
 	/**
 	 * We need to know if a keycode can potentially result in a
 	 * keytyped.
@@ -187,7 +185,7 @@ public class KeyEventWorkaround
 		}
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	public static KeyEvent processKeyEvent(KeyEvent evt)
 	{
 		int keyCode = evt.getKeyCode();
@@ -196,7 +194,7 @@ public class KeyEventWorkaround
 
 		switch(evt.getID())
 		{
-		//{{{ KEY_PRESSED...
+		// KEY_PRESSED...
 		case KeyEvent.KEY_PRESSED:
 			// get rid of keys we never need to handle
 			switch(keyCode)
@@ -235,8 +233,7 @@ public class KeyEventWorkaround
 				break;
 			}
 			break;
-		//}}}
-		//{{{ KEY_TYPED...
+		// KEY_TYPED...
 		case KeyEvent.KEY_TYPED:
 			// need to let \b through so that backspace will work
 			// in HistoryTextFields
@@ -279,8 +276,7 @@ public class KeyEventWorkaround
 				}
 			}
 			break;
-		//}}}
-		//{{{ KEY_RELEASED...
+		// KEY_RELEASED...
 		case KeyEvent.KEY_RELEASED:
 			switch(keyCode)
 			{
@@ -315,14 +311,12 @@ public class KeyEventWorkaround
 				break;
 			}
 			break;
-		//}}}
 		}
 		return evt;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static int last;
 	private static final int LAST_NOTHING = 0;
 	private static final int LAST_ALT = 1;
-	//}}}
 }

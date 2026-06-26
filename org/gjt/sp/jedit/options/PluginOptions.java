@@ -1,7 +1,6 @@
 /*
  * PluginOptions.java - Plugin options dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import java.awt.Dialog;
 import java.awt.Frame;
 import org.gjt.sp.jedit.gui.OptionsDialog;
 import org.gjt.sp.jedit.*;
-//}}}
 /**
  deprecated use CombinedOptions
  I've undeprecated this, CombinedOptions does not provide the same api and cannot
@@ -35,31 +33,31 @@ import org.gjt.sp.jedit.*;
  */
 public class PluginOptions extends OptionsDialog
 {
-	//{{{ PluginOptions constructor
+	// PluginOptions constructor
 	public PluginOptions(Frame frame)
 	{
 		super(frame,"plugin-options",jEdit.getProperty("plugin-options.last"));
 	} //}}}
 
-	//{{{ PluginOptions constructor
+	// PluginOptions constructor
 	public PluginOptions(Frame frame, String pane)
 	{
 		super(frame,"plugin-options",pane);
 	} //}}}
 
-	//{{{ PluginOptions constructor
+	// PluginOptions constructor
 	public PluginOptions(Dialog dialog)
 	{
 		super(dialog,"plugin-options",jEdit.getProperty("plugin-options.last"));
 	} //}}}
 
-	//{{{ PluginOptions constructor
+	// PluginOptions constructor
 	public PluginOptions(Dialog dialog, String pane)
 	{
 		super(dialog,"plugin-options",pane);
 	} //}}}
 
-	//{{{ createOptionTreeModel() method
+	// createOptionTreeModel() method
 	@Override
 	protected OptionTreeModel createOptionTreeModel()
 	{
@@ -104,18 +102,17 @@ public class PluginOptions extends OptionsDialog
 		return paneTreeModel;
 	} //}}}
 
-	//{{{ getDefaultGroup() method
+	// getDefaultGroup() method
 	@Override
 	protected OptionGroup getDefaultGroup()
 	{
 		return pluginsGroup;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private OptionGroup pluginsGroup;
-	//}}}
 
-	//{{{ NoPluginsPane class
+	// NoPluginsPane class
 	public static class NoPluginsPane extends AbstractOptionPane
 	{
 		public NoPluginsPane()

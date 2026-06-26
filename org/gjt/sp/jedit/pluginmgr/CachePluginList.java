@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2020 jEdit contributors
  *
@@ -41,13 +40,13 @@ class CachePluginList
 
 	private final String id;
 
-	//{{{ CachePluginList constructor
+	// CachePluginList constructor
 	CachePluginList(String id)
 	{
 		this.id = id;
 	} //}}}
 
-	//{{{ getPluginList() method
+	// getPluginList() method
 	Optional<String> getPluginList()
 	{
 		if (!id.equals(jEdit.getProperty("plugin-manager.mirror.cached-id")))
@@ -59,7 +58,7 @@ class CachePluginList
 			.flatMap(this::readCache);
 	} //}}}
 
-	//{{{ saveCache() method
+	// saveCache() method
 	void saveCache( CharSequence xml)
 	{
 		if (xml == null)
@@ -79,7 +78,7 @@ class CachePluginList
 			});
 	} //}}}
 
-	//{{{ getCacheFile() method
+	// getCacheFile() method
 	private Optional<Path> getCacheFile()
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -88,7 +87,7 @@ class CachePluginList
 		return Optional.of(Path.of(settingsDirectory, "pluginMgr-Cached.xml"));
 	} //}}}
 
-	//{{{ isAcceptableCache() method
+	// isAcceptableCache() method
 	private static boolean isAcceptableCache(Path path)
 	{
 		try
@@ -106,7 +105,7 @@ class CachePluginList
 		}
 	} //}}}
 
-	//{{{ deleteCache() method
+	// deleteCache() method
 	void deleteCache()
 	{
 		getCacheFile().ifPresent(path ->
@@ -123,7 +122,7 @@ class CachePluginList
 		});
 	} //}}}
 
-	//{{{ readCache() method
+	// readCache() method
 	private Optional<String> readCache(Path path)
 	{
 		try

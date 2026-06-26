@@ -1,7 +1,6 @@
 /*
  * KeyEventTranslator.java - Hides some warts of AWT event API
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.event.*;
 import javax.swing.KeyStroke;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import java.util.Objects;
 import org.gjt.sp.jedit.Debug;
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.util.Log;
-//}}}
 
 /** In conjunction with the <code>KeyEventWorkaround</code>, hides some
  * warts in the AWT key event API.
@@ -42,7 +40,7 @@ import org.gjt.sp.util.Log;
  */
 public class KeyEventTranslator
 {
-	//{{{ addTranslation() method
+	// addTranslation() method
 	/**
 	 * Adds a keyboard translation.
 	 * @param key1 Translate this key
@@ -54,7 +52,7 @@ public class KeyEventTranslator
 		transMap.put(key1,key2);
 	} //}}}
 
-	//{{{ translateKeyEvent() method
+	// translateKeyEvent() method
 
 	protected static KeyEvent lastKeyPressEvent;
 
@@ -172,7 +170,7 @@ public class KeyEventTranslator
 			return trans;
 	} //}}}
 
-	//{{{ parseKey() method
+	// parseKey() method
 	/**
 	 * Converts a string to a keystroke. The string should be of the
 	 * form <i>modifiers</i>+<i>shortcut</i> where <i>modifiers</i>
@@ -228,7 +226,7 @@ public class KeyEventTranslator
 		}
 	} //}}}
 
-	//{{{ parseKeyStroke() method
+	// parseKeyStroke() method
         /**
          * Converts a string to a Swing KeyStroke. The string should be of the
 	 * form <i>modifiers</i>+<i>shortcut</i> where <i>modifiers</i>
@@ -281,7 +279,7 @@ public class KeyEventTranslator
 		}
 	} //}}}
 
-	//{{{ setModifierMapping() method
+	// setModifierMapping() method
 	/**
 	 * Changes the mapping between symbolic modifier key names
 	 * (<code>C</code>, <code>A</code>, <code>M</code>, <code>S</code>) and
@@ -339,7 +337,7 @@ public class KeyEventTranslator
 		KeyEventTranslator.s = s;
 	} //}}}
 
-	//{{{ getSymbolicModifierName() method
+	// getSymbolicModifierName() method
 	/**
 	 * Returns a the symbolic modifier name for the specified Java modifier
 	 * flag.
@@ -362,7 +360,7 @@ public class KeyEventTranslator
 			return '\0';
 	} //}}}
 
-	//{{{ modifiersToString() method
+	// modifiersToString() method
 	private static final int[] MODS = {
 		InputEvent.CTRL_DOWN_MASK,
 		InputEvent.ALT_DOWN_MASK,
@@ -386,7 +384,7 @@ public class KeyEventTranslator
 			return buf.toString();
 	} //}}}
 
-	//{{{ getModifierString() method
+	// getModifierString() method
 	/**
 	 * Returns a string containing symbolic modifier names set in the
 	 * specified event.
@@ -411,7 +409,7 @@ public class KeyEventTranslator
 
 	static int c, a, m, s;
 
-	//{{{ Private members
+	// Private members
 	/** This map is a pool of Key. */
 	private static final Map<Key, Key> transMap = new HashMap<Key, Key>();
 
@@ -445,7 +443,7 @@ public class KeyEventTranslator
 		}
 	}
 
-	//{{{ parseModifiers() method
+	// parseModifiers() method
 	private static int parseModifiers(String modifierString)
 	{
 		int modifiers = 0;
@@ -472,7 +470,7 @@ public class KeyEventTranslator
 		return modifiers;
 	} //}}
 
-	//{{{ parseKeyCode() method
+	// parseKeyCode() method
 	/**
 	 * Parses the name of a keycode from the KeyEvent class to the the actual
 	 * member of that class. (e.g., the string "VK_COMMA" becomes the integer
@@ -492,9 +490,8 @@ public class KeyEventTranslator
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Key class
+	// Key class
 	public static class Key
 	{
 		public final String modifiers;

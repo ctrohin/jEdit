@@ -1,7 +1,6 @@
 /*
  * HistoryTextField.java - Text field with a history
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.AbstractBorder;
@@ -31,7 +30,6 @@ import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /** Text field with an arrow-key + drop-down accessable history.
  *
@@ -40,7 +38,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class HistoryTextField extends JTextField
 {
-	//{{{ HistoryTextField constructor
+	// HistoryTextField constructor
 	/**
 	 * Creates a new history text field.
 	 * @since jEdit 3.2pre5
@@ -50,7 +48,7 @@ public class HistoryTextField extends JTextField
 		this(null);
 	} //}}}
 
-	//{{{ HistoryTextField constructor
+	// HistoryTextField constructor
 	/**
 	 * Creates a new history text field.
 	 * @param name The history model name
@@ -60,7 +58,7 @@ public class HistoryTextField extends JTextField
 		this(name,false,true);
 	} //}}}
 
-	//{{{ HistoryTextField constructor
+	// HistoryTextField constructor
 	/**
 	 * Creates a new history text field.
 	 * @param name The history model name
@@ -75,7 +73,7 @@ public class HistoryTextField extends JTextField
 		this(name,instantPopups,true);
 	} //}}}
 
-	//{{{ HistoryTextField constructor
+	// HistoryTextField constructor
 	/**
 	 * Creates a new history text field.
 	 * @param name The history model name
@@ -110,7 +108,7 @@ public class HistoryTextField extends JTextField
 		setEnterAddsToHistory(enterAddsToHistory);
 	} //}}}
 
-	//{{{ setInstantPopups() method
+	// setInstantPopups() method
 	/**
 	 * Sets if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -121,7 +119,7 @@ public class HistoryTextField extends JTextField
 		controller.setInstantPopups(instantPopups);
 	} //}}}
 
-	//{{{ getInstantPopups() method
+	// getInstantPopups() method
 	/**
 	 * Returns if selecting a value from the popup should immediately fire
 	 * an ActionEvent.
@@ -132,7 +130,7 @@ public class HistoryTextField extends JTextField
 		return controller.getInstantPopups();
 	} //}}}
 
-	//{{{ setEnterAddsToHistory() method
+	// setEnterAddsToHistory() method
 	/**
 	 * Sets if pressing Enter should automatically add the currently
 	 * entered text to the history.
@@ -143,7 +141,7 @@ public class HistoryTextField extends JTextField
 		this.enterAddsToHistory = enterAddsToHistory;
 	} //}}}
 
-	//{{{ getEnterAddsToHistory() method
+	// getEnterAddsToHistory() method
 	/**
 	 * Returns if pressing Enter should automatically add the currently
 	 * entered text to the history.
@@ -154,7 +152,7 @@ public class HistoryTextField extends JTextField
 		return enterAddsToHistory;
 	} //}}}
 
-	//{{{ setSelectAllOnFocus() method
+	// setSelectAllOnFocus() method
 	/**
 	 * Sets if all text should be selected when the field gets focus.
 	 * @since jEdit 4.0pre3
@@ -164,7 +162,7 @@ public class HistoryTextField extends JTextField
 		this.selectAllOnFocus = selectAllOnFocus;
 	} //}}}
 
-	//{{{ getSelectAllOnFocus() method
+	// getSelectAllOnFocus() method
 	/**
 	 * Returns if all text should be selected when the field gets focus.
 	 * @since jEdit 4.0pre3
@@ -174,7 +172,7 @@ public class HistoryTextField extends JTextField
 		return selectAllOnFocus;
 	} //}}}
 
-	//{{{ getModel() method
+	// getModel() method
 	/**
 	 * Returns the underlying history model.
 	 */
@@ -183,7 +181,7 @@ public class HistoryTextField extends JTextField
 		return controller.getModel();
 	} //}}}
 
-	//{{{ setModel() method
+	// setModel() method
 	/**
 	 * Sets the history list model.
 	 * @param name The model name
@@ -201,7 +199,7 @@ public class HistoryTextField extends JTextField
 		repaint();
 	} //}}}
 
-	//{{{ addCurrentToHistory() method
+	// addCurrentToHistory() method
 	/**
 	 * Adds the currently entered item to the history.
 	 */
@@ -210,7 +208,7 @@ public class HistoryTextField extends JTextField
 		controller.addCurrentToHistory();
 	} //}}}
 
-	//{{{ setText() method
+	// setText() method
 	/**
 	 * Sets the displayed text.
 	 */
@@ -221,7 +219,7 @@ public class HistoryTextField extends JTextField
 		controller.setIndex(-1);
 	} //}}}
 
-	//{{{ fireActionPerformed() method
+	// fireActionPerformed() method
 	/**
 	 * Make it public.
 	 */
@@ -231,9 +229,9 @@ public class HistoryTextField extends JTextField
 		super.fireActionPerformed();
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	protected void processKeyEvent(KeyEvent evt)
 	{
@@ -291,7 +289,7 @@ public class HistoryTextField extends JTextField
 			super.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ processMouseEvent() method
+	// processMouseEvent() method
 	@Override
 	protected void processMouseEvent(MouseEvent evt)
 	{
@@ -323,33 +321,30 @@ public class HistoryTextField extends JTextField
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final HistoryText controller;
 	private boolean enterAddsToHistory;
 	private boolean selectAllOnFocus;
-	//}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	class MouseHandler extends MouseInputAdapter
 	{
 		boolean selectAll;
 
-		//{{{ mousePressed() method
+		// mousePressed() method
 		@Override
 		public void mousePressed(MouseEvent evt)
 		{
 			selectAll = (!hasFocus() && selectAllOnFocus);
 		} //}}}
 
-		//{{{ mouseReleased() method
+		// mouseReleased() method
 		@Override
 		public void mouseReleased(MouseEvent evt)
 		{
@@ -360,7 +355,7 @@ public class HistoryTextField extends JTextField
 			});
 		} //}}}
 
-		//{{{ mouseMoved() method
+		// mouseMoved() method
 		@Override
 		public void mouseMoved(MouseEvent evt)
 		{
@@ -374,7 +369,7 @@ public class HistoryTextField extends JTextField
 					Cursor.TEXT_CURSOR));
 		} //}}}
 
-		//{{{ mouseDragged() method
+		// mouseDragged() method
 		@Override
 		public void mouseDragged(MouseEvent evt)
 		{
@@ -382,7 +377,7 @@ public class HistoryTextField extends JTextField
 		} //}}}
 	} //}}}
 
-	//{{{ HistoryBorder class
+	// HistoryBorder class
 	static class HistoryBorder extends AbstractBorder
 	{
 		static final int WIDTH = 16;
@@ -422,5 +417,4 @@ public class HistoryTextField extends JTextField
 		}
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * BufferPrinter1_4.java - Main class that controls printing
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  * Portions copyright (C) 2002 Thomas Dilts
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.print;
 
-//{{{ Imports
+// Imports
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
 import java.awt.print.*;
@@ -32,7 +31,6 @@ import java.io.*;
 
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Log;
-//}}}
 
 @Deprecated
 /**
@@ -42,7 +40,7 @@ import org.gjt.sp.util.Log;
  */
 public class BufferPrinter1_4
 {
-	//{{{ getPrintJob() method
+	// getPrintJob() method
 	private static PrinterJob getPrintJob(String jobName)
 	{
 		job = PrinterJob.getPrinterJob();
@@ -91,7 +89,7 @@ public class BufferPrinter1_4
 		return job;
 	} //}}}
 
-	//{{{ pageSetup() method
+	// pageSetup() method
 	public static void pageSetup(View view)
 	{
 		PrinterJob prnJob = getPrintJob("PageSetupOnly");
@@ -99,7 +97,7 @@ public class BufferPrinter1_4
 			savePrintSpec();
 	} //}}}
 
-	//{{{ print() method
+	// print() method
 	public static void print(final View view, final Buffer buffer, boolean selection)
 	{
 		job = getPrintJob(MiscUtilities.abbreviateView(buffer.getPath()));
@@ -122,7 +120,7 @@ public class BufferPrinter1_4
 		printable.print();
 	} //}}}
 
-	//{{{ getPageFormat() method
+	// getPageFormat() method
 	public static PageFormat getPageFormat()
 	{
 		//convert from PrintRequestAttributeSet to the pageFormat
@@ -173,7 +171,7 @@ public class BufferPrinter1_4
 		return pf;
 	} //}}}
 
-	//{{{ savePrintSpec() method
+	// savePrintSpec() method
 	private static void savePrintSpec()
 	{
 		String settings = jEdit.getSettingsDirectory();
@@ -208,11 +206,9 @@ public class BufferPrinter1_4
 				} catch (IOException e) {}
 		}
 	}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private static PrintRequestAttributeSet format;
 	private static PrinterJob job;
-	//}}}
 }
 

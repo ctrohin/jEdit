@@ -1,7 +1,6 @@
 /*
  * VFSDirectoryEntryTableModel.java - VFS directory entry table model
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import javax.swing.table.*;
 import java.util.*;
 
@@ -34,7 +33,6 @@ import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
 
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -43,7 +41,7 @@ import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
  */
 public class VFSDirectoryEntryTableModel extends AbstractTableModel
 {
-	//{{{ VFSDirectoryEntryTableModel constructor
+	// VFSDirectoryEntryTableModel constructor
 	public VFSDirectoryEntryTableModel()
 	{
 		extAttrs = new ArrayList<>();
@@ -51,7 +49,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		ascending = true;
 	} //}}}
 
-	//{{{ setRoot() method
+	// setRoot() method
 	public void setRoot(VFS vfs, List<VFSFile> list)
 	{
 		extAttrs.clear();
@@ -73,7 +71,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		fireTableStructureChanged();
 	} //}}}
 
-	//{{{ expand() method
+	// expand() method
 	public int expand(VFS vfs, Entry entry, List<VFSFile> list)
 	{
 		int startIndex = -1;
@@ -124,7 +122,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		return startIndex;
 	} //}}}
 
-	//{{{ collapse() method
+	// collapse() method
 	public void collapse(VFS vfs, int index)
 	{
 		Entry entry = files[index];
@@ -165,14 +163,14 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		fireTableStructureChanged();
 	} //}}}
 
-	//{{{ getColumnCount() method
+	// getColumnCount() method
 	@Override
 	public int getColumnCount()
 	{
 		return 1 + extAttrs.size();
 	} //}}}
 
-	//{{{ getRowCount() method
+	// getRowCount() method
 	@Override
 	public int getRowCount()
 	{
@@ -182,7 +180,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 			return files.length;
 	} //}}}
 
-	//{{{ getColumnName() method
+	// getColumnName() method
 	@Override
 	public String getColumnName(int col)
 	{
@@ -192,14 +190,14 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 			return jEdit.getProperty("vfs.browser." + getExtendedAttribute(col));
 	} //}}}
 
-	//{{{ getColumnClass() method
+	// getColumnClass() method
 	@Override
 	public Class<Entry> getColumnClass(int col)
 	{
 		return Entry.class;
 	} //}}}
 
-	//{{{ getValueAt() method
+	// getValueAt() method
 	@Override
 	public Object getValueAt(int row, int col)
 	{
@@ -209,25 +207,25 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 			return files[row];
 	} //}}}
 
-	//{{{ getAscending() method
+	// getAscending() method
 	public boolean getAscending()
 	{
 		return ascending;
 	} //}}}
 
-	//{{{ getSortColumnIndex() method
+	// getSortColumnIndex() method
 	public int getSortColumnIndex()
 	{
 		return sortColumnIndex;
 	} //}}}
 
-	//{{{ getSortAttribute() method
+	// getSortAttribute() method
 	public String getSortAttribute(int column)
 	{
 		return column == 0 ? "name" : getExtendedAttribute(column);
 	} //}}}
 
-	//{{{ sortByColumn() method
+	// sortByColumn() method
 	public boolean sortByColumn(int columnIndex)
 	{
 		// toggle ascending/descending if column was clicked again
@@ -247,13 +245,13 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		return true;
 	} //}}}
 
-	//{{{ getExtendedAttribute() method
+	// getExtendedAttribute() method
 	public String getExtendedAttribute(int index)
 	{
 		return extAttrs.get(index - 1).name;
 	} //}}}
 
-	//{{{ getColumnWidth() method
+	// getColumnWidth() method
 	/**
 	 * @param index The column index
 	 * @return A saved column width
@@ -266,7 +264,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 			+ extAttr + ".width",100);
 	} //}}}
 	
-	//{{{ saveColumnWidth() method
+	// saveColumnWidth() method
 	/**
 	 * @param index The column index
 	 * @param w The column width
@@ -279,7 +277,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 			+ extAttr + ".width",w);
 	} //}}}
 	
-	//{{{ columnMoved() method
+	// columnMoved() method
 	protected void columnMoved(int fromIndex, int toIndex) {
 		if (fromIndex == toIndex)
 			return;
@@ -297,7 +295,7 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		else if (sortColumnIndex == toIndex) sortColumnIndex = fromIndex;
 	} //}}}
 	
-	//{{{ getFiles() method
+	// getFiles() method
 	public VFSFile[] getFiles()
 	{
 		VFSFile[] f = new VFSFile[files.length];
@@ -306,16 +304,15 @@ public class VFSDirectoryEntryTableModel extends AbstractTableModel
 		return f;
 	} //}}}
 	
-	//{{{ Package-private members
+	// Package-private members
 	Entry[] files;
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final List<ExtendedAttribute> extAttrs;
 	private int sortColumnIndex;
 	private boolean ascending;
 
-	//{{{ addExtendedAttributes() method
+	// addExtendedAttributes() method
 	private void addExtendedAttributes(VFS vfs)
 	{
 		String[] attrs = vfs.getExtendedAttributes();
@@ -337,7 +334,7 @@ vfs_attr_loop:	for(int i = 0; i < attrs.length; i++)
 		}
 	} //}}}
 
-	//{{{ removeExtendedAttributes() method
+	// removeExtendedAttributes() method
 	private void removeExtendedAttributes(VFS vfs)
 	{
 		String[] attrs = vfs.getExtendedAttributes();
@@ -367,9 +364,8 @@ vfs_attr_loop:	for(int i = 0; i < attrs.length; i++)
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Entry class
+	// Entry class
 	static class Entry
 	{
 		VFSFile dirEntry;
@@ -399,7 +395,7 @@ vfs_attr_loop:	for(int i = 0; i < attrs.length; i++)
 		
 	} //}}}
 
-	//{{{ ExtendedAttribute class
+	// ExtendedAttribute class
 	static class ExtendedAttribute
 	{
 		/* reference counter allows us to remove a column from
@@ -416,7 +412,7 @@ vfs_attr_loop:	for(int i = 0; i < attrs.length; i++)
 		}
 	} //}}}
 
-	//{{{ EntryCompare class
+	// EntryCompare class
 	/**
 	 * Implementation of {@link Comparator}
 	 * interface that compares {@link VFSDirectoryEntryTableModel.Entry} instances.

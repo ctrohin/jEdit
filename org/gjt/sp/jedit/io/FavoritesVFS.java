@@ -1,7 +1,6 @@
 /*
  * FavoritesVFS.java - Stores frequently-visited directory locations
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2004 Slava Pestov
  * Portions Copyright (C) 2011 Matthieu Casanova
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.util.*;
 
@@ -31,7 +30,6 @@ import org.gjt.sp.jedit.msg.DynamicMenuChanged;
 import org.gjt.sp.jedit.*;
 
 
-//}}}
 
 /**
  * A VFS used for remembering frequently-visited directories. Listing it
@@ -46,7 +44,7 @@ public class FavoritesVFS extends VFS
 {
 	public static final String PROTOCOL = "favorites";
 
-	//{{{ FavoritesVFS constructor
+	// FavoritesVFS constructor
 	public FavoritesVFS()
 	{
 		super("favorites",DELETE_CAP | RENAME_CAP | LOW_LATENCY_CAP
@@ -60,7 +58,7 @@ public class FavoritesVFS extends VFS
 		instance = this;
 	} //}}}
 
-	//{{{ getParentOfPath() method
+	// getParentOfPath() method
 	@Override
 	
 	public String getParentOfPath(String path)
@@ -68,7 +66,7 @@ public class FavoritesVFS extends VFS
 		return PROTOCOL + ':';
 	} //}}}
 
-	//{{{ isRemotePath() method
+	// isRemotePath() method
 	@Override
 	public boolean isRemotePath(String path)
 	{
@@ -76,7 +74,7 @@ public class FavoritesVFS extends VFS
 		return VFSManager.getVFSForPath(wrappedPath).isRemotePath(wrappedPath);
 	} //}}}
 
-	//{{{ _listFiles() method
+	// _listFiles() method
 	@Override
 	public VFSFile[] _listFiles(Object session, String url,
 		Component comp)
@@ -85,7 +83,7 @@ public class FavoritesVFS extends VFS
 		else return null;
 	} //}}}
 
-	//{{{ _getFile() method
+	// _getFile() method
 	@Override
 	public VFSFile _getFile(Object session, String path,
 		Component comp)
@@ -94,7 +92,7 @@ public class FavoritesVFS extends VFS
 		return new Favorite(path,VFSFile.DIRECTORY);
 	} //}}}
 
-	//{{{ _delete() method
+	// _delete() method
 	@Override
 	public boolean _delete(Object session, String path, Component comp)
 	{
@@ -120,7 +118,7 @@ public class FavoritesVFS extends VFS
 		return false;
 	} //}}}
 
-	//{{{ _delete() method
+	// _delete() method
 
 	/**
 	 * Rename a favorite
@@ -146,7 +144,7 @@ public class FavoritesVFS extends VFS
 		return false;
 	}  //}}}
 
-	//{{{ loadFavorites() method
+	// loadFavorites() method
 	public static void loadFavorites()
 	{
 		synchronized(lock)
@@ -171,7 +169,7 @@ public class FavoritesVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ addToFavorites() method
+	// addToFavorites() method
 	public static void addToFavorites(String path, int type)
 	{
 		synchronized(lock)
@@ -192,7 +190,7 @@ public class FavoritesVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ saveFavorites() method
+	// saveFavorites() method
 	public static void saveFavorites()
 	{
 		synchronized(lock)
@@ -220,7 +218,7 @@ public class FavoritesVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ getFavorites() method
+	// getFavorites() method
 	public static VFSFile[] getFavorites()
 	{
 		synchronized(lock)
@@ -232,13 +230,12 @@ public class FavoritesVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static FavoritesVFS instance;
 	private static final Object lock = new Object();
 	private static List<Favorite> favorites;
-	//}}}
 
-	//{{{ Favorite class
+	// Favorite class
 	public static class Favorite extends VFSFile
 	{
 		private String label;

@@ -1,7 +1,6 @@
 /*
  * RegexpIndentRule.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -39,7 +38,7 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
  */
 public class RegexpIndentRule implements IndentRule
 {
-	//{{{ RegexpIndentRule constructor
+	// RegexpIndentRule constructor
 	/**
 	 * @param collapse If true, then if the next indent rule is
 	 * an opening bracket, this rule will not increase indent.
@@ -55,7 +54,7 @@ public class RegexpIndentRule implements IndentRule
 		this.collapse = collapse;
 	} //}}}
 
-	//{{{ apply() method
+	// apply() method
 	@Override
 	public void apply(JEditBuffer buffer, int thisLineIndex,
 		int prevLineIndex, int prevPrevLineIndex,
@@ -84,7 +83,7 @@ public class RegexpIndentRule implements IndentRule
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + '[' + regexp + ']';
@@ -96,7 +95,7 @@ public class RegexpIndentRule implements IndentRule
 	private final Pattern regexp;
 	private final boolean collapse;
 
-	//{{{ class TokenFilter
+	// class TokenFilter
 	/**
 	 * A filter which removes non syntactic characters in comments
 	 * or literals which might confuse regexp matchings for indent.
@@ -155,7 +154,7 @@ public class RegexpIndentRule implements IndentRule
 		}
 	} //}}}
 
-	//{{{ lineMatches() method
+	// lineMatches() method
 	private boolean lineMatches(JEditBuffer buffer, int lineIndex)
 	{
 		TokenFilter filter

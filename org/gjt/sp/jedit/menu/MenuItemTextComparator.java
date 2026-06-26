@@ -1,7 +1,6 @@
 /*
  * MenuItemTextComparator.java - Compares the text values of two JMenuItems
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Eric Berry
  * Portions copyright (C) 1999, 2005 Slava Pestov
@@ -24,14 +23,13 @@
  */
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import java.util.Comparator;
 
 import javax.swing.JMenuItem;
 
 import org.gjt.sp.util.StandardUtilities;
 
-//}}}
 /**
  * MenuItemTextComparator implements java.util.Comparator, and compares the text
  * value of JMenuItems using the case-insensitive smart comparison of

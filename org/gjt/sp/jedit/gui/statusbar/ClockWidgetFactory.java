@@ -1,7 +1,6 @@
 /*
  * ClockWidgetFactory.java - The clock widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008-2021 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
@@ -33,7 +32,6 @@ import javax.swing.*;
 
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -41,7 +39,7 @@ import org.gjt.sp.jedit.jEdit;
  */
 public class ClockWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
@@ -49,7 +47,7 @@ public class ClockWidgetFactory implements StatusWidgetFactory
 		return clock;
 	} //}}}
 
-	//{{{ ClockWidget class
+	// ClockWidget class
 	private static class ClockWidget implements Widget
 	{
 		private final Clock clock;
@@ -66,17 +64,17 @@ public class ClockWidgetFactory implements StatusWidgetFactory
 		}
 	} //}}}
 
-	//{{{ Clock class
+	// Clock class
 	private static class Clock extends ToolTipLabel implements ActionListener
 	{
-		//{{{ Clock constructor
+		// Clock constructor
 		Clock()
 		{
 			setForeground(jEdit.getColorProperty("view.status.foreground"));
 			setBackground(jEdit.getColorProperty("view.status.background"));
 		} //}}}
 
-		//{{{ addNotify() method
+		// addNotify() method
 		@Override
 		public void addNotify()
 		{
@@ -94,7 +92,7 @@ public class ClockWidgetFactory implements StatusWidgetFactory
 			ToolTipManager.sharedInstance().registerComponent(this);
 		} //}}}
 
-		//{{{ removeNotify() method
+		// removeNotify() method
 		@Override
 		public void removeNotify()
 		{
@@ -103,35 +101,34 @@ public class ClockWidgetFactory implements StatusWidgetFactory
 			super.removeNotify();
 		} //}}}
 
-		//{{{ getToolTipText() method
+		// getToolTipText() method
 		@Override
 		public String getToolTipText()
 		{
 			return new Date().toString();
 		} //}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			update();
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private Timer timer;
 
-		//{{{ getTime() method
+		// getTime() method
 		private static String getTime()
 		{
 			return DateFormat.getTimeInstance(
 				DateFormat.SHORT).format(new Date());
 		} //}}}
 
-		//{{{ update() method
+		// update() method
 		private void update()
 		{
 			setText(getTime());
 		} //}}}
-		//}}}
 	} //}}}
 }

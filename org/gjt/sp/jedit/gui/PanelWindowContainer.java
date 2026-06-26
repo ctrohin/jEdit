@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -64,7 +63,6 @@ import org.gjt.sp.jedit.gui.DockableWindowManager.DockingArea;
 import org.gjt.sp.jedit.msg.DockableWindowUpdate;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /** A container for dockable windows. This class should never be used
  * directly.
@@ -74,14 +72,14 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class PanelWindowContainer implements DockableWindowContainer, DockingArea
 {
-	//{{{ PanelWindowContainer constructor
+	// PanelWindowContainer constructor
 	public PanelWindowContainer(DockableWindowManagerImpl wm, String position,
 	                            int dimension)
 	{
 		this.wm = wm;
 		this.position = position;
 
-		//{{{ Button box setup
+		// Button box setup
 		buttonPanel = new JPanel(new ButtonLayout());
 		buttonPanel.setBorder(new EmptyBorder(1,1,1,1));
 
@@ -110,7 +108,6 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		buttonGroup = new ButtonGroup();
 		// JDK 1.4 workaround
 		buttonGroup.add(nullButton = new FlatToggleButton());
-		//}}}
 
 		dockables = new ArrayList<>();
 		buttons = new ArrayList<>();
@@ -119,7 +116,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		this.dimension = dimension;
 	} //}}}
 
-	//{{{ getDockableWindowManager() method
+	// getDockableWindowManager() method
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -128,13 +125,13 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		return wm;
 	} //}}}
 
-	//{{{ register() method
+	// register() method
 	@Override
 	public void register(DockableWindowManagerImpl.Entry entry)
 	{
 		dockables.add(entry);
 
-		//{{{ Create button
+		// Create button
 		int rotation = switch (position) {
             case DockableWindowManager.TOP, DockableWindowManager.BOTTOM -> RotatedTextIcon.NONE;
             case DockableWindowManager.LEFT -> RotatedTextIcon.CCW;
@@ -152,7 +149,6 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		button.setActionCommand(entry.factory.name);
 		button.addActionListener(new ActionHandler());
 		button.addMouseListener(new MenuMouseHandler());
-		//}}}
 		buttonGroup.add(button);
 		buttons.add(button);
 		entry.btn = button;
@@ -160,7 +156,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		wm.revalidate();
 	} //}}}
 
-	//{{{ unregister() method
+	// unregister() method
 	@Override
 	public void unregister(DockableWindowManagerImpl.Entry entry)
 	{
@@ -191,7 +187,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ remove() method
+	// remove() method
 	@Override
 	public void remove(DockableWindowManagerImpl.Entry entry)
 	{
@@ -216,7 +212,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ showMostRecent() method
+	// showMostRecent() method
 	@Override
 	public void showMostRecent()
 	{
@@ -234,7 +230,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		wm.showDockableWindow(mostRecent);
 	} //}}}
 
-	//{{{ show() method
+	// show() method
 	@Override
 	@SuppressWarnings({"deprecation"})	// see notes below
 	public void show(DockableWindowManagerImpl.Entry entry)
@@ -301,14 +297,14 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		dockablePanel.repaint();
 	} //}}}
 
-	//{{{ isVisible() method
+	// isVisible() method
 	@Override
 	public boolean isVisible(DockableWindowManagerImpl.Entry entry)
 	{
 		return current == entry;
 	} //}}}
 
-	//{{{ getCurrent() method
+	// getCurrent() method
 	/**
 	 * Returns the name of the dockable in this container.
 	 * @since jEdit 4.2pre1
@@ -322,7 +318,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			return current.factory.name;
 	} //}}}
 
-	//{{{ getDimension() method
+	// getDimension() method
 	/**
 	 * Returns the width or height (depending on position) of the dockable
 	 * window container.
@@ -333,7 +329,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		return dimension;
 	} //}}}
 
-	//{{{ getPosition() method
+	// getPosition() method
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -342,7 +338,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		return position;
 	} //}}}
 
-	//{{{ getDockables() method
+	// getDockables() method
 	@Override
 	public String[] getDockables()
 	{
@@ -355,12 +351,12 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		return retVal;
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	static final int SPLITTER_WIDTH = 10;
 	DockablePanel dockablePanel;
 	JPanel buttonPanel;
 
-	//{{{ save() method
+	// save() method
 	void save()
 	{
 		jEdit.setIntegerProperty("view.dock." + position + ".dimension",
@@ -374,14 +370,14 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ setDimension() method
+	// setDimension() method
 	void setDimension(int dimension)
 	{
 		if(dimension > SPLITTER_WIDTH)
 			this.dimension = dimension - SPLITTER_WIDTH;
 	} //}}}
 
-	//{{{ sortDockables() method
+	// sortDockables() method
 	void sortDockables()
 	{
 		buttonPanel.removeAll();
@@ -392,7 +388,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			buttonPanel.add(button);
 	} //}}}
 
-	//{{{ getWrappedDimension() method
+	// getWrappedDimension() method
 	/**
 	 * Returns the width or height of wrapped rows or columns.
 	 */
@@ -402,9 +398,8 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			.getWrappedDimension(buttonPanel,dimension);
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final DockableWindowManagerImpl wm;
 	private final String position;
 	private final FlatButton closeBox;
@@ -420,11 +415,10 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 	// remember the most recent dockable
 	
 	private String mostRecent;
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ DockableWindowCompare class
+	// DockableWindowCompare class
 	static class DockableWindowCompare implements Comparator<AbstractButton>
 	{
 		@Override
@@ -439,7 +433,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override
@@ -455,7 +449,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ MenuMouseHandler class
+	// MenuMouseHandler class
 	class MenuMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -505,7 +499,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		}
 	} //}}}
 
-	//{{{ DockBorder class
+	// DockBorder class
 	private static class DockBorder implements Border
 	{
 		private static final int GRIP_DOT = 2;
@@ -520,7 +514,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		private Color edgeColor;
 		private Color gripColor;
 
-		//{{{ DockBorder constructor
+		// DockBorder constructor
 		DockBorder(String position)
 		{
 			this.position = position;
@@ -535,7 +529,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 					? SPLITTER_WIDTH : 0);
 		} //}}}
 
-		//{{{ paintBorder() method
+		// paintBorder() method
 		@Override
 		public void paintBorder(Component c, Graphics g,
 					int x, int y, int width, int height)
@@ -559,21 +553,21 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 		} //}}}
 
-		//{{{ getBorderInsets() method
+		// getBorderInsets() method
 		@Override
 		public Insets getBorderInsets(Component c)
 		{
 			return insets;
 		} //}}}
 
-		//{{{ isBorderOpaque() method
+		// isBorderOpaque() method
 		@Override
 		public boolean isBorderOpaque()
 		{
 			return false;
 		} //}}}
 
-		//{{{ paintHorizBorder() method
+		// paintHorizBorder() method
 		private void paintHorizBorder(Graphics g, int x, int y, int width,
 			boolean edgeAtStart)
 		{
@@ -587,7 +581,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			paintGrip(g, x, y, width, SPLITTER_WIDTH);
 		} //}}}
 
-		//{{{ paintVertBorder() method
+		// paintVertBorder() method
 		private void paintVertBorder(Graphics g, int x, int y, int height,
 			boolean edgeAtStart)
 		{
@@ -601,7 +595,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			paintGrip(g, x, y, SPLITTER_WIDTH, height);
 		} //}}}
 
-		//{{{ paintGrip() method
+		// paintGrip() method
 		private void paintGrip(Graphics g, int x, int y, int width, int height)
 		{
 			int gripW = GRIP_COLS * GRIP_DOT + (GRIP_COLS - 1) * GRIP_GAP;
@@ -621,7 +615,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 		} //}}}
 
-		//{{{ updateColors() method
+		// updateColors() method
 		private void updateColors(Component c)
 		{
 			Color panelBg = UIManager.getColor("Panel.background");
@@ -656,14 +650,14 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		} //}}}
 	} //}}}
 
-	//{{{ RotatedTextIcon class
+	// RotatedTextIcon class
 	public static class RotatedTextIcon implements Icon
 	{
 		public static final int NONE = 0;
 		public static final int CW = 1;
 		public static final int CCW = 2;
 
-		//{{{ RotatedTextIcon constructor
+		// RotatedTextIcon constructor
 		public RotatedTextIcon(int rotate, Font font, String text)
 		{
 			this.rotate = rotate;
@@ -693,7 +687,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 				RenderingHints.VALUE_RENDER_QUALITY);
 		} //}}}
 
-		//{{{ getIconWidth() method
+		// getIconWidth() method
 		@Override
 		public int getIconWidth()
 		{
@@ -702,7 +696,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 				? height : width);
 		} //}}}
 
-		//{{{ getIconHeight() method
+		// getIconHeight() method
 		@Override
 		public int getIconHeight()
 		{
@@ -711,7 +705,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 				? width : height);
 		} //}}}
 
-		//{{{ paintIcon() method
+		// paintIcon() method
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y)
 		{
@@ -723,12 +717,12 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			g2d.setRenderingHints(renderHints);
 			g2d.setColor(c.getForeground());
 
-			//{{{ No rotation
+			// No rotation
 			if(rotate == RotatedTextIcon.NONE)
 			{
 				g2d.drawGlyphVector(glyphs,x + 2,y + ascent);
 			} //}}}
-			//{{{ Clockwise rotation
+			// Clockwise rotation
 			else if(rotate == RotatedTextIcon.CW)
 			{
 				AffineTransform trans = new AffineTransform();
@@ -741,7 +735,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 					(width - height) / 2
 					+ ascent);
 			} //}}}
-			//{{{ Counterclockwise rotation
+			// Counterclockwise rotation
 			else if(rotate == RotatedTextIcon.CCW)
 			{
 				AffineTransform trans = new AffineTransform();
@@ -759,7 +753,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			g2d.setRenderingHints(oldHints);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final int rotate;
 		private final Font font;
 		private final GlyphVector glyphs;
@@ -767,21 +761,20 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		private final float height;
 		private final float ascent;
 		private final RenderingHints renderHints;
-		//}}}
 	} //}}}
 
-	//{{{ ButtonLayout class
+	// ButtonLayout class
 	private class ButtonLayout implements LayoutManager
 	{
-		//{{{ addLayoutComponent() method
+		// addLayoutComponent() method
 		@Override
 		public void addLayoutComponent(String name, Component comp) {} //}}}
 
-		//{{{ removeLayoutComponent() method
+		// removeLayoutComponent() method
 		@Override
 		public void removeLayoutComponent(Component comp) {} //}}}
 
-		//{{{ getWrappedDimension() method
+		// getWrappedDimension() method
 		/**
 		 * Returns the width or height of wrapped rows or columns.
 		 */
@@ -809,7 +802,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 		} //}}}
 
-		//{{{ preferredLayoutSize() method
+		// preferredLayoutSize() method
 		@Override
 		public Dimension preferredLayoutSize(Container parent)
 		{
@@ -836,14 +829,14 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 		} //}}}
 
-		//{{{ minimumLayoutSize() method
+		// minimumLayoutSize() method
 		@Override
 		public Dimension minimumLayoutSize(Container parent)
 		{
 			return preferredLayoutSize(parent);
 		} //}}}
 
-		//{{{ layoutContainer() method
+		// layoutContainer() method
 		@Override
 		public void layoutContainer(Container parent)
 		{
@@ -922,7 +915,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			}
 		} //}}}
 
-		//{{{ preferredLayoutSizeLR() method
+		// preferredLayoutSizeLR() method
 		private Dimension preferredLayoutSizeLR(Insets insets, Component[] comp, Dimension dim, int width)
 		{
 			int rowHeight = Math.max(dim.height,closeBox.getPreferredSize().width);
@@ -944,7 +937,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 			return returnValue;
 		} //}}}
 
-		//{{{ preferredLayoutSizeTB() method
+		// preferredLayoutSizeTB() method
 		private Dimension preferredLayoutSizeTB(int dimension, Insets insets, Component[] comp, Dimension dim)
 		{
 			int height = dimension - insets.bottom;
@@ -968,7 +961,7 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		} //}}}
 	} //}}}
 
-	//{{{ show() method
+	// show() method
 	@Override
 	public void show(String name)
 	{
@@ -981,5 +974,4 @@ public class PanelWindowContainer implements DockableWindowContainer, DockingAre
 		show(entry);
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * FileVFS.java - Local filesystem VFS
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2005 Slava Pestov
  * Portions copyright (C) 1998, 1999, 2000 Peter Graves
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.io.Closeable;
 
 
@@ -51,7 +50,6 @@ import org.gjt.sp.util.Log;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /**
  * Local filesystem VFS.
@@ -62,7 +60,7 @@ public class FileVFS extends VFS
 {
 	public static final String PERMISSIONS_PROPERTY = "FileVFS__perms";
 
-	//{{{ FileVFS constructor
+	// FileVFS constructor
 	public FileVFS()
 	{
 		super("file",READ_CAP | WRITE_CAP | BROWSE_CAP | DELETE_CAP
@@ -96,7 +94,7 @@ public class FileVFS extends VFS
 		}
 	}
 
-	//{{{ getFileName() method
+	// getFileName() method
 	@Override
 	public String getFileName(String path)
 	{
@@ -108,7 +106,7 @@ public class FileVFS extends VFS
 			return super.getFileName(path);
 	} //}}}
 
-	//{{{ getParentOfPath() method
+	// getParentOfPath() method
 	@Override
 	
 	public String getParentOfPath(String path)
@@ -137,14 +135,14 @@ public class FileVFS extends VFS
 		return super.getParentOfPath(path);
 	} //}}}
 
-	//{{{ isRemotePath() method
+	// isRemotePath() method
 	@Override
 	public boolean isRemotePath(String path)
 	{
 		return false;
 	} //}}}
 
-	//{{{ constructPath() method
+	// constructPath() method
 	@Override
 	public String constructPath(String parent, String path)
 	{
@@ -155,14 +153,14 @@ public class FileVFS extends VFS
 			return parent + File.separator + path;
 	} //}}}
 
-	//{{{ getFileSeparator() method
+	// getFileSeparator() method
 	@Override
 	public char getFileSeparator()
 	{
 		return File.separatorChar;
 	} //}}}
 
-	//{{{ getTwoStageSaveName() method
+	// getTwoStageSaveName() method
 	/**
 	 * Returns a temporary file name based on the given path.
 	 *
@@ -190,7 +188,7 @@ public class FileVFS extends VFS
 			: null;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	@Override
 	public boolean save(View view, Buffer buffer, String path)
 	{
@@ -205,13 +203,13 @@ public class FileVFS extends VFS
 		return super.save(view,buffer,path);
 	} //}}}
 
-	//{{{ insert() method
+	// insert() method
 	@Override
 	public boolean insert(View view, Buffer buffer, String path)
 	{
 		File file = new File(path);
 
-		//{{{ Check if file is valid
+		// Check if file is valid
 		if(!file.exists())
 			return false;
 
@@ -232,7 +230,7 @@ public class FileVFS extends VFS
 		return super.insert(view,buffer,path);
 	} //}}}
 
-	//{{{ recursiveDelete() method
+	// recursiveDelete() method
 	/**
 	 * #
 	 * @param path the directory path to recursive delete
@@ -254,7 +252,7 @@ public class FileVFS extends VFS
 		return path.delete();
 	} //}}}
 
-	//{{{ _canonPath() method
+	// _canonPath() method
 	/**
 	 * Returns the canonical form if the specified path name. For example,
 	 * <code>~</code> might be expanded to the user's home directory.
@@ -271,7 +269,7 @@ public class FileVFS extends VFS
 		return MiscUtilities.canonPath(path);
 	} //}}}
 
-	//{{{ LocalFile class
+	// LocalFile class
 	public static class LocalFile extends VFSFile
 	{
 		private final File file;
@@ -281,7 +279,7 @@ public class FileVFS extends VFS
 
 		private long modified;
 
-		//{{{ LocalFile() class
+		// LocalFile() class
 		public LocalFile(File file)
 		{
 			this.file = file;
@@ -298,7 +296,7 @@ public class FileVFS extends VFS
 				: VFSFile.FILE);
 		} //}}}
 
-		//{{{ getExtendedAttribute() method
+		// getExtendedAttribute() method
 		@Override
 		public String getExtendedAttribute(String name)
 		{
@@ -313,7 +311,7 @@ public class FileVFS extends VFS
 			}
 		} //}}}
 
-		//{{{ fetchAttrs() method
+		// fetchAttrs() method
 		/** Fetch the attributes of the local file. */
 		@Override
 		protected void fetchAttrs()
@@ -331,7 +329,7 @@ public class FileVFS extends VFS
 			setModified(file.lastModified());
 		} //}}}
 
-		//{{{ getIcon() method
+		// getIcon() method
 		/**
 		 * Returns the file system icon for the file.
 		 *
@@ -353,7 +351,7 @@ public class FileVFS extends VFS
 			return icon;
 		} //}}}
 
-		//{{{ getSymlinkPath() method
+		// getSymlinkPath() method
 		@Override
 		public String getSymlinkPath()
 		{
@@ -361,7 +359,7 @@ public class FileVFS extends VFS
 			return super.getSymlinkPath();
 		} //}}}
 
-		//{{{ getLength() method
+		// getLength() method
 		@Override
 		public long getLength()
 		{
@@ -369,7 +367,7 @@ public class FileVFS extends VFS
 			return super.getLength();
 		} //}}}
 
-		//{{{ isReadable() method
+		// isReadable() method
 		@Override
 		public boolean isReadable()
 		{
@@ -377,7 +375,7 @@ public class FileVFS extends VFS
 			return super.isReadable();
 		} //}}}
 
-		//{{{ isWriteable() method
+		// isWriteable() method
 		@Override
 		public boolean isWriteable()
 		{
@@ -385,7 +383,7 @@ public class FileVFS extends VFS
 			return super.isWriteable();
 		} //}}}
 
-		//{{{ getModified() method
+		// getModified() method
 		@Override
 		public long getModified()
 		{
@@ -393,7 +391,7 @@ public class FileVFS extends VFS
 			return modified;
 		} //}}}
 
-		//{{{ setModified() method
+		// setModified() method
 		public void setModified(long modified)
 		{
 			this.modified = modified;
@@ -403,12 +401,12 @@ public class FileVFS extends VFS
 		private transient Icon icon;
 	} //}}}
 
-	//{{{ _listFiles() method
+	// _listFiles() method
 	@Override
 	public VFSFile[] _listFiles(Object session, String path,
 		Component comp)
 	{
-		//{{{ Windows work around
+		// Windows work around
 		/* On Windows, paths of the form X: list the last *working
 		 * directory* on that drive. To list the root of the drive,
 		 * you must use X:\.
@@ -482,7 +480,7 @@ public class FileVFS extends VFS
 		return list2;
 	} //}}}
 
-	//{{{ _getFile() method
+	// _getFile() method
 	@Override
 	public VFSFile _getFile(Object session, String path,
 		Component comp)
@@ -500,7 +498,7 @@ public class FileVFS extends VFS
 		return new LocalFile(file);
 	} //}}}
 
-	//{{{ _delete() method
+	// _delete() method
 	@Override
 	public boolean _delete(Object session, String path, Component comp)
 	{
@@ -531,7 +529,7 @@ public class FileVFS extends VFS
 		return retVal;
 	} //}}}
 
-	//{{{ _rename() method
+	// _rename() method
 	@Override
 	public boolean _rename(Object session, String from, String to,
 		Component comp) throws IOException
@@ -580,7 +578,7 @@ public class FileVFS extends VFS
 		return true;
 	} //}}}
 
-	//{{{ _mkdir() method
+	// _mkdir() method
 	@Override
 	public boolean _mkdir(Object session, String directory, Component comp)
 	{
@@ -607,7 +605,7 @@ public class FileVFS extends VFS
 		return retVal;
 	} //}}}
 
-	//{{{ _createInputStream() method
+	// _createInputStream() method
 	@Override
 	public InputStream _createInputStream(Object session, String path,
 		boolean ignoreErrors, Component comp) throws IOException
@@ -625,7 +623,7 @@ public class FileVFS extends VFS
 		}
 	} //}}}
 
-	//{{{ _createOutputStream() method
+	// _createOutputStream() method
 	@Override
 	public OutputStream _createOutputStream(Object session, String path,
 		Component comp) throws IOException
@@ -633,7 +631,7 @@ public class FileVFS extends VFS
 		return new FileOutputStream(path);
 	} //}}}
 
-	//{{{ _saveComplete() method
+	// _saveComplete() method
 	@Override
 	public void _saveComplete(Object session, Buffer buffer, String path,
 		Component comp)
@@ -642,12 +640,12 @@ public class FileVFS extends VFS
 		setPermissions(path,permissions);
 	} //}}}
 
-	//{{{ Permission preservation code
+	// Permission preservation code
 
 	/* Code borrowed from j text editor (https://armedbear-j.sourceforge.net/) */
 	/* I made some changes to make it support suid, sgid and sticky files */
 
-	//{{{ getPermissions() method
+	// getPermissions() method
 	/**
 	 * Returns numeric permissions of a file. On non-Unix systems, always
 	 * returns zero.
@@ -698,7 +696,7 @@ public class FileVFS extends VFS
 		return permissions;
 	} //}}}
 
-	//{{{ setPermissions() method
+	// setPermissions() method
 	/**
 	 * Sets numeric permissions of a file. On non-Unix platforms,
 	 * does nothing.
@@ -739,10 +737,8 @@ public class FileVFS extends VFS
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private static FileSystemView fsView;
 	private static final List<String> additionalUncServers = new CopyOnWriteArrayList<>();
-	//}}}
 }

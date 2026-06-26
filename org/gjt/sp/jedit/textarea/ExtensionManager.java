@@ -1,7 +1,6 @@
 /*
  * ExtensionManager.java -
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002, 2003 Slava Pestov
  *
@@ -34,7 +33,7 @@ import org.gjt.sp.util.Log;
  */
 class ExtensionManager
 {
-	//{{{ addExtension() method
+	// addExtension() method
 	/**
 	 * Add an extension.
 	 * See {@link Gutter} and {@link TextAreaPainter} to know the layers
@@ -61,7 +60,7 @@ class ExtensionManager
 		extensions.add(entry);
 	} //}}}
 
-	//{{{ removeExtension() method
+	// removeExtension() method
 	void removeExtension(TextAreaExtension ext)
 	{
 		Iterator<Entry> iter = extensions.iterator();
@@ -75,7 +74,7 @@ class ExtensionManager
 		}
 	} //}}}
 
-	//{{{ getExtensions() method
+	// getExtensions() method
 	TextAreaExtension[] getExtensions()
 	{
 		TextAreaExtension[] retVal = new TextAreaExtension[
@@ -88,7 +87,7 @@ class ExtensionManager
 		return retVal;
 	} //}}}
 
-	//{{{ paintScreenLineRange() method
+	// paintScreenLineRange() method
 	void paintScreenLineRange(TextArea textArea, Graphics2D gfx,
 		int firstLine, int lastLine, int y, int lineHeight)
 	{
@@ -96,7 +95,7 @@ class ExtensionManager
 			Integer.MIN_VALUE, Integer.MAX_VALUE);
 	} //}}}
 
-	//{{{ paintScreenLineRange() method
+	// paintScreenLineRange() method
 	void paintScreenLineRange(TextArea textArea, Graphics2D gfx,
 		int firstLine, int lastLine, int y, int lineHeight,
 		int minLayer, int maxLayer)
@@ -135,7 +134,7 @@ class ExtensionManager
 		}
 	} //}}}
 
-	//{{{ getToolTipText() method
+	// getToolTipText() method
 	String getToolTipText(int x, int y)
 	{
 		for (Entry extension : extensions)
@@ -149,10 +148,10 @@ class ExtensionManager
 		return null;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final List<Entry> extensions = new LinkedList<Entry>();
 
-	//{{{ paintScreenLineRange() method
+	// paintScreenLineRange() method
 	private void paintScreenLineRange(Graphics2D gfx, int firstLine,
 		int lastLine, int[] physicalLines, int[] start, int[] end,
 		int y, int lineHeight, int minLayer, int maxLayer)
@@ -182,9 +181,8 @@ class ExtensionManager
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Entry class
+	// Entry class
 	/** This class represents an extension with his layer. */
 	static class Entry
 	{

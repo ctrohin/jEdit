@@ -1,7 +1,6 @@
 /*
  * MouseOptionPane.java - Editor window options
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,20 +21,19 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class MouseOptionPane extends AbstractOptionPane
 {
-	//{{{ MouseOptionPane constructor
+	// MouseOptionPane constructor
 	public MouseOptionPane()
 	{
 		super("mouse");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -108,7 +106,7 @@ public class MouseOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -130,7 +128,7 @@ public class MouseOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JCheckBox dragAndDrop;
 	private JCheckBox joinNonWordChars;
 	private JCheckBox middleMousePaste;

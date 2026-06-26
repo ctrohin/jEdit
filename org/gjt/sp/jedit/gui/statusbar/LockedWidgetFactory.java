@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2017 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -33,14 +32,13 @@ import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * @author Roman Tsourick
  */
 public class LockedWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() class
+	// getWidget() class
 	@Override
 	public Widget getWidget(View view)
 	{
@@ -48,7 +46,7 @@ public class LockedWidgetFactory implements StatusWidgetFactory
 		return widget;
 	} //}}}
 
-	//{{{ LockedWidget class
+	// LockedWidget class
 	private static class LockedWidget extends AbstractLabelWidget
 	{
 		private static Icon lockClosed;

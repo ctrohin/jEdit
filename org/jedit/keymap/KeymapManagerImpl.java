@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
 
 package org.jedit.keymap;
 
-//{{{ Imports
+// Imports
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,7 +38,6 @@ import javax.swing.JOptionPane;
 import org.gjt.sp.jedit.IPropertyManager;
 import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * The default keymap manager implementation.
@@ -57,7 +55,7 @@ public class KeymapManagerImpl implements KeymapManager
 	private final File systemKeymapFolder;
 
 
-	//{{{ KeymapManagerImpl() constructor
+	// KeymapManagerImpl() constructor
 	public KeymapManagerImpl(IPropertyManager propertyManager,
 				 File systemKeymapFolder,
 				 File userKeymapFolder)
@@ -76,14 +74,14 @@ public class KeymapManagerImpl implements KeymapManager
 		KeymapManagerImpl.userKeymapFolder = userKeymapFolder;
 	} //}}}
 
-	//{{{ getKeymap() method
+	// getKeymap() method
 	@Override
 	public Keymap getKeymap()
 	{
 		return currentKeymap;
 	} //}}}
 
-	//{{{ getKeymapNames() method
+	// getKeymapNames() method
 	@Override
 	public Collection<String> getKeymapNames()
 	{
@@ -95,7 +93,7 @@ public class KeymapManagerImpl implements KeymapManager
 		return keyMaps;
 	} //}}}
 
-	//{{{ getKeymap() method
+	// getKeymap() method
 	@Override
 	public Keymap getKeymap(String name)
 	{
@@ -106,7 +104,7 @@ public class KeymapManagerImpl implements KeymapManager
 		return keymap;
 	} //}}}
 
-	//{{{ getKeymapState() method
+	// getKeymapState() method
 	@Override
 	public State getKeymapState(String name)
 	{
@@ -123,7 +121,7 @@ public class KeymapManagerImpl implements KeymapManager
 		return State.Unknown;
 	} //}}}
 
-	//{{{ resetKeymap() method
+	// resetKeymap() method
 	@Override
 	public void resetKeymap(String name)
 	{
@@ -135,7 +133,7 @@ public class KeymapManagerImpl implements KeymapManager
 		}
 	} //}}}
 
-	//{{{ deleteUserKeymap() method
+	// deleteUserKeymap() method
 	@Override
 	public void deleteUserKeymap(String name)
 	{
@@ -147,7 +145,7 @@ public class KeymapManagerImpl implements KeymapManager
 		}
 	} //}}}
 
-	//{{{ copyKeymap() method
+	// copyKeymap() method
 	@Override
 	public boolean copyKeymap(String name, String newName)
 	{
@@ -175,7 +173,7 @@ public class KeymapManagerImpl implements KeymapManager
 		return false;
 	} //}}}
 
-	//{{{ reload() method
+	// reload() method
 	@Override
 	public void reload()
 	{
@@ -185,7 +183,7 @@ public class KeymapManagerImpl implements KeymapManager
 			currentKeymap = getKeymap(DEFAULT_KEYMAP_NAME);
 	} //}}}
 
-	//{{{ getKeymapFile() method
+	// getKeymapFile() method
 	private File getKeymapFile(String name)
 	{
 		File file = getUserKeymapFile(name);
@@ -194,19 +192,19 @@ public class KeymapManagerImpl implements KeymapManager
 		return file;
 	} //}}}
 
-	//{{{ getUserKeymapFile() method
+	// getUserKeymapFile() method
 	static File getUserKeymapFile(String name)
 	{
 		return new File(userKeymapFolder, name + "_keys.props");
 	} //}}}
 
-	//{{{ getSystemKeymapFile() method
+	// getSystemKeymapFile() method
 	private File getSystemKeymapFile(String name)
 	{
 		return new File(systemKeymapFolder, name + "_keys.props");
 	} //}}}
 
-	//{{{ getKeymapsFromFolder() method
+	// getKeymapsFromFolder() method
 	private static Collection<String> getKeymapsFromFolder(File folder)
 	{
 		if (folder == null)
@@ -225,7 +223,7 @@ public class KeymapManagerImpl implements KeymapManager
 		return names;
 	} //}}}
 
-	//{{{ getCurrentKeymapName() method
+	// getCurrentKeymapName() method
 	private String getCurrentKeymapName()
 	{
 		return propertyManager.getProperty("keymap.current");

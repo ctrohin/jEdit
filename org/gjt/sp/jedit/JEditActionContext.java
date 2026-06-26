@@ -1,7 +1,6 @@
 /*
  * JEditActionContext.java - For code sharing between jEdit and VFSBrowser
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  * Portions copyright (C) 2007 Matthieu Casanova
@@ -45,7 +44,7 @@ import static org.gjt.sp.util.StandardUtilities.EMPTY_STRING_ARRAY;
  */
 public abstract class JEditActionContext<F extends JEditAbstractEditAction, E extends JEditActionSet<F>>
 {
-	//{{{ invokeAction() method
+	// invokeAction() method
 	/**
 	 * Invokes the given action in response to a user-generated event.
 	 * @param evt The event
@@ -53,9 +52,8 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 	 * @since jEdit 4.3pre13
 	 */
 	public abstract void invokeAction(EventObject evt, F action);
-	//}}}
 
-	//{{{ addActionSet() method
+	// addActionSet() method
 	/**
 	 * @param actionSet Adds a new action set to the context.
 	 * @since jEdit 4.3pre13
@@ -79,7 +77,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 		}
 	} //}}}
 
-	//{{{ removeActionSet() method
+	// removeActionSet() method
 	/**
 	 * @param actionSet Removes an action set from the context.
 	 * @since jEdit 4.23pre13
@@ -101,7 +99,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 		}
 	} //}}}
 
-	//{{{ getActionSets() method
+	// getActionSets() method
 	/**
 	 * @return all registered action sets.
 	 * @since jEdit 4.3pre13
@@ -117,7 +115,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 		return retVal;
 	} //}}}
 
-	//{{{ getAction() method
+	// getAction() method
 	/**
 	 * Returns the specified action.
 	 * @param name The action name
@@ -133,7 +131,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 			return set.getAction(name);
 	} //}}}
 
-	//{{{ getActionSetForAction() method
+	// getActionSetForAction() method
 	/**
 	 * Returns the action set that contains the specified action.
 	 *
@@ -146,7 +144,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 		return actionHash.get(action);
 	} //}}}
 
-	//{{{ getActionNames() method
+	// getActionNames() method
 	/**
 	 * @return all registered action names.
 	 */
@@ -165,7 +163,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 		return Arrays.copyOf(actionNames, actionNames.length);
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	String[] actionNames;
 	/** 
 	 * This map contains as key an action name, 
@@ -175,9 +173,7 @@ public abstract class JEditActionContext<F extends JEditAbstractEditAction, E ex
 	
 	/** A map of built-in actions that were overridden by plugins. */
 	Hashtable<String, E> overriddenActions = new Hashtable<>();
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final Vector<E> actionSets = new Vector<>();
-	//}}}
 }

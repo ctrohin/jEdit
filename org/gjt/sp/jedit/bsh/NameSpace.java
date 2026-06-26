@@ -745,7 +745,7 @@ System.out.println("experiment: creating class manager");
 
         Object m = methods.get(name);
 
-        //{{{ jEdit version: properly handle methods with same signature.
+        // jEdit version: properly handle methods with same signature.
         if (m == null)
             methods.put(name, method);
         else if (m instanceof BshMethod)
@@ -781,9 +781,8 @@ System.out.println("experiment: creating class manager");
             }
             _methods.addElement( method );
         }
-        //}}}
 
-        //{{{ Original BeanShell code
+        // Original BeanShell code
         // if ( m == null )
         // 	methods.put(name, method);
         // else
@@ -794,7 +793,6 @@ System.out.println("experiment: creating class manager");
         // 	methods.put( name, v );
         // } else // Vector
         // 	((Vector)m).addElement( method );
-        //}}}
     }
 
     /**

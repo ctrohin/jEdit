@@ -1,7 +1,6 @@
 /*
  * AbstractEditAction.java - Base class for EditAction
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
   * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,14 +32,13 @@ package org.gjt.sp.jedit;
  */
 public abstract class JEditAbstractEditAction<E>
 {
-	//{{{ Private members
+	// Private members
 	protected String name;
 
 	protected Object[] args;
 
-	//}}}
 
-	//{{{ EditAction constructors
+	// EditAction constructors
 	/**
 	 * Creates a new edit action with the specified name.
 	 * @param name The action name
@@ -56,7 +54,7 @@ public abstract class JEditAbstractEditAction<E>
 		this.args = newArgs;
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns the internal name of this action.
 	 * @return the action name
@@ -77,7 +75,7 @@ public abstract class JEditAbstractEditAction<E>
 		name = newName;
 	}// }}}
 
-	//{{{ invoke() method
+	// invoke() method
 	/**
 	 * Invokes the action. This is an implementation of the Command pattern,
 	 * and concrete actions should override this.
@@ -96,7 +94,7 @@ public abstract class JEditAbstractEditAction<E>
 		invoke(arg);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{

@@ -1,7 +1,6 @@
 /*
  * EditPane.java - Text area and buffer switcher
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -64,7 +63,6 @@ import org.gjt.sp.jedit.textarea.TestGutter;
 import org.gjt.sp.jedit.textarea.TextAreaTransferHandler;
 import org.gjt.sp.util.SyntaxUtilities;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * A panel containing a text area.<p>
@@ -96,7 +94,7 @@ import org.gjt.sp.util.ThreadUtilities;
  */
 public class EditPane extends JPanel implements BufferSetListener
 {
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Returns the view containing this edit pane.
 	 * @return the view that contains this EditPane
@@ -120,7 +118,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return (EditPane)SwingUtilities.getAncestorOfClass(EditPane.class, ta);
 	} // }}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the current buffer.
 	 * @return the current buffer
@@ -131,7 +129,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return buffer;
 	} //}}}
 
-	//{{{ setBuffer() methods
+	// setBuffer() methods
 	/**
 	 * Sets the current buffer.
 	 * @param buffer The buffer to edit.
@@ -229,7 +227,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ prevBuffer() method
+	// prevBuffer() method
 	/**
 	 * Selects the previous buffer.
 	 * @since jEdit 2.7pre2
@@ -242,7 +240,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		setBuffer(previous);
 	} //}}}
 
-	//{{{ nextBuffer() method
+	// nextBuffer() method
 	/**
 	 * Selects the next buffer.
 	 * @since jEdit 2.7pre2
@@ -255,7 +253,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		setBuffer(buffer);
 	} //}}}
 
-	//{{{ recentBuffer() method
+	// recentBuffer() method
 	/**
 	 * Selects the most recently edited buffer.
 	 * @since jEdit 2.7pre2
@@ -268,7 +266,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null); 
 	} //}}}
 
-	//{{{ focusOnTextArea() method
+	// focusOnTextArea() method
 	/**
 	 * Sets the focus onto the text area.
 	 * @since jEdit 2.5pre2
@@ -278,7 +276,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		SwingUtilities.invokeLater(textArea::requestFocus);
 	} //}}}
 
-	//{{{ getTextArea() method
+	// getTextArea() method
 	/**
 	 * Returns the view's text area.
 	 * @return the text area of the edit pane
@@ -289,7 +287,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return textArea;
 	} //}}}
 
-	//{{{ getBufferSwitcher() method
+	// getBufferSwitcher() method
 	/**
 	 * Returns the buffer switcher combo box instance.
 	 * @return the buffer switcher (it can be null)
@@ -300,7 +298,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return bufferSwitcher;
 	} //}}}
 
-	//{{{ focusBufferSwitcher() method
+	// focusBufferSwitcher() method
 	/**
 	 * Pops up and focuses on the buffer switcher combo box.
 	 * @since jEdit 4.3pre18
@@ -320,7 +318,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ saveCaretInfo() method
+	// saveCaretInfo() method
 	/**
 	 * Saves the caret information to the current buffer.
 	 * @since jEdit 2.5pre2
@@ -366,7 +364,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ loadCaretInfo() method
+	// loadCaretInfo() method
 	/**
 	 * Loads the caret and selection information from this EditPane, fall
 	 * back to the information from the current buffer if none is already
@@ -462,7 +460,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		view.getStatus().setMessage(null);
 	} //}}}
 
-	//{{{ bufferRenamed() method
+	// bufferRenamed() method
 	/**
 	 * This method should be called by the Buffer when the path is changing.
 	 * @param oldPath the old path of the buffer
@@ -476,7 +474,7 @@ public class EditPane extends JPanel implements BufferSetListener
 
 	} //}}}
 
-	//{{{ CaretInfo class
+	// CaretInfo class
 	/**
 	 * Need to track this info for each buffer that this EditPane might edit
 	 * since a buffer may be open in more than one EditPane at a time.  That
@@ -493,7 +491,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		public boolean multipleSelection;
 	} //}}}
 
-	//{{{ goToNextMarker() method
+	// goToNextMarker() method
 	/**
 	 * Moves the caret to the next marker.
 	 * @param select whether to select the marker
@@ -531,7 +529,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		textArea.moveCaretPosition(marker.getPosition());
 	} //}}}
 
-	//{{{ goToPrevMarker() method
+	// goToPrevMarker() method
 	/**
 	 * Moves the caret to the previous marker.
 	 * @param select whether to select the marker
@@ -569,7 +567,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		textArea.moveCaretPosition(marker.getPosition());
 	} //}}}
 
-	//{{{ goToMarker() method
+	// goToMarker() method
 	/**
 	 * Moves the caret to the marker with the specified shortcut.
 	 * @param shortcut The shortcut
@@ -595,7 +593,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		textArea.moveCaretPosition(pos);
 	} //}}}
 
-	//{{{ addMarker() method
+	// addMarker() method
 	/**
 	 * Adds a marker at the caret position.
 	 * @since jEdit 3.2pre1
@@ -621,7 +619,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		buffer.addOrRemoveMarker('\0',textArea.getCaretPosition());
 	} //}}}
 
-	//{{{ swapMarkerAndCaret() method
+	// swapMarkerAndCaret() method
 	/**
 	 * Moves the caret to the marker with the specified shortcut,
 	 * then sets the marker position to the former caret position.
@@ -643,7 +641,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		buffer.addMarker(shortcut,caret);
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{
@@ -651,7 +649,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		loadBufferSwitcher();
 	} //}}}
 
-	//{{{ getMinimumSize() method
+	// getMinimumSize() method
 	/**
 	 * Returns 0,0 for split pane compatibility.
 	 */
@@ -661,7 +659,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return new Dimension(0,0);
 	} //}}}
 
-	//{{{ getBufferSet() method
+	// getBufferSet() method
 	/**
 	 * Returns the current buffer set.
 	 * This can be changed by setBufferSetScope().
@@ -673,7 +671,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		return bufferSet;
 	} //}}}
 
-	//{{{ bufferAdded() method
+	// bufferAdded() method
 	/**
 	 * A buffer was added in the bufferSet.
 	 * @param buffer the added buffer
@@ -695,7 +693,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ clearBuffer() method
+	// clearBuffer() method
 	/**
 	 * Clears the current buffer and shows the empty editor panel.
 	 */
@@ -727,7 +725,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ bufferRemoved() method
+	// bufferRemoved() method
 	/**
 	 * A buffer was removed from the bufferSet.
 	 * @param buffer the removed buffer
@@ -772,7 +770,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			bufferSwitcher.updateBufferList();
 	} //}}}
 
-	//{{{ bufferMoved() method
+	// bufferMoved() method
 	/**
 	 * A buffer was moved in the BufferSet.
 	 * @param buffer the moved buffer
@@ -787,7 +785,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			bufferSwitcher.updateBufferList();
 	} //}}}
 
-	//{{{ bufferSetSorted() method
+	// bufferSetSorted() method
 	/**
 	 * The bufferSet was sorted
 	 * @since jEdit 4.3pre16
@@ -799,7 +797,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			bufferSwitcher.updateBufferList();
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -808,9 +806,9 @@ public class EditPane extends JPanel implements BufferSetListener
 			? "active]" : "inactive]");
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ EditPane constructor
+	// EditPane constructor
 	EditPane( View view,  BufferSet bufferSetSource,  Buffer buffer)
 	{
 		super(new BorderLayout());
@@ -897,7 +895,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ close() method
+	// close() method
 	void close()
 	{
 		saveCaretInfo();
@@ -907,11 +905,10 @@ public class EditPane extends JPanel implements BufferSetListener
 	} //}}}
 
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private static final String CARD_EDITOR = "editor";
 	private static final String CARD_EMPTY = "empty";
 
@@ -969,9 +966,8 @@ public class EditPane extends JPanel implements BufferSetListener
 		layout.show(editorCard, CARD_EDITOR);
 	}
 
-	//}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	private void propertiesChanged()
 	{
 		TextAreaPainter painter = textArea.getPainter();
@@ -1074,7 +1070,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ initPainter() method
+	// initPainter() method
 	/**
 	 * Init the painter of a textarea.
 	 *
@@ -1139,7 +1135,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		painter.setFoldLineStyle(foldLineStyle);
 	} //}}}
 
-	//{{{ loadBufferSwitcher() method
+	// loadBufferSwitcher() method
 	void loadBufferSwitcher()
 	{
 		if(jEdit.getBooleanProperty("view.showBufferSwitcher") || jEdit.getBooleanProperty("view.showBufferTabs"))
@@ -1167,7 +1163,7 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ handleBufferUpdate() method
+	// handleBufferUpdate() method
 	@EBHandler
 	public void handleBufferUpdate(BufferUpdate msg)
 	{
@@ -1276,9 +1272,8 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ StatusHandler class
+	// StatusHandler class
 	class StatusHandler implements StatusListener
 	{
 		@Override
@@ -1334,37 +1329,37 @@ public class EditPane extends JPanel implements BufferSetListener
 		}
 	} //}}}
 
-	//{{{ MarkerHighlight class
+	// MarkerHighlight class
 	class MarkerHighlight extends TextAreaExtension
 	{
 		private boolean markerHighlight;
 		private Color markerHighlightColor;
 
-		//{{{ getMarkerHighlightColor() method
+		// getMarkerHighlightColor() method
 		public Color getMarkerHighlightColor()
 		{
 			return markerHighlightColor;
 		} //}}}
 
-		//{{{ setMarkerHighlightColor() method
+		// setMarkerHighlightColor() method
 		public void setMarkerHighlightColor(Color markerHighlightColor)
 		{
 			this.markerHighlightColor = markerHighlightColor;
 		} //}}}
 
-		//{{{ isMarkerHighlightEnabled() method
+		// isMarkerHighlightEnabled() method
 		public boolean isMarkerHighlightEnabled()
 		{
 			return markerHighlight;
 		} //}}}
 
-		//{{{ isMarkerHighlightEnabled()
+		// isMarkerHighlightEnabled()
 		public void setMarkerHighlightEnabled(boolean markerHighlight)
 		{
 			this.markerHighlight = markerHighlight;
 		} //}}}
 		private static final int FOLD_MARKER_SIZE = 12;
-		//{{{ paintValidLine() method
+		// paintValidLine() method
 		@Override
 		public void paintValidLine(Graphics2D gfx, int screenLine,
 			int physicalLine, int start, int end, int y)
@@ -1384,7 +1379,7 @@ public class EditPane extends JPanel implements BufferSetListener
 			}
 		} //}}}
 
-		//{{{ getToolTipText() method
+		// getToolTipText() method
 		@Override
 		public String getToolTipText(int x, int y)
 		{

@@ -1,7 +1,6 @@
 /*
  * ViewUpdate.java - View update message
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -65,7 +64,7 @@ public class ViewUpdate extends EBMessage
 	 */
 	public static final Object FULL_SCREEN_TOGGLED = "FULL_SCREEN_TOGGLED";
 
-	//{{{ ViewUpdate constructor
+	// ViewUpdate constructor
 	/**
 	 * Creates a new view update message.
 	 * @param view The view
@@ -78,7 +77,7 @@ public class ViewUpdate extends EBMessage
 		this.what = what;
 	} //}}}
 
-	//{{{ getWhat() method
+	// getWhat() method
 	/**
 	 * Returns what caused this view update.
 	 */
@@ -87,7 +86,7 @@ public class ViewUpdate extends EBMessage
 		return what;
 	} //}}}
 
-	//{{{ getView() method
+	// getView() method
 	/**
 	 * Returns the view involved.
 	 */
@@ -96,14 +95,13 @@ public class ViewUpdate extends EBMessage
 		return (View)getSource();
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	@Override
 	public String paramString()
 	{
 		return "what=" + what + "," + super.paramString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Object what;
-	//}}}
 }

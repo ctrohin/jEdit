@@ -1,7 +1,6 @@
 /*
  * IndentFoldHandler.java - Indent-based fold handler
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2002 Slava Pestov
  *
@@ -65,7 +64,7 @@ public class IndentFoldHandler extends FoldHandler
 		return (-1);
 	}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	/**
 	 * Returns the fold level of the specified line. For a whitespace-only
 	 * line, returns the fold level of the next non-whitespace line, or
@@ -100,7 +99,7 @@ public class IndentFoldHandler extends FoldHandler
 		return prevLevel;
 	} //}}}
 
-	//{{{ getPrecedingFoldLevels() method
+	// getPrecedingFoldLevels() method
 	/**
 	 * Returns the fold levels of the lines preceding the specified line,
 	 * which depend on the specified line.
@@ -133,5 +132,4 @@ public class IndentFoldHandler extends FoldHandler
 			precedingFoldLevels.add(max);
 		return precedingFoldLevels;
 	}
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.util;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
@@ -29,7 +28,6 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 import java.util.WeakHashMap;
-//}}}
 
 /**
  * An enhancement of the {@link DefaultTreeCellRenderer} to be used as superclass for custom
@@ -72,7 +70,7 @@ import java.util.WeakHashMap;
  */
 public abstract class EnhancedTreeCellRenderer extends DefaultTreeCellRenderer
 {
-	//{{{ getTreeCellRendererComponent() method
+	// getTreeCellRendererComponent() method
 	@Override
 	public final Component getTreeCellRendererComponent(JTree tree,
 		Object value, boolean selected, boolean expanded,
@@ -104,7 +102,7 @@ public abstract class EnhancedTreeCellRenderer extends DefaultTreeCellRenderer
 		return this;
 	} //}}}
 
-	//{{{ newInstance() method
+	// newInstance() method
 	/**
 	 * Creates a new instance of the tree cell renderer. Each invocation has to
 	 * return a different object. Saving a reference and returning the same
@@ -120,9 +118,8 @@ public abstract class EnhancedTreeCellRenderer extends DefaultTreeCellRenderer
 	 * @return a new readily initialized instance of this class
 	 */
 	protected abstract TreeCellRenderer newInstance();
-	//}}}
 
-	//{{{ configureTreeCellRendererComponent() method
+	// configureTreeCellRendererComponent() method
 	/**
 	 * Configures this instance of the renderer component based on the passed in
 	 * components. The value is set from messaging the tree with convertValueToText,
@@ -142,9 +139,7 @@ public abstract class EnhancedTreeCellRenderer extends DefaultTreeCellRenderer
 	protected abstract void configureTreeCellRendererComponent(JTree tree,
 		Object value, boolean selected, boolean expanded,
 		boolean leaf, int row, boolean hasFocus);
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private final Map<JTree, PropertyChangeListener> propertyChangeListeners = new WeakHashMap<>();
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * AboutDialog.java - About jEdit dialog box
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.awt.event.*;
@@ -38,14 +37,13 @@ import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
-//}}}
 
 /**
  * "About jEdit" dialog
  */
 public class AboutDialog extends JDialog
 {
-	//{{{ AboutDialog constructor
+	// AboutDialog constructor
 	public AboutDialog(View view)
 	{
 		super(view,jEdit.getProperty("about.title"), true);
@@ -91,7 +89,7 @@ public class AboutDialog extends JDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ closeDialog() method
+	// closeDialog() method
 	private void closeDialog()
 	{
 		AboutPanel.stopThread();
@@ -99,7 +97,7 @@ public class AboutDialog extends JDialog
 	} //}}}
 
 
-	//{{{ AboutPanel class
+	// AboutPanel class
 	private static class AboutPanel extends JComponent implements Runnable
 	{
 		private BufferedImage bufImage;

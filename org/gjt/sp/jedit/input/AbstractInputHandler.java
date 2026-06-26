@@ -1,7 +1,6 @@
 /*
  * AbstractInputHandler.java - Manages key bindings and executes actions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -55,13 +54,13 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 
 	protected static final int REPEAT_COUNT_THRESHOLD = 20;
 
-	//{{{ AbstractInputHandler constructor
+	// AbstractInputHandler constructor
 	public AbstractInputHandler()
 	{
 		repeatCount = 1;
 	} //}}}
 
-	//{{{ addKeyBinding() method
+	// addKeyBinding() method
 	/**
 	 * Adds a key binding to this input handler. The key binding is
 	 * a list of white space separated key strokes of the form
@@ -77,7 +76,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		addKeyBinding(keyBinding,(Object)action);
 	} //}}}
 
-	//{{{ addKeyBinding() method
+	// addKeyBinding() method
 	/**
 	 * Adds a key binding to this input handler. The key binding is
 	 * a list of white space separated key strokes of the form
@@ -92,7 +91,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		addKeyBinding(keyBinding,(Object)action);
 	} //}}}
 
-	//{{{ addKeyBinding() method
+	// addKeyBinding() method
 	/**
 	 * Adds a key binding to this input handler. The key binding is
 	 * a list of white space separated key strokes of the form
@@ -142,7 +141,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		}
 	} //}}}
 
-	//{{{ removeKeyBinding() method
+	// removeKeyBinding() method
 	/**
 	 * Removes a key binding from this input handler.
 	 *
@@ -184,7 +183,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		}
 	} //}}}
 
-	//{{{ removeAllKeyBindings() method
+	// removeAllKeyBindings() method
 	/**
 	 * Removes all key bindings from this input handler.
 	 */
@@ -193,7 +192,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		bindings.clear();
 	} //}}}
 
-	//{{{ getKeyBinding() method
+	// getKeyBinding() method
 	/**
 	 * Returns either an edit action, or a hashtable if the specified key
 	 * is a prefix.
@@ -235,7 +234,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		return null;
 	} //}}}
 
-	//{{{ getLastActionCount() method
+	// getLastActionCount() method
 	/**
 	 * Returns the number of times the last action was executed.
 	 * It can be used with smartHome and smartEnd
@@ -247,7 +246,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		return lastActionCount;
 	} //}}}
 
-	//{{{ resetLastActionCount() method
+	// resetLastActionCount() method
 	/**
 	 * Resets the last action count. This should be called when an
 	 * editing operation that is not an action is invoked, for example
@@ -259,13 +258,13 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		lastActionCount = 0;
 	} //}}}
 
-	//{{{ getKeyEventInterceptor() method
+	// getKeyEventInterceptor() method
 	public KeyListener getKeyEventInterceptor()
 	{
 		return keyEventInterceptor;
 	} //}}}
 
-	//{{{ setKeyEventInterceptor() method
+	// setKeyEventInterceptor() method
 	/**
 	 * Sets the listener that will handle all key events in this
 	 * view. For example, the complete word command uses this so
@@ -278,7 +277,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		this.keyEventInterceptor = keyEventInterceptor;
 	} //}}}
 
-	//{{{ isPrefixActive() method
+	// isPrefixActive() method
 	/**
 	 * Returns if a prefix key has been pressed.
 	 */
@@ -287,7 +286,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		return readNextChar != null;
 	} //}}}
 
-	//{{{ setBindings() method
+	// setBindings() method
 	/**
 	 * Replace the set of key bindings.
 	 * @since jEdit 4.3pre1
@@ -297,13 +296,13 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		this.bindings = this.currentBindings = bindings;
 	} //}}}
 
-	//{{{ setCurrentBindings() method
+	// setCurrentBindings() method
 	public void setCurrentBindings(Hashtable bindings)
 	{
 		currentBindings = bindings;
 	} //}}}
 
-	//{{{ handleKey() method
+	// handleKey() method
 	/**
 	 * Handles a keystroke.
 	 * @param keyStroke The key stroke.
@@ -312,9 +311,8 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 	 * @since jEdit 4.3pre7
 	 */
 	public abstract boolean handleKey(KeyEventTranslator.Key keyStroke,boolean dryRun);
-	//}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 
 	/**
 	 * Process a keyboard event.
@@ -326,9 +324,8 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 	 * @param global tell if the event comes from the DefaultKeyboardFocusManager or not
 	 */
 	public abstract void processKeyEvent(KeyEvent evt, int from, boolean global);
-	//}}}
 
-	//{{{ sendShortcutPrefixOff() method
+	// sendShortcutPrefixOff() method
 	protected void sendShortcutPrefixOff()
 	{
 		if(shortcutOn)
@@ -342,7 +339,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 
 	public abstract void invokeAction(E action);
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Return a String representation of the keyboard event for
 	 * debugging purpose.
@@ -383,7 +380,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		return b.toString();
 	} //}}}
 
-	//{{{ processKeyEventKeyStrokeHandling() method
+	// processKeyEventKeyStrokeHandling() method
 	/**
 	 *
 	 * @param evt the keyboard event
@@ -417,7 +414,7 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	// Stores prefix name in bindings hashtable
 	public static String PREFIX_STR = "PREFIX_STR";
@@ -426,5 +423,4 @@ public abstract class AbstractInputHandler<E extends JEditAbstractEditAction>
 
 	protected Hashtable bindings;
 	protected Hashtable currentBindings;
-	//}}}
 }

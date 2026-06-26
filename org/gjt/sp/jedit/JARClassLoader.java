@@ -1,7 +1,6 @@
 /*
  * JARClassLoader.java - Loads classes from JAR files
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -38,7 +37,6 @@ import java.util.jar.JarFile;
 import java.net.MalformedURLException;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
-//}}}
 
 /**
  * A class loader implementation that loads classes from JAR files. All
@@ -48,7 +46,7 @@ import java.util.jar.Attributes.Name;
  */
 public class JARClassLoader extends ClassLoader
 {
-	//{{{ JARClassLoader constructor
+	// JARClassLoader constructor
 	/**
 	 * This constructor creates a class loader for loading classes from all
 	 * plugins. For example BeanShell uses one of these so that scripts can
@@ -74,7 +72,7 @@ public class JARClassLoader extends ClassLoader
 		CleanerService.instance.register(this, () -> live--);
 	} //}}}
 
-	//{{{ loadClass() method
+	// loadClass() method
 	/**
 	 * @exception ClassNotFoundException if the class could not be found
 	 */
@@ -127,7 +125,7 @@ public class JARClassLoader extends ClassLoader
 		return loadFromParent(clazz);
 	} //}}}
 
-	//{{{ getResourceAsStream() method
+	// getResourceAsStream() method
 	@Override
 	public InputStream getResourceAsStream(String name)
 	{
@@ -161,7 +159,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ getResource() method
+	// getResource() method
 	/**
 	 * overriding getResource() because we want to search FIRST in this
 	 * ClassLoader, then the parent, the path, etc.
@@ -204,7 +202,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ getResourceAsPath() method
+	// getResourceAsPath() method
 	/**
 	 * construct a jeditresource:/etc path from the name
 	 * of a resource in the associated jar.
@@ -229,7 +227,7 @@ public class JARClassLoader extends ClassLoader
 			jar.getPath()) + '!' + name;
 	} //}}}
 
-	//{{{ dump() method
+	// dump() method
 	/**
 	 * For debugging.
 	 */
@@ -253,7 +251,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		if(jar == null)
@@ -262,7 +260,7 @@ public class JARClassLoader extends ClassLoader
 			return jar.getPath() + " (" + id + ')';
 	} //}}}
 
-	//{{{ findResources() method
+	// findResources() method
 	/**
 	 * @return zero or one resource, as returned by getResource()
 	 */
@@ -302,9 +300,9 @@ public class JARClassLoader extends ClassLoader
 		return new SingleElementEnumeration(resource);
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ JARClassLoader constructor
+	// JARClassLoader constructor
 	/**
 	 * @since jEdit 4.2pre1
 	 */
@@ -314,7 +312,7 @@ public class JARClassLoader extends ClassLoader
 		this.jar = jar;
 	} //}}}
 
-	//{{{ activate() method
+	// activate() method
 	void activate()
 	{
 		if (jar.getPlugin() != null)
@@ -339,7 +337,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ deactivate() method
+	// deactivate() method
 	void deactivate()
 	{
 		String[] classes = jar.getClasses();
@@ -367,9 +365,8 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
 	// used to mark non-existent classes in class hash
 	private static final Object NO_CLASS = new Object();
@@ -383,7 +380,7 @@ public class JARClassLoader extends ClassLoader
 	private boolean delegateFirst;
 	private PluginJAR jar;
 
-	//{{{ _loadClass() method
+	// _loadClass() method
 	/**
 	 * Load class from this JAR only.
 	 */
@@ -448,7 +445,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ definePackage(clazz) method
+	// definePackage(clazz) method
 	private void definePackage(String clazz) throws IOException
 	{
 		int idx = clazz.lastIndexOf('.');
@@ -459,7 +456,7 @@ public class JARClassLoader extends ClassLoader
 		}
 	} //}}}
 
-	//{{{ getMfValue() method
+	// getMfValue() method
 	private static String getMfValue(Attributes sectionAttrs, Attributes mainAttrs, Attributes.Name name)
 	{
 		String value=null;
@@ -471,9 +468,8 @@ public class JARClassLoader extends ClassLoader
 		}
 		return value;
 	}
-	//}}}
 
-	//{{{ definePackage(packageName, manifest) method
+	// definePackage(packageName, manifest) method
 	private void definePackage(String name, Manifest mf)
 	{
 		if (mf==null)
@@ -507,7 +503,7 @@ public class JARClassLoader extends ClassLoader
 			sealBase);
 	} //}}}
 
-	//{{{ loadFromParent() method
+	// loadFromParent() method
 	private Class loadFromParent(String clazz)
 		throws ClassNotFoundException
 	{
@@ -522,5 +518,4 @@ public class JARClassLoader extends ClassLoader
 		return cls;
 	} //}}}
 
-	//}}}
 }

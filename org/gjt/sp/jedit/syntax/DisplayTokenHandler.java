@@ -1,7 +1,7 @@
 /*
  * DisplayTokenHandler.java - converts tokens to chunks
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:encoding=utf-8:
+ * encoding=utf-8:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,13 +22,12 @@
 
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 import javax.swing.text.*;
 import java.awt.font.*;
 import java.util.List;
 import java.text.BreakIterator;
 import java.text.CharacterIterator;
-//}}}
 
 /**
  * Creates {@link Chunk} objects that can be painted on screen.
@@ -36,7 +35,7 @@ import java.text.CharacterIterator;
  */
 public class DisplayTokenHandler extends DefaultTokenHandler
 {
-	//{{{ init() method
+	// init() method
 	/**
 	 * Init some variables that will be used when marking tokens.
 	 * This is called before {@link org.gjt.sp.jedit.buffer.JEditBuffer#markTokens(int, TokenHandler)}
@@ -64,7 +63,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		this.physicalLineOffset = physicalLineOffset;
 	} //}}}
 
-	//{{{ getChunkList() method
+	// getChunkList() method
 	/**
 	 * Returns the list of chunks.
 	 * Each element is a head of linked chunks and represents a
@@ -76,7 +75,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		return out;
 	} //}}}
 
-	//{{{ handleToken() method
+	// handleToken() method
 	/**
 	 * Called by the token marker when a syntax token has been parsed.
 	 * @param seg The segment containing the text
@@ -145,22 +144,21 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		addToken(chunk, context);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
 	// Don't have chunks longer than a limit to avoid slowing things down.
 	// For example, too long chunks are hardly clipped out at rendering.
 	public static int MAX_CHUNK_LEN = 1;
 
-	//{{{ Instance variables
+	// Instance variables
 	private SyntaxStyle[] styles;
 	private FontRenderContext fontRenderContext;
 	private TabExpander expander;
 	private List<Chunk> out;
 	private float wrapMargin;
 	private int physicalLineOffset;
-	//}}}
 
-	//{{{ createChunk() method
+	// createChunk() method
 	private Chunk createChunk(byte id, int offset, int length,
 		TokenMarker.LineContext context)
 	{
@@ -169,13 +167,13 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 			context.rules.getDefault());
 	} //}}}
 
-	//{{{ initChunk() method
+	// initChunk() method
 	private void initChunk(Chunk chunk, float x, Segment lineText)
 	{
 		chunk.init(lineText,expander,x,fontRenderContext, physicalLineOffset);
 	} //}}}
 
-	//{{{ initChunks() method
+	// initChunks() method
 	private float initChunks(Chunk lineHead, Segment lineText)
 	{
 		float x = 0.0f;
@@ -187,7 +185,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		return x;
 	} //}}}
 
-	//{{{ mergeAdjucentChunks() method
+	// mergeAdjucentChunks() method
 	/**
 	 * Merges each adjucent chunks if possible, to reduce the number
 	 * of chunks for rendering performance.
@@ -210,7 +208,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//{{{ canMerge() method
+	// canMerge() method
 	private static boolean canMerge(Chunk c1, Chunk c2, Segment lineText)
 	{
 		return c1.style == c2.style
@@ -219,7 +217,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 			&& (c1.length + c2.length) <= MAX_CHUNK_LEN;
 	} //}}}
 
-	//{{{ makeWrappedLine() method
+	// makeWrappedLine() method
 	private Chunk makeWrappedLine(Chunk lineHead,
 		float virtualIndentWidth, Segment lineText)
 	{
@@ -237,7 +235,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//{{{ recalculateTabWidth() method
+	// recalculateTabWidth() method
 	// Returns true if all chunks are recaluculated and the total
 	// width fits in wrap margin.
 	private boolean recalculateTabWidthInWrapMargin(Chunk lineHead, Segment lineText)
@@ -258,7 +256,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		return true;
 	} //}}}
 
-	//{{{ endOffsetOfWhitespaces() method
+	// endOffsetOfWhitespaces() method
 	private static int endOffsetOfWhitespaces(Segment lineText, int origin)
 	{
 		int offset = origin;
@@ -271,7 +269,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		return offset;
 	} //}}}
 
-	//{{{ makeScreenLineInWrapMargin() method
+	// makeScreenLineInWrapMargin() method
 	/**
 	 * Do the main job for soft wrap feature.
 	 */
@@ -363,7 +361,6 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 					remaining = remaining.snippetAfter(moreShortened.length);
 					processedWidth += moreShortened.width;
 				}
-				//}}}
 				initChunk(remaining, virtualIndentWidth, lineText);
 				remaining.next = lineEnd.next;
 				lineHead = remaining;
@@ -378,7 +375,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//{{{ makeScreenLine() method
+	// makeScreenLine() method
 	private void makeScreenLine(Segment lineText)
 	{
 		if(firstToken == null)
@@ -401,7 +398,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//{{{ class LineBreaker
+	// class LineBreaker
 	private static class LineBreaker
 	{
 		public static final int DONE = -1;
@@ -440,7 +437,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 			}
 		}
 
-		//{{{ Private members
+		// Private members
 		private final BreakIterator iterator;
 		private final int offsetOrigin;
 		private int current;
@@ -452,10 +449,9 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 					? (iteratorOffset - offsetOrigin)
 					: DONE;
 		}
-		//}}}
 	} //}}}
 
-	//{{{ class LineBreakIterator
+	// class LineBreakIterator
 	/**
 	 * Custom break iterator to unify jEdit's line breaking rules
 	 * and natural language rules.
@@ -677,5 +673,4 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//}}}
 }

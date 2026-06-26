@@ -1,7 +1,6 @@
 /*
  * EnhancedMenu.java - jEdit menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.event.*;
 import javax.swing.*;
 import java.util.StringTokenizer;
@@ -31,23 +30,22 @@ import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.msg.*;
 import org.gjt.sp.jedit.*;
 import org.jedit.util.CleanerService;
-//}}}
 
 public class EnhancedMenu extends JMenu implements MenuListener
 {
-	//{{{ EnhancedMenu constructor
+	// EnhancedMenu constructor
 	public EnhancedMenu(String name)
 	{
 		this(name,jEdit.getProperty(name.concat(".label")), jEdit.getActionContext());
 	} //}}}
 
-	//{{{ EnhancedMenu constructor
+	// EnhancedMenu constructor
 	public EnhancedMenu(String name, String label)
 	{
 		this(name,label,jEdit.getActionContext());
 	} //}}}
 
-	//{{{ EnhancedMenu constructor
+	// EnhancedMenu constructor
 	public EnhancedMenu(String name, String label, ActionContext context)
 	{
 		this.context = context;
@@ -97,7 +95,7 @@ public class EnhancedMenu extends JMenu implements MenuListener
 		CleanerService.instance.register(this, () -> EditBus.removeFromBus(ebStub));
 	} //}}}
 
-	//{{{ menuSelected() method
+	// menuSelected() method
 	@Override
 	public void menuSelected(MenuEvent evt)
 	{
@@ -110,7 +108,7 @@ public class EnhancedMenu extends JMenu implements MenuListener
 	@Override
 	public void menuCanceled(MenuEvent e) {}
 
-	//{{{ init() method
+	// init() method
 	public void init()
 	{
 		if(providerCode == null)
@@ -141,7 +139,7 @@ public class EnhancedMenu extends JMenu implements MenuListener
 		}
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 	protected int initialComponentCount;
 	protected ActionContext context;
 
@@ -149,9 +147,8 @@ public class EnhancedMenu extends JMenu implements MenuListener
 	protected DynamicMenuProvider provider;
 
 	protected EditBusStub ebStub;
-	//}}}
 
-	//{{{ EditBusStub class
+	// EditBusStub class
 	/* EnhancedMenu has a reference to EditBusStub, but not the other
 	 * way around. So when the EnhancedMenu is being garbage collected
 	 * the Cleaner service removes the EditBusStub from the edit bus. */

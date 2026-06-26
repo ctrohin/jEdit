@@ -1,7 +1,6 @@
 /*
  * PluginOptionGroup.java - Plugin options model
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Portions Copyright (C) 2003 Slava Pestov
  * Copyright (C) 2012 Alan Ezust
@@ -84,7 +83,7 @@ public class PluginOptionGroup extends OptionGroup
 		return paneTreeModel;
 	} // }}}		
 
-	//{{{ NoPluginsPane class
+	// NoPluginsPane class
 	public static class NoPluginsPane extends AbstractOptionPane
 	{
 		public NoPluginsPane()

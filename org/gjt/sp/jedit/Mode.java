@@ -1,7 +1,6 @@
 /*
  * Mode.java - jEdit editing mode
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000 Slava Pestov
  * Copyright (C) 1999 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,7 +36,6 @@ import org.gjt.sp.jedit.syntax.TokenMarker;
 import org.gjt.sp.jedit.syntax.ModeProvider;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * An edit mode defines specific settings for editing some type of file.
@@ -48,7 +46,7 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class Mode
 {
-	//{{{ Mode constructor
+	// Mode constructor
 	/**
 	 * Creates a new edit mode.
 	 *
@@ -63,7 +61,7 @@ public class Mode
 		props = new Hashtable<>();
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Initializes the edit mode. Should be called after all properties
 	 * are loaded and set.
@@ -122,7 +120,7 @@ public class Mode
 		marker = null;
 	} //}}}
 
-	//{{{ getTokenMarker() method
+	// getTokenMarker() method
 	/**
 	 * Returns the token marker for this mode.
 	 */
@@ -132,7 +130,7 @@ public class Mode
 		return marker;
 	} //}}}
 
-	//{{{ setTokenMarker() method
+	// setTokenMarker() method
 	/**
 	 * Sets the token marker for this mode.
 	 * @param marker The new token marker
@@ -142,7 +140,7 @@ public class Mode
 		this.marker = marker;
 	} //}}}
 
-	//{{{ loadIfNecessary() method
+	// loadIfNecessary() method
 	/**
 	 * Loads the mode from disk if it hasn't been loaded already.
 	 * @since jEdit 2.5pre3
@@ -157,19 +155,19 @@ public class Mode
 		}
 	} //}}}
 
-	//{{{ isUserMode method
+	// isUserMode method
 	public boolean isUserMode() 
 	{
 		return isUserMode;	
 	} //}}}
 	
-	//{{{ setUserMode method
+	// setUserMode method
 	public void setUserMode(boolean b) 
 	{
 		isUserMode = b;	
 	} //}}}
 	
-	//{{{ getProperty() method
+	// getProperty() method
 	/**
 	 * Returns a mode property.
 	 * @param key The property name
@@ -181,7 +179,7 @@ public class Mode
 		return props.get(key);
 	} //}}}
 
-	//{{{ getBooleanProperty() method
+	// getBooleanProperty() method
 	/**
 	 * Returns the value of a boolean property.
 	 * @param key The property name
@@ -194,7 +192,7 @@ public class Mode
 		return StandardUtilities.getBoolean(value, false);
 	} //}}}
 
-	//{{{ setProperty() method
+	// setProperty() method
 	/**
 	 * Sets a mode property.
 	 * @param key The property name
@@ -205,7 +203,7 @@ public class Mode
 		props.put(key,value);
 	} //}}}
 
-	//{{{ unsetProperty() method
+	// unsetProperty() method
 	/**
 	 * Unsets a mode property.
 	 * @param key The property name
@@ -216,7 +214,7 @@ public class Mode
 		props.remove(key);
 	} //}}}
 
-	//{{{ setProperties() method
+	// setProperties() method
 	/**
 	 * Should only be called by <code>XModeHandler</code>.
 	 * @since jEdit 4.0pre3
@@ -233,7 +231,7 @@ public class Mode
 		this.props.putAll(props);
 	} //}}}
 
-	//{{{ accept() method
+	// accept() method
 	/**
 	 * Returns true if the edit mode is suitable for editing the specified
 	 * file. The buffer name and first line is checked against the
@@ -248,7 +246,7 @@ public class Mode
 		return accept(null, fileName, firstLine);
 	} //}}}
 
-	//{{{ accept() method
+	// accept() method
 	/**
 	 * Returns true if the edit mode is suitable for editing the specified
 	 * file. The buffer name and first line is checked against the
@@ -266,7 +264,7 @@ public class Mode
 				|| acceptFirstLine(firstLine);
 	} //}}}
 
-	//{{{ acceptFile() method
+	// acceptFile() method
 	/**
 	 * Returns true if the buffer's name or path matches the file name glob.
 	 * @param filePath The buffer's path, can be {@code null}
@@ -283,7 +281,7 @@ public class Mode
 			filePath != null && filepathMatcher.reset(filePath).matches();
 	} //}}}
 
-	//{{{ acceptFilenameIdentical() method
+	// acceptFilenameIdentical() method
 	/**
 	 * Returns true if the buffer name is identical to the file name glob.
 	 * This works only for regular expressions that only represent themselves,
@@ -297,7 +295,7 @@ public class Mode
 		return acceptIdentical(null, fileName);
 	} //}}}
 
-	//{{{ acceptIdentical() method
+	// acceptIdentical() method
 	/**
 	 * Returns true if the buffer path or name is identical to the file name glob.
 	 * This works only for regular expressions that only represent themselves,
@@ -331,7 +329,7 @@ public class Mode
 		return false;
 	} //}}}
 
-	//{{{ acceptFirstLine() method
+	// acceptFirstLine() method
 	/**
 	 * Returns true if the first line matches the first line glob.
 	 * @param firstLine The first line of the buffer
@@ -346,7 +344,7 @@ public class Mode
 		return firstLine != null && firstlineMatcher.reset(firstLine).matches();
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns the internal name of this edit mode.
 	 */
@@ -355,7 +353,7 @@ public class Mode
 		return name;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Returns a string representation of this edit mode.
 	 */
@@ -364,15 +362,15 @@ public class Mode
 		return name;
 	} //}}}
 
-	//{{{ getIgnoreWhitespace() method
+	// getIgnoreWhitespace() method
 	public boolean getIgnoreWhitespace()
 	{
 		return ignoreWhitespace;
 	} //}}}
 
-	//{{{ Indent rules
+	// Indent rules
 
-	//{{{ getIndentRules() method
+	// getIndentRules() method
 	public synchronized List<IndentRule> getIndentRules()
 	{
 		if (indentRules == null)
@@ -382,7 +380,7 @@ public class Mode
 		return indentRules;
 	} //}}}
 
-	//{{{ isElectricKey() method
+	// isElectricKey() method
 	public synchronized boolean isElectricKey(char ch)
 	{
 		if (electricKeys == null)
@@ -407,7 +405,7 @@ public class Mode
 		return (electricKeys.indexOf(ch) >= 0);
 	} //}}}
 
-	//{{{ initIndentRules() method
+	// initIndentRules() method
 	private void initIndentRules()
 	{
 		List<IndentRule> rules = new LinkedList<>();
@@ -467,7 +465,7 @@ public class Mode
 		indentRules = Collections.unmodifiableList(rules);
 	} //}}}
 
-	//{{{ createRegexpIndentRule() method
+	// createRegexpIndentRule() method
 	private IndentRule createRegexpIndentRule(String prop)
 	{
 		String value = (String) getProperty(prop);
@@ -491,7 +489,7 @@ public class Mode
 		return null;
 	} //}}}
 
-	//{{{ createBracketIndentRules() method
+	// createBracketIndentRules() method
 	private void createBracketIndentRules(String prop,
 						Collection<IndentRule> rules)
 	{
@@ -519,9 +517,8 @@ public class Mode
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	protected final String name;
 	protected final Map<String, Object> props;
 	private Matcher firstlineMatcher;
@@ -531,5 +528,4 @@ public class Mode
 	private String electricKeys;
 	private boolean ignoreWhitespace;
 	private boolean isUserMode;
-	//}}}
 }

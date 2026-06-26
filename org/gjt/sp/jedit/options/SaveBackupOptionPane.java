@@ -1,7 +1,6 @@
 /*
  * AutosaveBackupOptionPane.java - Autosave & backup options
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.NumericTextField;
 import org.gjt.sp.jedit.browser.VFSBrowser;
 import org.gjt.sp.jedit.manager.BufferManager;
-//}}}
 
 /**
  * The Save and Backup option panel.
@@ -39,13 +37,13 @@ import org.gjt.sp.jedit.manager.BufferManager;
  */
 public class SaveBackupOptionPane extends AbstractOptionPane
 {
-	//{{{ SaveBackupOptionPane constructor
+	// SaveBackupOptionPane constructor
 	public SaveBackupOptionPane()
 	{
 		super("save-back");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -179,7 +177,7 @@ public class SaveBackupOptionPane extends AbstractOptionPane
 		addComponent(backupEverySave);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -216,7 +214,7 @@ public class SaveBackupOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JCheckBox saveAsUsesFSB;
 	private JCheckBox twoStageSave;
 	private JCheckBox confirmSaveAll;
@@ -231,5 +229,4 @@ public class SaveBackupOptionPane extends AbstractOptionPane
 	private JTextField backupPrefix;
 	private JTextField backupSuffix;
 	private JCheckBox backupEverySave;
-	//}}}
 }

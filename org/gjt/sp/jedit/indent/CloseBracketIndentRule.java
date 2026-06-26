@@ -1,7 +1,6 @@
 /*
  * CloseBracketIndentRule.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -33,14 +32,14 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class CloseBracketIndentRule extends BracketIndentRule
 {
-	//{{{ CloseBracketIndentRule constructor
+	// CloseBracketIndentRule constructor
 	public CloseBracketIndentRule(char closeBracket, boolean aligned)
 	{
 		super(TextUtilities.getComplementaryBracket(closeBracket,null), closeBracket);
 		this.aligned = aligned;
 	} //}}}
 
-	//{{{ apply() method
+	// apply() method
 	@Override
 	public void apply(JEditBuffer buffer, int thisLineIndex,
 		int prevLineIndex, int prevPrevLineIndex,
@@ -99,7 +98,7 @@ public class CloseBracketIndentRule extends BracketIndentRule
 
 	private final boolean aligned;
 
-	//{{{ AlignBracket class
+	// AlignBracket class
 	private static class AlignBracket implements IndentAction
 	{
 		private final int openBracketLine;

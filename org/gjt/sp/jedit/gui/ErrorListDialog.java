@@ -1,7 +1,6 @@
 /*
  * ErrorListDialog.java - Used to list I/O and plugin load errors
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,14 +37,13 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.pluginmgr.PluginManager;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * Used to list I/O and plugin load errors
  */
 public class ErrorListDialog extends EnhancedDialog
 {
-	//{{{ ErrorEntry class
+	// ErrorEntry class
 	public static class ErrorEntry
 	{
 		String path;
@@ -110,7 +108,7 @@ public class ErrorListDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ JTextPaneSized class
+	// JTextPaneSized class
 	/**
 	 * This text pane sets its size to a constant amount of 80x25 chars,
 	 * when used inside a scrollpane.
@@ -127,7 +125,7 @@ public class ErrorListDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ ErrorListDialog constructor
+	// ErrorListDialog constructor
 	public ErrorListDialog(Frame frame, String title, String caption,
 		Vector<ErrorEntry> messages, boolean pluginError)
 	{
@@ -204,14 +202,14 @@ public class ErrorListDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{

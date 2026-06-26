@@ -1,7 +1,6 @@
 /*
  * Macros.java - Macro manager
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  * Portions copyright (C) 2002 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.msg.BufferUpdate;
 import org.gjt.sp.jedit.msg.DynamicMenuChanged;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
-//}}}
 
 /**
  * This class records and runs macros.<p>
@@ -61,7 +59,7 @@ import java.util.regex.Pattern;
  */
 public class Macros
 {
-	//{{{ showRunScriptDialog() method
+	// showRunScriptDialog() method
 	/**
 	 * Prompts for one or more files to run as macros
 	 * @param view The view
@@ -85,7 +83,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ runScript() method
+	// runScript() method
 	/**
 	 * Runs the specified script.
 	 * Unlike the {@link BeanShell#runScript(View,String,Reader,boolean)}
@@ -137,7 +135,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ message() method
+	// message() method
 	/**
 	 * Utility method that can be used to display a message dialog in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -170,7 +168,7 @@ public class Macros
 		
 	} //}}}
 
-	//{{{ error() method
+	// error() method
 	/**
 	 * Utility method that can be used to display an error dialog in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -201,7 +199,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ input() method
+	// input() method
 	/**
 	 * Utility method that can be used to prompt for input in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -216,7 +214,7 @@ public class Macros
 		return input(comp,prompt,null);
 	} //}}}
 
-	//{{{ input() method
+	// input() method
 	/**
 	 * Utility method that can be used to prompt for input in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -246,7 +244,7 @@ public class Macros
 		return retValue[0];
 	} //}}}
 
-	//{{{ confirm() method
+	// confirm() method
 	/**
 	 * Utility method that can be used to ask for confirmation in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -283,7 +281,7 @@ public class Macros
 		
 	} //}}}
 
-	//{{{ confirm() method
+	// confirm() method
 	/**
 	 * Utility method that can be used to ask for confirmation in a macro.
 	 * @param comp The component to show the dialog on behalf of, this
@@ -315,7 +313,7 @@ public class Macros
 		return retValue[0];
 	} //}}}
 
-	//{{{ loadMacros() method
+	// loadMacros() method
 	/**
 	 * Rebuilds the macros list, and sends a MacrosChanged message
 	 * (views update their Macros menu upon receiving it)
@@ -349,7 +347,7 @@ public class Macros
 		EditBus.send(new DynamicMenuChanged("macros"));
 	} //}}}
 
-	//{{{ registerHandler() method
+	// registerHandler() method
 	/**
 	 * Adds a macro handler to the handlers list
 	 * @since jEdit 4.0pre6
@@ -367,7 +365,7 @@ public class Macros
 		macroHandlers.add(handler);
 	} //}}}
 
-	//{{{ unregisterHandler() method
+	// unregisterHandler() method
 	/**
 	 * Removes a macro handler from the handlers list
 	 * @since jEdit 4.4.1
@@ -386,7 +384,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ getHandlers() method
+	// getHandlers() method
 	/**
 	 * Returns an array containing the list of registered macro handlers
 	 * @since jEdit 4.0pre6
@@ -397,7 +395,7 @@ public class Macros
 		return macroHandlers.toArray(handlers);
 	} //}}}
 
-	//{{{ getHandlerForFileName() method
+	// getHandlerForFileName() method
 	/**
 	 * Returns the macro handler suitable for running the specified file
 	 * name, or null if there is no suitable handler.
@@ -414,7 +412,7 @@ public class Macros
 		return null;
 	} //}}}
 
-	//{{{ getHandler() method
+	// getHandler() method
 	/**
 	 * Returns the macro handler with the specified name, or null if
 	 * there is no registered handler with that name.
@@ -430,9 +428,8 @@ public class Macros
 
 		return null;
 	}
-	//}}}
 
-	//{{{ getMacroHierarchy() method
+	// getMacroHierarchy() method
 	/**
 	 * Returns a vector hierarchy with all known macros in it.
 	 * Each element of this vector is either a macro name string,
@@ -446,7 +443,7 @@ public class Macros
 		return macroHierarchy;
 	} //}}}
 
-	//{{{ getMacroActionSet() method
+	// getMacroActionSet() method
 	/**
 	 * Returns an action set with all known macros in it.
 	 * @since jEdit 4.0pre1
@@ -456,7 +453,7 @@ public class Macros
 		return macroActionSet;
 	} //}}}
 
-	//{{{ getMacro() method
+	// getMacro() method
 	/**
 	 * Returns the macro with the specified name.
 	 * @param macro The macro's name
@@ -467,7 +464,7 @@ public class Macros
 		return macroHash.get(macro);
 	} //}}}
 
-	//{{{ getLastMacro() method
+	// getLastMacro() method
 	/**
 	 * @since jEdit 4.3pre1
 	 */
@@ -476,7 +473,7 @@ public class Macros
 		return lastMacro;
 	} //}}}
 
-	//{{{ setLastMacro() method
+	// setLastMacro() method
 	/**
 	 * @since jEdit 4.3pre1
 	 */
@@ -485,14 +482,14 @@ public class Macros
 		lastMacro = macro;
 	} //}}}
 
-	//{{{ Macro class
+	// Macro class
 	/**
 	 * Encapsulates the macro's label, name and path.
 	 * @since jEdit 2.2pre4
 	 */
 	public static class Macro extends EditAction
 	{
-		//{{{ Macro constructor
+		// Macro constructor
 		public Macro(Handler handler, String name, String label, String path)
 		{
 			super(name);
@@ -501,20 +498,19 @@ public class Macros
 			this.path = path;
 		} //}}}
 
-		//{{{ getHandler() method
+		// getHandler() method
 		public Handler getHandler()
 		{
 			return handler;
 		}
-		//}}}
 
-		//{{{ getPath() method
+		// getPath() method
 		public String getPath()
 		{
 			return path;
 		} //}}}
 
-		//{{{ invoke() method
+		// invoke() method
 		@Override
 		public void invoke(View view)
 		{
@@ -536,35 +532,34 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ getCode() method
+		// getCode() method
 		@Override
 		public String getCode()
 		{
 			return "Macros.getMacro(\"" + getName() + "\").invoke(view);";
 		} //}}}
 
-		//{{{ macroNameToLabel() method
+		// macroNameToLabel() method
 		public static String macroNameToLabel(String macroName)
 		{
 			int index = macroName.lastIndexOf('/');
 			return macroName.substring(index + 1).replace('_', ' ');
 		}//}}}
 
-		//{{{ getLabel() method
+		// getLabel() method
 		@Override
 		public String getLabel()
 		{
 			return label;
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final Handler handler;
 		private final String path;
 		private final String label;
-		//}}}
 	} //}}}
 
-	//{{{ recordTemporaryMacro() method
+	// recordTemporaryMacro() method
 	/**
 	 * Starts recording a temporary macro.
 	 * @param view The view
@@ -597,7 +592,7 @@ public class Macros
 		recordMacro(view,buffer,true);
 	} //}}}
 
-	//{{{ recordMacro() method
+	// recordMacro() method
 	/**
 	 * Starts recording a macro.
 	 * @param view The view
@@ -638,7 +633,7 @@ public class Macros
 		recordMacro(view,buffer,false);
 	} //}}}
 
-	//{{{ stopRecording() method
+	// stopRecording() method
 	/**
 	 * Stops a recording currently in progress.
 	 * @param view The view
@@ -659,7 +654,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ runTemporaryMacro() method
+	// runTemporaryMacro() method
 	/**
 	 * Runs the temporary macro.
 	 * @param view The view
@@ -705,9 +700,9 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static String systemMacroPath;
 	private static String userMacroPath;
 
@@ -718,9 +713,8 @@ public class Macros
 	private static final Map<String, Macro> macroHash;
 
 	private static Macro lastMacro;
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		macroHandlers = new ArrayList<Handler>();
@@ -731,7 +725,7 @@ public class Macros
 		macroHash = new Hashtable<>();
 	} //}}}
 
-	//{{{ loadMacros() method
+	// loadMacros() method
 	@SuppressWarnings({"unchecked"})	// TODO: figure out what is in 'list', might be a list of lists
 	private static void loadMacros(List list, String path, File directory)
 	{
@@ -752,7 +746,7 @@ public class Macros
 			{
 				String submenuName = fileName.replace('_', ' ');
 				List submenu = null;
-				//{{{ try to merge with an existing menu first
+				// try to merge with an existing menu first
 				for (Object obj : list)
 				{
 					if (obj instanceof List)
@@ -780,7 +774,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ addMacro() method
+	// addMacro() method
 	@SuppressWarnings({"unchecked"})
 	private static void addMacro(File file, String path, List list)
 	{
@@ -818,7 +812,7 @@ public class Macros
 		}
 	} //}}}
 
-	//{{{ recordMacro() method
+	// recordMacro() method
 	/**
 	 * Starts recording a macro.
 	 * @param view The view
@@ -835,9 +829,8 @@ public class Macros
 		view.getStatus().setMessage(null);
 	} //}}}
 
-	//}}}
 
-	//{{{ Recorder class
+	// Recorder class
 	/**
 	 * Handles macro recording.
 	 */
@@ -851,7 +844,7 @@ public class Macros
 		boolean lastWasOverwrite;
 		int overwriteCount;
 
-		//{{{ Recorder constructor
+		// Recorder constructor
 		public Recorder(View view, Buffer buffer, boolean temporary)
 		{
 			this.view = view;
@@ -860,7 +853,7 @@ public class Macros
 			EditBus.addToBus(this);
 		} //}}}
 
-		//{{{ record() method
+		// record() method
 		public void record(String code)
 		{
 			if (BeanShell.isScriptRunning())
@@ -871,7 +864,7 @@ public class Macros
 			append(code);
 		} //}}}
 
-		//{{{ record() method
+		// record() method
 		public void record(int repeat, String code)
 		{
 			if(repeat == 1)
@@ -885,7 +878,7 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ recordInput() method
+		// recordInput() method
 		/**
 		 * @since jEdit 4.2pre5
 		 */
@@ -903,7 +896,7 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ recordInput() method
+		// recordInput() method
 		/**
 		 * @since jEdit 4.2pre5
 		 */
@@ -939,7 +932,7 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ handleBufferUpdate() method
+		// handleBufferUpdate() method
 		@EBHandler
 		public void handleBufferUpdate(BufferUpdate bmsg)
 		{
@@ -949,13 +942,13 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ append() method
+		// append() method
 		private void append(String str)
 		{
 			buffer.insert(buffer.getLength(),str);
 		} //}}}
 
-		//{{{ dispose() method
+		// dispose() method
 		private void dispose()
 		{
 			flushInput();
@@ -972,7 +965,7 @@ public class Macros
 			view.getStatus().setMessage(null);
 		} //}}}
 
-		//{{{ flushInput() method
+		// flushInput() method
 		/**
 		 * We try to merge consecutive inputs. This helper method is
 		 * called when something other than input is to be recorded.
@@ -999,45 +992,43 @@ public class Macros
 		} //}}}
 	} //}}}
 
-	//{{{ Handler class
+	// Handler class
 	/**
 	 * Encapsulates creating and invoking macros in arbitrary scripting languages
 	 * @since jEdit 4.0pre6
 	 */
 	public abstract static class Handler
 	{
-		//{{{ getName() method
+		// getName() method
 		public String getName()
 		{
 			return name;
 		} //}}}
 
-		//{{{ getLabel() method
+		// getLabel() method
 		public String getLabel()
 		{
 			return label;
 		} //}}}
 
-		//{{{ accept() method
+		// accept() method
 		public boolean accept(String path)
 		{
 			return filter.matcher(MiscUtilities.getFileName(path)).matches();
 		} //}}}
 
-		//{{{ createMacro() method
+		// createMacro() method
 		public abstract Macro createMacro(String macroName, String path);
-		//}}}
 
-		//{{{ runMacro() method
+		// runMacro() method
 		/**
 		 * Runs the specified macro.
 		 * @param view The view - may be null.
 		 * @param macro The macro.
 		 */
 		public abstract void runMacro(View view, Macro macro);
-		//}}}
 
-		//{{{ runMacro() method
+		// runMacro() method
 		/**
 		 * Runs the specified macro. This method is optional; it is
 		 * called if the specified macro is a startup script. The
@@ -1056,7 +1047,7 @@ public class Macros
 			runMacro(view,macro);
 		} //}}}
 
-		//{{{ Handler constructor
+		// Handler constructor
 		protected Handler(String name)
 		{
 			this.name = name;
@@ -1074,23 +1065,22 @@ public class Macros
 			}
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final String name;
 		private final String label;
 		private final Pattern filter;
-		//}}}
 	} //}}}
 
-	//{{{ BeanShellHandler class
+	// BeanShellHandler class
 	private static class BeanShellHandler extends Handler
 	{
-		//{{{ BeanShellHandler constructor
+		// BeanShellHandler constructor
 		BeanShellHandler()
 		{
 			super("beanshell");
 		} //}}}
 
-		//{{{ createMacro() method
+		// createMacro() method
 		@Override
 		public Macro createMacro(String macroName, String path)
 		{
@@ -1101,14 +1091,14 @@ public class Macros
 				Macro.macroNameToLabel(macroName), path);
 		} //}}}
 
-		//{{{ runMacro() method
+		// runMacro() method
 		@Override
 		public void runMacro(View view, Macro macro)
 		{
 			BeanShell.runScript(view,macro.getPath(),null,true);
 		} //}}}
 
-		//{{{ runMacro() method
+		// runMacro() method
 		@Override
 		public void runMacro(View view, Macro macro, boolean ownNamespace)
 		{

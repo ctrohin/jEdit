@@ -1,7 +1,6 @@
 /*
  * BufferSetWidgetFactory.java - The bufferSet widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008, 2009 Matthieu Casanova
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
@@ -34,7 +33,6 @@ import org.gjt.sp.jedit.bufferset.BufferSet;
 import org.gjt.sp.jedit.msg.PropertiesChanged;
 import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
 
-//}}}
 
 /**
  * A Statusbar widget that show the bufferSet's scope of the current edit pane.
@@ -44,7 +42,7 @@ import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
  */
 public class BufferSetWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
@@ -52,7 +50,7 @@ public class BufferSetWidgetFactory implements StatusWidgetFactory
 		return bufferSetWidget;
 	} //}}}
 
-	//{{{ BufferSetWidget class
+	// BufferSetWidget class
 	private static class BufferSetWidget implements Widget, EBComponent
 	{
 		private final JLabel bufferSetLabel;
@@ -102,14 +100,14 @@ public class BufferSetWidgetFactory implements StatusWidgetFactory
 			}
 		}
 
-		//{{{ getComponent() method
+		// getComponent() method
 		@Override
 		public JComponent getComponent()
 		{
 			return bufferSetLabel;
 		} //}}}
 
-		//{{{ update() method
+		// update() method
 		@Override
 		public void update()
 		{
@@ -122,7 +120,7 @@ public class BufferSetWidgetFactory implements StatusWidgetFactory
 			}
 		} //}}}
 
-		//{{{ handleMessage() method
+		// handleMessage() method
 		@Override
 		public void handleMessage(EBMessage message)
 		{

@@ -1,7 +1,6 @@
 /*
  * OpenBracketIndentRule.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -33,7 +32,7 @@ import org.gjt.sp.jedit.TextUtilities;
  */
 public class OpenBracketIndentRule extends BracketIndentRule
 {
-	//{{{ OpenBracketIndentRule constructor
+	// OpenBracketIndentRule constructor
 	public OpenBracketIndentRule(char openBracket, boolean aligned)
 	{
 		super(openBracket,
@@ -41,7 +40,7 @@ public class OpenBracketIndentRule extends BracketIndentRule
 		this.aligned = aligned;
 	} //}}}
 
-	//{{{ apply() method
+	// apply() method
 	@Override
 	public void apply(JEditBuffer buffer, int thisLineIndex,
 		int prevLineIndex, int prevPrevLineIndex,
@@ -63,7 +62,7 @@ public class OpenBracketIndentRule extends BracketIndentRule
 		}
 	} //}}}
 
-	//{{{ getOpenBracketCount() method
+	// getOpenBracketCount() method
 	private int getOpenBracketCount(JEditBuffer buffer, int line)
 	{
 		if(line == -1)
@@ -72,7 +71,7 @@ public class OpenBracketIndentRule extends BracketIndentRule
 			return getBrackets(buffer, line).openCount;
 	} //}}}
 
-	//{{{ handleCollapse() method
+	// handleCollapse() method
 	private static void handleCollapse(Collection<IndentAction> indentActions, boolean delPrevPrevCollapse)
 	{
 		if (indentActions.contains(IndentAction.PrevCollapse))

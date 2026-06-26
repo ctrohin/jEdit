@@ -1,7 +1,6 @@
 /*
  * EditServer.java - jEdit server
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.bsh.NameSpace;
 
 import javax.swing.*;
@@ -31,7 +30,6 @@ import java.net.*;
 import java.util.Random;
 import org.gjt.sp.jedit.io.FileVFS;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * Inter-process communication.<p>
@@ -60,7 +58,7 @@ import org.gjt.sp.util.Log;
  */
 public class EditServer extends Thread
 {
-	//{{{ EditServer constructor
+	// EditServer constructor
 	EditServer(String portFile)
 	{
 		super("jEdit server daemon [" + portFile + "]");
@@ -119,7 +117,7 @@ public class EditServer extends Thread
 		}
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void run()
 	{
@@ -164,7 +162,7 @@ public class EditServer extends Thread
 		}
 	} //}}}
 
-	//{{{ handleClient() method
+	// handleClient() method
 	/**
 	 * @param restore Ignored unless no views are open
 	 * @param parent The client's parent directory
@@ -177,7 +175,7 @@ public class EditServer extends Thread
 		handleClient(restore,false,false,parent,args);
 	} //}}}
 
-	//{{{ handleClient() method
+	// handleClient() method
 	/**
 	 * @param restore Ignored unless no views are open
 	 * @param newView Open a new view?
@@ -259,19 +257,19 @@ public class EditServer extends Thread
 		}
 	} //}}}
 
-	//{{{ isOK() method
+	// isOK() method
 	boolean isOK()
 	{
 		return ok;
 	} //}}}
 
-	//{{{ getPort method
+	// getPort method
 	public int getPort()
 	{
 		return socket.getLocalPort();
 	} //}}}
 
-	//{{{ stopServer() method
+	// stopServer() method
 	void stopServer()
 	{
 		abort = true;
@@ -286,17 +284,16 @@ public class EditServer extends Thread
 		new File(portFile).delete();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final String portFile;
 	private ServerSocket socket;
 	private int authKey;
 	private boolean ok;
 	private boolean abort;
-	//}}}
 
-	//{{{ handleClient() method
+	// handleClient() method
 	private void handleClient(final Socket client, DataOutputStream out, DataInputStream in)
 		throws Exception
 	{
@@ -354,5 +351,4 @@ public class EditServer extends Thread
 		}
 	} //}}}
 
-	//}}}
 }

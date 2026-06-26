@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011-2013 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Task;
 import org.gjt.sp.util.TaskListener;
@@ -34,7 +33,6 @@ import java.awt.event.MouseEvent;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
 import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
-//}}}
 
 /**
  * A Statusbar widget that monitor the task manager.
@@ -44,7 +42,7 @@ import static org.gjt.sp.jedit.gui.adapters.MouseAdapters.mouseClicked;
  */
 public class TaskMonitorWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
@@ -53,7 +51,7 @@ public class TaskMonitorWidgetFactory implements StatusWidgetFactory
 		return widget;
 	} //}}}
 
-	//{{{ TaskMonitorWidget class
+	// TaskMonitorWidget class
 	private static class TaskMonitorWidget extends JLabel implements Widget, TaskListener
 	{
 		private final MessageFormat messageFormat;

@@ -1,7 +1,6 @@
 /*
  * FloatingWindowContainer.java - holds dockable windows
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -38,7 +37,6 @@ import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.icons.IconManager;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * A container for dockable windows. This class should never be used
@@ -50,7 +48,7 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 {
 	private String dockableName;
 
-	//{{{ FloatingWindowContainer constructor
+	// FloatingWindowContainer constructor
 	public FloatingWindowContainer(DockableWindowManagerImpl dockableWindowManager,
 		boolean clone)
 	{
@@ -73,7 +71,7 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 		getContentPane().add(BorderLayout.NORTH,caption);
 	} //}}}
 
-	//{{{ register() method
+	// register() method
 	@Override
 	public void register(DockableWindowManagerImpl.Entry entry)
 	{
@@ -98,14 +96,14 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 			entry.win.setVisible(true);
 	} //}}}
 
-	//{{{ remove() method
+	// remove() method
 	@Override
 	public void remove(DockableWindowManagerImpl.Entry entry)
 	{
 		dispose();
 	} //}}}
 
-	//{{{ unregister() method
+	// unregister() method
 	@Override
 	public void unregister(DockableWindowManagerImpl.Entry entry)
 	{
@@ -118,7 +116,7 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 		super.dispose();
 	} //}}}
 
-	//{{{ show() method
+	// show() method
 	@Override
 	public void show(final DockableWindowManagerImpl.Entry entry)
 	{
@@ -143,14 +141,14 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 		}
 	} //}}}
 
-	//{{{ isVisible() method
+	// isVisible() method
 	@Override
 	public boolean isVisible(DockableWindowManagerImpl.Entry entry)
 	{
 		return true;
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -159,27 +157,26 @@ public class FloatingWindowContainer extends JFrame implements DockableWindowCon
 		super.dispose();
 	} //}}}
 
-	//{{{ getDockableWindowManager() method
+	// getDockableWindowManager() method
 	public DockableWindowManagerImpl getDockableWindowManager()
 	{
 		return dockableWindowManager;
 	} //}}}
 
-	//{{{ getMinimumSize() method
+	// getMinimumSize() method
 	@Override
 	public Dimension getMinimumSize()
 	{
 		return new Dimension(0,0);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final DockableWindowManagerImpl dockableWindowManager;
 	private final boolean clone;
 	private DockableWindowManagerImpl.Entry entry;
 	private final JButton menu;
-	//}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		private JPopupMenu popup;

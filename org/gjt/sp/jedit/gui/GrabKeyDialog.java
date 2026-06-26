@@ -1,7 +1,6 @@
 /*
  * GrabKeyDialog.java - Grabs keys from the keyboard
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -34,14 +33,13 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.input.AbstractInputHandler;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * A dialog for getting shortcut keys.
  */
 public class GrabKeyDialog extends JDialog
 {
-	//{{{ GrabKeyDialog constructor
+	// GrabKeyDialog constructor
 	/**
 	 * Create and show a new modal dialog.
 	 *
@@ -60,7 +58,7 @@ public class GrabKeyDialog extends JDialog
 		init(binding,allBindings,debugBuffer);
 	} //}}}
 
-	//{{{ GrabKeyDialog constructor
+	// GrabKeyDialog constructor
 	/**
 	 * Create and show a new modal dialog.
 	 *
@@ -79,7 +77,7 @@ public class GrabKeyDialog extends JDialog
 		init(binding,allBindings,debugBuffer);
 	} //}}}
 
-	//{{{ getShortcut() method
+	// getShortcut() method
 	/**
 	 * Returns the shortcut, or null if the current shortcut should be
 	 * removed or the dialog either has been cancelled. Use isOK()
@@ -93,7 +91,7 @@ public class GrabKeyDialog extends JDialog
 			return null;
 	} //}}}
 
-	//{{{ isOK() method
+	// isOK() method
 	/**
 	 * Returns true, if the dialog has not been cancelled.
 	 * @since jEdit 3.2pre9
@@ -103,7 +101,7 @@ public class GrabKeyDialog extends JDialog
 		return isOK;
 	} //}}}
 
-	//{{{ getFocusTraversalKeysEnabled() method
+	// getFocusTraversalKeysEnabled() method
 	/**
 	 * Makes the tab key work in Java 1.4.
 	 * @since jEdit 3.2pre4
@@ -114,16 +112,16 @@ public class GrabKeyDialog extends JDialog
 		return false;
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	protected void processKeyEvent(KeyEvent evt)
 	{
 		shortcut.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private InputPane shortcut; // this is a bad hack
 	private JLabel assignedTo;
 	private JButton ok;
@@ -134,9 +132,8 @@ public class GrabKeyDialog extends JDialog
 	private KeyBinding binding;
 	private List<KeyBinding> allBindings;
 	private Buffer debugBuffer;
-	//}}}
 
-	//{{{ init() method
+	// init() method
 	private void init(KeyBinding binding, List<KeyBinding> allBindings, Buffer debugBuffer)
 	{
 		this.binding = binding;
@@ -225,7 +222,7 @@ public class GrabKeyDialog extends JDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ getSymbolicName() method
+	// getSymbolicName() method
 	public static String getSymbolicName(int keyCode)
 	{
 		if (Debug.DUMP_KEY_EVENTS)
@@ -261,7 +258,7 @@ public class GrabKeyDialog extends JDialog
 		return null;
 	} //}}}
 
-	//{{{ updateAssignedTo() method
+	// updateAssignedTo() method
 	private void updateAssignedTo(String shortcut)
 	{
 		String text = jEdit.getProperty("grab-key.assigned-to.none");
@@ -283,7 +280,7 @@ public class GrabKeyDialog extends JDialog
 				new String[] { text }));
 	} //}}}
 
-	//{{{ getKeyBinding() method
+	// getKeyBinding() method
 	private KeyBinding getKeyBinding(String shortcut)
 	{
 		if(shortcut == null || shortcut.isEmpty())
@@ -315,9 +312,8 @@ public class GrabKeyDialog extends JDialog
 		return null;
 	} //}}}
 
-	//}}}
 
-	//{{{ KeyBinding class
+	// KeyBinding class
 	/**
 	 * A jEdit action or macro with its two possible shortcuts.
 	 * @since jEdit 3.2pre8
@@ -347,10 +343,10 @@ public class GrabKeyDialog extends JDialog
 		}
 	} //}}}
 
-	//{{{ InputPane class
+	// InputPane class
 	private class InputPane extends JTextField
 	{
-		//{{{ getFocusTraversalKeysEnabled() method
+		// getFocusTraversalKeysEnabled() method
 		/**
 		 * Makes the tab key work in Java 1.4.
 		 * @since jEdit 3.2pre4
@@ -375,7 +371,7 @@ public class GrabKeyDialog extends JDialog
 			return rawShortcut;
 		}
 
-		//{{{ processKeyEvent() method
+		// processKeyEvent() method
 		@Override
 		protected void processKeyEvent(KeyEvent _evt)
 		{
@@ -456,10 +452,10 @@ public class GrabKeyDialog extends JDialog
 		protected String rawShortcut = "";
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -485,7 +481,7 @@ public class GrabKeyDialog extends JDialog
 			}
 		} //}}}
 
-		//{{{ canClose() method
+		// canClose() method
 		private boolean canClose()
 		{
 			String shortcutString = shortcut.getShortcut();

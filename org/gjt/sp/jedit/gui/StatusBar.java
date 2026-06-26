@@ -1,7 +1,6 @@
 /*
  * StatusBar.java - The status bar displayed at the bottom of views
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2004 Slava Pestov
  * Portions copyright (C) 2001 Mike Dillon
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.gui.statusbar.StatsBarWidgetPanel;
@@ -39,7 +38,6 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-//}}}
 
 /** The status bar used to display various information to the user.
  *
@@ -59,7 +57,7 @@ import java.awt.*;
  */
 public class StatusBar extends JPanel
 {
-	//{{{ StatusBar constructor
+	// StatusBar constructor
 	public StatusBar(View view)
 	{
 		super(new BorderLayout());
@@ -83,7 +81,7 @@ public class StatusBar extends JPanel
 		taskHandler = new TaskHandler();
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged()
 	{
 		Color fg = jEdit.getColorProperty("view.status.foreground");
@@ -101,7 +99,7 @@ public class StatusBar extends JPanel
 		updateMiscStatus();
 	} //}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -109,7 +107,7 @@ public class StatusBar extends JPanel
 		TaskManager.instance.addTaskListener(taskHandler);
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -117,7 +115,7 @@ public class StatusBar extends JPanel
 		TaskManager.instance.removeTaskListener(taskHandler);
 	} //}}}
 
-	//{{{ TaskListener implementation
+	// TaskListener implementation
 	private class TaskHandler implements TaskListener
 	{
 		private final Runnable statusLineIo = new Runnable()
@@ -152,14 +150,14 @@ public class StatusBar extends JPanel
 			}
 		};
 
-		//{{{ waiting() method
+		// waiting() method
 		@Override
 		public void waiting(Task task)
 		{
 			SwingUtilities.invokeLater(statusLineIo);
 		} //}}}
 
-		//{{{ done() method
+		// done() method
 		@Override
 		public void done(Task task)
 		{
@@ -167,9 +165,8 @@ public class StatusBar extends JPanel
 		} //}}}
 	} //}}}
 
-	//}}}
 
-	//{{{ getMessage() method
+	// getMessage() method
 	/**
 	 * Returns the current message.
 	 *
@@ -181,7 +178,7 @@ public class StatusBar extends JPanel
 		return message.getText();
 	} //}}}
 
-	//{{{ setMessageAndClear() method
+	// setMessageAndClear() method
 	/**
 	 * Show a message for a short period of time.
 	 * @param message The message
@@ -203,7 +200,7 @@ public class StatusBar extends JPanel
 		tempTimer.start();
 	} //}}}
 
-	//{{{ setMessage() method
+	// setMessage() method
 	/**
 	 * Displays a status message.
 	 * @param message the message to display, it can be null
@@ -229,7 +226,7 @@ public class StatusBar extends JPanel
 			this.message.setText(message);
 	} //}}}
 
-	//{{{ setMessageComponent() method
+	// setMessageComponent() method
 	public void setMessageComponent(Component comp)
 	{
 		currentMessageIsIO = false;
@@ -243,26 +240,26 @@ public class StatusBar extends JPanel
 		panel.add(BorderLayout.CENTER, messageComp);
 	} //}}}
 
-	//{{{ updateCaretStatus() method
+	// updateCaretStatus() method
 	/** Updates the status bar with information about the caret position, line number, etc */
 	public void updateCaretStatus()
 	{
 		updateEvent(StatusBarEventType.Caret);
 	} //}}}
 
-	//{{{ updateBufferStatus() method
+	// updateBufferStatus() method
 	public void updateBufferStatus()
 	{
 		updateEvent(StatusBarEventType.Buffer);
 	} //}}}
 
-	//{{{ updateMiscStatus() method
+	// updateMiscStatus() method
 	public void updateMiscStatus()
 	{
 		updateEvent(StatusBarEventType.Misc);
 	} //}}}
 
-	//{{{ updateEvent() method
+	// updateEvent() method
 	/**
 	 * Update the widgets that are interested in the given event type
 	 * @param statusBarEventType the event type
@@ -274,7 +271,7 @@ public class StatusBar extends JPanel
 		trailingWidgetsBox.updateEvent(statusBarEventType);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final TaskHandler taskHandler;
 	private final View view;
 	private final JPanel panel;
@@ -286,5 +283,4 @@ public class StatusBar extends JPanel
 	
 	private Timer tempTimer;
 	private boolean currentMessageIsIO;
-	//}}}
 }

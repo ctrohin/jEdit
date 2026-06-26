@@ -1,7 +1,6 @@
 /*
  * PropertyManager.java - Manages property files
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -27,7 +26,7 @@ import java.util.*;
 
 class PropertyManager
 {
-	//{{{ getProperties() method
+	// getProperties() method
 	Properties getProperties()
 	{
 		Properties total = new Properties();
@@ -42,7 +41,7 @@ class PropertyManager
 		return total;
 	} //}}}
 
-	//{{{ loadSystemProps() method
+	// loadSystemProps() method
 	void loadSystemProps(String path) throws IOException
 	{
 		var resourceOptional = jEdit.getResourceAsUTF8Text(path);
@@ -59,14 +58,14 @@ class PropertyManager
 		}
 	} //}}}
 
-	//{{{ loadSiteProps() method
+	// loadSiteProps() method
 	void loadSiteProps(InputStream in)
 		throws IOException
 	{
 		loadProps(site,in);
 	} //}}}
 
-	//{{{ loadLocalizationProps() method
+	// loadLocalizationProps() method
 	void loadLocalizationProps(String path) throws IOException
 	{
 		var resourceOptional = jEdit.getResourceAsUTF8Text(path);
@@ -83,21 +82,21 @@ class PropertyManager
 		}
 	} //}}}
 
-	//{{{ loadUserProps() method
+	// loadUserProps() method
 	void loadUserProps(InputStream in)
 		throws IOException
 	{
 		loadProps(user,in);
 	} //}}}
 
-	//{{{ saveUserProps() method
+	// saveUserProps() method
 	void saveUserProps(OutputStream out)
 		throws IOException
 	{
 		MiscUtilities.storeProperties(user, out, "jEdit properties");
 	} //}}}
 
-	//{{{ loadPluginProps() method
+	// loadPluginProps() method
 	Properties loadPluginProps(InputStream in)
 		throws IOException
 	{
@@ -107,19 +106,19 @@ class PropertyManager
 		return plugin;
 	} //}}}
 
-	//{{{ addPluginProps() method
+	// addPluginProps() method
 	void addPluginProps(Properties props)
 	{
 		plugins.add(props);
 	} //}}}
 
-	//{{{ removePluginProps() method
+	// removePluginProps() method
 	void removePluginProps(Properties props)
 	{
 		plugins.remove(props);
 	} //}}}
 
-	//{{{ loadPluginLocalizationProps() method
+	// loadPluginLocalizationProps() method
 	Properties loadPluginLocalizationProps(Reader in)
 		throws IOException
 	{
@@ -129,19 +128,19 @@ class PropertyManager
 		return pluginLocalization;
 	} //}}}
 
-	//{{{ addPluginLocalizationProps() method
+	// addPluginLocalizationProps() method
 	void addPluginLocalizationProps(Properties props)
 	{
 		pluginLocalizations.add(props);
 	} //}}}
 
-	//{{{ removePluginLocalizationProps() method
+	// removePluginLocalizationProps() method
 	void removePluginLocalizationProps(Properties props)
 	{
 		pluginLocalizations.remove(props);
 	} //}}}
 
-	//{{{ getProperty() method
+	// getProperty() method
 	String getProperty(String name)
 	{
 		String value = user.getProperty(name);
@@ -162,7 +161,7 @@ class PropertyManager
 		return getDefaultProperty(name);
 	} //}}}
 
-	//{{{ setProperty() method
+	// setProperty() method
 	void setProperty(String name, String value)
 	{
 		String prop = getDefaultProperty(name);
@@ -190,14 +189,14 @@ class PropertyManager
 		}
 	} //}}}
 
-	//{{{ setTemporaryProperty() method
+	// setTemporaryProperty() method
 	public void setTemporaryProperty(String name, String value)
 	{
 		user.remove(name);
 		system.setProperty(name,value);
 	} //}}}
 
-	//{{{ unsetProperty() method
+	// unsetProperty() method
 	void unsetProperty(String name)
 	{
 		if(getDefaultProperty(name) != null)
@@ -206,13 +205,13 @@ class PropertyManager
 			user.remove(name);
 	} //}}}
 
-	//{{{ resetProperty() method
+	// resetProperty() method
 	public void resetProperty(String name)
 	{
 		user.remove(name);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Properties system = new Properties();
 	private final List<Properties> plugins = new LinkedList<>();
 	private final Properties site = new Properties();
@@ -220,7 +219,7 @@ class PropertyManager
 	private final List<Properties> pluginLocalizations = new LinkedList<>();
 	private final Properties user = new Properties();
 
-	//{{{ getDefaultProperty() method
+	// getDefaultProperty() method
 	public String getDefaultProperty(String name)
 	{
 		String value = site.getProperty(name);
@@ -238,7 +237,7 @@ class PropertyManager
 		return system.getProperty(name);
 	} //}}}
 
-	//{{{ loadProps() method
+	// loadProps() method
 	private static void loadProps(Properties into, InputStream in)
 		throws IOException
 	{
@@ -252,7 +251,7 @@ class PropertyManager
 		}
 	} //}}}
 
-	//{{{ loadProps() method
+	// loadProps() method
 	private static void loadProps(Properties into, Reader in)
 		throws IOException
 	{
@@ -266,5 +265,4 @@ class PropertyManager
 		}
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * DummyTokenHandler.java - Ignores tokens
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -40,7 +39,7 @@ public class DummyTokenHandler implements TokenHandler
 	 */
 	public static final DummyTokenHandler INSTANCE = new DummyTokenHandler();
 
-	//{{{ handleToken() method
+	// handleToken() method
 	/**
 	 * Called by the token marker when a syntax token has been parsed.
 	 * @param seg The segment containing the text
@@ -55,7 +54,7 @@ public class DummyTokenHandler implements TokenHandler
 	public void handleToken(Segment seg, byte id, int offset, int length,
 		TokenMarker.LineContext context) {} //}}}
 
-	//{{{ setLineContext() method
+	// setLineContext() method
 	/**
 	 * The token handler can compare this object with the object
 	 * previously given for this line to see if the token type at the end

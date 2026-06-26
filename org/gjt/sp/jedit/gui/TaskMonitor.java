@@ -1,7 +1,6 @@
 /*
  * TaskMonitor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010-2012 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
@@ -37,7 +36,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
-//}}}
 
 /** Task Monitor dockable panel, for showing progress on active tasks.
  * @author Matthieu Casanova
@@ -48,7 +46,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 	private final TaskTableModel model;
 	private final JLabel remainingCount;
 
-	//{{{ TaskMonitor constructor
+	// TaskMonitor constructor
 	public TaskMonitor()
 	{
 		super(new BorderLayout());
@@ -75,7 +73,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 		add(panel);
 	} //}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -84,7 +82,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 		super.addNotify();
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -93,62 +91,62 @@ public class TaskMonitor extends JPanel implements TaskListener
 		model.removeAll();
 	} //}}}
 
-	//{{{ waiting() method
+	// waiting() method
 	@Override
 	public void waiting(Task task)
 	{
 		model.addTask(task);
 	} //}}}
 
-	//{{{ running() method
+	// running() method
 	@Override
 	public void running(Task task)
 	{
 		repaint();
 	} //}}}
 
-	//{{{ done() method
+	// done() method
 	@Override
 	public void done(Task task)
 	{
 		model.removeTask(task);
 	} //}}}
 
-	//{{{ statusUpdated() method
+	// statusUpdated() method
 	@Override
 	public void statusUpdated(Task task)
 	{
 		repaint();
 	} //}}}
 
-	//{{{ maximumUpdated() method
+	// maximumUpdated() method
 	@Override
 	public void maximumUpdated(Task task)
 	{
 		repaint();
 	} //}}}
 
-	//{{{ valueUpdated() method
+	// valueUpdated() method
 	@Override
 	public void valueUpdated(Task task)
 	{
 		repaint();
 	} //}}}
 
-	//{{{ updateTasksCount() method
+	// updateTasksCount() method
 	private void updateTasksCount()
 	{
 		remainingCount.setText(jEdit.getProperty("taskmanager.remainingtasks.label",
 						new Object[]{model.getRowCount()}));
 	} //}}}
 
-	//{{{ TaskCellRenderer class
+	// TaskCellRenderer class
 	private static class TaskCellRenderer implements TableCellRenderer
 	{
 		private final JProgressBar progress;
 		private final JButton button;
 
-		//{{{ TaskCellRenderer constructor
+		// TaskCellRenderer constructor
 		private TaskCellRenderer()
 		{
 			progress = new JProgressBar();
@@ -156,7 +154,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 			progress.setStringPainted(true);
 		} //}}}
 
-		//{{{ getTableCellRendererComponent
+		// getTableCellRendererComponent
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 							       boolean hasFocus, int row, int column)
@@ -191,14 +189,14 @@ public class TaskMonitor extends JPanel implements TaskListener
 		} //}}}
 	} //}}}
 
-	//{{{ TaskTableEditor class
+	// TaskTableEditor class
 	private static class TaskTableEditor extends AbstractCellEditor implements TableCellEditor
 	{
 		private final JButton button;
 
 		private Task task;
 
-		//{{{ TaskTableEditor constructor
+		// TaskTableEditor constructor
 		private TaskTableEditor()
 		{
 			button = new JButton(GUIUtilities.loadIcon(jEdit.getProperty("close-buffer.icon")));
@@ -209,14 +207,14 @@ public class TaskMonitor extends JPanel implements TaskListener
 			});
 		} //}}}
 
-		//{{{ getCellEditorValue() method
+		// getCellEditorValue() method
 		@Override
 		public Object getCellEditorValue()
 		{
 			return null;
 		} //}}}
 
-		//{{{ getTableCellEditorComponent() method
+		// getTableCellEditorComponent() method
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
 		{
@@ -225,46 +223,46 @@ public class TaskMonitor extends JPanel implements TaskListener
 		} //}}}
 	} //}}}
 
-	//{{{ TaskTableModel class
+	// TaskTableModel class
 	private static class TaskTableModel extends AbstractTableModel
 	{
 		private final java.util.List<Task> tasks;
 
-		//{{{ TaskTableModel constructor
+		// TaskTableModel constructor
 		private TaskTableModel()
 		{
 			tasks = new ArrayList<Task>();
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		@Override
 		public int getRowCount()
 		{
 			return tasks.size();
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		@Override
 		public int getColumnCount()
 		{
 			return 2;
 		} //}}}
 
-		//{{{ isCellEditable() method
+		// isCellEditable() method
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
 			return columnIndex == 1;
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex)
 		{
 			return tasks.get(rowIndex);
 		} //}}}
 
-		//{{{ addTask() method
+		// addTask() method
 		void addTask(Task task)
 		{
 			ThreadUtilities.runInDispatchThread(() ->
@@ -274,7 +272,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 			});
 		} //}}}
 
-		//{{{ removeTask() method
+		// removeTask() method
 		void removeTask(Task task)
 		{
 			ThreadUtilities.runInDispatchThread(() ->
@@ -288,7 +286,7 @@ public class TaskMonitor extends JPanel implements TaskListener
 			});
 		} //}}}
 
-		//{{{ removeAll() method
+		// removeAll() method
 		public void removeAll()
 		{
 			tasks.clear();

@@ -1,7 +1,6 @@
 /*
  * Marker.java - Named location in a buffer
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001 Slava Pestov
  *
@@ -40,7 +39,7 @@ import javax.swing.text.Position;
  */
 public class Marker
 {
-	//{{{ getShortcut() method
+	// getShortcut() method
 	/**
 	 * Returns the marker's shortcut character.
 	 * @since jEdit 3.2pre1
@@ -50,7 +49,7 @@ public class Marker
 		return shortcut;
 	} //}}}
 
-	//{{{ getPosition() method
+	// getPosition() method
 	/**
 	 * Returns the position of this marker.
 	 * @since jEdit 3.2pre1
@@ -60,9 +59,9 @@ public class Marker
 		return (position == null ? pos : position.getOffset());
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ Marker constructor
+	// Marker constructor
 	/**
 	 * <p>After a marker is created using the constructor,
 	 * {@link #createPosition} should be called, to make the marker reflect
@@ -77,7 +76,7 @@ public class Marker
 		this.pos = position;
 	} //}}}
 
-	//{{{ setShortcut() method
+	// setShortcut() method
 	/**
 	 * Sets the marker's shortcut.
 	 * @param shortcut The new shortcut
@@ -88,13 +87,13 @@ public class Marker
 		this.shortcut = shortcut;
 	} //}}}
 
-	//{{{ createPosition() method
+	// createPosition() method
 	void createPosition()
 	{
 		position = buffer.createPosition(pos);
 	} //}}}
 
-	//{{{ removePosition() method
+	// removePosition() method
 	void removePosition()
 	{
 		// forget the cached Position instance
@@ -105,7 +104,7 @@ public class Marker
 		}
 	} //}}}
 
-	//{{{ setPosition() method
+	// setPosition() method
 	/**
 	 * Sets the position of this marker.
 	 * @since jEdit 4.0pre5
@@ -115,12 +114,10 @@ public class Marker
 		this.pos = pos;
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private Buffer buffer;
 	private char shortcut;
 	private int pos;
 	private Position position;
-	//}}}
 }

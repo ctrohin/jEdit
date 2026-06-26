@@ -1,7 +1,6 @@
 /*
  * EditPlugin.java - Abstract class all plugins must implement
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -254,7 +253,7 @@ options.quicknotepad.label=QuickNotepad
  */
 public abstract class EditPlugin
 {
-	//{{{ start() method
+	// start() method
 	/**
 	 * jEdit calls this method when the plugin is being activated, either
 	 * during startup or at any other time. A plugin can get activated for
@@ -293,9 +292,8 @@ public abstract class EditPlugin
 	 * @since jEdit 2.1pre1
 	 */
 	public void start() {}
-	//}}}
 
-	//{{{ stop() method
+	// stop() method
 	/**
 	 * jEdit calls this method when the plugin is being unloaded. This can
 	 * be when the program is exiting, or at any other time.<p>
@@ -324,7 +322,7 @@ public abstract class EditPlugin
 	 */
 	public void stop() {} //}}}
 
-	//{{{ getPluginHome() method
+	// getPluginHome() method
 	/**
 	 * Returns the home of your plugin.
 	 *
@@ -341,7 +339,7 @@ public abstract class EditPlugin
 		return getPluginHome(getClassName());
 	} //}}}
 
-	//{{{ getPluginHome() method
+	// getPluginHome() method
 	/**
 	 * <p>Returns the home of the specified plugin.</p>
 	 *
@@ -369,7 +367,7 @@ public abstract class EditPlugin
 		return getPluginHome(clazz.getName());
 	} //}}}
 
-	//{{{ getPluginHome() method
+	// getPluginHome() method
 	/**
 	 * <p>Returns the home of the specified plugin.</p>
 	 *
@@ -395,7 +393,7 @@ public abstract class EditPlugin
 		return getPluginHome(plugin.getClassName());
 	} //}}}
 
-	//{{{ getPluginHome() method
+	// getPluginHome() method
 	/**
 	 * Returns the home of the specified plugin.
 	 *
@@ -424,7 +422,7 @@ public abstract class EditPlugin
 		return new File(file, pluginClassName);
 	} //}}}
 
-	//{{{ getResourceAsStream() method
+	// getResourceAsStream() method
 	/**
 	 * <p>Returns an input stream to the specified resource, or {@code null}
 	 * if none is found.</p>
@@ -453,7 +451,7 @@ public abstract class EditPlugin
 		return getResourceAsStream(clazz.getName(), path);
 	} //}}}
 
-	//{{{ getResourceAsStream() method
+	// getResourceAsStream() method
 	/**
 	 * <p>Returns an input stream to the specified resource, or <code>null</code>
 	 * if none is found.</p>
@@ -481,7 +479,7 @@ public abstract class EditPlugin
 		return getResourceAsStream(plugin.getClassName(), path);
 	} //}}}
 
-	//{{{ getResourceAsStream() method
+	// getResourceAsStream() method
 	/**
 	 * Returns an input stream to the specified resource, or <code>null</code>
 	 * if none is found.
@@ -510,7 +508,7 @@ public abstract class EditPlugin
 		}
 	} //}}}
 
-	//{{{ getResourceAsOutputStream() method
+	// getResourceAsOutputStream() method
 	/**
 	 * <p>Returns an output stream to the specified resource, or {@code null}
 	 * if access to that resource is denied.</p>
@@ -539,7 +537,7 @@ public abstract class EditPlugin
 		return getResourceAsOutputStream(clazz.getName(), path);
 	} //}}}
 
-	//{{{ getResourceAsOutputStream() method
+	// getResourceAsOutputStream() method
 	/**
 	 * <p>Returns an output stream to the specified resource, or <code>null</code> if access
 	 * to that resource is denied.</p>
@@ -567,7 +565,7 @@ public abstract class EditPlugin
 		return getResourceAsOutputStream(plugin.getClassName(), path);
 	} //}}}
 
-	//{{{ getResourceAsOutputStream() method
+	// getResourceAsOutputStream() method
 	/**
 	 * Returns an output stream to the specified resource, or <code>null</node> if access
 	 * to that resource is denied.
@@ -605,7 +603,7 @@ public abstract class EditPlugin
 		}
 	} //}}}
 
-	//{{{ getResourcePath() method
+	// getResourcePath() method
 	/**
 	 * <p>Returns the full path of the specified plugin resource.</p>
 	 *
@@ -633,7 +631,7 @@ public abstract class EditPlugin
 		return getResourcePath(clazz.getName(), path);
 	} //}}}
 
-	//{{{ getResourcePath() method
+	// getResourcePath() method
 	/**
 	 * <p>Returns the full path of the specified plugin resource.</p>
 	 *
@@ -660,7 +658,7 @@ public abstract class EditPlugin
 		return getResourcePath(plugin.getClassName(), path);
 	} //}}}
 
-	//{{{ getResourcePath() method
+	// getResourcePath() method
 	/**
 	 * Returns the full path of the specified plugin resource.
 	 *
@@ -682,7 +680,7 @@ public abstract class EditPlugin
 		return new File(home, path);
 	} //}}}
 
-	//{{{ getClassName() method
+	// getClassName() method
 	/**
 	 * @return the plugin's class name. This might not be the same as
 	 * the class of the actual <code>EditPlugin</code> instance, for
@@ -695,7 +693,7 @@ public abstract class EditPlugin
 		return getClass().getName();
 	} //}}}
 
-	//{{{ getPluginJAR() method
+	// getPluginJAR() method
 	/**
 	 * @return the JAR file containing this plugin.
 	 * @since jEdit 4.2pre1
@@ -705,7 +703,7 @@ public abstract class EditPlugin
 		return jar;
 	} //}}}
 
-	//{{{ createMenuItems() method
+	// createMenuItems() method
 	/**
 	 * Called by the view when constructing its <b>Plugins</b> menu.
 	 * See the description of this class for details about how the
@@ -736,7 +734,7 @@ public abstract class EditPlugin
 		return null;
 	} //}}}
 
-	//{{{ createBrowserMenuItems() method
+	// createBrowserMenuItems() method
 	/**
 	 * Called by the filesystem browser when constructing its
 	 * <b>Plugins</b> menu.
@@ -775,11 +773,10 @@ public abstract class EditPlugin
 		return null;
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	PluginJAR jar;
-	//}}}
 
-	//{{{ Broken class
+	// Broken class
 	/**
 	 * A placeholder for a plugin that didn't load.
 	 * @see jEdit#getPlugin(String)
@@ -805,7 +802,7 @@ public abstract class EditPlugin
 		private final String clazz;
 	} //}}}
 
-	//{{{ Deferred class
+	// Deferred class
 	/**
 	 * A placeholder for a plugin that hasn't been loaded yet.
 	 * @see jEdit#getPlugin(String)

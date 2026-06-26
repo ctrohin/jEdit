@@ -1,7 +1,6 @@
 /*
  * BufferPrinter1_3.java - Main class that controls printing
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  * Portions copyright (C) 2002 Thomas Dilts
@@ -23,11 +22,10 @@
 
 package org.gjt.sp.jedit.print;
 
-//{{{ Imports
+// Imports
 import java.awt.print.*;
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 @Deprecated
 /**
@@ -37,7 +35,7 @@ import org.gjt.sp.jedit.*;
  */
 public class BufferPrinter1_3
 {
-	//{{{ getPrintJob() method
+	// getPrintJob() method
 	private static PrinterJob getPrintJob()
 	{
 		job = PrinterJob.getPrinterJob();
@@ -64,7 +62,7 @@ public class BufferPrinter1_3
 
 	}//}}}
 
-	//{{{ pageSetup() method
+	// pageSetup() method
 	public static void pageSetup(View view)
 	{
 		job = getPrintJob();
@@ -85,7 +83,7 @@ public class BufferPrinter1_3
 		}
 	} //}}}
 
-	//{{{ print() method
+	// print() method
 	public static void print(final View view, final Buffer buffer, boolean selection)
 	{
 		job = getPrintJob();
@@ -106,14 +104,13 @@ public class BufferPrinter1_3
 		printable.print();
 	} //}}}
 
-	//{{{ getPageFormat() method
+	// getPageFormat() method
 	public static PageFormat getPageFormat()
 	{
 		return format;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static PageFormat format;
 	private static PrinterJob job;
-	//}}}
 }

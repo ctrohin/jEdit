@@ -2,7 +2,6 @@
  * TextUtilities.java - Various text functions
  * Copyright (C) 1998, 2005 Slava Pestov
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +20,12 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 import javax.swing.text.Segment;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.syntax.*;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * Contains several text manipulation methods.
@@ -53,7 +51,7 @@ public class TextUtilities
 	public static final int SYMBOL = 2;
 
 
-	//{{{ getTokenAtOffset() method
+	// getTokenAtOffset() method
 	/**
 	 * Returns the token that contains the specified offset.
 	 * @param tokens The token list
@@ -77,7 +75,7 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//{{{ getComplementaryBracket() method
+	// getComplementaryBracket() method
 	/**
 	 * Given an opening bracket, return the corresponding closing bracket
 	 * and store true in <code>direction[0]</code>. Given a closing bracket,
@@ -119,7 +117,7 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//{{{ findMatchingBracket() method
+	// findMatchingBracket() method
 	/**
 	 * Returns the offset of the bracket matching the one at the
 	 * specified offset of the buffer, or -1 if the bracket is
@@ -167,7 +165,7 @@ public class TextUtilities
 
 		int startLine = line;
 
-		//{{{ Forward search
+		// Forward search
 		if(direction[0])
 		{
 			offset++;
@@ -205,17 +203,16 @@ public class TextUtilities
 					}
 				}
 
-				//{{{ Go on to next line
+				// Go on to next line
 				line++;
 				if(line >= buffer.getLineCount() || (line - startLine) > BRACKET_MATCH_LIMIT)
 					break;
 				buffer.getLineText(line,lineText);
 				offset = 0;
 				haveTokens = false;
-				//}}}
 			}
 		} //}}}
-		//{{{ Backward search
+		// Backward search
 		else
 		{
 			offset--;
@@ -253,14 +250,13 @@ public class TextUtilities
 					}
 				}
 
-				//{{{ Go on to previous line
+				// Go on to previous line
 				line--;
 				if(line < 0 || (startLine - line) > BRACKET_MATCH_LIMIT)
 					break;
 				buffer.getLineText(line,lineText);
 				offset = lineText.count - 1;
 				haveTokens = false;
-				//}}}
 			}
 		} //}}}
 
@@ -268,7 +264,7 @@ public class TextUtilities
 		return -1;
 	} //}}}
 
-	//{{{ join() method
+	// join() method
 	/** Similar to perl's join() method on lists,
 	 *    but works with all collections.
 	 *
@@ -298,7 +294,7 @@ public class TextUtilities
 		return retval.toString();
 	} //}}}
 
-	//{{{ findWordStart() methods
+	// findWordStart() methods
 	/**
 	 * Locates the start of the word at the specified position.
 	 * @param line The text
@@ -426,9 +422,8 @@ public class TextUtilities
 		if(noWordSep == null)
 			noWordSep = "";
 
-		//{{{ the character under the cursor changes how we behave.
+		// the character under the cursor changes how we behave.
 		int type = getCharType(ch, noWordSep);
-		//}}}
 
 		for(int i = pos; i >= 0; i--)
 		{
@@ -436,7 +431,7 @@ public class TextUtilities
 			ch = line.charAt(i);
 			switch(type)
 			{
-			//{{{ Whitespace...
+			// Whitespace...
 			case WHITESPACE:
 				// only select other whitespace in this case, unless eating only after words
 				if(Character.isWhitespace(ch))
@@ -454,7 +449,7 @@ public class TextUtilities
 				else
 					type = SYMBOL;
 				break; //}}}
-			//{{{ Word character...
+			// Word character...
 			case WORD_CHAR:
 				// stop at next last (in writing direction) upper case char if camel cased
 				// (don't stop at every upper case char, don't treat noWordSep as word chars)
@@ -484,7 +479,7 @@ public class TextUtilities
 				}
 				else
 					return i + 1; //}}}
-			//{{{ Symbol...
+			// Symbol...
 			case SYMBOL:
 				if(!joinNonWordChars && pos != i)
 					return i + 1;
@@ -515,7 +510,7 @@ public class TextUtilities
 		return 0;
 	} //}}}
 
-	//{{{ findWordEnd() methods
+	// findWordEnd() methods
 	/**
 	 * Locates the end of the word at the specified position.
 	 * @param line The text
@@ -625,9 +620,8 @@ public class TextUtilities
 		if(noWordSep == null)
 			noWordSep = "";
 
-		//{{{ the character under the cursor changes how we behave.
+		// the character under the cursor changes how we behave.
 		int type = getCharType(ch, noWordSep);
-		//}}}
 
 		for(int i = pos; i < line.length(); i++)
 		{
@@ -635,14 +629,14 @@ public class TextUtilities
 			ch = line.charAt(i);
 			switch(type)
 			{
-			//{{{ Whitespace...
+			// Whitespace...
 			case WHITESPACE:
 				// only select other whitespace in this case
 				if(Character.isWhitespace(ch))
 					break;
 				else
 					return i; //}}}
-			//{{{ Word character...
+			// Word character...
 			case WORD_CHAR:
 				// stop at next last upper case char if camel cased
 				// (don't stop at every upper case char, don't treat noWordSep as word chars)
@@ -670,7 +664,7 @@ public class TextUtilities
 				}
 				else
 					return i; //}}}
-			//{{{ Symbol...
+			// Symbol...
 			case SYMBOL:
 				if(!joinNonWordChars && i != pos)
 					return i;
@@ -701,7 +695,7 @@ public class TextUtilities
 		return line.length();
 	} //}}}
 
-	//{{{ getCharType() method
+	// getCharType() method
 	/**
 	 * Returns the type of the char.
 	 *
@@ -726,7 +720,7 @@ public class TextUtilities
 	} //}}}
 
 
-	//{{{ spacesToTabs() method
+	// spacesToTabs() method
 	/**
 	 * Converts consecutive spaces to tabs in the specified string.
 	 * @param in The string
@@ -784,7 +778,7 @@ public class TextUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ tabsToSpaces() method
+	// tabsToSpaces() method
 	/**
 	 * Converts tabs to consecutive spaces in the specified string.
 	 * @param in The string
@@ -817,7 +811,7 @@ public class TextUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ format() method
+	// format() method
 	/**
 	 * Formats the specified text by merging and breaking lines to the
 	 * specified width.
@@ -852,7 +846,7 @@ public class TextUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ indexIgnoringWhitespace() method
+	// indexIgnoringWhitespace() method
 	/**
 	 * Inverse of <code>ignoringWhitespaceIndex()</code>.
 	 * @param str a string (not an empty string)
@@ -868,7 +862,7 @@ public class TextUtilities
 		return j;
 	} //}}}
 
-	//{{{ ignoringWhitespaceIndex() method
+	// ignoringWhitespaceIndex() method
 	/**
 	 * Inverse of <code>indexIgnoringWhitespace()</code>.
 	 * @param str a string (not an empty string)
@@ -891,7 +885,7 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//{{{ getStringCase() methods
+	// getStringCase() methods
 	public static final int MIXED = 0;
 	public static final int LOWER_CASE = 1;
 	public static final int UPPER_CASE = 2;
@@ -958,7 +952,7 @@ public class TextUtilities
 		return getStringCase((CharSequence) str);
 	} //}}}
 
-	//{{{ toTitleCase() method
+	// toTitleCase() method
 	/**
 	 * Converts the specified string to title case, by capitalizing the
 	 * first letter.
@@ -976,7 +970,7 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//{{{ escapeText() method
+	// escapeText() method
 	/**
 	 * Escapes a given string for use in a java.util.regex pattern.
 	 * @since jEdit 4.5pre1
@@ -989,8 +983,8 @@ public class TextUtilities
 		return "\\Q" + result + "\\E";
 	} //}}}
 	
-	//{{{ Private members
-	//{{{ formatParagraph() method
+	// Private members
+	// formatParagraph() method
 	private static void formatParagraph(String text, int maxLineLength,
 		int tabSize, StringBuilder buf)
 	{
@@ -1026,7 +1020,7 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//{{{ indexIgnoringWhitespace() method
+	// indexIgnoringWhitespace() method
 	public static void indexIgnoringWhitespace(String text, int maxLineLength,
 		int tabSize, StringBuffer buf)
 	{
@@ -1062,5 +1056,4 @@ public class TextUtilities
 		}
 	} //}}}
 
-	//}}}
 }

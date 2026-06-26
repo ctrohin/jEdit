@@ -1,7 +1,6 @@
 /*
  * EnhancedMenuItem.java - Menu item with user-specified accelerator string
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,14 +29,13 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.KeyEventTranslator;
 import org.gjt.sp.jedit.gui.statusbar.HoverSetStatusMouseHandler;
 import org.jedit.keymap.Keymap;
-//}}}
 
 /**
  * jEdit's custom menu item. It adds support for multi-key shortcuts.
  */
 public class EnhancedMenuItem extends JMenuItem
 {
-	//{{{ EnhancedMenuItem constructor
+	// EnhancedMenuItem constructor
 	/**
 	 * Creates a new menu item. Most plugins should call
 	 * GUIUtilities.loadMenuItem() instead.
@@ -86,7 +84,7 @@ public class EnhancedMenuItem extends JMenuItem
 			setEnabled(false);
 	} //}}}
 
-	//{{{ getPreferredSize() method
+	// getPreferredSize() method
 	@Override
 	public Dimension getPreferredSize()
 	{
@@ -100,7 +98,7 @@ public class EnhancedMenuItem extends JMenuItem
 		return d;
 	} //}}}
 
-	//{{{ paint() method
+	// paint() method
 	@Override
 	public void paint(Graphics g)
 	{
@@ -122,20 +120,18 @@ public class EnhancedMenuItem extends JMenuItem
 		}
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	static Font acceleratorFont;
 	static Color acceleratorForeground;
 	static Color acceleratorSelectionForeground;
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	
 	private String shortcut;
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		acceleratorFont = GUIUtilities.menuAcceleratorFont();
@@ -155,5 +151,4 @@ public class EnhancedMenuItem extends JMenuItem
 		}
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * BufferHistory.java - Remembers caret positions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.*;
@@ -36,7 +35,6 @@ import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
 import org.gjt.sp.util.IOUtilities;
-//}}}
 
 /**
  * Recent file list.
@@ -45,7 +43,7 @@ import org.gjt.sp.util.IOUtilities;
  */
 public class BufferHistory
 {
-	//{{{ Entry class
+	// Entry class
 	/**
 	 * Recent file list entry.
 	 */
@@ -77,7 +75,7 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ getEntry() method
+	// getEntry() method
 	public static Entry getEntry(String path)
 	{
 		historyLock.readLock().lock();
@@ -97,7 +95,7 @@ public class BufferHistory
 		return null;
 	} //}}}
 
-	//{{{ setEntry() method
+	// setEntry() method
 	public static void setEntry(String path, int caret, Selection[] selection,
 		String encoding, String mode)
 	{
@@ -116,7 +114,7 @@ public class BufferHistory
 		notifyChange();
 	} //}}}
 
-	//{{{ clear() method
+	// clear() method
 	/**
 	 * Clear the BufferHistory.
 	 * @since 4.3pre6
@@ -135,7 +133,7 @@ public class BufferHistory
 		notifyChange();
 	} //}}}
 
-	//{{{ getHistory() method
+	// getHistory() method
 	/**
 	 * Returns the Buffer list.
 	 * @return the buffer history list
@@ -160,7 +158,7 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	public static void load()
 	{
 		if(recentXML == null)
@@ -184,7 +182,7 @@ public class BufferHistory
 		history = handler.result;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	public static void save()
 	{
 		if(recentXML == null)
@@ -277,12 +275,12 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static LinkedList<Entry> history;
 	private static final ReentrantReadWriteLock historyLock;
 	private static SettingsXML recentXML;
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		history = new LinkedList<Entry>();
@@ -294,7 +292,7 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ addEntry() method
+	// addEntry() method
 	private static void addEntry(Entry entry)
 	{
 		historyLock.writeLock().lock();
@@ -309,7 +307,7 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ removeEntry() method
+	// removeEntry() method
 	private static void removeEntry(String path)
 	{
 		historyLock.writeLock().lock();
@@ -332,7 +330,7 @@ public class BufferHistory
 		}
 	} //}}}
 
-	//{{{ selectionToString() method
+	// selectionToString() method
 	private static String selectionToString(Selection[] s)
 	{
 		if(s == null)
@@ -358,7 +356,7 @@ public class BufferHistory
 		return buf.toString();
 	} //}}}
 
-	//{{{ stringToSelection() method
+	// stringToSelection() method
 	private static Selection[] stringToSelection(String s)
 	{
 		if(s == null)
@@ -394,7 +392,7 @@ public class BufferHistory
 		return returnValue;
 	} //}}}
 
-	//{{{ trimToLimit() method
+	// trimToLimit() method
 	private static void trimToLimit(Deque<Entry> list)
 	{
 		int max = jEdit.getIntegerProperty("recentFiles", 40);
@@ -402,13 +400,13 @@ public class BufferHistory
 			list.removeLast();
 	} //}}}
 
-	//{{{ notifyChange() method
+	// notifyChange() method
 	private static void notifyChange()
 	{
 		EditBus.send(new DynamicMenuChanged("recent-files"));
 	} //}}}
 
-	//{{{ RecentHandler class
+	// RecentHandler class
 	private static class RecentHandler extends DefaultHandler
 	{
 		public LinkedList<Entry> result = new LinkedList<Entry>();
@@ -482,5 +480,4 @@ public class BufferHistory
 		private final StringBuilder charData = new StringBuilder();	// NOPMD
 	} //}}}
 
-	//}}}
 }

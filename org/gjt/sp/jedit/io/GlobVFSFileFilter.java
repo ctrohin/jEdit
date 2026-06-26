@@ -1,7 +1,6 @@
 /*
  * VFSFileFilter.java - VFSFileFilter that uses Unix-style globs.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Marcelo Vanzin
  *

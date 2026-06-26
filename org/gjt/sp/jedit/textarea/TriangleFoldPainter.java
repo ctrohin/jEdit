@@ -1,7 +1,6 @@
 /*
  * TriangleFoldPainter.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=0:
  *
  * Copyright (C) 1999, 2000 mike dillon
  * Portions copyright (C) 2001, 2002 Slava Pestov

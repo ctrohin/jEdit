@@ -1,7 +1,6 @@
 /*
  * BufferIORequest.java - I/O request
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.bufferio;
 
-//{{{ Imports
+// Imports
 import java.io.BufferedOutputStream;
 import java.io.CharConversionException;
 import java.io.IOException;
@@ -46,7 +45,6 @@ import org.gjt.sp.jedit.io.EncodingServer;
 import org.gjt.sp.util.IntegerArray;
 import org.gjt.sp.util.SegmentBuffer;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * A buffer I/O request.
@@ -55,7 +53,7 @@ import org.gjt.sp.util.Log;
  */
 public abstract class BufferIORequest extends IoTask
 {
-	//{{{ Constants
+	// Constants
 
 	/**
 	 * Size of I/O buffers.
@@ -75,18 +73,16 @@ public abstract class BufferIORequest extends IoTask
 	 * Buffer boolean property set when an error occurs.
 	 */
 	public static final String ERROR_OCCURRED = "BufferIORequest__error";
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	protected final View view;
 	protected final Buffer buffer;
 	protected final Object session;
 	protected final VFS vfs;
 	protected String path;
 	protected final String markersPath;
-	//}}}
 
-	//{{{ BufferIORequest constructor
+	// BufferIORequest constructor
 	/**
 	 * Creates a new buffer I/O request.
 	 * @param view The view
@@ -109,13 +105,13 @@ public abstract class BufferIORequest extends IoTask
 		//buffer.setIoTask(this);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return getClass().getName() + '[' + buffer + ']';
 	} //}}}
 
-	//{{{ getCharIOBufferSize() method
+	// getCharIOBufferSize() method
 	/**
 	 * Size of character I/O buffers.
 	 */
@@ -124,7 +120,7 @@ public abstract class BufferIORequest extends IoTask
 		return IOBUFSIZE;
 	} //}}}
 
-	//{{{ getByteIOBufferSize() method
+	// getByteIOBufferSize() method
 	/**
 	 * Size of byte I/O buffers.
 	 */
@@ -134,7 +130,7 @@ public abstract class BufferIORequest extends IoTask
 		return IOBUFSIZE * 2;
 	} //}}}
 
-	//{{{ autodetect() method
+	// autodetect() method
 	/**
 	 * Tries to detect if the stream is gzipped, and if it has an encoding
 	 * specified with an XML PI.
@@ -144,7 +140,7 @@ public abstract class BufferIORequest extends IoTask
 		return MiscUtilities.autodetect(in, buffer);
 	} //}}}
 
-	//{{{ read() method
+	// read() method
 	protected SegmentBuffer read(Reader in, long length,
 		boolean insert) throws IOException, InterruptedException
 	{
@@ -345,7 +341,7 @@ public abstract class BufferIORequest extends IoTask
 		return seg;
 	} //}}}
 
-	//{{{ write() method
+	// write() method
 	protected void write(Buffer buffer, OutputStream out)
 		throws IOException, InterruptedException
 	{
@@ -399,7 +395,7 @@ public abstract class BufferIORequest extends IoTask
 		writer.flush();
 	} //}}}
 
-	//{{{ endSessionQuietly() method
+	// endSessionQuietly() method
 	protected void endSessionQuietly()
 	{
 		try
@@ -416,9 +412,9 @@ public abstract class BufferIORequest extends IoTask
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ createEncodingErrorMessage() method
+	// createEncodingErrorMessage() method
 	private static String getWriteEncodingErrorMessage(
 		String encodingName, Encoding encoding,
 		Segment line, int lineIndex)
@@ -446,7 +442,7 @@ public abstract class BufferIORequest extends IoTask
 		return jEdit.getProperty("ioerror.write-encoding-error", args);
 	} //}}}
 
-	//{{{ getFirstGuiltyCharacterIndex() method
+	// getFirstGuiltyCharacterIndex() method
 	// Look for the first character which causes encoding error.
 	private static int getFirstGuiltyCharacterIndex(Encoding encoding,
 		Segment line) throws IOException
@@ -479,5 +475,4 @@ public abstract class BufferIORequest extends IoTask
 		return -1;
 	} //}}}
 
-	//}}}
 }

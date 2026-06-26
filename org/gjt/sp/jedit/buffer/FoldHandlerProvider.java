@@ -1,7 +1,6 @@
 /*
  * FoldHandlerProvider.java - Fold handler provider interface
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
  *

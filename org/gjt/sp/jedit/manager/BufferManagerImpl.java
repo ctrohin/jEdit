@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2020 jEdit contributors
  *
@@ -71,7 +70,7 @@ public class BufferManagerImpl implements BufferManager
 		return bufferListLock;
 	}
 
-	//{{{ getBuffers() methods
+	// getBuffers() methods
 	/**
 	 * Returns an array of all open buffers from any View.
 	 * This method is synchronized on the bufferList, if you expect your action might be slow
@@ -121,7 +120,7 @@ public class BufferManagerImpl implements BufferManager
 		return getBuffers(Buffer::isDirty);
 	}
 
-	//{{{ forEach() method
+	// forEach() method
 	/**
 	 * Performs the given action for each buffer.
 	 * This method is synchronized on the bufferList, if you expect your action might be slow,
@@ -145,7 +144,7 @@ public class BufferManagerImpl implements BufferManager
 		}
 	} //}}}
 
-	//{{{ size() method
+	// size() method
 	/**
 	 * Returns the number of open buffers.
 	 */
@@ -155,20 +154,20 @@ public class BufferManagerImpl implements BufferManager
 		return bufferCount;
 	} //}}}
 
-	//{{{ getFirstBuffer() method
+	// getFirstBuffer() method
 	@Override
 	public Buffer getFirst()
 	{
 		return buffersFirst;
 	} //}}}
 
-	//{{{ getLast() method
+	// getLast() method
 	public Buffer getLast()
 	{
 		return buffersLast;
 	} //}}}
 
-	//{{{ checkBufferStatus() method
+	// checkBufferStatus() method
 	/**
 	 * Checks buffer status on disk and shows the dialog box
 	 * informing the user that buffers changed on disk, if necessary.
@@ -250,7 +249,7 @@ public class BufferManagerImpl implements BufferManager
 		this.sortByName = sortByName;
 	}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the buffer with the specified path name. The path name
 	 * must be an absolute path. This method automatically resolves
@@ -270,7 +269,7 @@ public class BufferManagerImpl implements BufferManager
 		return _getBuffer(MiscUtilities.resolveSymlinks(path));
 	} //}}}
 
-	//{{{ _getBuffer() method
+	// _getBuffer() method
 	/**
 	 * Returns the buffer with the specified path name. The path name
 	 * must be an absolute, canonical, path.
@@ -299,7 +298,7 @@ public class BufferManagerImpl implements BufferManager
 		}
 	} //}}}
 
-	//{{{ getNextUntitledBufferId() method
+	// getNextUntitledBufferId() method
 	@Override
 	public int getNextUntitledBufferId()
 	{
@@ -324,7 +323,7 @@ public class BufferManagerImpl implements BufferManager
 		return untitledCount + 1;
 	} //}}}
 
-	//{{{ updateBufferHash() method
+	// updateBufferHash() method
 	/**
 	 * To be used by jEdit class only
 	 */
@@ -340,7 +339,7 @@ public class BufferManagerImpl implements BufferManager
 		bufferHash.put(path,buffer);
 	} //}}}
 
-	//{{{ removeBufferFromList() method
+	// removeBufferFromList() method
 	public void removeBufferFromList(Buffer buffer)
 	{
 		synchronized(bufferListLock)
@@ -388,7 +387,7 @@ public class BufferManagerImpl implements BufferManager
 		}
 	} //}}}
 
-	//{{{ addBufferToList() method
+	// addBufferToList() method
 	public void addBufferToList(Buffer buffer)
 	{
 		synchronized(bufferListLock)
@@ -404,7 +403,7 @@ public class BufferManagerImpl implements BufferManager
 				buffersFirst = buffersLast = buffer;
 				return;
 			}
-			//{{{ Sort buffer list
+			// Sort buffer list
 			else if(sortBuffers)
 			{
 				String str11, str12;
@@ -460,7 +459,7 @@ public class BufferManagerImpl implements BufferManager
 		}
 	} //}}}
 
-	//{{{ updatePosition() method
+	// updatePosition() method
 	/**
 	 * If buffer sorting is enabled, this repositions the buffer.
 	 */
@@ -485,7 +484,7 @@ public class BufferManagerImpl implements BufferManager
 		}
 	} //}}}
 
-	//{{{ getPathForBufferHash() method
+	// getPathForBufferHash() method
 	public void removeBuffer(Buffer buffer)
 	{
 		String path = getPathForBufferHash(buffer);
@@ -493,7 +492,7 @@ public class BufferManagerImpl implements BufferManager
 		removeBufferFromList(buffer);
 	} //}}}
 
-	//{{{ getPathForBufferHash() method
+	// getPathForBufferHash() method
 	private static String getPathForBufferHash(Buffer buffer)
 	{
 		String path = buffer.getSymlinkPath();
@@ -505,7 +504,7 @@ public class BufferManagerImpl implements BufferManager
 		return path;
 	} //}}}
 
-	//{{{ closeAllBuffers() method
+	// closeAllBuffers() method
 	public void closeAllBuffers(View view, boolean isExiting, boolean autosaveUntitled, boolean saveRecent, boolean persistentMarkers)
 	{
 		// close remaining buffers (the close dialog only deals with

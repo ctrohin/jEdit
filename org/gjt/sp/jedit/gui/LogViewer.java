@@ -1,7 +1,6 @@
 /*
  * LogViewer.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 
@@ -35,7 +34,6 @@ import org.gjt.sp.jedit.msg.PropertiesChanged;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
 import org.gjt.sp.util.swing.event.UniqueActionDocumentListener;
-//}}}
 
 /** Activity Log Viewer
  * @version $Id$
@@ -44,7 +42,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 {
 	private final ColorizerCellRenderer cellRenderer;
 
-	//{{{ LogViewer constructor
+	// LogViewer constructor
 	@SuppressWarnings({"unchecked"})	// The FilteredListModel needs work
 	public LogViewer()
 	{
@@ -110,7 +108,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		propertiesChanged();
 	} //}}}
 
-	//{{{ setBounds() method
+	// setBounds() method
 	@Override
 	public void setBounds(int x, int y, int width, int height)
 	{
@@ -118,14 +116,14 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		scrollLaterIfRequired();
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{
 		propertiesChanged();
 	} //}}}
 
-	//{{{ addNotify() method
+	// addNotify() method
 	@Override
 	public void addNotify()
 	{
@@ -140,7 +138,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		EditBus.addToBus(this);
 	} //}}}
 
-	//{{{ removeNotify() method
+	// removeNotify() method
 	@Override
 	public void removeNotify()
 	{
@@ -152,14 +150,14 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		EditBus.removeFromBus(this);
 	} //}}}
 
-	//{{{ focusOnDefaultComponent() method
+	// focusOnDefaultComponent() method
 	@Override
 	public void focusOnDefaultComponent()
 	{
 		list.requestFocus();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private ListHandler listHandler;
 	private FilteredListModel<ListModel<String>> listModel;
 	private final JList<String> list;
@@ -173,7 +171,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 	private static boolean showWarning = jEdit.getBooleanProperty("log-viewer.message.warning", true);
 	private static boolean showError = jEdit.getBooleanProperty("log-viewer.message.error", true);
 
-	//{{{ setFilter() method
+	// setFilter() method
 	private void setFilter()
 	{
 		String toFilter = filter.getText();
@@ -181,7 +179,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		scrollLaterIfRequired();
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	private void propertiesChanged()
 	{
 		cellRenderer.updateColors(list);
@@ -190,7 +188,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 					.getHeight());
 	} //}}}
 
-	//{{{ scrollToTail() method
+	// scrollToTail() method
 	/** Scroll to the tail of the logs. */
 	private void scrollToTail()
 	{
@@ -199,16 +197,15 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 			list.ensureIndexIsVisible(index - 1);
 	} //}}}
 
-	//{{{ scrollLaterIfRequired() method
+	// scrollLaterIfRequired() method
 	private void scrollLaterIfRequired()
 	{
 		if (tailIsOn)
 			ThreadUtilities.runInDispatchThread(this::scrollToTail);
 	} //}}}
 
-	//}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	@SuppressWarnings({"deprecation"})	// see note below
 	private class ActionHandler implements ActionListener
 	{
@@ -254,7 +251,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		}
 	} //}}}
 
-	//{{{ ListHandler class
+	// ListHandler class
 	private class ListHandler implements ListDataListener
 	{
 		@Override
@@ -276,7 +273,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		}
 	} //}}}
 
-	//{{{ LogList class
+	// LogList class
 	private class LogList extends JList<String>
 	{
 		LogList(ListModel<String> model)
@@ -323,7 +320,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		private int startIndex;
 	} //}}}
 
-	//{{{ ColorizerCellRenderer class
+	// ColorizerCellRenderer class
 	private static class ColorizerCellRenderer extends JPanel implements ListCellRenderer<String>
 	{
 		private static Color debugColor;
@@ -425,7 +422,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		}
 	} //}}}
 
-	//{{{ MyFilteredListModel
+	// MyFilteredListModel
 	private static class MyFilteredListModel extends FilteredListModel<ListModel<String>>
 	{
 		MyFilteredListModel(ListModel<String> model)
@@ -462,7 +459,7 @@ public class LogViewer extends JPanel implements DefaultFocusComponent
 		}
 	} //}}}
 
-	//{{{ LogSettings dialog
+	// LogSettings dialog
 	@SuppressWarnings({"unchecked"})	// The FilteredListModel needs work
 	private class LogSettings extends JDialog
 	{

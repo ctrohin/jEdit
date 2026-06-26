@@ -10,6 +10,7 @@
 <MODE>
 	<PROPS>
 		<PROPERTY NAME="contextInsensitive" VALUE="true"/>
+		<PROPERTY NAME="folding" VALUE="none" />
 	</PROPS>
 	<RULES DEFAULT="LITERAL1">
 

@@ -1,7 +1,6 @@
 /*
  * MemoryStatusWidgetFactory.java - The memory status widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,7 +45,6 @@ import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -54,14 +52,14 @@ import org.gjt.sp.jedit.jEdit;
  */
 public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() constructor
+	// getWidget() constructor
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new MemoryStatusWidget(view);
 	} //}}}
 	
-	//{{{ MemoryStatusWidget class
+	// MemoryStatusWidget class
 	private static class MemoryStatusWidget implements Widget
 	{
 		private final MemoryStatus memoryStatus;
@@ -78,12 +76,12 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 		}
 	} //}}}
 
-	//{{{ MemoryStatus class
+	// MemoryStatus class
 	private static class MemoryStatus extends JComponent implements ActionListener
 	{
 		private final View view;
 
-		//{{{ MemoryStatus constructor
+		// MemoryStatus constructor
 		MemoryStatus(View view)
 		{
 			this.view = view;
@@ -112,7 +110,7 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 			addMouseListener(new MouseHandler());
 		} //}}}
 
-		//{{{ addNotify() method
+		// addNotify() method
 		@Override
 		public void addNotify()
 		{
@@ -122,7 +120,7 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 			ToolTipManager.sharedInstance().registerComponent(this);
 		} //}}}
 
-		//{{{ removeNotify() method
+		// removeNotify() method
 		@Override
 		public void removeNotify()
 		{
@@ -132,7 +130,7 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 			super.removeNotify();
 		} //}}}
 
-		//{{{ getToolTipText() method
+		// getToolTipText() method
 		@Override
 		public String getToolTipText()
 		{
@@ -145,21 +143,21 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 			return jEdit.getProperty("view.status.memory-tooltip",args);
 		} //}}}
 
-		//{{{ getToolTipLocation() method
+		// getToolTipLocation() method
 		@Override
 		public Point getToolTipLocation(MouseEvent event)
 		{
 			return new Point(event.getX(),-20);
 		} //}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
 			repaint();
 		} //}}}
 
-		//{{{ paintComponent() method
+		// paintComponent() method
 		@Override
 		public void paintComponent(Graphics g)
 		{
@@ -216,7 +214,7 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 			g2.dispose();
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private static final String memoryTestStr = "9999/9999MB";
 
 		private final LineMetrics lm;
@@ -227,9 +225,8 @@ public class MemoryStatusWidgetFactory implements StatusWidgetFactory
 
 
 		private Timer timer;
-		//}}}
 
-		//{{{ MouseHandler class
+		// MouseHandler class
 		class MouseHandler extends MouseAdapter
 		{
 			@Override

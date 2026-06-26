@@ -1,7 +1,6 @@
 /*
  * DefaultTokenHandler.java - Builds a linked list of Token objects
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -33,7 +32,7 @@ import javax.swing.text.Segment;
  */
 public class DefaultTokenHandler implements TokenHandler
 {
-	//{{{ reset() method
+	// reset() method
 	/**
 	 * Clears the list of tokens.
 	 */
@@ -42,7 +41,7 @@ public class DefaultTokenHandler implements TokenHandler
 		lastToken = firstToken = null;
 	} //}}}
 
-	//{{{ getTokens() method
+	// getTokens() method
 	/**
 	 * Returns the first syntax token.
 	 * @since jEdit 4.1pre1
@@ -52,7 +51,7 @@ public class DefaultTokenHandler implements TokenHandler
 		return firstToken;
 	} //}}}
 
-	//{{{ handleToken() method
+	// handleToken() method
 	/**
 	 * Called by the token marker when a syntax token has been parsed.
 	 * @param seg The segment containing the text
@@ -72,7 +71,7 @@ public class DefaultTokenHandler implements TokenHandler
 			addToken(token,context);
 	} //}}}
 
-	//{{{ getLineContext() method
+	// getLineContext() method
 	/**
 	 * The token handler can compare this object with the object
 	 * previously given for this line to see if the token type at the end
@@ -85,7 +84,7 @@ public class DefaultTokenHandler implements TokenHandler
 		return lineContext;
 	} //}}}
 
-	//{{{ setLineContext() method
+	// setLineContext() method
 	/**
 	 * The token handler can compare this object with the object
 	 * previously given for this line to see if the token type at the end
@@ -99,11 +98,11 @@ public class DefaultTokenHandler implements TokenHandler
 		this.lineContext = lineContext;
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 	protected Token firstToken, lastToken;
 	protected TokenMarker.LineContext lineContext;
 
-	//{{{ getParserRuleSet() method
+	// getParserRuleSet() method
 	protected ParserRuleSet getParserRuleSet(TokenMarker.LineContext context)
 	{
 		while(context != null)
@@ -117,14 +116,14 @@ public class DefaultTokenHandler implements TokenHandler
 		return null;
 	} //}}}
 
-	//{{{ createToken() method
+	// createToken() method
 	protected Token createToken(byte id, int offset, int length,
 		TokenMarker.LineContext context)
 	{
 		return new Token(id,offset,length,getParserRuleSet(context));
 	} //}}}
 
-	//{{{ addToken() method
+	// addToken() method
 	protected void addToken(Token token, TokenMarker.LineContext context)
 	{
 		if(firstToken == null)
@@ -138,5 +137,4 @@ public class DefaultTokenHandler implements TokenHandler
 		}
 	} //}}}
 
-	//}}}
 }

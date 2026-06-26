@@ -2,7 +2,6 @@
  * ContextOptionPane.java - Context menu options panel
  * Copyright (C) 2000, 2001 Slava Pestov
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,12 +20,11 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.JCheckBox;
 
 import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * Right-click context menu editor.

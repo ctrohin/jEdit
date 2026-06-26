@@ -1,7 +1,6 @@
 /*
  * DirectoryProvider.java - File list menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
@@ -31,7 +30,6 @@ import org.gjt.sp.jedit.browser.*;
 import org.gjt.sp.jedit.io.FileVFS;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -39,20 +37,20 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class DirectoryProvider implements DynamicMenuProvider
 {
-	//{{{ DirectoryProvider constructor
+	// DirectoryProvider constructor
 	public DirectoryProvider(String dir)
 	{
 		this.dir = dir;
 	} //}}}
 
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return true;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
@@ -169,7 +167,6 @@ public class DirectoryProvider implements DynamicMenuProvider
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final String dir;
-	//}}}
 }

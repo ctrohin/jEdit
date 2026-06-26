@@ -1,7 +1,6 @@
 /*
  * BeanShellAction.java - BeanShell action
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -43,7 +42,7 @@ import org.gjt.sp.util.Log;
  */
 public class BeanShellAction extends EditAction
 {
-	//{{{ BeanShellAction constructor
+	// BeanShellAction constructor
 	public BeanShellAction(String name, String code, String isSelected,
 		boolean noRepeat, boolean noRecord, boolean noRememberLast)
 	{
@@ -65,7 +64,7 @@ public class BeanShellAction extends EditAction
 			isSelected != null ? "true" : "false");
 	} //}}}
 
-	//{{{ invoke() method
+	// invoke() method
 	@Override
 	public void invoke(View view)
 	{
@@ -83,7 +82,7 @@ public class BeanShellAction extends EditAction
 		}
 	} //}}}
 
-	//{{{ isSelected() method
+	// isSelected() method
 	@Override
 	public boolean isSelected(Component comp)
 	{
@@ -133,21 +132,21 @@ public class BeanShellAction extends EditAction
 		}
 	} //}}}
 
-	//{{{ noRepeat() method
+	// noRepeat() method
 	@Override
 	public boolean noRepeat()
 	{
 		return noRepeat;
 	} //}}}
 
-	//{{{ noRecord() method
+	// noRecord() method
 	@Override
 	public boolean noRecord()
 	{
 		return noRecord;
 	} //}}}
 
-	//{{{ noRememberLast() method
+	// noRememberLast() method
 	/**
 	 * Returns if this edit action should not be remembered as the most
 	 * recently invoked action.
@@ -159,21 +158,21 @@ public class BeanShellAction extends EditAction
 		return noRememberLast;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	@Override
 	public String getCode()
 	{
 		return code.getSource().trim();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final boolean noRepeat;
 	private final boolean noRecord;
 	private final boolean noRememberLast;
 	private final CachedBshMethod code;
 	private CachedBshMethod isSelected;
 
-	//{{{ CachedBshMethod class
+	// CachedBshMethod class
 	private static class CachedBshMethod
 	{
 		private final String name;
@@ -208,5 +207,4 @@ public class BeanShellAction extends EditAction
 		}
 	}//}}}
 
-	//}}}
 }

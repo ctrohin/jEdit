@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010 jEdit contributors
  *
@@ -94,7 +93,7 @@ public class PasteSpecialDialog extends EnhancedDialog
 		});
 		getContentPane().add(new JScrollPane(this.flavorList));
 
-		//{{{ Buttons
+		// Buttons
 
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
@@ -115,7 +114,6 @@ public class PasteSpecialDialog extends EnhancedDialog
 		GenericGUIUtilities.makeSameSize(ok, cancel);
 
 		content.add(BorderLayout.SOUTH, buttons);
-		//}}}
 
 		pack();
 		setLocationRelativeTo(view);

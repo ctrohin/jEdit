@@ -19,35 +19,34 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.syntax.ModeProvider;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
-//}}}
 
 /**
  * @author Slava Pestov
  */
 class ModeCatalogHandler extends DefaultHandler
 {
-	//{{{ ModeCatalogHandler constructor
+	// ModeCatalogHandler constructor
 	ModeCatalogHandler(String directory, boolean resource)
 	{
 		this.directory = directory;
 		this.resource = resource;
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return XMLUtilities.findEntity(systemId, "catalog.dtd", getClass());
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attrs)
 	{

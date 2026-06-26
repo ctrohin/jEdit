@@ -1,7 +1,6 @@
 /*
  * XModeHandler.java - XML handler for mode files
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 mike dillon
  * Portions copyright (C) 2000, 2001 Slava Pestov
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -35,7 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.gjt.sp.jedit.Mode;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
-//}}}
 
 /**
  * XML handler for mode definition files.
@@ -43,7 +41,7 @@ import org.gjt.sp.util.XMLUtilities;
  */
 public abstract class XModeHandler extends DefaultHandler
 {
-	//{{{ XModeHandler constructor
+	// XModeHandler constructor
 	protected XModeHandler(String modeName)
 	{
 		this.modeName = modeName;
@@ -52,21 +50,21 @@ public abstract class XModeHandler extends DefaultHandler
 		stateStack = new Stack<>();
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return XMLUtilities.findEntity(systemId, "xmode.dtd", XModeHandler.class);
 	} //}}}
 
-	//{{{ characters() method
+	// characters() method
 	@Override
 	public void characters(char[] c, int off, int len)
 	{
 		peekElement().setText(c, off, len);
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName,
 				 String qName, Attributes attrs)
@@ -117,7 +115,7 @@ public abstract class XModeHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endElement() method
+	// endElement() method
 	@Override
 	public void endElement(String uri, String localName, String name)
 	{
@@ -134,12 +132,12 @@ public abstract class XModeHandler extends DefaultHandler
 					reloadModes.add(mode);
 				}
 			}
-			//{{{ PROPERTY
+			// PROPERTY
 			if (tag.tagName.equals("PROPERTY"))
 			{
 				props.put(propName,propValue);
 			} //}}}
-			//{{{ PROPS
+			// PROPS
 			else if (tag.tagName.equals("PROPS"))
 			{
 				if(peekElement().tagName.equals("RULES"))
@@ -149,14 +147,14 @@ public abstract class XModeHandler extends DefaultHandler
 
 				props = new Hashtable<>();
 			} //}}}
-			//{{{ RULES
+			// RULES
 			else if (tag.tagName.equals("RULES"))
 			{
 				rules.setKeywords(keywords);
 				keywords = null;
 				rules = null;
 			} //}}}
-			//{{{ IMPORT
+			// IMPORT
 			else if (tag.tagName.equals("IMPORT"))
 			{
 				// prevent lockups
@@ -165,12 +163,12 @@ public abstract class XModeHandler extends DefaultHandler
 					rules.addRuleSet(tag.lastDelegateSet);
 				}
 			} //}}}
-			//{{{ TERMINATE
+			// TERMINATE
 			else if (tag.tagName.equals("TERMINATE"))
 			{
 				rules.setTerminateChar(tag.termChar);
 			} //}}}
-			//{{{ SEQ
+			// SEQ
 			else if (tag.tagName.equals("SEQ"))
 			{
 				if(tag.lastStart == null)
@@ -183,7 +181,7 @@ public abstract class XModeHandler extends DefaultHandler
 					tag.lastStartPosMatch,tag.lastStart.toString(),
 					tag.lastDelegateSet,tag.lastTokenID));
 			} //}}}
-			//{{{ SEQ_REGEXP
+			// SEQ_REGEXP
 			else if (tag.tagName.equals("SEQ_REGEXP"))
 			{
 				if(tag.lastStart == null)
@@ -214,7 +212,7 @@ public abstract class XModeHandler extends DefaultHandler
 					error("regexp",re);
 				}
 			} //}}}
-			//{{{ SPAN
+			// SPAN
 			else if (tag.tagName.equals("SPAN"))
 			{
 				if(tag.lastStart == null)
@@ -239,7 +237,7 @@ public abstract class XModeHandler extends DefaultHandler
 					tag.lastNoWordBreak,
 					tag.lastEscape));
 			} //}}}
-			//{{{ SPAN_REGEXP
+			// SPAN_REGEXP
 			else if (tag.tagName.equals("SPAN_REGEXP"))
 			{
 				if(tag.lastStart == null)
@@ -294,7 +292,7 @@ public abstract class XModeHandler extends DefaultHandler
 					error("regexp",re);
 				}
 			} //}}}
-			//{{{ EOL_SPAN
+			// EOL_SPAN
 			else if (tag.tagName.equals("EOL_SPAN"))
 			{
 				if(tag.lastStart == null)
@@ -308,7 +306,7 @@ public abstract class XModeHandler extends DefaultHandler
 					tag.lastDelegateSet,tag.lastTokenID,
 					tag.lastMatchType));
 			} //}}}
-			//{{{ EOL_SPAN_REGEXP
+			// EOL_SPAN_REGEXP
 			else if (tag.tagName.equals("EOL_SPAN_REGEXP"))
 			{
 				if(tag.lastStart == null)
@@ -341,7 +339,7 @@ public abstract class XModeHandler extends DefaultHandler
 					error("regexp",re);
 				}
 			} //}}}
-			//{{{ MARK_FOLLOWING
+			// MARK_FOLLOWING
 			else if (tag.tagName.equals("MARK_FOLLOWING"))
 			{
 				if(tag.lastStart == null)
@@ -355,7 +353,7 @@ public abstract class XModeHandler extends DefaultHandler
 					tag.lastStartPosMatch,tag.lastStart.toString(),
 					tag.lastTokenID,tag.lastMatchType));
 			} //}}}
-			//{{{ MARK_PREVIOUS
+			// MARK_PREVIOUS
 			else if (tag.tagName.equals("MARK_PREVIOUS"))
 			{
 				if(tag.lastStart == null)
@@ -369,7 +367,7 @@ public abstract class XModeHandler extends DefaultHandler
 					tag.lastStartPosMatch,tag.lastStart.toString(),
 					tag.lastTokenID,tag.lastMatchType));
 			} //}}}
-			//{{{ Keywords
+			// Keywords
 			else if (
 				!tag.tagName.equals("END")
 				&& !tag.tagName.equals("BEGIN")
@@ -398,7 +396,7 @@ public abstract class XModeHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startDocument() method
+	// startDocument() method
 	@Override
 	public void startDocument()
 	{
@@ -407,7 +405,7 @@ public abstract class XModeHandler extends DefaultHandler
 		reloadModes = new Vector<>();
 	} //}}}
 
-	//{{{ endDocument() method
+	// endDocument() method
 	@Override
 	public void endDocument()
 	{
@@ -423,7 +421,7 @@ public abstract class XModeHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ getTokenMarker() method
+	// getTokenMarker() method
 	/**
 	 * Returns the TokenMarker.
 	 *
@@ -434,15 +432,15 @@ public abstract class XModeHandler extends DefaultHandler
 		return marker;
 	} //}}}
 
-	//{{{ getModeProperties() method
+	// getModeProperties() method
 	public Hashtable<String, String> getModeProperties()
 	{
 		return modeProps;
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 
-	//{{{ error() method
+	// error() method
 	/**
 	 * Reports an error.
 	 * You must override this method so that the mode loader can do error
@@ -453,9 +451,8 @@ public abstract class XModeHandler extends DefaultHandler
 	 * @since jEdit 4.2pre1
 	 */
 	protected abstract void error(String msg, Object subst);
-	//}}}
 
-	//{{{ getTokenMarker() method
+	// getTokenMarker() method
 	/**
 	 * Returns the token marker for the given mode.
 	 * You must override this method so that the mode loader can resolve
@@ -464,13 +461,11 @@ public abstract class XModeHandler extends DefaultHandler
 	 * @since jEdit 4.2pre1
 	 */
 	protected abstract TokenMarker getTokenMarker(String mode);
-	//}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final String modeName;
 	/** The token marker cannot be null. */
 	private final TokenMarker marker;
@@ -487,16 +482,15 @@ public abstract class XModeHandler extends DefaultHandler
 	 *  @see <a href="https://sourceforge.net/p/jedit/bugs/2895/">https://sourceforge.net/p/jedit/bugs/2895/</a>
 	 */
 	private Vector<Mode> reloadModes;
-	//}}}
 
-	//{{{ addKeyword() method
+	// addKeyword() method
 	private void addKeyword(String k, byte id)
 	{
 		if (keywords == null) return;
 		keywords.add(k,id);
 	} //}}}
 
-	//{{{ pushElement() method
+	// pushElement() method
 	private TagDecl pushElement(String name, Attributes attrs)
 	{
 		if (name != null)
@@ -512,19 +506,19 @@ public abstract class XModeHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ peekElement() method
+	// peekElement() method
 	private TagDecl peekElement()
 	{
 		return stateStack.peek();
 	} //}}}
 
-	//{{{ popElement() method
+	// popElement() method
 	private TagDecl popElement()
 	{
 		return stateStack.pop();
 	} //}}}
 
-	//{{{ findParent() method
+	// findParent() method
 	/**
 	 * Finds the first element whose tag matches 'tagName',
 	 * searching backwards in the stack.
@@ -540,7 +534,6 @@ public abstract class XModeHandler extends DefaultHandler
 		return null;
 	} //}}}
 
-	//}}}
 
 	/**
 	 * Hold info about what tag was read and what attributes were

@@ -1,7 +1,6 @@
 /*
  * PasteFromListDialog.java - Paste previous/paste deleted dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -22,19 +21,18 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /** Paste previous/paste deleted dialog */
 public class PasteFromListDialog extends EnhancedDialog
 {
-	//{{{ PasteFromListDialog constructor
+	// PasteFromListDialog constructor
 	public PasteFromListDialog(String name, View view, MutableListModel<String> model)
 	{
 		super(view,jEdit.getProperty(name + ".title"),true);
@@ -105,7 +103,7 @@ public class PasteFromListDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -134,24 +132,23 @@ public class PasteFromListDialog extends EnhancedDialog
 		cleanup();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		cleanup();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private final MutableListModel<String> listModel;
 	private final JList<String> clips;
 	private final JTextArea clipText;
 	private final JButton insert;
-	//}}}
 
-	//{{{ cleanup()
+	// cleanup()
 	private void cleanup()
 	{
 		// Remove the reference to the JList from the history model so that the
@@ -161,7 +158,7 @@ public class PasteFromListDialog extends EnhancedDialog
 		dispose();
 	} //}}}
 
-	//{{{ getSelectedClipText()
+	// getSelectedClipText()
 	private String getSelectedClipText()
 	{
 		java.util.List<String> selected = clips.getSelectedValuesList();
@@ -185,16 +182,15 @@ public class PasteFromListDialog extends EnhancedDialog
 			return clip.toString();
 		}
 	}
-	//}}}
 
-	//{{{ updateButtons() method
+	// updateButtons() method
 	private void updateButtons()
 	{
 		int selected = clips.getSelectedIndex();
 		insert.setEnabled(selected != -1);
 	} //}}}
 
-	//{{{ showClipText() method
+	// showClipText() method
 	private void showClipText()
 	{
 		java.util.List<String> selected = clips.getSelectedValuesList();
@@ -221,11 +217,9 @@ public class PasteFromListDialog extends EnhancedDialog
 
 		clipText.setCaretPosition(0);
 	}
-	//}}}
 
-	//}}}
 
-	//{{{ Renderer class
+	// Renderer class
 	private static class Renderer extends DefaultListCellRenderer
 	{
 		Renderer(int maxItemLength)
@@ -285,7 +279,7 @@ public class PasteFromListDialog extends EnhancedDialog
 		private final int maxItemLength;
 	} //}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override

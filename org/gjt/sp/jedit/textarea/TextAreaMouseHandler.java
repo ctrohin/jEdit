@@ -1,7 +1,6 @@
 /*
  * TextAreaMouseHandler.java - standalone mouse handler for textarea
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -44,13 +43,13 @@ import java.awt.*;
  */
 public class TextAreaMouseHandler extends MouseInputAdapter
 {
-	//{{{ MouseHandler constructor
+	// MouseHandler constructor
 	TextAreaMouseHandler(TextArea textArea)
 	{
 		this.textArea = textArea;
 	} //}}}
 
-	//{{{ mousePressed() method
+	// mousePressed() method
 	@Override
 	public void mousePressed(MouseEvent evt)
 	{
@@ -141,7 +140,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		}
 	} //}}}
 
-	//{{{ doSingleClick() method
+	// doSingleClick() method
 	protected void doSingleClick(MouseEvent evt)
 	{
 		int x = evt.getX();
@@ -229,7 +228,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 			textArea.selectNone();
 	} //}}}
 
-	//{{{ doDoubleClick() method
+	// doDoubleClick() method
 	protected void doDoubleClick()
 	{
 		// Ignore empty lines
@@ -266,7 +265,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		dragged = true;
 	} //}}}
 
-	//{{{ doTripleClick() method
+	// doTripleClick() method
 	protected void doTripleClick()
 	{
 		int newCaret = textArea.getLineEndOffset(dragStartLine);
@@ -289,14 +288,14 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		dragged = true;
 	} //}}}
 
-	//{{{ mouseMoved() method
+	// mouseMoved() method
 	@Override
 	public void mouseMoved(MouseEvent evt)
 	{
 		showCursor();
 	} //}}}
 
-	//{{{ mouseDragged() method
+	// mouseDragged() method
 	@Override
 	public void mouseDragged(MouseEvent evt)
 	{
@@ -340,7 +339,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		}
 	} //}}}
 
-	//{{{ doSingleDrag() method
+	// doSingleDrag() method
 	private void doSingleDrag(MouseEvent evt)
 	{
 		dragged = true;
@@ -412,7 +411,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		}
 	} //}}}
 
-	//{{{ doDoubleDrag() method
+	// doDoubleDrag() method
 	private void doDoubleDrag(MouseEvent evt)
 	{
 		int markLineStart = textArea.getLineStartOffset(dragStartLine);
@@ -479,7 +478,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		dragged = true;
 	} //}}}
 
-	//{{{ doTripleDrag() method
+	// doTripleDrag() method
 	private void doTripleDrag(MouseEvent evt)
 	{
 		TextAreaPainter painter = textArea.getPainter();
@@ -521,7 +520,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		dragged = true;
 	} //}}}
 
-	//{{{ mouseReleased() method
+	// mouseReleased() method
 	@Override
 	public void mouseReleased(MouseEvent evt)
 	{
@@ -574,7 +573,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 			textArea.scrollToCaret(false);
 	} //}}}
 
-	//{{{ isPopupTrigger() method
+	// isPopupTrigger() method
 	/**
 	 * Returns if the specified event is the popup trigger event.
 	 * This implements precisely defined behavior, as opposed to
@@ -587,7 +586,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		return isRightButton(evt);
 	} //}}}
 
-	//{{{ isLeftButton() method
+	// isLeftButton() method
 	/**
 	 * @param evt A mouse event
 	 * @return true if the mouse event is due to the left button
@@ -598,7 +597,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		return evt.getButton() == BUTTON1;
 	} //}}}
 
-	//{{{ isMiddleButton() method
+	// isMiddleButton() method
 	/**
 	 * @param modifiers The modifiers flag from a mouse event
 	 * @return true if the modifier match the middle button
@@ -637,7 +636,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 			return evt.getButton() == BUTTON2;
 	} //}}}
 
-	//{{{ isRightButton() method
+	// isRightButton() method
 	/**
 	 * @param modifiers The modifiers flag from a mouse event
 	 * @return true if the modifier match the right button
@@ -676,9 +675,9 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 			return evt.getButton() == BUTTON3;
 	} //}}}
 
-	//{{{ Private methods
+	// Private methods
 
-	//{{{ getSelectionPivotCaret() method
+	// getSelectionPivotCaret() method
 	/*
 	 * Dynamically get the "pivot" point associated with a current
 	 * selection.  See inline comments for details.
@@ -709,7 +708,7 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 		return caret;
 	} //}}}
 
-	//{{{ getSelectionPivotLine() method
+	// getSelectionPivotLine() method
 	/*
 	 * See getSelectionPivotCaret for an explanation of this function
 	 */
@@ -728,9 +727,8 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 
 		return cl;
 	} //}}}
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	protected final TextArea textArea;
 	protected int dragStartLine;
 	protected int dragStartOffset;
@@ -744,11 +742,10 @@ public class TextAreaMouseHandler extends MouseInputAdapter
 	immediately deselect */
 	protected boolean maybeDragAndDrop;
 
-	//{{{ showCursor() method
+	// showCursor() method
 	protected void showCursor()
 	{
 		textArea.getPainter().showCursor();
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * ModeProvider.java - An edit mode provider.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.Mode;
 import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.Log;
@@ -41,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.regex.*;
-//}}}
 
 /**
  * This class works like a singleton, the instance is initialized by jEdit.
@@ -56,13 +54,13 @@ public class ModeProvider
 
 	private final LinkedHashMap<String, Mode> modes = new LinkedHashMap<>(250);
 
-	//{{{ removeAll() method
+	// removeAll() method
 	public void removeAll()
 	{
 		modes.clear();
 	} //}}}
 
-	//{{{ removeMode() method
+	// removeMode() method
 	/**
 	 * Will only remove user modes.
 	 * @return true if the mode was removed, false otherwise.
@@ -144,7 +142,7 @@ public class ModeProvider
 		return true;
 	} //}}}
 
-	//{{{ getMode() method
+	// getMode() method
 	/**
 	 * Returns the edit mode with the specified name.
 	 * @param name The edit mode
@@ -155,7 +153,7 @@ public class ModeProvider
 		return modes.get(name);
 	} //}}}
 
-	//{{{ getModeForFile() method
+	// getModeForFile() method
 	/**
 	 * Get the appropriate mode that must be used for the file
 	 * @param filename the filename
@@ -168,7 +166,7 @@ public class ModeProvider
 		return getModeForFile(null, filename, firstLine);
 	} //}}}
 
-	//{{{ getModeForFile() method
+	// getModeForFile() method
 	/**
 	 * Get the appropriate mode that must be used for the file
 	 * @param filepath the filepath, can be {@code null}
@@ -259,7 +257,7 @@ public class ModeProvider
 		return null;
 	} //}}}
 
-	//{{{ getModes() method
+	// getModes() method
 	/**
 	 * Returns an array of installed edit modes.
 	 * @since jEdit 4.3pre10
@@ -269,7 +267,7 @@ public class ModeProvider
 		return modes.values().toArray(new Mode[0]);
 	} //}}}
 
-	//{{{ addMode() method
+	// addMode() method
 	/**
 	 * Do not call this method. It is only public so that classes
 	 * in the org.gjt.sp.jedit.syntax package can access it.
@@ -288,7 +286,7 @@ public class ModeProvider
 		modes.put(name, mode);
 	} //}}}
 
-	//{{{ addUserMode() method
+	// addUserMode() method
 	/**
 	 * Do not call this method. It is only public so that classes
 	 * in the org.gjt.sp.jedit.syntax package can access it.
@@ -354,7 +352,7 @@ public class ModeProvider
 		loadMode(mode);
 	} //}}}
 
-	//{{{ loadMode() method
+	// loadMode() method
 	public void loadMode(Mode mode, XModeHandler xmh)
 	{
 		String fileName = (String)mode.getProperty("file");
@@ -410,7 +408,7 @@ public class ModeProvider
 		}
 	} //}}}
 
-	//{{{ loadMode() method
+	// loadMode() method
 	public void loadMode(Mode mode)
 	{
 		XModeHandler xmh = new XModeHandler(mode.getName())
@@ -434,7 +432,7 @@ public class ModeProvider
 		loadMode(mode, xmh);
 	} //}}}
 
-	//{{{ error() method
+	// error() method
 	protected void error(String file, Throwable e)
 	{
 		Log.log(Log.ERROR, this, e);

@@ -1,7 +1,6 @@
 /*
  * BufferHandler.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -51,7 +50,7 @@ class BufferHandler implements BufferListener
 	private int delayedUpdateStart;
 	private int delayedUpdateEnd;
 
-	//{{{ BufferChangeHandler constructor
+	// BufferChangeHandler constructor
 	BufferHandler(DisplayManager displayManager,
 		TextArea textArea,
 		JEditBuffer buffer)
@@ -61,7 +60,7 @@ class BufferHandler implements BufferListener
 		this.buffer = buffer;
 	} //}}}
 
-	//{{{ bufferLoaded() method
+	// bufferLoaded() method
 	@Override
 	public void bufferLoaded(JEditBuffer buffer)
 	{
@@ -69,14 +68,14 @@ class BufferHandler implements BufferListener
 		textArea._finishCaretUpdate();
 	} //}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	@Override
 	public void foldHandlerChanged(JEditBuffer buffer)
 	{
 		displayManager.foldHandlerChanged();
 	} //}}}
 
-	//{{{ foldLevelChanged() method
+	// foldLevelChanged() method
 	@Override
 	public void foldLevelChanged(JEditBuffer buffer, int start, int end)
 	{
@@ -90,7 +89,7 @@ class BufferHandler implements BufferListener
 		}
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	@Override
 	public void contentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length)
 	{
@@ -118,7 +117,7 @@ class BufferHandler implements BufferListener
 				delayedUpdateEnd += numLines;
 			delayUpdate(startLine,endLine);
 
-			//{{{ resize selections if necessary
+			// resize selections if necessary
 			
 			Iterator<Selection> iter = textArea.getSelectionIterator();
 			while(iter.hasNext())
@@ -157,7 +156,7 @@ class BufferHandler implements BufferListener
 		}
 	} //}}}
 
-	//{{{ preContentInserted() method
+	// preContentInserted() method
 	/**
 	 * Called when text is about to be inserted in the buffer.
 	 * @param buffer The buffer in question
@@ -181,7 +180,7 @@ class BufferHandler implements BufferListener
 		}
 	} //}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * Called when text is about to be removed from the buffer, but is
 	 * still present.
@@ -262,7 +261,7 @@ class BufferHandler implements BufferListener
 		}
 	} //}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	@Override
 	public void contentRemoved(JEditBuffer buffer, int startLine, int start, int numLines, int length)
 	{
@@ -277,7 +276,7 @@ class BufferHandler implements BufferListener
 			firstLine.contentRemoved(startLine,start,numLines);
 			scrollLineCount.contentRemoved(startLine,start,numLines);
 
-			//{{{ resize selections if necessary
+			// resize selections if necessary
 			int nSel = textArea.getSelectionCount();
 			Iterator<Selection> iter = textArea.getSelectionIterator();
 			while(iter.hasNext())
@@ -321,9 +320,8 @@ class BufferHandler implements BufferListener
 			}
 		}
 	}
-	//}}}
 
-	//{{{ transactionComplete() method
+	// transactionComplete() method
 	@Override
 	public void transactionComplete(JEditBuffer buffer)
 	{
@@ -340,7 +338,7 @@ class BufferHandler implements BufferListener
 
 		delayedUpdate = false;
 
-		//{{{ Debug code
+		// Debug code
 		if(Debug.SCROLL_VERIFY)
 		{
 			int line = delayedUpdateStart;
@@ -363,7 +361,7 @@ class BufferHandler implements BufferListener
 		} //}}}
 	} //}}}
 
-	//{{{ doDelayedUpdate() method
+	// doDelayedUpdate() method
 	private void doDelayedUpdate()
 	{
 		// must be done before the below call
@@ -409,7 +407,7 @@ class BufferHandler implements BufferListener
 		buffer.getFoldLevel(delayedUpdateEnd);
 	} //}}}
 
-	//{{{ delayUpdate() method
+	// delayUpdate() method
 	private void delayUpdate(int startLine, int endLine)
 	{
 		textArea.chunkCache.invalidateChunksFromPhys(startLine);
@@ -431,7 +429,7 @@ class BufferHandler implements BufferListener
 		}
 	} //}}}
 
-	//{{{ getReadyToBreakFold() method
+	// getReadyToBreakFold() method
 	// This is a fix for black hole bug.
 	// If you modify a part of folded lines, like {{{ (followed by }}}),
 	// the fold is removed so it must be expanded otherwise the text

@@ -1,7 +1,6 @@
 /*
  * HyperSearchRequest.java - HyperSearch request, run in I/O thread
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.search;
 
-//{{{ Imports
+// Imports
 import javax.swing.tree.*;
 import javax.swing.*;
 
@@ -33,7 +32,6 @@ import org.gjt.sp.jedit.GUIUtilities;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.util.*;
-//}}}
 
 /**
  * HyperSearch results window.
@@ -42,7 +40,7 @@ import org.gjt.sp.util.*;
  */
 class HyperSearchRequest extends Task
 {
-	//{{{ HyperSearchRequest constructor
+	// HyperSearchRequest constructor
 	HyperSearchRequest(View view, SearchMatcher matcher,
 		HyperSearchResults results, Selection[] selection)
 	{
@@ -56,7 +54,7 @@ class HyperSearchRequest extends Task
 		this.selection = selection;
 	} //}}}
 
-	//{{{ run() method
+	// run() method
 	@Override
 	public void _run()
 	{
@@ -170,9 +168,9 @@ class HyperSearchRequest extends Task
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private final SearchMatcher matcher;
 	private final HyperSearchResults results;
@@ -180,9 +178,8 @@ class HyperSearchRequest extends Task
 	private final Selection[] selection;
 	private final String searchString;
 	private DefaultMutableTreeNode selectNode;
-	//}}}
 
-	//{{{ searchInSelection() method
+	// searchInSelection() method
 	private int searchInSelection(Buffer buffer) throws Exception
 	{
 		setCancellable(false);
@@ -218,7 +215,7 @@ class HyperSearchRequest extends Task
 		return resultCount;
 	} //}}}
 
-	//{{{ doHyperSearch() method
+	// doHyperSearch() method
 	private int doHyperSearch(Buffer buffer, int start, int end)
 		throws Exception
 	{
@@ -240,7 +237,7 @@ class HyperSearchRequest extends Task
 		return resultCount;
 	} //}}}
 
-	//{{{ doHyperSearch() method
+	// doHyperSearch() method
 	private int doHyperSearch(Buffer buffer, int start, int end,
 		DefaultMutableTreeNode bufferNode)
 	{
@@ -308,5 +305,4 @@ class HyperSearchRequest extends Task
 		return resultCount;
 	} //}}}
 
-	//}}}
 }

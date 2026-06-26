@@ -1,7 +1,6 @@
 /*
  * BufferPrinter1_7.java - Main class that controls printing
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  * Portions copyright (C) 2002 Thomas Dilts

@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010 jEdit contributors
  *
@@ -39,13 +38,13 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 	private boolean handledDeletion = true;
 	private boolean singleTabDeleted;
 	
-	//{{{ ElasticTabStopBufferListener() method
+	// ElasticTabStopBufferListener() method
 	public ElasticTabStopBufferListener(TextArea textArea)
 	{
 		this.textArea = textArea;
 	}//}}}
 	
-	//{{{ fullyUpdateColumnBlocks() method
+	// fullyUpdateColumnBlocks() method
 	private void fullyUpdateColumnBlocks(JEditBuffer buffer)
 	{
 		buffer.indentUsingElasticTabstops();
@@ -57,7 +56,7 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 		//textArea.getPainter().repaint();
 	}//}}}
 	
-	//{{{ contentInserted() method
+	// contentInserted() method
 	@Override
 	public void contentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length)
 	{
@@ -214,7 +213,7 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 		}
 	}//}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	/**
 	 * Called when text is removed from the buffer.
 	 * @param buffer The buffer in question
@@ -486,7 +485,7 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 		}
 	}//}}}
 		
-	//{{{ transactionComplete() method
+	// transactionComplete() method
 	@Override
 	public void transactionComplete(JEditBuffer buffer)
 	{
@@ -501,9 +500,8 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 		}	
 			
 	}
-	//}}}
 		
-	//{{{ preContentInserted() method
+	// preContentInserted() method
 	@Override
 	public void preContentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length)
 	{
@@ -516,7 +514,7 @@ public class ElasticTabStopBufferListener extends BufferAdapter
 			buffer.getColumnBlock().setDirtyStatus(true);
 	} //}}}
 		
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	@Override
 	public void preContentRemoved(JEditBuffer buffer, int startLine, int offset, int numLines, int length)
 	{

@@ -1,7 +1,6 @@
 /*
  * InputHandler.java - Manages key bindings and executes actions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
@@ -36,7 +35,6 @@ import org.gjt.sp.util.StandardUtilities;
 
 import java.awt.event.KeyEvent;
 import java.awt.*;
-//}}}
 
 /**
  * An input handler converts the user's key strokes into concrete actions.
@@ -52,7 +50,7 @@ import java.awt.*;
  */
 public abstract class InputHandler extends AbstractInputHandler<EditAction>
 {
-	//{{{ InputHandler constructor
+	// InputHandler constructor
 	/**
 	 * Creates a new input handler.
 	 * @param view The view
@@ -62,7 +60,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		this.view = view;
 	} //}}}
 
-	//{{{ handleKey() method
+	// handleKey() method
 	/**
 	 * Handles a keystroke.
 	 * @param keyStroke The key stroke.
@@ -74,7 +72,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		return handleKey(keyStroke, false);
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	/**
 	 * Forwards key events directly to the input handler.
 	 * This is slightly faster than using a KeyListener
@@ -162,7 +160,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		}
 	} //}}}
 
-	//{{{ _preprocessKeyEvent() method
+	// _preprocessKeyEvent() method
 	private KeyEvent _preprocessKeyEvent(KeyEvent evt)
 	{
 		if(view.isClosed())
@@ -214,7 +212,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		return KeyEventWorkaround.processKeyEvent(evt);
 	} //}}}
 
-	//{{{ processKeyEventSub() method
+	// processKeyEventSub() method
 	private void processKeyEventSub(boolean focusOnTextArea)
 	{
 		// we might have been closed as a result of
@@ -247,9 +245,8 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 			view.setPrefixFocusOwner(null);
 		}
 	}
-	//}}}
 
-	//{{{ getRepeatCount() method
+	// getRepeatCount() method
 	/**
 	 * Returns the number of times the next action will be repeated.
 	 */
@@ -258,7 +255,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		return repeatCount;
 	} //}}}
 
-	//{{{ setRepeatCount() method
+	// setRepeatCount() method
 	/**
 	 * Sets the number of times the next action will be repeated.
 	 * @param repeatCount The repeat count
@@ -271,7 +268,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 			view.getStatus().setMessage(null);
 	} //}}}
 
-	//{{{ getLastAction() method
+	// getLastAction() method
 	/**
 	 * Returns the last executed action.
 	 * @since jEdit 2.5pre5
@@ -281,7 +278,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		return lastAction;
 	} //}}}
 
-	//{{{ readNextChar() method
+	// readNextChar() method
 	/**
 	 * Invokes the specified BeanShell code, replacing __char__ in the
 	 * code with the next input character.
@@ -295,7 +292,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		readNextChar = code;
 	} //}}}
 
-	//{{{ invokeAction() method
+	// invokeAction() method
 	/**
 	 * Invokes the specified action, repeating and recording it as
 	 * necessary.
@@ -308,7 +305,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		invokeAction(jEdit.getAction(action));
 	} //}}}
 
-	//{{{ invokeAction() method
+	// invokeAction() method
 	/**
 	 * Invokes the specified action, repeating and recording it as
 	 * necessary.
@@ -397,7 +394,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		}
 	} //}}}
 
-	//{{{ invokeLastAction() method
+	// invokeLastAction() method
 	public void invokeLastAction()
 	{
 		if(lastAction == null)
@@ -406,12 +403,11 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 			invokeAction(lastAction);
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	protected final View view;
 
-	//}}}
 
-	//{{{ userInput() method
+	// userInput() method
 	protected void userInput(char ch)
 	{
 		lastActionCount = 0;
@@ -470,7 +466,7 @@ public abstract class InputHandler extends AbstractInputHandler<EditAction>
 		repeatCount = 1;
 	} //}}}
 
-	//{{{ invokeReadNextChar() method
+	// invokeReadNextChar() method
 	protected void invokeReadNextChar(char ch)
 	{
 		JEditBuffer buffer = view.getBuffer();

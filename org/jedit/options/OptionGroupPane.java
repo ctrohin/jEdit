@@ -1,7 +1,6 @@
 /*
  * OptionGroupPane.java - A Pane (view) for displaying/selecting OptionGroups.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:
  *
  * Copyright (C) 2005 Slava Pestov
  * Copyright (C) 2011 Alan Ezust 
@@ -336,7 +335,7 @@ public class OptionGroupPane extends AbstractOptionPane implements TreeSelection
 
 	} //}}}
 
-	//{{{ save() methods
+	// save() methods
 	@Override
 	protected void _save()
 	{

@@ -2,7 +2,6 @@
  * SelectionLengthWidgetFactory.java - A status bar widget that displays
  * the length of the selection at caret
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  *
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import org.gjt.sp.jedit.msg.ViewUpdate;
@@ -34,7 +33,6 @@ import org.gjt.sp.jedit.textarea.Selection;
 import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.CaretEvent;
-//}}}
 
 /**
  * @author Matthieu Casanova 
@@ -42,14 +40,14 @@ import javax.swing.event.CaretEvent;
  */
 public class SelectionLengthWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new SelectionLengthWidget(view);
 	} //}}}
 
-	//{{{ SelectionLengthWidget class
+	// SelectionLengthWidget class
 	public static class SelectionLengthWidget implements Widget
 	{
 		private final SelectionLength selectionLength;
@@ -122,7 +120,7 @@ public class SelectionLengthWidgetFactory implements StatusWidgetFactory
 		{
 			boolean visible;
 
-			//{{{ addNotify() method
+			// addNotify() method
 			@Override
 			public void addNotify()
 			{
@@ -132,7 +130,7 @@ public class SelectionLengthWidgetFactory implements StatusWidgetFactory
 			} //}}}
 
 
-			//{{{ removeNotify() method
+			// removeNotify() method
 			@Override
 			public void removeNotify()
 			{

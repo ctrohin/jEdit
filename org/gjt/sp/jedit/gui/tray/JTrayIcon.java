@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.tray;
 
-//{{{ Imports
+// Imports
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.TrayIcon;
@@ -36,7 +35,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * A TrayIcon that accepts Swing JPopupMenu.
@@ -50,20 +48,20 @@ public class JTrayIcon extends TrayIcon
 	private MouseListener mouseListener;
 	private PopupMenuListener popupMenuListener;
 
-	//{{{ JTrayIcon constructor
+	// JTrayIcon constructor
 	public JTrayIcon(Image image, String tooltip)
 	{
 		super(image, tooltip, null);
 
 	} //}}}
 
-	//{{{ getMenu() method
+	// getMenu() method
 	public JPopupMenu getMenu()
 	{
 		return menu;
 	} //}}}
 
-	//{{{ setMenu() method
+	// setMenu() method
 	public void setMenu(JPopupMenu menu)
 	{
 		if (menu == null)
@@ -97,7 +95,7 @@ public class JTrayIcon extends TrayIcon
 		this.menu = menu;
 	} //}}}
 
-	//{{{ MyMouseListener class
+	// MyMouseListener class
 	private class MyMouseListener extends MouseAdapter
 	{
 		@Override
@@ -112,7 +110,7 @@ public class JTrayIcon extends TrayIcon
 		}
 	} //}}}
 
-	//{{{ MyPopupMenuListener class
+	// MyPopupMenuListener class
 	private class MyPopupMenuListener implements PopupMenuListener
 	{
 		@Override

@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2020 jEdit contributors
  *
@@ -52,14 +51,14 @@ public class RemotePluginList
 	private final ProgressObserver progressObserver;
 	private final String id;
 
-	//{{{ RemotePluginList constructor
+	// RemotePluginList constructor
 	public RemotePluginList(ProgressObserver progressObserver, String id)
 	{
 		this.progressObserver = progressObserver;
 		this.id = id;
 	} //}}}
 
-	//{{{ openPluginListStream() method
+	// openPluginListStream() method
 	
 	String getPluginList() throws IOException, URISyntaxException
 	{
@@ -104,7 +103,7 @@ public class RemotePluginList
 		}
 	} //}}}
 
-	//{{{ openPluginListStream() method
+	// openPluginListStream() method
 	static InputStream openPluginListStream(InputStream inputStream) throws IOException
 	{
 		InputStream in = new BufferedInputStream(inputStream);
@@ -121,7 +120,7 @@ public class RemotePluginList
 		return in;
 	} //}}}
 
-	//{{{ buildMirror() method
+	// buildMirror() method
 	
 	private static String buildMirror(String id)
 	{

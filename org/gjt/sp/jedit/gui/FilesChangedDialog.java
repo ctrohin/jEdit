@@ -1,7 +1,6 @@
 /*
  * FilesChangedDialog.java - Files changed on disk
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.event.*;
 import javax.swing.tree.*;
 import javax.swing.*;
@@ -32,7 +31,6 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.manager.BufferManager;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /**
  * Files changed on disk dialog.
@@ -42,7 +40,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class FilesChangedDialog extends EnhancedDialog
 {
-	//{{{ FilesChangedDialog constructor
+	// FilesChangedDialog constructor
 	public FilesChangedDialog(View view, int[] states,
 		boolean alreadyReloaded)
 	{
@@ -191,21 +189,21 @@ public class FilesChangedDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final View view;
 	private final JTree bufferTree;
 	private final DefaultTreeModel bufferTreeModel;
@@ -217,7 +215,7 @@ public class FilesChangedDialog extends EnhancedDialog
 	private JButton reload;
 	private JButton ignore;
 
-	//{{{ updateEnabled() method
+	// updateEnabled() method
 	private void updateEnabled()
 	{
 		TreePath[] paths = bufferTree
@@ -240,7 +238,7 @@ public class FilesChangedDialog extends EnhancedDialog
 			ignore.setEnabled(enabled);
 	} //}}}
 
-	//{{{ selectAll() method
+	// selectAll() method
 	private void selectAll()
 	{
 		selectAllInProgress = true;
@@ -270,7 +268,7 @@ public class FilesChangedDialog extends EnhancedDialog
 		updateEnabled();
 	} //}}}
 
-	//{{{ reload() method
+	// reload() method
 	private void action(String action)
 	{
 		TreePath[] paths = bufferTree
@@ -350,9 +348,8 @@ public class FilesChangedDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ TreeHandler class
+	// TreeHandler class
 	class TreeHandler implements TreeSelectionListener
 	{
 		@Override
@@ -379,7 +376,7 @@ public class FilesChangedDialog extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ Renderer class
+	// Renderer class
 	static class Renderer extends EnhancedTreeCellRenderer
 	{
 		Renderer()

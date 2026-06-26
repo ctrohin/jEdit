@@ -59,4 +59,4 @@ and their status.
 
 jEdit buffer local properties:
 :wrap=hard:maxLineLen=72:indentSize=2:
-:folding=explicit:collapseFolds=2:
+

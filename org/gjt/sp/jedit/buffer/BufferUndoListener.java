@@ -1,7 +1,6 @@
 /*
  * BufferUndoListener.java - Buffer undo listener interface
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2009 Shlomy Reinstein
  *
@@ -38,35 +37,31 @@ package org.gjt.sp.jedit.buffer;
  */
 public interface BufferUndoListener
 {
-	//{{{ beginUndo() method
+	// beginUndo() method
 	/**
 	 * Called when an undo operation on the buffer begins.
 	 * @param buffer The buffer in question
 	 */
 	void beginUndo(JEditBuffer buffer);
-	//}}}
 
-	//{{{ endUndo() method
+	// endUndo() method
 	/**
 	 * Called when an undo operation on the buffer ends.
 	 * @param buffer The buffer in question
 	 */
 	void endUndo(JEditBuffer buffer);
-	//}}}
 
-	//{{{ beginRedo() method
+	// beginRedo() method
 	/**
 	 * Called when a redo on the buffer begins.
 	 * @param buffer The buffer in question
 	 */
 	void beginRedo(JEditBuffer buffer);
-	//}}}
 
-	//{{{ endRedo() method
+	// endRedo() method
 	/**
 	 * Called when a redo on the buffer ends.
 	 * @param buffer The buffer in question
 	 */
 	void endRedo(JEditBuffer buffer);
-	//}}}
 }

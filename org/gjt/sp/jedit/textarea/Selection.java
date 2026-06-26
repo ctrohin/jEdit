@@ -1,7 +1,6 @@
 /*
  * Selection.java - Selected text
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.util.ArrayList;
 import java.util.List;
 
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * An abstract class that holds data on a region of selected text.
@@ -48,7 +46,7 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public abstract class Selection implements Cloneable
 {
-	//{{{ getStart() method
+	// getStart() method
 	/**
 	 * Returns the start offset of this selection.
 	 */
@@ -57,7 +55,7 @@ public abstract class Selection implements Cloneable
 		return start;
 	} //}}}
 
-	//{{{ getEnd() method
+	// getEnd() method
 	/**
 	 * Returns the end offset of this selection.
 	 */
@@ -66,7 +64,7 @@ public abstract class Selection implements Cloneable
 		return end;
 	} //}}}
 
-	//{{{ getStart() method
+	// getStart() method
 	/**
 	 * Returns the beginning of the portion of the selection
 	 * falling on the specified line. Used to manipulate
@@ -76,9 +74,8 @@ public abstract class Selection implements Cloneable
 	 * @since jEdit 4.1pre1
 	 */
 	public abstract int getStart(JEditBuffer buffer, int line);
-	//}}}
 
-	//{{{ getEnd() method
+	// getEnd() method
 	/**
 	 * Returns the end of the portion of the selection
 	 * falling on the specified line. Used to manipulate
@@ -88,9 +85,8 @@ public abstract class Selection implements Cloneable
 	 * @since jEdit 4.1pre1
 	 */
 	public abstract int getEnd(JEditBuffer buffer, int line);
-	//}}}
 
-	//{{{ getStartLine() method
+	// getStartLine() method
 	/**
 	 * Returns the starting line number of this selection.
 	 */
@@ -99,7 +95,7 @@ public abstract class Selection implements Cloneable
 		return startLine;
 	} //}}}
 
-	//{{{ getEndLine() method
+	// getEndLine() method
 	/**
 	 * Returns the ending line number of this selection.
 	 */
@@ -108,7 +104,7 @@ public abstract class Selection implements Cloneable
 		return endLine;
 	} //}}}
 
-	//{{{ overlaps() method
+	// overlaps() method
 	/**
 	 * Returns if this selection and the specified selection overlap.
 	 * @param s The other selection
@@ -123,7 +119,7 @@ public abstract class Selection implements Cloneable
 			return false;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -132,7 +128,7 @@ public abstract class Selection implements Cloneable
 			+ ",endLine=" + endLine + ']';
 	} //}}}
 
-	//{{{ clone() method
+	// clone() method
 	@Override
 	public Object clone()
 	{
@@ -148,23 +144,23 @@ public abstract class Selection implements Cloneable
 		}
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 	int start, end;
 	int startLine, endLine;
 
-	//{{{ Selection constructor
+	// Selection constructor
 	protected Selection()
 	{
 	} //}}}
 
-	//{{{ Selection constructor
+	// Selection constructor
 	protected Selection(Selection sel)
 	{
 		this.start = sel.start;
 		this.end = sel.end;
 	} //}}}
 
-	//{{{ Selection constructors
+	// Selection constructors
 	protected Selection(int start, int end)
 	{
 		this.start = start;
@@ -213,33 +209,32 @@ public abstract class Selection implements Cloneable
 	 */
 	abstract boolean contentRemoved(JEditBuffer buffer, int startLine, int start,
 		int numLines, int length);
-	//}}}
 
-	//{{{ Range class
+	// Range class
 	/**
 	 * An ordinary range selection.
 	 * @since jEdit 3.2pre1
 	 */
 	public static class Range extends Selection
 	{
-		//{{{ Range constructor
+		// Range constructor
 		public Range()
 		{
 		} //}}}
 
-		//{{{ Range constructor
+		// Range constructor
 		public Range(Selection sel)
 		{
 			super(sel);
 		} //}}}
 
-		//{{{ Range constructor
+		// Range constructor
 		public Range(int start, int end)
 		{
 			super(start,end);
 		} //}}}
 
-		//{{{ getStart() method
+		// getStart() method
 		@Override
 		public int getStart(JEditBuffer buffer, int line)
 		{
@@ -249,7 +244,7 @@ public abstract class Selection implements Cloneable
 				return buffer.getLineStartOffset(line);
 		} //}}}
 
-		//{{{ getEnd() method
+		// getEnd() method
 		@Override
 		public int getEnd(JEditBuffer buffer, int line)
 		{
@@ -259,16 +254,16 @@ public abstract class Selection implements Cloneable
 				return buffer.getLineEndOffset(line) - 1;
 		} //}}}
 
-		//{{{ Package-private members
+		// Package-private members
 
-		//{{{ getText() method
+		// getText() method
 		@Override
 		void getText(JEditBuffer buffer, StringBuilder buf)
 		{
 			buf.append(buffer.getText(start,end - start));
 		} //}}}
 
-		//{{{ setText() method
+		// setText() method
 		/**
 		 * Replace the selection with the given text
 		 * @param buffer the buffer
@@ -288,7 +283,7 @@ public abstract class Selection implements Cloneable
 				return start;
 		} //}}}
 
-		//{{{ contentInserted() method
+		// contentInserted() method
 		@Override
 		boolean contentInserted(JEditBuffer buffer, int startLine, int start,
 			int numLines, int length)
@@ -314,7 +309,7 @@ public abstract class Selection implements Cloneable
 			return changed;
 		} //}}}
 
-		//{{{ contentRemoved() method
+		// contentRemoved() method
 		@Override
 		boolean contentRemoved(JEditBuffer buffer, int startLine, int start,
 			int numLines, int length)
@@ -353,10 +348,9 @@ public abstract class Selection implements Cloneable
 			return changed;
 		} //}}}
 
-		//}}}
 	} //}}}
 
-	//{{{ Rect class
+	// Rect class
 	/**
 	 * A rectangular selection.
 	 * @since jEdit 3.2pre1
@@ -364,30 +358,30 @@ public abstract class Selection implements Cloneable
 	// this class is not very fast...
 	public static class Rect extends Selection
 	{
-		//{{{ Rect constructor
+		// Rect constructor
 		public Rect()
 		{
 		} //}}}
 
-		//{{{ Rect constructor
+		// Rect constructor
 		public Rect(Selection sel)
 		{
 			super(sel);
 		} //}}}
 
-		//{{{ Rect constructor
+		// Rect constructor
 		public Rect(int start, int end)
 		{
 			super(start,end);
 		} //}}}
 
-		//{{{ Rect constructor
+		// Rect constructor
 		public Rect(int startLine, int start, int endLine, int end)
 		{
 			super(startLine, start, endLine, end);
 		} //}}}
 
-		//{{{ Rect constructor
+		// Rect constructor
 		public Rect(JEditBuffer buffer, int startLine, int startColumn,
 			int endLine, int endColumn)
 		{
@@ -418,7 +412,7 @@ public abstract class Selection implements Cloneable
 			this.end = endOffset;
 		} //}}}
 
-		//{{{ getStartColumn() method
+		// getStartColumn() method
 		public int getStartColumn(JEditBuffer buffer)
 		{
 			int virtColStart = buffer.getVirtualWidth(startLine,
@@ -428,7 +422,7 @@ public abstract class Selection implements Cloneable
 			return Math.min(virtColStart,virtColEnd);
 		} //}}}
 
-		//{{{ getEndColumn() method
+		// getEndColumn() method
 		public int getEndColumn(JEditBuffer buffer)
 		{
 			int virtColStart = buffer.getVirtualWidth(startLine,
@@ -438,7 +432,7 @@ public abstract class Selection implements Cloneable
 			return Math.max(virtColStart,virtColEnd);
 		} //}}}
 
-		//{{{ getStart() method
+		// getStart() method
 		@Override
 		public int getStart(JEditBuffer buffer, int line)
 		{
@@ -446,7 +440,7 @@ public abstract class Selection implements Cloneable
 				getStartColumn(buffer));
 		} //}}}
 
-		//{{{ getEnd() method
+		// getEnd() method
 		@Override
 		public int getEnd(JEditBuffer buffer, int line)
 		{
@@ -454,11 +448,11 @@ public abstract class Selection implements Cloneable
 				getEndColumn(buffer));
 		} //}}}
 
-		//{{{ Package-private members
+		// Package-private members
 		int extraStartVirt;
 		int extraEndVirt;
 
-		//{{{ getText() method
+		// getText() method
 		@Override
 		void getText(JEditBuffer buffer, StringBuilder buf)
 		{
@@ -492,7 +486,7 @@ public abstract class Selection implements Cloneable
 			}
 		} //}}}
 
-		//{{{ setText() method
+		// setText() method
 		/**
 		 * Replace the selection with the given text
 		 * @param buffer the buffer
@@ -512,7 +506,7 @@ public abstract class Selection implements Cloneable
 			/* This list will contains Strings and Integer. */
 			List<Object> lines = new ArrayList<Object>();
 
-			//{{{ Split the text into lines
+			// Split the text into lines
 			if(text != null)
 			{
 				int lastNewline = 0;
@@ -545,7 +539,7 @@ public abstract class Selection implements Cloneable
 				}
 			} //}}}
 
-			//{{{ Insert the lines into the buffer
+			// Insert the lines into the buffer
 			int endOffset = 0;
 			int[] total = new int[1];
 			int lastLine = Math.max(startLine + totalLines - 1,endLine);
@@ -616,15 +610,14 @@ public abstract class Selection implements Cloneable
 					+ endWhitespace;
 			} //}}}
 
-			//{{{ Move the caret down a line
+			// Move the caret down a line
 			if(text == null || text.isEmpty())
 				return end;
 			else
 				return endOffset;
-			//}}}
 		} //}}}
 
-		//{{{ contentInserted() method
+		// contentInserted() method
 		@Override
 		boolean contentInserted(JEditBuffer buffer, int startLine, int start,
 			int numLines, int length)
@@ -714,7 +707,7 @@ public abstract class Selection implements Cloneable
 			return true;
 		} //}}}
 
-		//{{{ contentRemoved() method
+		// contentRemoved() method
 		@Override
 		boolean contentRemoved(JEditBuffer buffer, int startLine, int start,
 			int numLines, int length)
@@ -753,11 +746,10 @@ public abstract class Selection implements Cloneable
 			return changed;
 		} //}}}
 
-		//}}}
 
-		//{{{ Private members
+		// Private members
 
-		//{{{ getColumnOnOtherLine() method
+		// getColumnOnOtherLine() method
 		private static int getColumnOnOtherLine(JEditBuffer buffer, int line,
 			int col)
 		{
@@ -769,6 +761,5 @@ public abstract class Selection implements Cloneable
 				return buffer.getLineStartOffset(line) + returnValue;
 		} //}}}
 
-		//}}}
 	} //}}}
 }

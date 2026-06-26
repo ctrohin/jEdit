@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=8:indentSize=8:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2026 jEdit contributors
  *
@@ -29,12 +28,11 @@ package org.gjt.sp.jedit.gui;
  */
 
 public interface DockableWindow {
-	//{{{ Move notification
+	// Move notification
 	/**
 	 * Notifies a dockable window before its docking position is changed.
 	 * @param newPosition The docking position to which the window is moving.
 	 * @since jEdit 4.3pre11
 	 */
 	void move(String newPosition);
-	//}}}
 }

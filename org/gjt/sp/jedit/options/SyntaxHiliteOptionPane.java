@@ -1,7 +1,6 @@
 /*
  * SyntaxHiliteOptionPane.java - Syntax highlighting option pane
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import javax.swing.*;
@@ -39,9 +38,8 @@ import org.gjt.sp.jedit.themes.ThemeConstants;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.SyntaxUtilities;
-//}}}
 
-//{{{ SyntaxHiliteOptionPane class
+// SyntaxHiliteOptionPane class
 /**
  * Style option pane.
  * @author Slava Pestov
@@ -51,16 +49,15 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 {
 	public static final EmptyBorder noFocusBorder = new EmptyBorder(1,1,1,1);
 
-	//{{{ StyleOptionPane constructor
+	// StyleOptionPane constructor
 	public SyntaxHiliteOptionPane()
 	{
 		super("syntax");
 	}
-	//}}}
 
-	//{{{ Protected members
+	// Protected members
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -69,16 +66,15 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 		add(BorderLayout.CENTER,createStyleTableScroller());
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
 		styleModel.save();
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private StyleTableModel styleModel;
 	private JTable styleTable;
 
@@ -101,7 +97,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 		return p;
 	}
 
-	//{{{ createStyleTableScroller() method
+	// createStyleTableScroller() method
 	private JScrollPane createStyleTableScroller()
 	{
 		styleModel = createStyleTableModel();
@@ -122,15 +118,14 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 		return scroller;
 	} //}}}
 
-	//{{{ createStyleTableModel() method
+	// createStyleTableModel() method
 	private static StyleTableModel createStyleTableModel()
 	{
 		return new StyleTableModel();
 	} //}}}
 
-	//}}}
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	private class MouseHandler extends MouseAdapter
 	{
 		@Override
@@ -157,12 +152,12 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ StyleTableModel class
+	// StyleTableModel class
 	private static class StyleTableModel extends AbstractTableModel
 	{
 		private final java.util.List<StyleChoice> styleChoices;
 
-		//{{{ StyleTableModel constructor
+		// StyleTableModel constructor
 		StyleTableModel()
 		{
 			styleChoices = new Vector<StyleChoice>(Token.ID_COUNT + 4);
@@ -185,19 +180,19 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			Collections.sort(styleChoices,new StandardUtilities.StringCompare<StyleChoice>(true));
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		public int getColumnCount()
 		{
 			return 2;
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		public int getRowCount()
 		{
 			return styleChoices.size();
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		public Object getValueAt(int row, int col)
 		{
 			StyleChoice ch = styleChoices.get(row);
@@ -212,7 +207,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ setValueAt() method
+		// setValueAt() method
 		@Override
 		public void setValueAt(Object value, int row, int col)
 		{
@@ -222,7 +217,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			fireTableRowsUpdated(row,row);
 		} //}}}
 
-		//{{{ getColumnName() method
+		// getColumnName() method
 		@Override
 		public String getColumnName(int index)
 		{
@@ -237,7 +232,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ save() method
+		// save() method
 		public void save()
 		{
 			for (StyleChoice ch : styleChoices)
@@ -258,7 +253,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			this.fireTableDataChanged();
 		}
 
-		//{{{ addStyleChoice() method
+		// addStyleChoice() method
 		private void addStyleChoice(String label, String property)
 		{
 			Font font = new JLabel().getFont();
@@ -268,7 +263,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			                                                         font.getFamily(), font.getSize(), true)));
 		} //}}}
 
-		//{{{ StyleChoice class
+		// StyleChoice class
 		private static class StyleChoice
 		{
 			private String label;
@@ -290,11 +285,11 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ StyleRenderer class
+		// StyleRenderer class
 		static class StyleRenderer extends JLabel
 			implements TableCellRenderer
 		{
-			//{{{ StyleRenderer constructor
+			// StyleRenderer constructor
 			StyleRenderer()
 			{
 				setOpaque(true);
@@ -302,7 +297,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 				setText("Hello World");
 			} //}}}
 
-			//{{{ getTableCellRendererComponent() method
+			// getTableCellRendererComponent() method
 			public Component getTableCellRendererComponent(
 				JTable table,
 				Object value,

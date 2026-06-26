@@ -1,7 +1,6 @@
 /*
  * ModeSettingsPane.java - Mode-specific options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.util.Arrays;
@@ -33,7 +32,6 @@ import org.gjt.sp.jedit.buffer.FoldHandler;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.buffer.WordWrap;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * Option pane to change the settings of an edit mode.
@@ -42,13 +40,13 @@ import org.gjt.sp.util.StandardUtilities;
  */
 public class ModeSettingsPane extends AbstractOptionPane
 {
-	//{{{ ModeSettingsPane constructor
+	// ModeSettingsPane constructor
 	public ModeSettingsPane()
 	{
 		super("modesettings");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -156,7 +154,7 @@ public class ModeSettingsPane extends AbstractOptionPane
 		return modes;
 	}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -170,9 +168,9 @@ public class ModeSettingsPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private ModeProperties global;
 	private ModeProperties[] modeProps;
 	private ModeProperties current;
@@ -194,9 +192,8 @@ public class ModeSettingsPane extends AbstractOptionPane
 	private JComboBox<String> autoIndent;
 	private JCheckBox deepIndent;
 	private String[] modeNames;
-	//}}}
 
-	//{{{ saveMode() method
+	// saveMode() method
 	private void saveMode()
 	{
 		current.useDefaults = useDefaults.isSelected();
@@ -216,7 +213,7 @@ public class ModeSettingsPane extends AbstractOptionPane
 		current.deepIndent = deepIndent.isSelected();
 	} //}}}
 
-	//{{{ selectMode() method
+	// selectMode() method
 	private void selectMode()
 	{
 		int index = Math.max(mode.getSelectedIndex(), 0);
@@ -249,7 +246,7 @@ public class ModeSettingsPane extends AbstractOptionPane
 		revalidate();
 	} //}}}
 
-	//{{{ updateEnabled() method
+	// updateEnabled() method
 	private void updateEnabled()
 	{
 		boolean enabled;
@@ -283,12 +280,11 @@ public class ModeSettingsPane extends AbstractOptionPane
 		deepIndent.setEnabled(enabled);
 	} //}}}
 
-	//}}}
 
-	//{{{ ModeProperties class
+	// ModeProperties class
 	private static class ModeProperties
 	{
-		//{{{ Instance variables
+		// Instance variables
 		Mode mode;
 		boolean edited;
 		boolean loaded;
@@ -309,20 +305,19 @@ public class ModeSettingsPane extends AbstractOptionPane
 		String autoIndent;
 		boolean deepIndent;
 		boolean isUserMode;
-		//}}}
 
-		//{{{ ModeProperties constructor
+		// ModeProperties constructor
 		ModeProperties()
 		{
 		} //}}}
 
-		//{{{ ModeProperties constructor
+		// ModeProperties constructor
 		ModeProperties(Mode mode)
 		{
 			this.mode = mode;
 		} //}}}
 
-		//{{{ load() method
+		// load() method
 		void load()
 		{
 			if(loaded)
@@ -369,7 +364,7 @@ public class ModeSettingsPane extends AbstractOptionPane
 			}
 		} //}}}
 
-		//{{{ save() method
+		// save() method
 		void save()
 		{
 			// don't do anything if the user didn't change

@@ -1,7 +1,6 @@
 /*
  * ActionListHandler.java - XML handler for action files
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -32,7 +31,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.XMLUtilities;
-//}}}
 
 /**
  * This class loads the actions.xml files into a {@link JEditActionSet}. 
@@ -41,7 +39,7 @@ import org.gjt.sp.util.XMLUtilities;
  */
 class ActionListHandler extends DefaultHandler
 {
-	//{{{ ActionListHandler constructor
+	// ActionListHandler constructor
 	ActionListHandler(String path, JEditActionSet actionSet)
 	{
 		this.path = path;
@@ -51,14 +49,14 @@ class ActionListHandler extends DefaultHandler
 		isSelected = new StringBuilder();
 	} //}}}
 
-	//{{{ resolveEntity() method
+	// resolveEntity() method
 	@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 	{
 		return XMLUtilities.findEntity(systemId, "actions.dtd", getClass());
 	} //}}}
 
-	//{{{ attribute() method
+	// attribute() method
 	public void attribute(String aname, String value, boolean isSpecified)
 	{
 		aname = (aname == null) ? null : aname.intern();
@@ -74,7 +72,7 @@ class ActionListHandler extends DefaultHandler
 			noRememberLast = ("TRUE".equals(value));
 	} //}}}
 
-	//{{{ characters() method
+	// characters() method
 	@Override
 	public void characters(char[] c, int off, int len)
 	{
@@ -89,7 +87,7 @@ class ActionListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startElement() method
+	// startElement() method
 	@Override
 	public void startElement(String uri, String localName,
 				 String qName, Attributes attrs)
@@ -107,7 +105,7 @@ class ActionListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ endElement() method
+	// endElement() method
 	@Override
 	@SuppressWarnings({"unchecked"})
 	public void endElement(String uri, String localName, String qName)
@@ -142,7 +140,7 @@ class ActionListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ startDocument() method
+	// startDocument() method
 	@Override
 	public void startDocument()
 	{
@@ -156,9 +154,9 @@ class ActionListHandler extends DefaultHandler
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	// TODO: path isn't used, it should be removed.
 	private String path;
 	private JEditActionSet actionSet;
@@ -172,9 +170,8 @@ class ActionListHandler extends DefaultHandler
 	private boolean noRememberLast;
 
 	private final Stack<String> stateStack;
-	//}}}
 
-	//{{{ pushElement() method
+	// pushElement() method
 	private String pushElement(String name)
 	{
 		name = (name == null) ? null : name.intern();
@@ -184,17 +181,16 @@ class ActionListHandler extends DefaultHandler
 		return name;
 	} //}}}
 
-	//{{{ peekElement() method
+	// peekElement() method
 	private String peekElement()
 	{
 		return stateStack.peek();
 	} //}}}
 
-	//{{{ popElement() method
+	// popElement() method
 	private String popElement()
 	{
 		return stateStack.pop();
 	} //}}}
 
-	//}}}
 }

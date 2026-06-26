@@ -1,7 +1,6 @@
 /*
  * VFSFileNameField.java - File name field with completion
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import java.util.HashSet;
 import java.awt.event.*;
 import java.awt.*;
@@ -36,7 +35,6 @@ import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.Log;
 
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -45,7 +43,7 @@ import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
  */
 public class VFSFileNameField extends HistoryTextField
 {
-	//{{{ VFSFileNameField constructor
+	// VFSFileNameField constructor
 	public VFSFileNameField(VFSBrowser browser, String model)
 	{
 		super(model);
@@ -65,7 +63,7 @@ public class VFSFileNameField extends HistoryTextField
 		setFocusTraversalKeys(FORWARD, keys);
 	} //}}}
 
-	//{{{ processKeyEvent() method
+	// processKeyEvent() method
 	@Override
 	public void processKeyEvent(KeyEvent evt)
 	{
@@ -166,10 +164,10 @@ public class VFSFileNameField extends HistoryTextField
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final VFSBrowser browser;
 
-	//{{{ doComplete() method
+	// doComplete() method
 	public String doComplete(String path, String complete, boolean dirsOnly)
 	{
 		Log.log(Log.DEBUG,VFSFileNameField.class,
@@ -209,7 +207,7 @@ public class VFSFileNameField extends HistoryTextField
 		}
 	} //}}}
 
-	//{{{ doComplete() method
+	// doComplete() method
 	private void doComplete(String currentText)
 	{
 		int index = MiscUtilities.getLastSeparatorIndex(currentText);
@@ -295,5 +293,4 @@ public class VFSFileNameField extends HistoryTextField
 		setText(newText);
 	} //}}}
 
-	//}}}
 }

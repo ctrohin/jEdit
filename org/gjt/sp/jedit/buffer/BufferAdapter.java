@@ -1,7 +1,6 @@
 /*
  * BufferAdapter.java - Buffer listener adapter
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -31,7 +30,7 @@ package org.gjt.sp.jedit.buffer;
  */
 public abstract class BufferAdapter implements BufferListener
 {
-	//{{{ foldLevelChanged() method
+	// foldLevelChanged() method
 	/**
 	 * Called when line fold levels change.
 	 * @param buffer The buffer in question
@@ -41,9 +40,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void foldLevelChanged(JEditBuffer buffer, int start, int end) {}
-	//}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	/**
 	 * Called when text is inserted into the buffer.
 	 * @param buffer The buffer in question
@@ -55,9 +53,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void contentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {}
-	//}}}
 
-	//{{{ preContentInserted() method
+	// preContentInserted() method
 	/**
 	 * Called when text is about to be inserted in the buffer.
 	 *
@@ -70,9 +67,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void preContentInserted(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {}
-	//}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * Called when text is about to be removed from the buffer, but is
 	 * still present.
@@ -85,9 +81,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void preContentRemoved(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {}
-	//}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	/**
 	 * Called when text is removed from the buffer.
 	 * @param buffer The buffer in question
@@ -99,9 +94,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void contentRemoved(JEditBuffer buffer, int startLine, int offset, int numLines, int length) {}
-	//}}}
 
-	//{{{ transactionComplete() method
+	// transactionComplete() method
 	/**
 	 * Called after an undo or compound edit has finished. The text area
 	 * uses this event to queue up and collapse cleanup operations so they
@@ -113,9 +107,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void transactionComplete(JEditBuffer buffer) {}
-	//}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	/**
 	 * Called to notify the text area that folds need to be collapsed if
 	 * the "collapseFolds" property is set. This method is called after the
@@ -127,9 +120,8 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void foldHandlerChanged(JEditBuffer buffer) {}
-	//}}}
 
-	//{{{ foldHandlerChanged() method
+	// foldHandlerChanged() method
 	/**
 	 * Called to notify the text area that the buffer has been reloaded.
 	 *
@@ -138,5 +130,4 @@ public abstract class BufferAdapter implements BufferListener
 	 */
 	@Override
 	public void bufferLoaded(JEditBuffer buffer) {}
-	//}}}
 }

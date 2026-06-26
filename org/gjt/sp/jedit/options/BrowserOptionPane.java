@@ -1,7 +1,6 @@
 /*
  * BrowserOptionPane.java - Browser options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001 Slava Pestov
  *
@@ -22,25 +21,24 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
-//{{{ BrowserOptionPane class
+// BrowserOptionPane class
 /**
  * @author Slava Pestov
  * @version $Id$
  */
 public class BrowserOptionPane extends AbstractOptionPane
 {
-	//{{{ BrowserOptionPane constructor
+	// BrowserOptionPane constructor
 	public BrowserOptionPane()
 	{
 		super("browser.general");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	public void _init()
 	{
@@ -130,7 +128,7 @@ public class BrowserOptionPane extends AbstractOptionPane
 		addComponent(useDefaultIcons);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	public void _save()
 	{
@@ -157,7 +155,7 @@ public class BrowserOptionPane extends AbstractOptionPane
 			useDefaultIcons.isSelected());
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JComboBox<String> defaultDirectory;
 	private JCheckBox showToolbar;
 	private JCheckBox showMenubar;
@@ -168,5 +166,4 @@ public class BrowserOptionPane extends AbstractOptionPane
 	private JCheckBox doubleClickClose;
 	private JCheckBox currentBufferFilter;
 	private JCheckBox useDefaultIcons;
-	//}}}
 } //}}}

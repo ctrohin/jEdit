@@ -1,7 +1,6 @@
 /*
  * BrowserView.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2003 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.browser;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.*;
@@ -39,7 +38,6 @@ import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * VFS browser tree view.
@@ -49,7 +47,7 @@ import org.gjt.sp.util.ThreadUtilities;
 @SuppressWarnings({"unchecked"})	// TODO: need to check on ParentDirectoryList and make it generic
 class BrowserView extends JPanel
 {
-	//{{{ BrowserView constructor
+	// BrowserView constructor
 	BrowserView(final VFSBrowser browser, final boolean showRoots)
 	{
 		this.browser = browser;
@@ -105,38 +103,38 @@ class BrowserView extends JPanel
 		propertiesChanged();
 	} //}}}
 
-	//{{{ focusOnFileView() method
+	// focusOnFileView() method
 	public void focusOnFileView()
 	{
 		table.requestFocus();
 	} //}}}
 
-	//{{{ getSelectedFiles() method
+	// getSelectedFiles() method
 	public VFSFile[] getSelectedFiles()
 	{
 		return table.getSelectedFiles();
 	} //}}}
 
-	//{{{ selectNone() method
+	// selectNone() method
 	public void selectNone()
 	{
 		table.clearSelection();
 	} //}}}
 
-	//{{{ saveExpansionState() method
+	// saveExpansionState() method
 	public void saveExpansionState()
 	{
 		tmpExpanded.clear();
 		table.getExpandedDirectories(tmpExpanded);
 	} //}}}
 
-	//{{{ clearExpansionState() method
+	// clearExpansionState() method
 	public void clearExpansionState()
 	{
 		tmpExpanded.clear();
 	} //}}}
 
-	//{{{ loadDirectory() method
+	// loadDirectory() method
 	public void loadDirectory(Object node, String path,
 		boolean addToHistory)
 	{
@@ -144,7 +142,7 @@ class BrowserView extends JPanel
 	} //}}}
 
 
-	//{{{ loadDirectory() method
+	// loadDirectory() method
 	public void loadDirectory(final Object node, String path,
 		final boolean addToHistory, final Runnable delayedAWTTask)
 	{
@@ -180,7 +178,7 @@ class BrowserView extends JPanel
 			session, vfs, path, loadInfo, awtRunnable));
 	} //}}}
 
-	//{{{ directoryLoaded() method
+	// directoryLoaded() method
 	/**
 	 * Rebuild the parent view after a directory has been loaded.
 	 *
@@ -190,7 +188,7 @@ class BrowserView extends JPanel
 	 */
 	public void directoryLoaded(Object node, String path, java.util.List<VFSFile> directory)
 	{
-		//{{{ If reloading root, update parent directory list
+		// If reloading root, update parent directory list
 		if(node == null)
 		{
 			DefaultListModel parentList = new DefaultListModel();
@@ -255,13 +253,13 @@ class BrowserView extends JPanel
 			node,directory,tmpExpanded);
 	} //}}}
 
-	//{{{ updateFileView() method
+	// updateFileView() method
 	public void updateFileView()
 	{
 		table.repaint();
 	} //}}}
 
-	//{{{ maybeReloadDirectory() method
+	// maybeReloadDirectory() method
 	public void maybeReloadDirectory(String path)
 	{
 		String browserDir = browser.getDirectory();
@@ -307,7 +305,7 @@ class BrowserView extends JPanel
 		table.maybeReloadDirectory(path);
 	} //}}}
 
-	//{{{ propertiesChanged() method
+	// propertiesChanged() method
 	public void propertiesChanged()
 	{
 		showIcons = jEdit.getBooleanProperty("vfs.browser.showIcons");
@@ -315,7 +313,7 @@ class BrowserView extends JPanel
 		doOnSplitPane(s -> s.setBorder(null));
 	} //}}}
 
-	//{{{ getBrowser() method
+	// getBrowser() method
 	/**
 	 * Returns the associated <code>VFSBrowser</code> instance.
 	 * @since jEdit 4.2pre1
@@ -325,21 +323,21 @@ class BrowserView extends JPanel
 		return browser;
 	} //}}}
 
-	//{{{ getTable() method
+	// getTable() method
 	public VFSDirectoryEntryTable getTable()
 	{
 		return table;
 	} //}}}
 
-	//{{{ getParentDirectoryList() method
+	// getParentDirectoryList() method
 	public JList getParentDirectoryList()
 	{
 		return parentDirectories;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final VFSBrowser browser;
 
 	private JSplitPane splitPane;
@@ -348,9 +346,8 @@ class BrowserView extends JPanel
 	private final Set<String> tmpExpanded;
 	private BrowserCommandsMenu popup;
 	private boolean showIcons;
-    //}}}
 
-	//{{{ showFilePopup() method
+	// showFilePopup() method
 	private void showFilePopup(VFSFile[] files, Component comp,
 		Point point)
 	{
@@ -387,11 +384,10 @@ class BrowserView extends JPanel
 		GenericGUIUtilities.showPopupMenu(popup,comp,point.x,point.y);
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ ParentDirectoryRenderer class
+	// ParentDirectoryRenderer class
 	class ParentDirectoryRenderer extends DefaultListCellRenderer
 	{
 		private Font plainFont;
@@ -442,7 +438,7 @@ class BrowserView extends JPanel
 		}
 	} //}}}
 
-	//{{{ ParentMouseHandler class
+	// ParentMouseHandler class
 	private class ParentMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -501,7 +497,7 @@ class BrowserView extends JPanel
 		}
 	} //}}}
 
-	//{{{ TableKeyListener class
+	// TableKeyListener class
 	private class TableKeyListener extends KeyAdapter
 	{
 		@Override
@@ -532,10 +528,10 @@ class BrowserView extends JPanel
 		}
 	} //}}}
 
-	//{{{ TableMouseHandler class
+	// TableMouseHandler class
 	private class TableMouseHandler extends MouseAdapter
 	{
-		//{{{ mouseClicked() method
+		// mouseClicked() method
 		@Override
 		public void mouseClicked(MouseEvent evt)
 		{
@@ -575,7 +571,7 @@ class BrowserView extends JPanel
 			}
 		} //}}}
 
-		//{{{ mousePressed() method
+		// mousePressed() method
 		@Override
 		public void mousePressed(MouseEvent evt)
 		{
@@ -630,7 +626,7 @@ class BrowserView extends JPanel
 			}
 		} //}}}
 
-		//{{{ mouseReleased() method
+		// mouseReleased() method
 		@Override
 		public void mouseReleased(MouseEvent evt)
 		{
@@ -643,7 +639,6 @@ class BrowserView extends JPanel
 	} //}}}
 
 	private static class LoadingPlaceholder {}
-	//}}}
 
 	class ParentDirectoryList extends JList
 	{

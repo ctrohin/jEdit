@@ -1,7 +1,6 @@
 /*
  * EditBus.java - The EditBus
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999 Slava Pestov
  *
@@ -87,7 +86,7 @@ import org.gjt.sp.util.ThreadUtilities;
 public class EditBus
 {
 
-	//{{{ EBHandler annotation
+	// EBHandler annotation
 	/**
 	 * This annotation should be used in methods that are to be
 	 * considered "edit bus message handlers". When registering
@@ -119,7 +118,7 @@ public class EditBus
 		boolean exact() default false;
 	} //}}}
 
-	//{{{ addToBus() method
+	// addToBus() method
 	/**
 	 * Adds a component to the bus. It will receive all messages sent
 	 * on the bus.
@@ -131,7 +130,7 @@ public class EditBus
 		addToBus((Object)comp);
 	} //}}}
 
-	//{{{ addToBus() method
+	// addToBus() method
 	/**
 	 * Adds a component to the bus. Methods annotated with the
 	 * {@link EBHandler} annotation found in the component will
@@ -151,7 +150,7 @@ public class EditBus
 		components.addComponent(comp);
 	} //}}}
 
-	//{{{ removeFromBus() method
+	// removeFromBus() method
 	/**
 	 * Removes a component from the bus.
 	 * @param comp The component to remove
@@ -161,7 +160,7 @@ public class EditBus
 		removeFromBus((Object) comp);
 	} //}}}
 
-	//{{{ removeFromBus() method
+	// removeFromBus() method
 	/**
 	 * Removes a component from the bus.
 	 * @param comp The component to remove
@@ -172,7 +171,7 @@ public class EditBus
 		components.removeComponent(comp);
 	} //}}}
 
-	//{{{ send() method
+	// send() method
 	/**
 	 * Sends a message to all components on the bus in turn.
 	 * The message is delivered to components in the AWT thread,
@@ -211,7 +210,7 @@ public class EditBus
 		}
 	} //}}}
 
-	//{{{ sendAsync() method
+	// sendAsync() method
 	/**
 	 * Schedules a message to be sent on the edit bus as soon as
 	 * the AWT thread is done processing current events. The
@@ -227,13 +226,13 @@ public class EditBus
 		EventQueue.invokeLater(new SendMessage(message));
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final HandlerList components = new HandlerList();
 
 	// can't create new instances
 	private EditBus() {}
 
-	//{{{ dispatch() method
+	// dispatch() method
 	private static void dispatch(EBMessageHandler emh,
 				     EBMessage msg)
 		throws Exception
@@ -247,7 +246,7 @@ public class EditBus
 		}
 	} //}}}
 
-	//{{{ sendImpl() method
+	// sendImpl() method
 	private static void sendImpl(EBMessage message)
 	{
 		boolean isExact = true;
@@ -299,9 +298,8 @@ public class EditBus
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ EBMessageHandler class
+	// EBMessageHandler class
 	private static class EBMessageHandler
 	{
 
@@ -319,7 +317,7 @@ public class EditBus
 		EBHandler source;
 	} //}}}
 
-	//{{{ HandlerList class
+	// HandlerList class
 	/**
 	 * A "special" hash map that has some optimizations for use by
 	 * the EditBus. Notably, it allows setting a "read only" mode
@@ -423,7 +421,7 @@ public class EditBus
 		private final List<Object> remove = new LinkedList<>();
 	} //}}}
 
-	//{{{ SendMessage class
+	// SendMessage class
 	private static class SendMessage implements Runnable
 	{
 		SendMessage(EBMessage message)

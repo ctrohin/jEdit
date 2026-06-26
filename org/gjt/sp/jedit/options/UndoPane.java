@@ -1,7 +1,6 @@
 /*
  * UndoPane.java - Mode-specific options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2002 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import java.awt.event.*;
 import java.nio.file.*;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * Set options for undo here.
@@ -38,13 +36,13 @@ import org.gjt.sp.jedit.*;
  */
 public class UndoPane extends AbstractOptionPane
 {
-	//{{{ UndoPane constructor
+	// UndoPane constructor
 	public UndoPane()
 	{
 		super("undo");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -58,7 +56,7 @@ public class UndoPane extends AbstractOptionPane
 		addComponent(resetUndoOnSave);
 	} //}}}
 	
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -66,9 +64,8 @@ public class UndoPane extends AbstractOptionPane
 		jEdit.setBooleanProperty("resetUndoOnSave", resetUndoOnSave.isSelected());
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private JTextField undoCount;
 	private JCheckBox resetUndoOnSave;
-	//}}}
 
 }

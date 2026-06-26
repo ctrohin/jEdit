@@ -1,6 +1,6 @@
 // jEdit default startup.bsh script.
 //  Used mostly for experimental keyboard workarounds.
-// :folding=explicit:expandFolds=1:
+// expandFolds=1:
 
 //Most of the file is commented out. Note that the hacks here are
 //not guaranteed to work, might break various features in odd ways,

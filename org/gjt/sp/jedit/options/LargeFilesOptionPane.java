@@ -1,7 +1,6 @@
 /*
  * LargeFilesOptionPane.java - Options for handling large files
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2013 Matthieu Casanova
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 
 import org.gjt.sp.jedit.*;
 
 import static org.gjt.sp.jedit.Buffer.LARGE_MODE_FILE;
 import static org.gjt.sp.jedit.LargeFileMode.*;
-//}}}
 
 /**
  * The options pane for handling large files.
@@ -39,17 +37,17 @@ import static org.gjt.sp.jedit.LargeFileMode.*;
  */
 public class LargeFilesOptionPane extends AbstractOptionPane
 {
-	//{{{ EditingOptionPane constructor
+	// EditingOptionPane constructor
 	public LargeFilesOptionPane()
 	{
 		super("large-files");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
-		//{{{ Large file mode
+		// Large file mode
 
 		addSeparator("options.editing.largefilemode.title");
 
@@ -87,10 +85,9 @@ public class LargeFilesOptionPane extends AbstractOptionPane
 		largeFileModeButtonGroup.add(fullSyntaxLargeFileMode);
 		largeFileModeButtonGroup.add(limitedSyntaxLargeFileMode);
 		largeFileModeButtonGroup.add(noHighlightLargeFileMode);
-		//}}}
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -112,15 +109,13 @@ public class LargeFilesOptionPane extends AbstractOptionPane
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private JRadioButton askLargeFileMode;
 	private JRadioButton noHighlightLargeFileMode;
 	private JRadioButton limitedSyntaxLargeFileMode;
 	private JRadioButton fullSyntaxLargeFileMode;
-	//}}}
 
-	//}}}
 
 }

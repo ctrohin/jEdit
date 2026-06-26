@@ -1,7 +1,6 @@
 /*
  * BeanShell.java - BeanShell scripting support
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -39,7 +38,6 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.TaskManager;
-//}}}
 
 /**
  * BeanShell is jEdit's extension language.<p>
@@ -70,7 +68,7 @@ public class BeanShell
 		Log.log(Log.MESSAGE, BeanShell.class, "Beanshell Init");
 	}
 
-	//{{{ evalSelection() method
+	// evalSelection() method
 	/**
 	 * Evaluates the text selected in the specified text area.
 	 * @param view The view
@@ -82,7 +80,7 @@ public class BeanShell
 		bsh.evalSelection(view, textArea);
 	} //}}}
 
-	//{{{ showEvaluateDialog() method
+	// showEvaluateDialog() method
 	/**
 	 * Prompts for a BeanShell expression to evaluate.
 	 * @param view the View
@@ -126,7 +124,7 @@ public class BeanShell
 		}
 	} //}}}
 
-	//{{{ showEvaluateLinesDialog() method
+	// showEvaluateLinesDialog() method
 	/**
 	 * Evaluates the specified script for each selected line.
 	 * @param view The view
@@ -185,7 +183,7 @@ public class BeanShell
 		textArea.selectNone();
 	} //}}}
 
-	//{{{ runScript() method
+	// runScript() method
 	/**
 	 * Runs a BeanShell script. Errors are shown in a dialog box.<p>
 	 *
@@ -225,7 +223,7 @@ public class BeanShell
 		}
 	} //}}}
 
-	//{{{ runScript() method
+	// runScript() method
 	/**
 	 * Runs a BeanShell script. Errors are shown in a dialog box.<p>
 	 *
@@ -260,7 +258,7 @@ public class BeanShell
 		}
 	} //}}}
 
-	//{{{ _runScript() method
+	// _runScript() method
 	/**
 	 * Runs a BeanShell script. Errors are passed to the caller.<p>
 	 *
@@ -294,7 +292,7 @@ public class BeanShell
 			: bsh.getNameSpace());
 	} //}}}
 
-	//{{{ _runScript() method
+	// _runScript() method
 	/**
 	 * Runs a BeanShell script. Errors are passed to the caller.<p>
 	 *
@@ -366,7 +364,7 @@ public class BeanShell
 		}
 	} //}}}
 
-	//{{{ eval() method
+	// eval() method
 	/**
 	 * Evaluates the specified BeanShell expression. Errors are reported in
 	 * a dialog box.
@@ -383,7 +381,7 @@ public class BeanShell
 		return bsh.eval(view, namespace, command);
 	} //}}}
 
-	//{{{ _eval() method
+	// _eval() method
 	/**
 	 * Evaluates the specified BeanShell expression. Unlike
 	 * <code>eval()</code>, this method passes any exceptions to the caller.
@@ -404,7 +402,7 @@ public class BeanShell
 		return bsh._eval(view, namespace, command);
 	} //}}}
 
-	//{{{ cacheBlock() method
+	// cacheBlock() method
 	/**
 	 * Caches a block of code, returning a handle that can be passed to
 	 * runCachedBlock().
@@ -422,7 +420,7 @@ public class BeanShell
 		return bsh.cacheBlock(id, code, namespace);
 	} //}}}
 
-	//{{{ runCachedBlock() method
+	// runCachedBlock() method
 	/**
 	 * Runs a cached block of code in the specified namespace. Faster than
 	 * evaluating the block each time.
@@ -440,7 +438,7 @@ public class BeanShell
 		return bsh.runCachedBlock(method, view, namespace);
 	} //}}}
 
-	//{{{ isScriptRunning() method
+	// isScriptRunning() method
 	/**
 	 * @return if a BeanShell script or macro is currently running.
 	 * @since jEdit 2.7pre2
@@ -450,7 +448,7 @@ public class BeanShell
 		return running;
 	} //}}}
 
-	//{{{ getNameSpace() method
+	// getNameSpace() method
 	/**
 	 * @return the global namespace.
 	 * @since jEdit 3.2pre5
@@ -460,9 +458,9 @@ public class BeanShell
 		return bsh.getNameSpace();
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ resetClassManager() method
+	// resetClassManager() method
 	/**
 	 * Causes BeanShell internal structures to drop references to cached
 	 * Class instances.
@@ -472,15 +470,12 @@ public class BeanShell
 		bsh.resetClassManager();
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static boolean running;
-	//}}}
 
-	//}}}
 
 	/**
 	 * The BeanshellFacade that is used by jEdit.

@@ -1,7 +1,6 @@
 /*
  * BeanShellFacade.java - A BeanShell facade
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Matthieu Casanova
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.lang.reflect.InvocationTargetException;
 import org.gjt.sp.jedit.bsh.BshClassManager;
 import org.gjt.sp.jedit.bsh.BshMethod;
@@ -35,7 +34,6 @@ import org.gjt.sp.jedit.bsh.UtilEvalError;
 import org.gjt.sp.jedit.bsh.classpath.ClassManagerImpl;
 import org.gjt.sp.jedit.textarea.TextArea;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * This class will be the interface for beanshell interaction.
@@ -45,7 +43,7 @@ import org.gjt.sp.util.Log;
  */
 public abstract class BeanShellFacade<T>
 {
-	//{{{ BeanShellFacade constructor
+	// BeanShellFacade constructor
 	protected BeanShellFacade()
 	{
 		classManager = new ClassManagerImpl();
@@ -56,7 +54,7 @@ public abstract class BeanShellFacade<T>
 		init();
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Initialize things. It is called by the constructor.
 	 * You can override it to import other packages
@@ -70,7 +68,7 @@ public abstract class BeanShellFacade<T>
 		global.importPackage("org.gjt.sp.util");
 	} //}}}
 
-	//{{{ evalSelection() method
+	// evalSelection() method
 	/**
 	 * Evaluates the text selected in the specified text area.
 	 * @param param some sort of parameter
@@ -89,7 +87,7 @@ public abstract class BeanShellFacade<T>
 			textArea.setSelectedText(returnValue.toString());
 	} //}}}
 
-	//{{{ eval() method
+	// eval() method
 	/**
 	 * Evaluates the specified BeanShell expression with the global namespace
 	 * @param param The parameter
@@ -101,7 +99,7 @@ public abstract class BeanShellFacade<T>
 		return eval(param, global, command);
 	} //}}}
 
-	//{{{ eval() method
+	// eval() method
 	/**
 	 * Evaluates the specified BeanShell expression. Errors are reported in
 	 * a dialog box.
@@ -126,7 +124,7 @@ public abstract class BeanShellFacade<T>
 		return null;
 	} //}}}
 
-	//{{{ _eval() method
+	// _eval() method
 	/**
 	 * Evaluates the specified BeanShell expression. Unlike
 	 * <code>eval()</code>, this method passes any exceptions to the caller.
@@ -171,7 +169,7 @@ public abstract class BeanShellFacade<T>
 		}
 	} //}}}
 
-	//{{{ cacheBlock() method
+	// cacheBlock() method
 	/**
 	 * Caches a block of code, returning a handle that can be passed to
 	 * runCachedBlock().
@@ -203,7 +201,7 @@ public abstract class BeanShellFacade<T>
 		}
 	} //}}}
 
-	//{{{ runCachedBlock() method
+	// runCachedBlock() method
 	/**
 	 * Runs a cached block of code in the specified namespace. Faster than
 	 * evaluating the block each time.
@@ -254,7 +252,7 @@ public abstract class BeanShellFacade<T>
 		}
 	} //}}}
 
-	//{{{ getNameSpace() method
+	// getNameSpace() method
 	/**
 	 * @return the global namespace.
 	 */
@@ -263,7 +261,7 @@ public abstract class BeanShellFacade<T>
 		return global;
 	} //}}}
 
-	//{{{ resetClassManager() method
+	// resetClassManager() method
 	/**
 	 * Causes BeanShell internal structures to drop references to cached
 	 * Class instances.
@@ -273,7 +271,7 @@ public abstract class BeanShellFacade<T>
 		classManager.reset();
 	} //}}}
 
-	//{{{ setVariable() method
+	// setVariable() method
 	/**
 	 * Set a beanshell variable in the namespace without overriding it
 	 * @param nameSpace the namespace
@@ -287,27 +285,24 @@ public abstract class BeanShellFacade<T>
 			nameSpace.setVariable(name,object, false);
 	} //}}}
 
-	//{{{ setupDefaultVariables() method
+	// setupDefaultVariables() method
 	protected abstract void setupDefaultVariables(NameSpace namespace, T param)
 		throws UtilEvalError;
-	//}}}
 
-	//{{{ resetDefaultVariables() method
+	// resetDefaultVariables() method
 	protected abstract void resetDefaultVariables(NameSpace namespace)
 		throws UtilEvalError;
-	//}}}
 
-	//{{{ handleException() method
+	// handleException() method
 	protected abstract void handleException(T param, String path, Throwable t);
-	//}}}
 
-	//{{{ createInterpreter() method
+	// createInterpreter() method
 	protected static Interpreter createInterpreter(NameSpace nameSpace)
 	{
 		return new Interpreter(null,System.out,System.err,false,nameSpace);
 	} //}}}
 
-	//{{{ unwrapException() method
+	// unwrapException() method
 	/**
 	 * This extracts an exception from a 'wrapping' exception, as BeanShell
 	 * sometimes throws. This gives the user a more accurate error traceback
@@ -337,10 +332,9 @@ public abstract class BeanShellFacade<T>
 		throw e;
 	} //}}}
 
-	//{{{ Static variables
+	// Static variables
 	protected NameSpace global;
 	protected BshClassManager classManager;
 	private static Interpreter interpForMethods;
 	private static final Object[] NO_ARGS = new Object[0];
-	//}}}
 }

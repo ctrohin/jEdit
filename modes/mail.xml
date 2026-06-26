@@ -6,6 +6,7 @@
 	<PROPS>
 		<PROPERTY NAME="lineComment" VALUE=">" />
 		<PROPERTY NAME="noWordSep" VALUE="-_" />
+		<PROPERTY NAME="folding" VALUE="none" />
 	</PROPS>
 	<RULES IGNORE_CASE="TRUE" HIGHLIGHT_DIGITS="FALSE" NO_WORD_SEP="-_:)">
 		<EOL_SPAN AT_LINE_START="TRUE" TYPE="COMMENT3">&gt;&gt;&gt;</EOL_SPAN>

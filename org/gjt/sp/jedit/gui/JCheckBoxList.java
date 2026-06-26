@@ -1,7 +1,6 @@
 /*
  * JCheckBoxList.java - A list, each item can be checked or unchecked
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001, 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.awt.Font;
 import java.util.Vector;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.*;
-//}}}
 
 /**
  * A list where items can be selected and checked off independently.
@@ -38,7 +36,7 @@ import javax.swing.table.*;
  */
 public class JCheckBoxList extends JTable
 {
-	//{{{ JCheckBoxList constructor
+	// JCheckBoxList constructor
 	/**
 	 * Creates a checkbox list with the given list of objects. The elements
 	 * of this array can either be Entry instances, or other objects (if the
@@ -49,7 +47,7 @@ public class JCheckBoxList extends JTable
 		setModel(items);
 	} //}}}
 
-	//{{{ JCheckBoxList constructor
+	// JCheckBoxList constructor
 	/**
 	 * Creates a checkbox list with the given list of objects. The elements
 	 * of this vector can either be Entry instances, or other objects (if the
@@ -60,7 +58,7 @@ public class JCheckBoxList extends JTable
 		setModel(items);
 	} //}}}
 
-	//{{{ setModel() method
+	// setModel() method
 	/**
 	 * Sets the model to the given list of objects. The elements of this
 	 * array can either be Entry instances, or other objects (if the
@@ -72,7 +70,7 @@ public class JCheckBoxList extends JTable
 		init();
 	} //}}}
 
-	//{{{ setModel() method
+	// setModel() method
 	/**
 	 * Sets the model to the given list of objects. The elements of this
 	 * vector can either be Entry instances, or other objects (if the
@@ -84,7 +82,7 @@ public class JCheckBoxList extends JTable
 		init();
 	} //}}}
 
-	//{{{ getCheckedValues() method
+	// getCheckedValues() method
 	public Object[] getCheckedValues()
 	{
 		List<Object> values = new ArrayList<Object>();
@@ -102,7 +100,7 @@ public class JCheckBoxList extends JTable
 		return values.toArray(retVal);
 	} //}}}
 
-	//{{{ selectAll() method
+	// selectAll() method
 	@Override
 	public void selectAll()
 	{
@@ -117,7 +115,7 @@ public class JCheckBoxList extends JTable
 		model.fireTableRowsUpdated(0,model.getRowCount());
 	} //}}}
 
-	//{{{ getValues() method
+	// getValues() method
 	public Entry[] getValues()
 	{
 		CheckBoxListModel model = (CheckBoxListModel)getModel();
@@ -126,7 +124,7 @@ public class JCheckBoxList extends JTable
 		return retVal;
 	} //}}}
 
-	//{{{ getSelectedValue() method
+	// getSelectedValue() method
 	public Object getSelectedValue()
 	{
 		int row = getSelectedRow();
@@ -140,7 +138,7 @@ public class JCheckBoxList extends JTable
 		}
 	} //}}}
 
-	//{{{ getCellRenderer() method
+	// getCellRenderer() method
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column)
 	{
@@ -154,10 +152,10 @@ public class JCheckBoxList extends JTable
 		return super.getCellRenderer(row,column);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private TableCellRenderer dummy;
 
-	//{{{ init() method
+	// init() method
 	private void init()
 	{
 		dummy = new DummyRenderer();
@@ -177,9 +175,8 @@ public class JCheckBoxList extends JTable
 		column.setCellRenderer(new LabelRenderer());
 	} //}}}
 
-	//}}}
 
-	//{{{ Entry class
+	// Entry class
 	/**
 	 * A check box list entry.
 	 */
@@ -212,7 +209,7 @@ public class JCheckBoxList extends JTable
 		}
 	} //}}}
 
-	//{{{ DummyRenderer class
+	// DummyRenderer class
 	private static class DummyRenderer extends DefaultTableCellRenderer
 	{
 		@Override
@@ -224,7 +221,7 @@ public class JCheckBoxList extends JTable
 		}
 	} //}}}
 
-	//{{{ LabelRenderer class
+	// LabelRenderer class
 	private class LabelRenderer extends DefaultTableCellRenderer
 	{
 		Font plainFont, boldFont;
@@ -252,7 +249,7 @@ public class JCheckBoxList extends JTable
 	} //}}}
 }
 
-//{{{ CheckBoxListModel class
+// CheckBoxListModel class
 class CheckBoxListModel extends AbstractTableModel
 {
 	Vector<JCheckBoxList.Entry> items;

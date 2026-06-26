@@ -1,7 +1,6 @@
 /*
  * FavoritesProvider.java - Favorites list menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,25 +21,24 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.util.Arrays;
 
 import org.gjt.sp.jedit.browser.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class FavoritesProvider implements DynamicMenuProvider
 {
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return false;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{

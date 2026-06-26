@@ -1,7 +1,6 @@
 /*
  * PositionManager.java - Manages positions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.buffer;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.text.Position;
 import java.util.*;
 import org.gjt.sp.util.Log;
 import org.jedit.util.CleanerService;
-//}}}
 
 /**
  * A class internal to jEdit's document model. You should not use it
@@ -44,13 +42,13 @@ import org.jedit.util.CleanerService;
  */
 class PositionManager
 {
-	//{{{ PositionManager constructor
+	// PositionManager constructor
 	PositionManager(JEditBuffer buffer)
 	{
 		this.buffer = buffer;
 	} //}}}
 	
-	//{{{ createPosition() method
+	// createPosition() method
 	/** No explicit removal is required. Unreferencing is enough. */
 	public Position createPosition(int offset)
 	{
@@ -74,7 +72,7 @@ class PositionManager
 		return posTopHalf;
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	public synchronized void contentInserted(int offset, int length)
 	{
 		if(positions.isEmpty())
@@ -92,7 +90,7 @@ class PositionManager
 		iteration = false;
 	} //}}}
 
-	//{{{ contentRemoved() method
+	// contentRemoved() method
 	public synchronized void contentRemoved(int offset, int length)
 	{
 		if(positions.isEmpty())
@@ -121,14 +119,13 @@ class PositionManager
 
 	boolean iteration;
 
-	//{{{ Private members
+	// Private members
 	private final JEditBuffer buffer;
 	private final SortedMap<PosBottomHalf, PosBottomHalf> positions = new TreeMap<>();
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ PosTopHalf class
+	// PosTopHalf class
 	/** A wrapper for real position handling done by
 	  * <code>PosBottomHalf</code>, so Top means the part that is
 	  * visible. When there are no more references
@@ -139,13 +136,13 @@ class PositionManager
 	{
 		private final PosBottomHalf bh;
 
-		//{{{ PosTopHalf constructor
+		// PosTopHalf constructor
 		PosTopHalf(PosBottomHalf bh)
 		{
 			this.bh = bh;
 		} //}}}
 
-		//{{{ getOffset() method
+		// getOffset() method
 		@Override
 		public int getOffset()
 		{
@@ -153,7 +150,7 @@ class PositionManager
 		} //}}}
 	} //}}}
 
-	//{{{ PosBottomHalf class
+	// PosBottomHalf class
 	/** 'bottom' means the part
 	  * that is not visible outside and stays only here in
 	  * <code>positions</code> map.*/
@@ -162,32 +159,32 @@ class PositionManager
 		private int offset;
 		private int ref;
 
-		//{{{ PosBottomHalf constructor
+		// PosBottomHalf constructor
 		PosBottomHalf(int offset)
 		{
 			this.offset = offset;
 		} //}}}
 
-		//{{{ getOffset() method
+		// getOffset() method
 		public int getOffset()
 		{
 			return offset;
 		} //}}}
 
-		//{{{ ref() method
+		// ref() method
 		void ref()
 		{
 			ref++;
 		} //}}}
 
-		//{{{ unref() method
+		// unref() method
 		void unref()
 		{
 			if(--ref == 0)
 				positions.remove(this);
 		} //}}}
 
-		//{{{ contentInserted() method
+		// contentInserted() method
 		void contentInserted(int offset, int length)
 		{
 			if(offset > this.offset)
@@ -196,7 +193,7 @@ class PositionManager
 			checkInvariants();
 		} //}}}
 
-		//{{{ contentRemoved() method
+		// contentRemoved() method
 		void contentRemoved(int offset, int length)
 		{
 			if(offset > this.offset)
@@ -208,7 +205,7 @@ class PositionManager
 			checkInvariants();
 		} //}}}
 
-		//{{{ equals() method
+		// equals() method
 		@Override
 		public boolean equals(Object o)
 		{
@@ -218,7 +215,7 @@ class PositionManager
 			return ((PosBottomHalf)o).offset == offset;
 		} //}}}
 
-		//{{{ compareTo() method
+		// compareTo() method
 		@Override
 		public int compareTo( PosBottomHalf posBottomHalf)
 		{
@@ -227,7 +224,7 @@ class PositionManager
 			return offset - posBottomHalf.offset;
 		} //}}}
 		
-		//{{{ checkInvariants() method
+		// checkInvariants() method
 		private void checkInvariants()
 		{
 			if(offset < 0 || offset > buffer.getLength())
@@ -235,5 +232,4 @@ class PositionManager
 		} //}}}
 	} //}}}
 
-	//}}}
 }

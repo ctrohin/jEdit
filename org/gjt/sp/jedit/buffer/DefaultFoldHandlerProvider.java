@@ -1,7 +1,6 @@
 /*
  * DummyFoldHandler.java - Fold handler used when folding is switched off
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  * Portions copyright (C) 2007 Matthieu Casanova

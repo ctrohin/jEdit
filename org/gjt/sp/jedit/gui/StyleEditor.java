@@ -1,7 +1,6 @@
 /*
  * StyleEditor.java - Style editor dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000, 2001 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -52,7 +51,7 @@ import org.gjt.sp.jedit.buffer.JEditBuffer;
 /** Style editor dialog */
 public class StyleEditor extends EnhancedDialog
 {
-	//{{{ invokeForCaret() method
+	// invokeForCaret() method
 	/**
 	 * Edit the syntax style of the token under the caret.
 	 *
@@ -100,7 +99,7 @@ public class StyleEditor extends EnhancedDialog
 		}
 	} //}}}
 
-	//{{{ StyleEditor constructor
+	// StyleEditor constructor
 	public StyleEditor(JDialog parent, SyntaxStyle style, String styleName)
 	{
 		super(parent, jEdit.getProperty("style-editor.title"),true);
@@ -113,7 +112,7 @@ public class StyleEditor extends EnhancedDialog
 		initialize(parent, style, styleName);
 	} //}}}
 
-	//{{{ initialize() method
+	// initialize() method
 	private void initialize(Component comp, SyntaxStyle style, String styleName)
 	{
 		JPanel content = new JPanel(new BorderLayout(12, 12));
@@ -190,7 +189,7 @@ public class StyleEditor extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -198,14 +197,14 @@ public class StyleEditor extends EnhancedDialog
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ getStyle() method
+	// getStyle() method
 	public SyntaxStyle getStyle()
 	{
 		if(!okClicked)
@@ -222,7 +221,7 @@ public class StyleEditor extends EnhancedDialog
 				font.getSize()));
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JCheckBox italics;
 	private JCheckBox bold;
 	private JCheckBox fgColorCheckBox;
@@ -230,5 +229,4 @@ public class StyleEditor extends EnhancedDialog
 	private JCheckBox bgColorCheckBox;
 	private ColorWellButton bgColor;
 	private boolean okClicked;
-	//}}}
 }

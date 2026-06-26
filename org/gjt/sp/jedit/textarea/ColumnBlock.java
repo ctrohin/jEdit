@@ -1,7 +1,6 @@
 /*
  * ColumnBlock.java 
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010 Anshal Shukla
  *
@@ -37,7 +36,7 @@ public class ColumnBlock extends Rect implements Node
 	private boolean isDirty;
 
 	@Override
-	//{{{ addChild() method
+	// addChild() method
 	public void addChild(Node node)
 	{
 		// must add the children in sorted order
@@ -60,50 +59,50 @@ public class ColumnBlock extends Rect implements Node
 	}//}}}
 
 	@Override
-	//{{{ getChildren() method
+	// getChildren() method
 	public Vector<Node> getChildren()
 	{
 		return children;
 	}//}}}
 
 	@Override
-	//{{{ getParent() method
+	// getParent() method
 	public Node getParent()
 	{
 		return parent;
 	}//}}}
 
-	//{{{ setWidth() method
+	// setWidth() method
 	public void setWidth(int width)
 	{
 		columnBlockWidth = width;
 	}//}}}
 
-	//{{{ setParent() method
+	// setParent() method
 	public void setParent(Node parent)
 	{
 		this.parent = parent;
 	}//}}}
 
-	//{{{ setLines() method
+	// setLines() method
 	public void setLines(Vector<ColumnBlockLine> lines)
 	{
 		this.lines = lines;
 	}//}}}
 
-	//{{{ getLines() method
+	// getLines() method
 	public Vector<ColumnBlockLine> getLines()
 	{
 		return lines;
 	}//}}}
 
-	//{{{ ColumnBlock() method
+	// ColumnBlock() method
 	public ColumnBlock()
 	{
 
 	}//}}}
 
-	//{{{  ColumnBlock() method
+	// ColumnBlock() method
 	public ColumnBlock(JEditBuffer buffer, int startLine, int startColumn, int endLine,
 		int endColumn)
 	{
@@ -111,7 +110,7 @@ public class ColumnBlock extends Rect implements Node
 		this.buffer = buffer;
 	}//}}}
 
-	//{{{  ColumnBlock() method
+	// ColumnBlock() method
 	public ColumnBlock(JEditBuffer buffer, int startLine, int endLine)
 	{
 		this.startLine = startLine;
@@ -119,27 +118,27 @@ public class ColumnBlock extends Rect implements Node
 		this.buffer = buffer;
 	}//}}}
 
-	//{{{  getStartLine() method
+	// getStartLine() method
 	@Override
 	public int getStartLine()
 	{
 		return startLine;
 	}//}}}
 
-	//{{{  getEndLine() method
+	// getEndLine() method
 	@Override
 	public int getEndLine()
 	{
 		return endLine;
 	}//}}}
 
-	//{{{   getColumnWidth() method
+	// getColumnWidth() method
 	public int getColumnWidth()
 	{
 		return (int) columnBlockWidth;
 	}//}}}
 
-	//{{{  isLineWithinThisBlock() method
+	// isLineWithinThisBlock() method
 	public int isLineWithinThisBlock(int line)
 	{
 		if (line < startLine)
@@ -156,7 +155,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 
-	//{{{ getContainingBlock() method
+	// getContainingBlock() method
 	public ColumnBlock getContainingBlock(int line, int offset)
 	{
 		ColumnBlock retBlock = null;
@@ -184,7 +183,7 @@ public class ColumnBlock extends Rect implements Node
 		return retBlock;
 	}//}}}
 
-	//{{{ getContainingBlock() method
+	// getContainingBlock() method
 	public ColumnBlock getColumnBlock(int line, int offset)
 	{
 		if (isDirty)
@@ -232,7 +231,7 @@ public class ColumnBlock extends Rect implements Node
 
 	}//}}}
 
-	//{{{ searchChildren() method
+	// searchChildren() method
 	public ColumnBlock searchChildren(int line)
 	{
 		if (children != null && !children.isEmpty())
@@ -245,7 +244,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 
-	//{{{ searchChildren() method
+	// searchChildren() method
 	/*
 	 * binary search on a sorted list searches the children for one
 	 * containing the line no. line returns an exact match or the closest
@@ -301,7 +300,7 @@ public class ColumnBlock extends Rect implements Node
 		return null;
 	}//}}}
 	
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		StringBuilder buf = new StringBuilder();
@@ -321,7 +320,7 @@ public class ColumnBlock extends Rect implements Node
 		return buf.toString();
 	}//}}}
 
-	//{{{ throwException() method
+	// throwException() method
 	private void throwException(int offset, int line)
 	{
 		throw new IllegalArgumentException("{ELASTIC TABSTOP}CORRUPT DATA@{"
@@ -332,7 +331,7 @@ public class ColumnBlock extends Rect implements Node
 			+ "while searching in \n " + this);
 	}//}}}
 
-	//{{{ setDirtyStatus() method
+	// setDirtyStatus() method
 	public void setDirtyStatus(boolean status)
 	{
 		synchronized (buffer.columnBlockLock)
@@ -341,7 +340,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 
-	//{{{ updateLineNo() method
+	// updateLineNo() method
 	public void updateLineNo(int line)
 	{
 		// Things to do in this method
@@ -362,7 +361,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 
-	//{{{ updateColumnBlockLineOffset() method
+	// updateColumnBlockLineOffset() method
 	public void updateColumnBlockLineOffset(int line, int offsetAdd, boolean increaseStartOffset)
 	{
 		if (line >= startLine && line <= endLine)
@@ -387,7 +386,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 	
-	//{{{ setTabSizeDirtyStatus() method
+	// setTabSizeDirtyStatus() method
 	/*
 	 * tab sizes become dirty on font changes or when char is added or
 	 * deleted inside ColumnBlock they become clean once they get calculated
@@ -406,7 +405,7 @@ public class ColumnBlock extends Rect implements Node
 		}
 	}//}}}
 
-	//{{{ areTabSizesDirty() method
+	// areTabSizesDirty() method
 	public boolean areTabSizesDirty()
 	{
 		return tabSizesDirty;

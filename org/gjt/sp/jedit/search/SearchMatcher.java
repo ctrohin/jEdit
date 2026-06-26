@@ -1,7 +1,6 @@
 /*
  * SearchMatcher.java - Abstract string matcher interface
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2001, 2002 Slava Pestov
  *
@@ -127,7 +126,7 @@ public abstract class SearchMatcher
 	 */
 	protected String noWordSep;
 
-	//{{{ Match class
+	// Match class
 	public static class Match
 	{
 		public int start;

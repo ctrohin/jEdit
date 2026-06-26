@@ -1,7 +1,6 @@
 /*
  * OptionsDialog.java - Tree options dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  * Portions copyright (C) 1999 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -36,7 +35,6 @@ import java.util.List;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.EnhancedTreeCellRenderer;
 import org.gjt.sp.util.Log;
-//}}}
 
 /** An abstract options dialog box.
  * @author Slava Pestov
@@ -45,16 +43,15 @@ import org.gjt.sp.util.Log;
  */
 public abstract class OptionsDialog extends EnhancedDialog implements TreeSelectionListener
 {
-	//{{{ Instance variables
+	// Instance variables
 	private String name;
 	private JSplitPane splitter;
 	protected JTree paneTree;
 	private JScrollPane stage;
 	protected OptionPane currentPane;
 	private Map<Object, OptionPane> deferredOptionPanes;
-	//}}}
 
-	//{{{ OptionsDialog constructor
+	// OptionsDialog constructor
 	/**
 	 * @param frame - the parent frame for dialogs created
 	 * @param name the name of an option pane - it must have a .title and .code
@@ -67,33 +64,33 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		init(name,pane);
 	} //}}}
 
-	//{{{ OptionsDialog constructor
+	// OptionsDialog constructor
 	protected OptionsDialog(Dialog dialog, String name, String pane)
 	{
 		super(dialog, jEdit.getProperty(name + ".title"), true);
 		init(name,pane);
 	} //}}}
 
-	//{{{ addOptionGroup() method
+	// addOptionGroup() method
 	public void addOptionGroup(OptionGroup group)
 	{
 		getDefaultGroup().addOptionGroup(group);
 	} //}}}
 
-	//{{{ addOptionPane() method
+	// addOptionPane() method
 	public void addOptionPane(OptionPane pane)
 	{
 		getDefaultGroup().addOptionPane(pane);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
 		ok(true);
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
@@ -102,7 +99,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		dispose();
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	public void ok(boolean dispose)
 	{
 		if(currentPane != null)
@@ -122,7 +119,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 			dispose();
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	@Override
 	public void dispose()
 	{
@@ -131,7 +128,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		super.dispose();
 	} //}}}
 
-	//{{{ valueChanged() method
+	// valueChanged() method
 	@Override
 	public void valueChanged(TreeSelectionEvent evt)
 	{
@@ -242,7 +239,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		currentPane = optionPane;
 	} //}}}
 
-	//{{{ Protected members
+	// Protected members
 	// {{{ createOptionTreeModel
 	/**
 	 * Creates the tree model that goes on the left of the option pane,
@@ -253,9 +250,8 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 	// }}}
 
 	protected abstract OptionGroup getDefaultGroup();
-	//}}}
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * @param name the name of this pane
 	 * @param pane - a sub-pane name to select (?)
@@ -353,15 +349,15 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		setVisible(true);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ selectPane() method
+	// selectPane() method
 	private boolean selectPane(OptionGroup node, String name)
 	{
 		return selectPane(node,name,new ArrayList<Object>());
 	} //}}}
 
-	//{{{ selectPane() method
+	// selectPane() method
 	private boolean selectPane(OptionGroup node, String name, List<Object> path)
 	{
 		path.add(node);
@@ -421,7 +417,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		return false;
 	} //}}}
 
-	//{{{ save() method
+	// save() method
 	private void save(Object obj)
 	{
 		if(obj instanceof OptionGroup)
@@ -450,7 +446,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		}
 	} //}}}
 
-	//{{{ updateSize() method
+	// updateSize() method
 	private void updateSize()
 	{
 		Dimension currentSize = getSize();
@@ -467,9 +463,8 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		validate();
 	} //}}}
 
-	//}}}
 
-	//{{{ PaneNameRenderer class
+	// PaneNameRenderer class
 	public static class PaneNameRenderer extends EnhancedTreeCellRenderer
 	{
 		public PaneNameRenderer()
@@ -531,7 +526,7 @@ public abstract class OptionsDialog extends EnhancedDialog implements TreeSelect
 		private final Font groupFont;
 	} //}}}
 
-	//{{{ OptionTreeModel class
+	// OptionTreeModel class
 	/**
 	 * deprecated use {@link OptionTreeModel}
 	 * Undeprecating until the GlobalOptions, PluginOptions and/or CombinedOptions

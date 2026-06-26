@@ -1,7 +1,6 @@
 /*
  * HelpIndex.java - Index for help searching feature
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.net.*;
 import java.util.zip.*;
@@ -30,11 +29,10 @@ import java.util.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.util.Log;
-//}}}
 
 class HelpIndex
 {
-	//{{{ HelpIndex constructor
+	// HelpIndex constructor
 	HelpIndex()
 	{
 		words = new HashMap<>();
@@ -71,7 +69,7 @@ class HelpIndex
 		ignoreWord("you");
 	} //}}}
 
-	//{{{ indexEditorHelp() method
+	// indexEditorHelp() method
 	/**
 	 * Indexes all available help, including the jEdit user's guide, FAQ,]
 	 * and plugin documentation.
@@ -111,7 +109,7 @@ class HelpIndex
 		Log.log(Log.DEBUG,this,"Indexed " + words.size() + " words");
 	} //}}}
 
-	//{{{ indexDirectory() method
+	// indexDirectory() method
 	/**
 	 * Indexes all HTML and text files in the specified directory.
 	 * @param dir The directory
@@ -125,7 +123,7 @@ class HelpIndex
 			indexURL(file);
 	} //}}}
 
-	//{{{ indexJAR() method
+	// indexJAR() method
 	/**
 	 * Indexes all HTML and text files in the specified JAR file.
 	 * @param jar The JAR file
@@ -150,7 +148,7 @@ class HelpIndex
 		}
 	} //}}}
 
-	//{{{ indexURL() method
+	// indexURL() method
 	/**
 	 * Reads the specified HTML file and adds all words defined therein to the
 	 * index.
@@ -171,7 +169,7 @@ class HelpIndex
 		indexStream(_in, url.toString());
 	} //}}}
 
-	//{{{ lookupWord() method
+	// lookupWord() method
 	public Word lookupWord(String word)
 	{
 		Object o = words.get(word);
@@ -181,25 +179,25 @@ class HelpIndex
 			return (Word)o;
 	} //}}}
 
-	//{{{ getFile() method
+	// getFile() method
 	public HelpFile getFile(int index)
 	{
 		return files.get(index);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	// used to mark words to ignore (see constructor for the list)
 	private static final Object IGNORE = new Object();
 	private final Map<String, Object> words;
 	private final List<HelpFile> files;
 
-	//{{{ ignoreWord() method
+	// ignoreWord() method
 	private void ignoreWord(String word)
 	{
 		words.put(word,IGNORE);
 	} //}}}
 
-	//{{{ indexStream() method
+	// indexStream() method
 	/**
 	 * Reads the specified HTML file and adds all words defined therein to the
 	 * index.
@@ -280,7 +278,7 @@ class HelpIndex
 			file.title = titleText.toString();
 	} //}}}
 
-	//{{{ addWord() method
+	// addWord() method
 	private void addWord(String word, int file, boolean title)
 	{
 		word = word.toLowerCase();
@@ -295,9 +293,8 @@ class HelpIndex
 			((Word)o).addOccurrence(file,title);
 	} //}}}
 
-	//}}}
 
-	//{{{ Word class
+	// Word class
 	static class Word
 	{
 		// how much an occurrence in the title is worth
@@ -351,7 +348,7 @@ class HelpIndex
 		}
 	} //}}}
 
-	//{{{ HelpFile class
+	// HelpFile class
 	static class HelpFile
 	{
 		String file;

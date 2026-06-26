@@ -1,7 +1,6 @@
 /*
  * TokenMarker.java - Tokenizes lines of text
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  * Copyright (C) 1999, 2000 mike dillon
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.syntax;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.text.Segment;
 import java.lang.ref.WeakReference;
@@ -32,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.gjt.sp.jedit.TextUtilities;
 import org.gjt.sp.util.SegmentCharSequence;
-//}}}
 
 /**
  * A token marker splits lines of text into tokens. Each token carries
@@ -50,11 +48,11 @@ public class TokenMarker
 
 	public static final ParserRuleSet[] EMPTY_PARSER_RULE_SETS_ARRAY = new ParserRuleSet[0];
 
-	//{{{ TokenMarker constructor
+	// TokenMarker constructor
 	public TokenMarker()
 	{} //}}}
 
-	//{{{ addRuleSet() method
+	// addRuleSet() method
 	public void addRuleSet(ParserRuleSet rules)
 	{
 		ruleSets.put(rules.getSetName(), rules);
@@ -63,19 +61,19 @@ public class TokenMarker
 			mainRuleSet = rules;
 	} //}}}
 
-	//{{{ getMainRuleSet() method
+	// getMainRuleSet() method
 	public ParserRuleSet getMainRuleSet()
 	{
 		return mainRuleSet;
 	} //}}}
 
-	//{{{ getRuleSet() method
+	// getRuleSet() method
 	public ParserRuleSet getRuleSet(String setName)
 	{
 		return ruleSets.get(setName);
 	} //}}}
 
-	//{{{ getRuleSets() method
+	// getRuleSets() method
 	/**
 	 * @since jEdit 4.2pre3
 	 */
@@ -84,7 +82,7 @@ public class TokenMarker
 		return ruleSets.values().toArray(EMPTY_PARSER_RULE_SETS_ARRAY);
 	} //}}}
 
-	//{{{ markTokens() method
+	// markTokens() method
 	/**
 	 * Do not call this method directly; call Buffer.markTokens() instead.
 	 *
@@ -95,7 +93,7 @@ public class TokenMarker
 	public synchronized LineContext markTokens(LineContext prevContext,
 		TokenHandler tokenHandler, Segment line)
 	{
-		//{{{ Set up some instance variables
+		// Set up some instance variables
 		// this is to avoid having to pass around lots and lots of
 		// parameters.
 		this.tokenHandler = tokenHandler;
@@ -124,14 +122,13 @@ public class TokenMarker
 
 		seenWhitespaceEnd = false;
 		whitespaceEnd = line.offset;
-		//}}}
 
-		//{{{ Main parser loop
+		// Main parser loop
 		int terminateChar = context.rules.getTerminateChar();
 		boolean terminated = false;
 main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 		{
-			//{{{ check if we have to stop parsing (happens if the terminateChar has been exceeded)
+			// check if we have to stop parsing (happens if the terminateChar has been exceeded)
 			if(terminateChar >= 0 && pos - line.offset >= terminateChar
 				&& !terminated)
 			{
@@ -142,14 +139,14 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 				keywords = context.rules.getKeywords();
 			} //}}}
 
-			//{{{ Check for the escape rule before anything else.
+			// Check for the escape rule before anything else.
 			if (context.escapeRule != null &&
 				handleRuleStart(context.escapeRule))
 			{
 				continue main_loop;
 			} //}}}
 
-			//{{{ check for end of delegate
+			// check for end of delegate
 			if (context.parent != null
 			    && context.parent.inRule != null
 			    && checkDelegateEnd(context.parent.inRule))
@@ -158,7 +155,7 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 				continue main_loop;
 			} //}}}
 
-			//{{{ check every rule
+			// check every rule
 			char ch = line.array[pos];
 			List<ParserRule> rules = context.rules.getRules(ch);
 			for (ParserRule rule : rules)
@@ -171,7 +168,7 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 				}
 			} //}}}
 
-			//{{{ check if current character is a word separator
+			// check if current character is a word separator
 			if(Character.isWhitespace(ch))
 			{
 				if(!seenWhitespaceEnd)
@@ -226,7 +223,7 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 			} //}}}
 		} //}}}
 
-		//{{{ Mark all remaining characters
+		// Mark all remaining characters
 		pos = lineLength;
 
 		if(context.inRule != null)
@@ -234,9 +231,8 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 
 		handleNoWordBreak();
 		markKeyword(true);
-		//}}}
 
-		//{{{ Unwind any NO_LINE_BREAK parent delegates
+		// Unwind any NO_LINE_BREAK parent delegates
 unwind:		while(context.parent != null)
 		{
 			ParserRule rule = context.parent.inRule;
@@ -265,9 +261,9 @@ unwind:		while(context.parent != null)
 		return context;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final Map<String, ParserRuleSet> ruleSets = new Hashtable<>(64);
 	private ParserRuleSet mainRuleSet;
 
@@ -286,9 +282,8 @@ unwind:		while(context.parent != null)
 
 	private int whitespaceEnd;
 	private boolean seenWhitespaceEnd;
-	//}}}
 
-	//{{{ checkDelegateEnd() method
+	// checkDelegateEnd() method
 	private boolean checkDelegateEnd(ParserRule rule)
 	{
 		if(rule.end == null && rule.endRegexp == null)
@@ -327,7 +322,7 @@ unwind:		while(context.parent != null)
 		return false;
 	} //}}}
 
-	//{{{ offsetMatches
+	// offsetMatches
 	/**
 	 * Checks if the offset matches given position-match-hint of
 	 * ParserRule.
@@ -362,7 +357,7 @@ unwind:		while(context.parent != null)
 		return true;
 	} //}}}
 
-	//{{{ handleRuleStart() method
+	// handleRuleStart() method
 	/**
 	 * Checks if the rule matches the line at the current position
 	 * as its start and handles the rule if it does match
@@ -453,7 +448,7 @@ unwind:		while(context.parent != null)
 
 			switch(checkRule.action & ParserRule.MAJOR_ACTIONS)
 			{
-			//{{{ SEQ
+			// SEQ
 			case ParserRule.SEQ:
 				context.spanEndSubst = null;
 				context.spanEndSubstRegex = null;
@@ -484,8 +479,7 @@ unwind:		while(context.parent != null)
 					keywords = context.rules.getKeywords();
 				}
 				break;
-			//}}}
-			//{{{ SPAN, EOL_SPAN
+			// SPAN, EOL_SPAN
 			case ParserRule.SPAN:
 			case ParserRule.EOL_SPAN:
 				context.setInRule(checkRule);
@@ -543,8 +537,7 @@ unwind:		while(context.parent != null)
 				keywords = context.rules.getKeywords();
 
 				break;
-			//}}}
-			//{{{ MARK_FOLLOWING
+			// MARK_FOLLOWING
 			case ParserRule.MARK_FOLLOWING:
 				tokenHandler.handleToken(line,
 					matchToken(checkRule, checkRule, context),
@@ -555,8 +548,7 @@ unwind:		while(context.parent != null)
 				context.spanEndSubstRegex = null;
 				context.setInRule(checkRule);
 				break;
-			//}}}
-			//{{{ MARK_PREVIOUS
+			// MARK_PREVIOUS
 			case ParserRule.MARK_PREVIOUS:
 				context.spanEndSubst = null;
 				context.spanEndSubstRegex = null;
@@ -576,7 +568,6 @@ unwind:		while(context.parent != null)
 					context);
 
 				break;
-			//}}}
 			default:
 				throw new InternalError("Unhandled major action");
 			}
@@ -591,7 +582,7 @@ unwind:		while(context.parent != null)
 		return true;
 	} //}}}
 
-	//{{{ handleRuleEnd() method
+	// handleRuleEnd() method
 	/**
 	 * Checks if the rule matches the line at the current position
 	 * as its end and handles the rule if it does match
@@ -668,7 +659,7 @@ unwind:		while(context.parent != null)
 		return true;
 	} //}}}
 
-	//{{{ handleNoWordBreak() method
+	// handleNoWordBreak() method
 	private void handleNoWordBreak()
 	{
 		if(context.parent != null)
@@ -693,7 +684,7 @@ unwind:		while(context.parent != null)
 		}
 	} //}}}
 
-	//{{{ handleTokenWithSpaces() method
+	// handleTokenWithSpaces() method
 	private void handleTokenWithSpaces(TokenHandler tokenHandler,
 		byte tokenType, int start, int len, LineContext context)
 	{
@@ -721,14 +712,14 @@ unwind:		while(context.parent != null)
 		}
 	} //}}}
 
-	//{{{ markKeyword() method
+	// markKeyword() method
 	private void markKeyword(boolean addRemaining)
 	{
 		int len = pos - lastOffset;
 		if(len == 0)
 			return;
 
-		//{{{ Do digits
+		// Do digits
 		if(context.rules.getHighlightDigits())
 		{
 			boolean digit = false;
@@ -783,7 +774,7 @@ unwind:		while(context.parent != null)
 			}
 		} //}}}
 
-		//{{{ Do keywords
+		// Do keywords
 		if(keywords != null)
 		{
 			byte id = keywords.lookup(line, lastOffset, len);
@@ -798,7 +789,7 @@ unwind:		while(context.parent != null)
 			}
 		} //}}}
 
-		//{{{ Handle any remaining crud
+		// Handle any remaining crud
 		if(addRemaining)
 		{
 			tokenHandler.handleToken(line,context.rules.getDefault(),
@@ -807,7 +798,7 @@ unwind:		while(context.parent != null)
 		} //}}}
 	} //}}}
 
-	//{{{ substitute() method
+	// substitute() method
 	/**
 	 * Perform substitution references in <code>end</code> to the matched groups in
 	 * <code>match</code>. In particular, "$1" is replaced with the first match group in
@@ -868,7 +859,7 @@ unwind:		while(context.parent != null)
 		return returnValue;
 	} //}}}
 
-	//{{{ matchToken() method
+	// matchToken() method
 	private byte matchToken(ParserRule rule, ParserRule base, LineContext ctx)
 	{
 		switch (rule.matchType)
@@ -884,7 +875,7 @@ unwind:		while(context.parent != null)
 		}
 	} //}}}
 
-	//{{{ checkHashString() method
+	// checkHashString() method
 	private boolean checkHashString( char[] upHashChar)
 	{
 		for (int i = 0; i < upHashChar.length; i++)
@@ -897,9 +888,8 @@ unwind:		while(context.parent != null)
 		return true;
 	} //}}}
 
-	//}}}
 
-	//{{{ LineContext class
+	// LineContext class
 	/**
 	 * Stores persistent per-line syntax parser state.
 	 */
@@ -915,7 +905,7 @@ unwind:		while(context.parent != null)
 		public Pattern spanEndSubstRegex;
 		public ParserRule escapeRule;
 
-		//{{{ LineContext constructor
+		// LineContext constructor
 		public LineContext(ParserRuleSet rs, LineContext lc)
 		{
 			rules = rs;
@@ -931,12 +921,12 @@ unwind:		while(context.parent != null)
 				escapeRule = lc.escapeRule;
 		} //}}}
 
-		//{{{ LineContext constructor
+		// LineContext constructor
 		public LineContext()
 		{
 		} //}}}
 
-		//{{{ intern() method
+		// intern() method
 		public LineContext intern()
 		{
 			WeakReference<LineContext> ref = intern.get(this);
@@ -952,7 +942,7 @@ unwind:		while(context.parent != null)
 			return this;
 		} //}}}
 
-		//{{{ hashCode() method
+		// hashCode() method
 		public int hashCode()
 		{
 			int code = 0;
@@ -964,7 +954,7 @@ unwind:		while(context.parent != null)
 			return code;
 		} //}}}
 
-		//{{{ equals() method
+		// equals() method
 		public boolean equals(Object obj)
 		{
 			if(obj instanceof LineContext)
@@ -979,7 +969,7 @@ unwind:		while(context.parent != null)
 				return false;
 		} //}}}
 
-		//{{{ clone() method
+		// clone() method
 		@Override
 		public Object clone()
 		{
@@ -994,7 +984,7 @@ unwind:		while(context.parent != null)
 			return lc;
 		} //}}}
 
-		//{{{ charArraysEqual() method
+		// charArraysEqual() method
 		private static boolean charArraysEqual(char[] c1, char[] c2)
 		{
 			if(c1 == null)
@@ -1016,7 +1006,7 @@ unwind:		while(context.parent != null)
 			return true;
 		} //}}}
 
-		//{{{ setInRule() method
+		// setInRule() method
 		/**
 		 * Sets the current rule being processed and adjusts the
 		 * escape rule for the context based on the rule.

@@ -1,7 +1,6 @@
 /*
  * StructureMatcher.java - Abstract interface for bracket matching, etc.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -22,10 +21,9 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import org.gjt.sp.jedit.TextUtilities;
-//}}}
 
 /**
  * An interface for matching parts of a source file's stucture. The default
@@ -38,25 +36,23 @@ import org.gjt.sp.jedit.TextUtilities;
  */
 public interface StructureMatcher
 {
-	//{{{ getMatch() method
+	// getMatch() method
 	/**
 	 * Returns the element matching the one at the given text area's
 	 * caret position, or null.
 	 * @since jEdit 4.2pre3
 	 */
 	Match getMatch(TextArea textArea);
-	//}}}
 
-	//{{{ selectMatch() method
+	// selectMatch() method
 	/**
 	 * Selects from the caret to the matching structure element (if there is
 	 * one, otherwise the behavior of this method is undefined).
 	 * @since jEdit 4.2pre3
 	 */
 	void selectMatch(TextArea textArea);
-	//}}}
 
-	//{{{ BracketMatcher class
+	// BracketMatcher class
 	class BracketMatcher implements StructureMatcher
 	{
 		@Override
@@ -95,7 +91,7 @@ public interface StructureMatcher
 		}
 	} //}}}
 
-	//{{{ Match class
+	// Match class
 	/**
 	 * A structure match, denoted by a start and end position.
 	 * @since jEdit 4.2pre3
@@ -126,7 +122,7 @@ public interface StructureMatcher
 		}
 	} //}}}
 
-	//{{{ Highlight class
+	// Highlight class
 	/**
 	 * Paints the structure match highlight.
 	 */

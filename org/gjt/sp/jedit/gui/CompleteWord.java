@@ -1,7 +1,6 @@
 /*
  * CompleteWord.java - Complete word dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2001 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
@@ -48,7 +47,6 @@ import org.gjt.sp.jedit.syntax.KeywordMap;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /** A word completion popup.
  */
@@ -57,7 +55,7 @@ public class CompleteWord extends CompletionPopup
 
 	public static final Completion[] EMPTY_COMPLETION_ARRAY = new Completion[0];
 
-	//{{{ completeWord() method
+	// completeWord() method
 	public static void completeWord(View view)
 	{
 		JEditTextArea textArea = view.getTextArea();
@@ -88,7 +86,7 @@ public class CompleteWord extends CompletionPopup
 		{
 			javax.swing.UIManager.getLookAndFeel().provideErrorFeedback(null); 
 		}
-		//{{{ if there is only one competion, insert in buffer
+		// if there is only one competion, insert in buffer
 		else if(completions.length == 1)
 		{
 			Completion c = completions[0];
@@ -103,7 +101,7 @@ public class CompleteWord extends CompletionPopup
 					word.length()));
 			}
 		} //}}}
-		//{{{ show popup if > 1
+		// show popup if > 1
 		else
 		{
 			String longestPrefix = MiscUtilities.getLongestPrefix(
@@ -127,7 +125,7 @@ public class CompleteWord extends CompletionPopup
 		} //}}}
 	} //}}}
 
-	//{{{ CompleteWord constructor
+	// CompleteWord constructor
 	public CompleteWord(View view, String word, Completion[] completions,
 		Point location, String noWordSep)
 	{
@@ -141,9 +139,9 @@ public class CompleteWord extends CompletionPopup
 		reset(new Words(completions), true);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ getNonAlphaNumericWordChars() method
+	// getNonAlphaNumericWordChars() method
 	private static String getNonAlphaNumericWordChars(Buffer buffer,
 		KeywordMap keywordMap)
 	{
@@ -162,7 +160,7 @@ public class CompleteWord extends CompletionPopup
 		return noWordSep;
 	} //}}}
 
-	//{{{ getWordToComplete() method
+	// getWordToComplete() method
 	private static String getWordToComplete(Buffer buffer, int caretLine,
 		int caret, String noWordSep)
 	{
@@ -187,7 +185,7 @@ public class CompleteWord extends CompletionPopup
 		return word.toString();
 	} //}}}
 
-	//{{{ getVisibleBuffers() method
+	// getVisibleBuffers() method
 	private static Collection<Buffer> getVisibleBuffers()
 	{
 		final Collection<Buffer> buffers = new HashSet<>();
@@ -195,7 +193,7 @@ public class CompleteWord extends CompletionPopup
 		return buffers;
 	} //}}}
 
-	//{{{ getCompletions() method
+	// getCompletions() method
 	private static Completion[] getCompletions(final Buffer buffer, final String word,
 		final int caret)
 	{
@@ -234,14 +232,14 @@ public class CompleteWord extends CompletionPopup
 		return completionArray;
 	} //}}}
 
-	//{{{ getCompletions() method
+	// getCompletions() method
 	private static void getCompletions(Buffer buffer, String word,
 		KeywordMap keywordMap, String noWordSep, int caret,
 		Collection<Completion> completions)
 	{
 		int wordLen = word.length();
 
-		//{{{ try to find matching keywords
+		// try to find matching keywords
 		if(keywordMap != null)
 		{
 			String[] keywords = keywordMap.getKeywords();
@@ -257,7 +255,7 @@ public class CompleteWord extends CompletionPopup
 			}
 		} //}}}
 
-		//{{{ loop through all lines of current buffer
+		// loop through all lines of current buffer
 		for(int i = 0; i < buffer.getLineCount(); i++)
 		{
 			CharSequence line = buffer.getLineSegment(i);
@@ -302,7 +300,7 @@ public class CompleteWord extends CompletionPopup
 		} //}}}
 	} //}}}
 
-	//{{{ completeWord() method
+	// completeWord() method
 	private static String completeWord(CharSequence line, int offset, String noWordSep)
 	{
 		// '+ 1' so that findWordEnd() doesn't pick up the space at the start
@@ -310,14 +308,13 @@ public class CompleteWord extends CompletionPopup
 		return line.subSequence(offset,wordEnd).toString();
 	} //}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private final JEditTextArea textArea;
 	private final Buffer buffer;
 	private String word;
 	private final String noWordSep;
-	//}}}
 
-	//{{{ Completion class
+	// Completion class
 	private static class Completion
 	{
 		final String text;
@@ -348,7 +345,7 @@ public class CompleteWord extends CompletionPopup
 		}
 	} //}}}
 
-	//{{{ Words class
+	// Words class
 	private class Words implements Candidates
 	{
 		private final DefaultListCellRenderer renderer;
@@ -411,7 +408,7 @@ public class CompleteWord extends CompletionPopup
 		}
 	} //}}}
 
-	//{{{ resetWords() method
+	// resetWords() method
 	private void resetWords(String newWord)
 	{
 		int caret = textArea.getCaretPosition();
@@ -428,9 +425,8 @@ public class CompleteWord extends CompletionPopup
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ keyPressed() medhod
+	// keyPressed() medhod
 	@Override
 	protected void keyPressed(KeyEvent e)
 	{
@@ -450,7 +446,7 @@ public class CompleteWord extends CompletionPopup
 		}
 	} //}}}
 
-	//{{{ keyTyped() medhod
+	// keyTyped() medhod
 	@Override
 	protected void keyTyped(KeyEvent e)
 	{

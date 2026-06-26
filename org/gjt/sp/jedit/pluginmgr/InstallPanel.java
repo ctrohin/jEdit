@@ -1,7 +1,6 @@
 /*
  * InstallPanel.java - For installing plugins
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002-2013 Kris Kopicki, Slava Pestov, Dale Anson,
  *      Matthieu Casanova, Alan Ezust, Björn Kautler
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.pluginmgr;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.browser.VFSBrowser;
 import org.gjt.sp.jedit.gui.RolloverButton;
@@ -56,14 +55,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-//}}}
 
 /**
  * @version $Id$
  */
 class InstallPanel extends JPanel implements EBComponent
 {
-	//{{{ Variables
+	// Variables
 	private final JTable table;
 	private final JScrollPane scrollpane;
 	private final PluginTableModel pluginModel;
@@ -77,9 +75,8 @@ class InstallPanel extends JPanel implements EBComponent
 	private boolean isLoading;
 
 	private final Collection<String> pluginSet = new HashSet<>();
-	//}}}
 
-	//{{{ InstallPanel constructor
+	// InstallPanel constructor
 	InstallPanel(PluginManager window, boolean updates)
 	{
 		super(null);
@@ -254,7 +251,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ loadPluginSet() methods
+	// loadPluginSet() methods
 	/**
 	 * loads a pluginSet xml file and updates the model to reflect
 	 * certain checked selections
@@ -286,7 +283,7 @@ class InstallPanel extends JPanel implements EBComponent
 		pluginModel.update(edtTask);
 	} //}}}
 
-	//{{{ updateModel() method
+	// updateModel() method
 	/**
 	 * Must be called from the EDT.
 	 **/
@@ -311,7 +308,7 @@ class InstallPanel extends JPanel implements EBComponent
 		});
 	} //}}}
 
-	//{{{ handleMessage() method
+	// handleMessage() method
 	@Override
 	public void handleMessage(EBMessage message)
 	{
@@ -336,23 +333,23 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ loading() method
+	// loading() method
 	void loading()
 	{
 		layout.show(this, "LOADING");
 		isLoading = true;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ isDownloadingList() method
+	// isDownloadingList() method
 	private boolean isDownloadingList()
 	{
 		return isLoading;
 	} //}}}
 
 
-	//{{{ formatSize() method
+	// formatSize() method
 	private static String formatSize(int size)
 	{
 		NumberFormat df = NumberFormat.getInstance();
@@ -366,11 +363,10 @@ class InstallPanel extends JPanel implements EBComponent
 		return sizeText;
 	} //}}}
 
-	//}}}
 
-	//{{{ Inner classes
+	// Inner classes
 
-	//{{{ PluginTableModel class
+	// PluginTableModel class
 	private class PluginTableModel extends AbstractTableModel
 	{
 		private List<Entry> entries = new ArrayList<>();
@@ -379,14 +375,14 @@ class InstallPanel extends JPanel implements EBComponent
 		private String filterString;
 		int sortDirection = 1;
 
-		//{{{ setFilterString() method
+		// setFilterString() method
 		public void setFilterString(String filterString)
 		{
 			this.filterString = filterString;
 			updateFilteredEntries();
 		} //}}}
 
-		//{{{ updateFilteredEntries() method
+		// updateFilteredEntries() method
 		void updateFilteredEntries()
 		{
 			filteredEntries.clear();
@@ -450,7 +446,7 @@ class InstallPanel extends JPanel implements EBComponent
 			fireTableChanged(new TableModelEvent(PluginTableModel.this));
 		} //}}}
 
-		//{{{ getColumnClass() method
+		// getColumnClass() method
 		@Override
 		public Class getColumnClass(int columnIndex)
 		{
@@ -466,14 +462,14 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ getColumnCount() method
+		// getColumnCount() method
 		@Override
 		public int getColumnCount()
 		{
 			return 6;
 		} //}}}
 
-		//{{{ getColumnName() method
+		// getColumnName() method
 		@Override
 		public String getColumnName(int column)
 		{
@@ -489,14 +485,14 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ getRowCount() method
+		// getRowCount() method
 		@Override
 		public int getRowCount()
 		{
 			return filteredEntries.size();
 		} //}}}
 
-		//{{{ getValueAt() method
+		// getValueAt() method
 		@Override
 		public Object getValueAt(int rowIndex,int columnIndex)
 		{
@@ -522,14 +518,14 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ isCellEditable() method
+		// isCellEditable() method
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
 			return columnIndex == 0;
 		} //}}}
 
-		//{{{ setSelectAll() method
+		// setSelectAll() method
 		public void setSelectAll(boolean b)
 		{
 			if(isDownloadingList())
@@ -550,14 +546,14 @@ class InstallPanel extends JPanel implements EBComponent
 			fireTableChanged(new TableModelEvent(this));
 		} //}}}
 
-		//{{{ setSortType() method
+		// setSortType() method
 		public void setSortType(int type)
 		{
 			sortType = type;
 			sort(type);
 		} //}}}
 
-		//{{{ deselectDependents() method
+		// deselectDependents() method
 		/**
 		 * deselect all plugins depending upon entry after a warning.
 		 * If user cancels, reinstate install field of entry
@@ -593,7 +589,7 @@ class InstallPanel extends JPanel implements EBComponent
 			return true;
 		} //}}}
 
-		//{{{ setValueAt() method
+		// setValueAt() method
 		@Override
 		public void setValueAt(Object aValue, int row, int column)
 		{
@@ -658,7 +654,7 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ updateDeps() method
+		// updateDeps() method
 		/***
 		 * recursively add dependencies to install,
 		 * or remove entry from its dependencies' dependents list
@@ -699,7 +695,7 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ sort() method
+		// sort() method
 		public void sort(int type)
 		{
 			Set<String> savedChecked = new HashSet<>();
@@ -717,9 +713,8 @@ class InstallPanel extends JPanel implements EBComponent
 			restoreSelection(savedChecked,savedSelection);
 			table.getTableHeader().repaint();
 		}
-		//}}}
 
-		//{{{ update() method
+		// update() method
 		public void update(Runnable edtTask)
 		{
 			ThreadUtilities.runInBackground(new UpdateModelTask(edtTask));
@@ -765,7 +760,7 @@ class InstallPanel extends JPanel implements EBComponent
 			return entries;
 		}
 
-		//{{{ saveSelection() method
+		// saveSelection() method
 		public void saveSelection(Set<String> savedChecked, Set<String> savedSelection)
 		{
 			if (entries.isEmpty())
@@ -784,13 +779,13 @@ class InstallPanel extends JPanel implements EBComponent
 			}
 		} //}}}
 
-		//{{{ clearSelection() method
+		// clearSelection() method
 		public void clearSelection()
 		{
 			restoreSelection(Collections.emptySet(), Collections.emptySet());
 		} //}}}
 
-		//{{{ restoreSelection() method
+		// restoreSelection() method
 		public void restoreSelection(Set<String> savedChecked, Set<String> savedSelection)
 		{
 			for (int i=0, c=getRowCount() ; i<c ; i++)
@@ -868,7 +863,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ Entry class
+	// Entry class
 	private static class Entry
 	{
 		String name, installedVersion, version, author, date, description, set, dependencies;
@@ -937,7 +932,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ PluginInfoBox class
+	// PluginInfoBox class
 	/**
 	 * TODO: refactor to use the PluginDetailPanel?
 	 */
@@ -983,7 +978,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ SizeLabel class
+	// SizeLabel class
 	private class SizeLabel extends JLabel implements TableModelListener
 	{
 		private int size;
@@ -1026,7 +1021,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ SelectallButton class
+	// SelectallButton class
 	private class SelectallButton extends JCheckBox implements ActionListener, TableModelListener
 	{
 		SelectallButton()
@@ -1065,7 +1060,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ StringMapHandler class
+	// StringMapHandler class
 	/** For parsing the pluginset xml files into pluginSet */
 	private class StringMapHandler extends DefaultHandler
 	{
@@ -1084,12 +1079,12 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ ChoosePluginSet class
+	// ChoosePluginSet class
 	private class ChoosePluginSet extends RolloverButton implements ActionListener
 	{
 		private String path;
 
-		//{{{ ChoosePluginSet constructor
+		// ChoosePluginSet constructor
 		ChoosePluginSet()
 		{
 			setIcon(GUIUtilities.loadIcon(jEdit.getProperty("install-plugins.choose-plugin-set.icon")));
@@ -1097,7 +1092,7 @@ class InstallPanel extends JPanel implements EBComponent
 			updateUI();
 		} //}}}
 
-		//{{{ updateUI method
+		// updateUI method
 		@Override
 		public void updateUI()
 		{
@@ -1107,7 +1102,7 @@ class InstallPanel extends JPanel implements EBComponent
 			super.updateUI();
 		}//}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent ae)
 		{
@@ -1135,10 +1130,10 @@ class InstallPanel extends JPanel implements EBComponent
 		} //}}}
 	}//}}}
 
-	//{{{ ClearPluginSet class
+	// ClearPluginSet class
 	private class ClearPluginSet extends RolloverButton implements ActionListener
 	{
-		//{{{ ClearPluginSet constructor
+		// ClearPluginSet constructor
 		ClearPluginSet()
 		{
 			setIcon(GUIUtilities.loadIcon(jEdit.getProperty("install-plugins.clear-plugin-set.icon")));
@@ -1146,7 +1141,7 @@ class InstallPanel extends JPanel implements EBComponent
 			addActionListener(this);
 		} //}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
@@ -1157,7 +1152,7 @@ class InstallPanel extends JPanel implements EBComponent
 		} //}}}
 	} //}}}
 
-	//{{{ InstallButton class
+	// InstallButton class
 	private class InstallButton extends JButton implements ActionListener, TableModelListener
 	{
 		InstallButton()
@@ -1247,7 +1242,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ EntryCompare class
+	// EntryCompare class
 	private static class EntryCompare implements Comparator<Entry>
 	{
 		private static final int COLUMN_INSTALL = 0;
@@ -1304,7 +1299,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ HeaderMouseHandler class
+	// HeaderMouseHandler class
 	private class HeaderMouseHandler extends MouseAdapter
 	{
 		@Override
@@ -1316,7 +1311,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ TextRenderer
+	// TextRenderer
 	private static class TextRenderer extends DefaultTableCellRenderer
 	{
 		private final DefaultTableCellRenderer tcr;
@@ -1338,7 +1333,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ KeyboardAction class
+	// KeyboardAction class
 	private class KeyboardAction extends AbstractAction
 	{
 		private final KeyboardCommand command;
@@ -1380,7 +1375,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ TableFocusHandler class
+	// TableFocusHandler class
 	private class TableFocusHandler extends FocusAdapter
 	{
 		@Override
@@ -1399,7 +1394,7 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//{{{ HeaderRenderer
+	// HeaderRenderer
 	private static class HeaderRenderer extends DefaultTableCellRenderer
 	{
 		private final DefaultTableCellRenderer tcr;
@@ -1424,7 +1419,6 @@ class InstallPanel extends JPanel implements EBComponent
 		}
 	} //}}}
 
-	//}}}
 
 	static final Icon ASC_ICON  = GUIUtilities.loadIcon("MatIcons.CHEVRON_UP:10");
 	static final Icon DESC_ICON = GUIUtilities.loadIcon("MatIcons.CHEVRON_DOWN:10");

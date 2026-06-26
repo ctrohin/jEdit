@@ -1,7 +1,6 @@
 /*
  * BufferOptions.java - Buffer-specific options dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +28,6 @@ import java.awt.*;
 import org.gjt.sp.jedit.options.BufferOptionPane;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 /**
  * Buffer-specific options dialog.
@@ -38,7 +36,7 @@ import org.gjt.sp.jedit.*;
  */
 public class BufferOptions extends EnhancedDialog
 {
-	//{{{ BufferOptions constructor
+	// BufferOptions constructor
 	public BufferOptions(View view, Buffer buffer)
 	{
 		super(view,jEdit.getProperty("buffer-options.title"),true);
@@ -51,7 +49,7 @@ public class BufferOptions extends EnhancedDialog
 
 		content.add(BorderLayout.NORTH,panel);
 
-		//{{{ Buttons
+		// Buttons
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons,BoxLayout.X_AXIS));
 		buttons.setBorder(new EmptyBorder(12,0,0,0));
@@ -71,14 +69,13 @@ public class BufferOptions extends EnhancedDialog
 		
 		//buttons.add(Box.createGlue());
 		content.add(BorderLayout.SOUTH,buttons);
-		//}}}
 
 		pack();
 		setLocationRelativeTo(view);
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -86,15 +83,14 @@ public class BufferOptions extends EnhancedDialog
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final BufferOptionPane panel;
-	//}}}
 }
 

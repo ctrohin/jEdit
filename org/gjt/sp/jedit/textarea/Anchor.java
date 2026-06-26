@@ -1,7 +1,6 @@
 /*
  * Anchor.java - A base point for physical line <-> screen line conversion
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Slava Pestov
  *
@@ -70,7 +69,7 @@ abstract class Anchor
 	int preContentInsertedScrollLines;
 	int preContentRemovedScrollLines;
 
-	//{{{ Anchor constructor
+	// Anchor constructor
 	protected Anchor(DisplayManager displayManager,
 		TextArea textArea)
 	{
@@ -82,7 +81,7 @@ abstract class Anchor
 	abstract void reset();
 	abstract void changed();
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -103,7 +102,7 @@ abstract class Anchor
 		setScrollLine(getScrollLine() + numLines);
 	}
 
-	//{{{ preContentInserted() method
+	// preContentInserted() method
 	/**
 	 * Some content will be inserted.
 	 *
@@ -111,9 +110,8 @@ abstract class Anchor
 	 * @param numLines the number of inserted lines
 	 */
 	abstract void preContentInserted(int startLine, int numLines);
-	//}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	/**
 	 * Some content is inserted.
 	 *
@@ -121,9 +119,8 @@ abstract class Anchor
 	 * @param numLines the number of inserted lines
 	 */
 	abstract void contentInserted(int startLine, int numLines);
-	//}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * Method called before a content is removed from a buffer.
 	 *
@@ -133,9 +130,8 @@ abstract class Anchor
 	 */
 
 	abstract void preContentRemoved(int startLine, int offset, int numLines);
-	//}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * Method called before a content is removed from a buffer.
 	 *
@@ -144,7 +140,6 @@ abstract class Anchor
 	 * @param numLines the number of removed lines
 	 */
 	abstract void contentRemoved(int startLine, int offset, int numLines);
-	//}}}
 
 	int getPhysicalLine()
 	{

@@ -1,7 +1,6 @@
 /*
  * TextAreaBorder.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -28,7 +27,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 public class TextAreaBorder extends AbstractBorder
 {
-	//{{{ paintBorder() method
+	// paintBorder() method
 	@Override
 	public void paintBorder(Component c, Graphics g, int x, int y,
 		int width, int height)
@@ -49,7 +48,7 @@ public class TextAreaBorder extends AbstractBorder
 		g.translate(-x,-y);
 	} //}}}
 
-	//{{{ getBorderInsets() method
+	// getBorderInsets() method
 	@Override
 	public Insets getBorderInsets(Component c)
 	{

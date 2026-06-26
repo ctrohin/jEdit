@@ -1,7 +1,6 @@
 /*
  * PluginUpdate.java - Plugin update message
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -38,7 +37,7 @@ import org.gjt.sp.jedit.*;
  */
 public class PluginUpdate extends EBMessage
 {
-	//{{{ Message types
+	// Message types
 	/**
 	 * Plugin loaded. This is sent after a JAR file is added to the
 	 * list and scanned.
@@ -71,9 +70,8 @@ public class PluginUpdate extends EBMessage
 	 * @since jEdit 5.2
 	 */
 	public static final Object REMOVED = "REMOVED";
-	//}}}
 	
-	//{{{ PluginUpdate constructor
+	// PluginUpdate constructor
 	/**
 	 * Creates a new plugin update message.
 	 * @param jar The plugin
@@ -97,7 +95,7 @@ public class PluginUpdate extends EBMessage
 		this.exit = exit;
 	} //}}}
 
-	//{{{ PluginUpdate constructor
+	// PluginUpdate constructor
 	/**
 	 * Creates a new plugin update message. This constructor should be used
 	 * when the plugin is being removed and the PluginJAR is no longer available.
@@ -115,7 +113,7 @@ public class PluginUpdate extends EBMessage
 		this.exit = exit;
 	} //}}}
 
-	//{{{ getWhat() method
+	// getWhat() method
 	/**
 	 * Returns what caused this plugin update.
 	 */
@@ -124,7 +122,7 @@ public class PluginUpdate extends EBMessage
 		return what;
 	} //}}}
 
-	//{{{ isExiting() method
+	// isExiting() method
 	/**
 	 * Returns true if this plugin is being unloaded as part of the
 	 * shutdown process, in which case some components like the help
@@ -136,7 +134,7 @@ public class PluginUpdate extends EBMessage
 		return exit;
 	} //}}}
 
-	//{{{ getPluginJAR() method
+	// getPluginJAR() method
 	/**
 	 * Returns the plugin involved.
 	 * It might be null when the plugin is removed
@@ -147,7 +145,7 @@ public class PluginUpdate extends EBMessage
 		return jar;
 	} //}}}
 
-	//{{{ getFile() method
+	// getFile() method
 	/**
 	 * Returns the file representing the plugin involved.
 	 */
@@ -156,7 +154,7 @@ public class PluginUpdate extends EBMessage
 		return file;
 	} //}}}
 
-	//{{{ getPluginVersion() method
+	// getPluginVersion() method
 	/**
 	 * Returns the plugin version.
 	 *
@@ -168,18 +166,17 @@ public class PluginUpdate extends EBMessage
 		return version;
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	@Override
 	public String paramString()
 	{
 		return "what=" + what + ",exit=" + exit + ",version=" + version + "," + super.paramString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private PluginJAR jar;
 	private File file;
 	private final Object what;
 	private final boolean exit;
 	private String version;
-	//}}}
 }

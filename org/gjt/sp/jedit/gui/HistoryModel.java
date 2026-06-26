@@ -1,7 +1,6 @@
 /*
  * HistoryModel.java - History list model
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2005 Slava Pestov
  * Copyright (C) 2010 Eric Le Lay
@@ -23,10 +22,9 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.DefaultListModel;
 import java.util.*;
-//}}}
 
 /** A named history list
  *
@@ -44,7 +42,7 @@ import java.util.*;
 public class HistoryModel extends DefaultListModel<String>
 	implements MutableListModel<String>
 {
-	//{{{ HistoryModel constructor
+	// HistoryModel constructor
 	/**
 	 * Creates a new history list. Calling this is normally not
 	 * necessary.
@@ -56,7 +54,7 @@ public class HistoryModel extends DefaultListModel<String>
 		maxSize = -1;
 	} //}}}
 
-	//{{{ addItem() method
+	// addItem() method
 	/**
 	 * Adds an item to the end of this history list, trimming the list
 	 * to the maximum number of items if necessary.
@@ -97,7 +95,7 @@ public class HistoryModel extends DefaultListModel<String>
 			removeElementAt(getSize() - 1);
 	} //}}}
 
-	//{{{ insertElementAt() method
+	// insertElementAt() method
 	@Override
 	public void insertElementAt(String obj, int index)
 	{
@@ -105,7 +103,7 @@ public class HistoryModel extends DefaultListModel<String>
 		super.insertElementAt(obj,index);
 	} //}}}
 
-	//{{{ getItem() method
+	// getItem() method
 	/**
 	 * Returns an item from the history list.
 	 * @param index The index
@@ -115,7 +113,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return elementAt(index);
 	} //}}}
 
-	//{{{ removeElement() method
+	// removeElement() method
 	@Override
 	public boolean removeElement(Object obj)
 	{
@@ -123,7 +121,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return super.removeElement(obj);
 	} //}}}
 
-	//{{{ removeAllElements() method
+	// removeAllElements() method
 	@Override
 	public void removeAllElements()
 	{
@@ -131,7 +129,7 @@ public class HistoryModel extends DefaultListModel<String>
 		super.removeAllElements();
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	/**
 	 * Returns the name of this history list. This can be passed
 	 * to the HistoryTextField constructor.
@@ -141,7 +139,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return name;
 	} //}}}
 
-	//{{{ getModel() method
+	// getModel() method
 	/**
 	 * Returns a named model. If the specified model does not
 	 * already exist, it will be created.
@@ -162,21 +160,21 @@ public class HistoryModel extends DefaultListModel<String>
 		return model;
 	} //}}}
 
-	//{{{ loadHistory() method
+	// loadHistory() method
 	public static void loadHistory()
 	{
 		if (saver != null)
 			models = saver.load(models);
 	} //}}}
 
-	//{{{ saveHistory() method
+	// saveHistory() method
 	public static void saveHistory()
 	{
 		if (saver != null && modified && saver.save(models))
 			modified = false;
 	} //}}}
 
-	//{{{ setMax() method
+	// setMax() method
 	/**
 	 * sets the maximum size of this history
 	 * @param max the new maximum size of this history of -1 to restore default
@@ -186,7 +184,7 @@ public class HistoryModel extends DefaultListModel<String>
 		this.max = max;
 	} //}}}
 
-	//{{{ getMax() method
+	// getMax() method
 	/**
 	 * @return maximum size of this history or -1 is it's the default size
 	 */
@@ -195,7 +193,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return max;
 	} //}}}
 
-	//{{{ setMaxSize() method
+	// setMaxSize() method
 	/**
 	 * Sets the maximum size (in characters) for this history model
 	 * @param max the new maximum size for the history model, or -1 to restore the default
@@ -206,7 +204,7 @@ public class HistoryModel extends DefaultListModel<String>
 		this.maxSize = max;
 	} //}}}
 
-	//{{{ getMaxSize() method
+	// getMaxSize() method
 	/**
 	 * @return the maximum size (in characters) for this history model, or -1 for the default
 	 * @since jEdit 4.5pre1
@@ -216,7 +214,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return maxSize;
 	} //}}}
 
-	//{{{ setDefaultMax() method
+	// setDefaultMax() method
 	/**
 	 * Sets the default size of all HistoryModels.
 	 * Affects the VFS path history, the hypersearch history, etc..
@@ -227,7 +225,7 @@ public class HistoryModel extends DefaultListModel<String>
 		HistoryModel.defaultMax = max;
 	} //}}}
 
-	//{{{ getDefaultMax() method
+	// getDefaultMax() method
 	/**
 	 * Gets the default size of all HistoryModels.
 	 * @return default size limit for HistoryModels
@@ -237,7 +235,7 @@ public class HistoryModel extends DefaultListModel<String>
 		return HistoryModel.defaultMax;
 	} //}}}
 
-	//{{{ setDefaultMaxSize() method
+	// setDefaultMaxSize() method
 	/**
 	 * Sets the default max size (in characters) for all history models. To change the max
 	 * size of one history, call {@link #setMaxSize} instead.
@@ -248,7 +246,7 @@ public class HistoryModel extends DefaultListModel<String>
 		HistoryModel.defaultMaxSize = newMax;
 	} //}}}
 
-	//{{{ getDefaultMaxSize() method
+	// getDefaultMaxSize() method
 	/**
 	 * Gets the default maximum size (in characters) for all history models.
 	 * @since jEdit 4.5pre1
@@ -258,13 +256,13 @@ public class HistoryModel extends DefaultListModel<String>
 		return HistoryModel.defaultMaxSize;
 	} //}}}
 
-	//{{{ setSaver() method
+	// setSaver() method
 	public static void setSaver(HistoryModelSaver saver)
 	{
 		HistoryModel.saver = saver;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private int max;
 	private static int defaultMax;
 
@@ -277,7 +275,7 @@ public class HistoryModel extends DefaultListModel<String>
 	private static boolean modified;
 	private static HistoryModelSaver saver;
 
-	//{{{ getCurrentSize() method
+	// getCurrentSize() method
 	/**
 	 * Gets the current size (in characters) of the entire history model.
 	 */
@@ -291,7 +289,5 @@ public class HistoryModel extends DefaultListModel<String>
 
 		return currentSize;
 	}
-	//}}}
 
-	//}}}
 }

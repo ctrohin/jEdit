@@ -1,7 +1,6 @@
 /*
  * VFSManager.java - Main class of virtual filesystem
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2000, 2005 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 
 import javax.swing.JOptionPane;
 import java.awt.Component;
@@ -40,7 +39,6 @@ import org.gjt.sp.util.TaskManager;
 import org.gjt.sp.util.ThreadUtilities;
 import org.gjt.sp.util.AwtRunnableQueue;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * jEdit's virtual filesystem allows it to transparently edit files
@@ -64,7 +62,7 @@ public class VFSManager
 	 */
 	public static final String SERVICE = "org.gjt.sp.jedit.io.VFS";
 
-	//{{{ init() method
+	// init() method
 	/**
 	 * Do not call.
 	 */
@@ -72,7 +70,7 @@ public class VFSManager
 	{
 	} //}}}
 
-	//{{{ start() method
+	// start() method
 	/**
 	 * Do not call.
 	 */
@@ -81,9 +79,9 @@ public class VFSManager
 		AwtRunnableQueue.INSTANCE.start();
 	} //}}}
 
-	//{{{ VFS methods
+	// VFS methods
 
-	//{{{ canReadFile() method
+	// canReadFile() method
 	/**
 	 * Returns true if the file exists
 	 * @param path the path of the file
@@ -120,7 +118,7 @@ public class VFSManager
 		return false;
 	} //}}}
 
-	//{{{ getFileVFS() method
+	// getFileVFS() method
 	/**
 	 * Returns the local filesystem VFS.
 	 * @since jEdit 2.5pre1
@@ -130,7 +128,7 @@ public class VFSManager
 		return fileVFS;
 	} //}}}
 
-	//{{{ getUrlVFS() method
+	// getUrlVFS() method
 	/**
 	 * Returns the URL VFS.
 	 * @since jEdit 2.5pre1
@@ -140,7 +138,7 @@ public class VFSManager
 		return urlVFS;
 	} //}}}
 
-	//{{{ getVFSForProtocol() method
+	// getVFSForProtocol() method
 	/**
 	 * Returns the VFS for the specified protocol.
 	 * @param protocol The protocol
@@ -162,7 +160,7 @@ public class VFSManager
 		}
 	} //}}}
 
-	//{{{ getVFSForPath() method
+	// getVFSForPath() method
 	/**
 	 * Returns the VFS for the specified path.
 	 * @param path The path
@@ -177,7 +175,7 @@ public class VFSManager
 			return fileVFS;
 	} //}}}
 
-	//{{{ getVFSs() method
+	// getVFSs() method
 	/**
 	 * Returns a list of all registered filesystems.
 	 * @since jEdit 4.2pre1
@@ -188,11 +186,10 @@ public class VFSManager
 		return newAPI;
 	} //}}}
 
-	//}}}
 
-	//{{{ I/O request methods
+	// I/O request methods
 
-	//{{{ waitForRequests() method
+	// waitForRequests() method
 	/**
 	 * Returns when all pending requests are complete.
 	 * Must be called in the Event Dispatch Thread
@@ -206,7 +203,7 @@ public class VFSManager
 		TaskManager.instance.waitForIoTasks();
 	} //}}}
 
-	//{{{ errorOccurred() method
+	// errorOccurred() method
 	/**
 	 * Returns if the last request caused an error.
 	 */
@@ -215,7 +212,7 @@ public class VFSManager
 		return error;
 	} //}}}
 
-	//{{{ getRequestCount() method
+	// getRequestCount() method
 	/**
 	 * Returns the number of pending I/O requests.
 	 */
@@ -224,9 +221,8 @@ public class VFSManager
 		return TaskManager.instance.countIoTasks();
 	} //}}}
 
-	//}}}
 
-	//{{{ error() method
+	// error() method
 	/**
 	 * Handle an I/O error.
 	 * @since jEdit 4.3pre3
@@ -237,7 +233,7 @@ public class VFSManager
 		VFSManager.error(comp,path,"ioerror",new String[] { e.toString() });
 	} //}}}
 
-	//{{{ error() method
+	// error() method
 	/**
 	 * Reports an I/O error with default urgency, <code>Log.ERROR</code>
 	 *
@@ -300,7 +296,7 @@ public class VFSManager
 		ThreadUtilities.runInDispatchThread(r);
 	} //}}}
 
-	//{{{ sendVFSUpdate() method
+	// sendVFSUpdate() method
 	/**
 	 * Sends a VFS update message.
 	 * @param vfs The VFS
@@ -348,7 +344,7 @@ public class VFSManager
 		}
 	} //}}}
 
-	//{{{ SendVFSUpdatesSafely class
+	// SendVFSUpdatesSafely class
 	private static class SendVFSUpdatesSafely implements Runnable
 	{
 		@Override
@@ -369,9 +365,9 @@ public class VFSManager
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Static variables
+	// Static variables
 	private static final VFS fileVFS;
 	private static final VFS urlVFS;
 	private static boolean error;
@@ -382,9 +378,8 @@ public class VFSManager
 	// An indicator of whether ErrorDisplayer is active
 	// Should be accessed with synchronized(errorLock)
 	private static boolean errorDisplayerActive;
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		errors = new Vector<>();
@@ -393,7 +388,7 @@ public class VFSManager
 		vfsUpdates = new ArrayList<>(10);
 	} //}}}
 
-	//{{{ ErrorDisplayer class
+	// ErrorDisplayer class
 	private static class ErrorDisplayer implements Runnable
 	{
 		private final Frame frame;
@@ -459,7 +454,7 @@ public class VFSManager
 				// Maybe there are more accumulating?
 				// We'll stay here until they stop coming out.
 				int errCount1 = -1, errCount2 = 0;
-				while (errCount1 != errCount2) //{{{
+				while (errCount1 != errCount2) // 
 				{
 					// errors is a Vector and Vectors are synchronized
 					errCount1 = errors.size();
@@ -498,5 +493,4 @@ public class VFSManager
 	} //}}}
 
 	private VFSManager() {}
-	//}}}
 }

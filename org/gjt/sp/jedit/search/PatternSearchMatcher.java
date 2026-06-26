@@ -36,7 +36,7 @@ import org.gjt.sp.util.ReverseCharSequence;
  */
 public class PatternSearchMatcher extends SearchMatcher
 {
-	//{{{ PatternSearchMatcher constructors
+	// PatternSearchMatcher constructors
 	/**
 	 * Creates a new regular expression string matcher.
 	 * @see java.util.regex.Pattern
@@ -77,7 +77,7 @@ public class PatternSearchMatcher extends SearchMatcher
 		this(re, ignoreCase, false);
 	} //}}}
 
-	//{{{ nextMatch() method
+	// nextMatch() method
 	/**
 	 * {@inheritDoc}
 	 * <p>Reverse regex search is done by searching from the beginning to
@@ -234,7 +234,7 @@ public class PatternSearchMatcher extends SearchMatcher
 
 	} //}}}
 
-	//{{{ removeNonCapturingGroups() method
+	// removeNonCapturingGroups() method
     public static Pattern removeNonCapturingGroups( Pattern re, int flags ) 
     {
         String p = re.pattern();
@@ -297,7 +297,7 @@ public class PatternSearchMatcher extends SearchMatcher
         return re;
     } //}}}
     
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
@@ -313,10 +313,9 @@ public class PatternSearchMatcher extends SearchMatcher
 		return flags;
 	}
 
-	//{{{ Private members
+	// Private members
 	private final int flags;
 	private Pattern	re;
 	private final String pattern;
-	//}}}
 }
 

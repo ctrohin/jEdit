@@ -1,7 +1,6 @@
 /*
  * GeneralOptionPane.java - General options panel
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  *               2013 Thomas Meyer
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.AbstractOptionPane;
 import org.gjt.sp.jedit.jEdit;
 
@@ -33,7 +32,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//}}}
 
 /**
  * jEdit's General Options Pane
@@ -41,7 +39,7 @@ import java.awt.event.ActionListener;
 
 public class GeneralOptionPane extends AbstractOptionPane
 {
-	//{{{ checkFileStatus bit flags:
+	// checkFileStatus bit flags:
 	public static final int checkFileStatus_none = 0;
 
 	/** Check the buffer status when the view gets focus (low bit) */
@@ -52,9 +50,8 @@ public class GeneralOptionPane extends AbstractOptionPane
 
 	/** This is actually a bitwise OR: (view focus | buffer focus) */ 
 	public static final int checkFileStatus_all = 3;	
-	//}}}
 
-	//{{{ Private members
+	// Private members
 
 	private JComboBox<String> checkModStatus;
 	private JComboBox<String> checkModStatusUpon;
@@ -73,15 +70,14 @@ public class GeneralOptionPane extends AbstractOptionPane
 	private JComboBox<String> lang;
 	
 	private JCheckBox closeAllConfirm;
-	//}}}
 
-	//{{{ GeneralOptionPane constructor
+	// GeneralOptionPane constructor
 	public GeneralOptionPane()
 	{
 		super("general");
 	} //}}}
 
-	//{{{ _init() method
+	// _init() method
 	@Override
 	protected void _init()
 	{
@@ -234,7 +230,7 @@ public class GeneralOptionPane extends AbstractOptionPane
 		addComponent(jEdit.getProperty("options.appearance.lang.label"), lang);
 	} //}}}
 
-	//{{{ _save() method
+	// _save() method
 	@Override
 	protected void _save()
 	{
@@ -278,7 +274,7 @@ public class GeneralOptionPane extends AbstractOptionPane
 		jEdit.setProperty("lang.current", String.valueOf(lang.getSelectedItem()));
 	} //}}}
 
-	//{{{ LangCellRenderer class
+	// LangCellRenderer class
 	private static class LangCellRenderer extends DefaultListCellRenderer
 	{
 		@Override

@@ -1,7 +1,6 @@
 /*
  * NumericTextField.java - A TextField that accepts only numeric values
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  *
@@ -356,7 +355,7 @@ public class NumericTextField extends JTextField implements ComboBoxEditor
 		}
 	}
 
-	//{{{ ComboBoxEditor methods
+	// ComboBoxEditor methods
 	@Override
 	public Component getEditorComponent()
 	{
@@ -377,5 +376,4 @@ public class NumericTextField extends JTextField implements ComboBoxEditor
 		else
 			setText(item.toString());
 	}
-	//}}}
 }

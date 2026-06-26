@@ -1,7 +1,6 @@
 /*
  * AwtRunnableQueue.java - Queue for task to run in the Event Dispatch Thread
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2012 Thomas Meyer
  *
@@ -44,13 +43,13 @@ public enum AwtRunnableQueue
 	@GuardedBy("this") private boolean awtRunnerQueued;
 	@GuardedBy("this") private final LinkedList<Runnable> awtQueue;
 
-	//{{{ Constructor method
+	// Constructor method
 	private AwtRunnableQueue()
 	{
 		awtQueue = new LinkedList<>();
 	} //}}}
 
-	//{{{ start() method
+	// start() method
 	/**
 	 * Queue the AWT runner for the first time.
 	 */
@@ -64,7 +63,7 @@ public enum AwtRunnableQueue
 	} //}}}
 
 
-	//{{{ runAfterIoTasks() method
+	// runAfterIoTasks() method
 	/**
 	 * Adds a runnable to the AWT queue to run in the EDT 
 	 * after all pending IO tasks are finished
@@ -74,7 +73,7 @@ public enum AwtRunnableQueue
 	{
 		boolean runDirectly = false;
 
-		//{{{ if there are no requests, execute AWT requests immediately
+		// if there are no requests, execute AWT requests immediately
 		synchronized (this)
 		{
 			if(awtQueueStarted && TaskManager.instance.countIoTasks() == 0 && awtQueue.isEmpty())
@@ -96,7 +95,7 @@ public enum AwtRunnableQueue
 		queueAWTRunner(false);
 	} //}}}
 
-	//{{{ queueAWTRunner() method
+	// queueAWTRunner() method
 	public void queueAWTRunner(boolean wait)
 	{
 		if(wait)
@@ -119,7 +118,7 @@ public enum AwtRunnableQueue
 		}
 	} //}}}
 
-	//{{{ RunRequestsInAWTThread class
+	// RunRequestsInAWTThread class
 	private class RunRequestsInAWTThread implements Runnable
 	{
 		@Override
@@ -144,7 +143,7 @@ public enum AwtRunnableQueue
 			}
 		}
 
-		//{{{ doAWTRequest() method
+		// doAWTRequest() method
 		/**
 		 * Actually run the Runnable
 		 * @param request the request to run

@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2007 Kazutoshi Satoda
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.File;
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -32,7 +31,6 @@ import java.io.OutputStreamWriter;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.gjt.sp.util.XMLUtilities;
-//}}}
 
 /**
  * A XML file in the settings directory.
@@ -45,7 +43,7 @@ import org.gjt.sp.util.XMLUtilities;
  */
 public class SettingsXML
 {
-	//{{{ Saver class
+	// Saver class
 	/**
 	 * A Writer to write XML for saving.
 	 * The real settings file is not changed until the finish()
@@ -54,7 +52,7 @@ public class SettingsXML
 	 */
 	public class Saver extends BufferedWriter
 	{
-		//{{{ writeXMLDeclaration() method
+		// writeXMLDeclaration() method
 		/**
 		 * Write the XML 1.0 declaration.
 		 * This should be the first output.
@@ -64,7 +62,7 @@ public class SettingsXML
 			writeXMLDeclaration("1.0");
 		} //}}}
 
-		//{{{ writeXMLDeclaration() method
+		// writeXMLDeclaration() method
 		/**
 		 * Write the XML declaration of a specific version.
 		 * This should be the first output.
@@ -79,7 +77,7 @@ public class SettingsXML
 			newLine();
 		} //}}}
 
-		//{{{ finish() method
+		// finish() method
 		/**
 		 * Perform the final step of saving.
 		 */
@@ -92,7 +90,7 @@ public class SettingsXML
 			knownLastModified = file.lastModified();
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private File twoStageSaveFile;
 		private static final String encoding = "UTF-8";
 
@@ -112,10 +110,9 @@ public class SettingsXML
 			this.twoStageSaveFile = twoStageSaveFile;
 		}
 
-		//}}}
 	} //}}}
 
-	//{{{ Constructor
+	// Constructor
 	/**
 	 * Construct a SettingsXML with specific location and name.
 	 * @param settingsDirectory
@@ -135,7 +132,7 @@ public class SettingsXML
 		file = f;
 	}
 
-	//{{{ fileExits() method
+	// fileExits() method
 	/**
 	 * Returns true if the file exists.
 	 */
@@ -144,7 +141,7 @@ public class SettingsXML
 		return file.exists();
 	} //}}}
 
-	//{{{ load() method
+	// load() method
 	/**
 	 * Parse the XML file to load.
 	 * @param handler
@@ -156,7 +153,7 @@ public class SettingsXML
 		knownLastModified = file.lastModified();
 	} //}}}
 
-	//{{{ openSaver() method
+	// openSaver() method
 	/**
 	 * Open the file to save in XML.
 	 */
@@ -165,7 +162,7 @@ public class SettingsXML
 		return new Saver();
 	} //}}}
 
-	//{{{ hasChangedOnDisk() method
+	// hasChangedOnDisk() method
 	/**
 	 * Returns true if the file has been changed on disk.
 	 * This is based on the last modified time at the last saving
@@ -177,7 +174,7 @@ public class SettingsXML
 			&& (file.lastModified() != knownLastModified);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	/**
 	 * Returns the file's path.
 	 */
@@ -186,8 +183,7 @@ public class SettingsXML
 		return file.toString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private File file;
 	private long knownLastModified;
-	//}}}
 }

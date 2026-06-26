@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2011 jEdit contributors
  *
@@ -21,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui.tray;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.EditBus;
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.jedit.ServiceManager;
@@ -41,7 +40,6 @@ import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static java.awt.image.ImageObserver.HEIGHT;
 import static java.awt.image.ImageObserver.WIDTH;
 import static java.lang.Math.round;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -55,7 +53,7 @@ public class JTrayIconManager
 	private static String userDir;
 	private static String[] args;
 
-	//{{{ setTrayIconArgs() method
+	// setTrayIconArgs() method
 	public static void setTrayIconArgs(boolean restore, String userDir, String[] args)
 	{
 		JTrayIconManager.restore = restore;
@@ -63,7 +61,7 @@ public class JTrayIconManager
 		JTrayIconManager.args = args;
 	} //}}}
 
-	//{{{ addTrayIcon() method
+	// addTrayIcon() method
 	public static void addTrayIcon()
 	{
 		if (trayIcon == null && SystemTray.isSupported())
@@ -237,7 +235,7 @@ public class JTrayIconManager
 		}
 	} //}}}
 
-	//{{{ removeTrayIcon() method
+	// removeTrayIcon() method
 	public static void removeTrayIcon()
 	{
 		if (trayIcon != null)

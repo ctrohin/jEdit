@@ -1,7 +1,6 @@
 /*
  * HelpTOCLoader.java - Help table of contents loader
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  * Copyright (C) 2016 Eric Le Lay
@@ -22,7 +21,7 @@
  */
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +40,6 @@ import org.gjt.sp.util.StandardUtilities;
 import org.gjt.sp.util.XMLUtilities;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-//}}}
 
 /**
  * Help table-of-contents loader.
@@ -55,13 +53,13 @@ import org.xml.sax.helpers.DefaultHandler;
  **/
 public class HelpTOCLoader {
 
-	//{{{ HelpTOCLoader constructor
+	// HelpTOCLoader constructor
 	public HelpTOCLoader(Map<String, DefaultMutableTreeNode> nodes, String baseURL) {
 		this.nodes = nodes;
 		this.baseURL = baseURL;
 	} //}}}
 
-	//{{{ HelpNode class
+	// HelpNode class
 	/**
 	 * a TOC item: href and title.
 	 */
@@ -69,21 +67,21 @@ public class HelpTOCLoader {
 	{
 		public final String href, title;
 
-		//{{{ HelpNode constructor
+		// HelpNode constructor
 		HelpNode(String href, String title)
 		{
 			this.href = href;
 			this.title = title;
 		} //}}}
 
-		//{{{ toString() method
+		// toString() method
 		public String toString()
 		{
 			return title;
 		} //}}}
 	} //}}}
 
-	//{{{ createTOC() method
+	// createTOC() method
 	/**
 	 * Load the table of contents.
 	 * Performs synchronous IO, so you don't want to call it from the GUI thread.
@@ -144,7 +142,7 @@ public class HelpTOCLoader {
 		return tocRoot;
 	} //}}}
 
-	//{{{ createNode() method
+	// createNode() method
 	private DefaultMutableTreeNode createNode(String href, String title)
 	{
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(
@@ -156,7 +154,7 @@ public class HelpTOCLoader {
 		return node;
 	} //}}}
 
-	//{{{ loadTOC() method
+	// loadTOC() method
 	private void loadTOC(DefaultMutableTreeNode root, String path)
 	{
 		TOCHandler h = new TOCHandler(root,MiscUtilities.getParentOfPath(path));
@@ -189,17 +187,16 @@ public class HelpTOCLoader {
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Map<String, DefaultMutableTreeNode> nodes;
 	private final String baseURL;
-	//}}}
 
-	//{{{ TOCHandler class
+	// TOCHandler class
 	class TOCHandler extends DefaultHandler
 	{
 		String dir;
 
-		//{{{ TOCHandler constructor
+		// TOCHandler constructor
 		TOCHandler(DefaultMutableTreeNode root, String dir)
 		{
 			nodes = new Stack<DefaultMutableTreeNode>();
@@ -207,7 +204,7 @@ public class HelpTOCLoader {
 			this.dir = dir;
 		} //}}}
 
-		//{{{ characters() method
+		// characters() method
 		@Override
 		public void characters(char[] c, int off, int len)
 		{
@@ -226,7 +223,7 @@ public class HelpTOCLoader {
 
 		} //}}}
 
-		//{{{ startElement() method
+		// startElement() method
 		@Override
 		public void startElement(String uri, String localName,
 					 String name, Attributes attrs)
@@ -236,7 +233,7 @@ public class HelpTOCLoader {
 				href = attrs.getValue("HREF");
 		} //}}}
 
-		//{{{ endElement() method
+		// endElement() method
 		@Override
 		public void endElement(String uri, String localName, String name)
 		{
@@ -259,16 +256,15 @@ public class HelpTOCLoader {
 			}
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private String tag;
 		private final StringBuilder title = new StringBuilder();
 		private String href;
 		private DefaultMutableTreeNode node;
 		private final Stack<DefaultMutableTreeNode> nodes;
-		//}}}
 	} //}}}
 
-	//{{{ PluginCompare class
+	// PluginCompare class
 	static class PluginCompare implements Comparator<EditPlugin>
 	{
 		@Override

@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -38,7 +37,7 @@ import java.io.IOException;
  */
 class JEditRegisterSaver implements RegisterSaver
 {
-	//{{{ Constructor
+	// Constructor
 	JEditRegisterSaver()
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -48,7 +47,7 @@ class JEditRegisterSaver implements RegisterSaver
 		}
 	} //}}}
 
-	//{{{ loadRegisters() method
+	// loadRegisters() method
 	@Override
 	public void loadRegisters()
 	{
@@ -76,7 +75,7 @@ class JEditRegisterSaver implements RegisterSaver
 		}
 	} //}}}
 
-	//{{{ saveRegisters() method
+	// saveRegisters() method
 	@Override
 	public void saveRegisters()
 	{
@@ -145,20 +144,20 @@ class JEditRegisterSaver implements RegisterSaver
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private SettingsXML registersXML;
 
-	//{{{ RegistersHandler class
+	// RegistersHandler class
 	private static class RegistersHandler extends DefaultHandler
 	{
-		//{{{ resolveEntity() method
+		// resolveEntity() method
 		@Override
 		public InputSource resolveEntity(String publicId, String systemId)
 		{
 			return XMLUtilities.findEntity(systemId, "registers.dtd", getClass());
 		} //}}}
 
-		//{{{ startElement() method
+		// startElement() method
 		@Override
 		public void startElement(String uri, String localName,
 					 String qName, Attributes attrs)
@@ -167,7 +166,7 @@ class JEditRegisterSaver implements RegisterSaver
 			inRegister = "REGISTER".equals(qName);
 		} //}}}
 
-		//{{{ endElement() method
+		// endElement() method
 		@Override
 		public void endElement(String uri, String localName, String name)
 		{
@@ -182,7 +181,7 @@ class JEditRegisterSaver implements RegisterSaver
 			}
 		} //}}}
 
-		//{{{ characters() method
+		// characters() method
 		@Override
 		public void characters(char[] ch, int start, int length)
 		{
@@ -190,11 +189,9 @@ class JEditRegisterSaver implements RegisterSaver
 				charData.append(ch, start, length);
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private String registerName;
 		private final StringBuilder charData = new StringBuilder();
 		private boolean inRegister;
-		//}}}
 	} //}}}
-	//}}}
 }

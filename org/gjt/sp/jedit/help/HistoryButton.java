@@ -1,7 +1,6 @@
 /*
  * HistoryButton.java - History Button
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Nicholas O'Leary
  *
@@ -22,13 +21,12 @@
 
 package org.gjt.sp.jedit.help;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.gui.RolloverButton;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-//}}}
 
 /**
  * History Button
@@ -40,15 +38,14 @@ public class HistoryButton extends JPanel implements ActionListener
 	public static final int BACK    = 0;
 	public static final int FORWARD = 1;
 
-	//{{{ Private Members
+	// Private Members
 	private final int type;
 	private final HelpHistoryModel history;
 	private final RolloverButton arrow_button;
 	private final RolloverButton drop_button;
 	private ActionListener arrowActionListener;
-	//}}}
 
-	//{{{ HistoryButton constructor
+	// HistoryButton constructor
 	public HistoryButton(int type, HelpHistoryModel model)
 	{
 		super();
@@ -76,7 +73,7 @@ public class HistoryButton extends JPanel implements ActionListener
 		this.history = model;
 	} //}}}
 
-	//{{{ setEnabled() method
+	// setEnabled() method
 	@Override
 	public void setEnabled(boolean state)
 	{
@@ -85,14 +82,14 @@ public class HistoryButton extends JPanel implements ActionListener
 		arrow_button.setEnabled(state);
 	} //}}}
 
-	//{{{ addActionListener() method
+	// addActionListener() method
 	public void addActionListener(ActionListener al)
 	{
 		arrow_button.addActionListener(this);
 		arrowActionListener = al;
 	} //}}}
 
-	//{{{ actionPerformed() method
+	// actionPerformed() method
 	@Override
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -106,18 +103,18 @@ public class HistoryButton extends JPanel implements ActionListener
 			);
 	} //}}}
 
-	//{{{ getParentHistoryButton() method
+	// getParentHistoryButton() method
 	private HistoryButton getParentHistoryButton()
 	{
 		return this;
 	} //}}}
 
-	//{{{ Inner Classes
+	// Inner Classes
 
-	//{{{ DropActionHandler class
+	// DropActionHandler class
 	class DropActionHandler implements ActionListener
 	{
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
@@ -156,12 +153,12 @@ public class HistoryButton extends JPanel implements ActionListener
 		} //}}}
 	} //}}}
 
-	//{{{ HistoryListActionHandler class
+	// HistoryListActionHandler class
 	class HistoryListActionHandler extends AbstractAction
 	{
 		HelpHistoryModel.HistoryEntry entry;
 
-		//{{{ HistoryListActionHandler constructor
+		// HistoryListActionHandler constructor
 		HistoryListActionHandler(HelpHistoryModel.HistoryEntry entry)
 		{
 			super(entry.title);
@@ -169,7 +166,7 @@ public class HistoryButton extends JPanel implements ActionListener
 			this.putValue(Action.ACTION_COMMAND_KEY,entry.url + ':' + entry.scrollPosition);
 		} //}}}
 
-		//{{{ actionPerformed() method
+		// actionPerformed() method
 		@Override
 		public void actionPerformed(ActionEvent ae)
 		{
@@ -178,5 +175,4 @@ public class HistoryButton extends JPanel implements ActionListener
 		} //}}}
 	} //}}}
 
-	//}}}
 }

@@ -1,7 +1,6 @@
 /*
  * DeepIndentRule.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Matthieu Casanova
  *
@@ -44,14 +43,14 @@ public class DeepIndentRule implements IndentRule
 	private final char openChar;
 	private final char closeChar;
 
-	//{{{ DeepIndentRule constructor
+	// DeepIndentRule constructor
 	public DeepIndentRule(char openChar, char closeChar)
 	{
 		this.openChar = openChar;
 		this.closeChar = closeChar;
 	} //}}}
 
-	//{{{ apply() method
+	// apply() method
 	@Override
 	public void apply(JEditBuffer buffer, int thisLineIndex,
 			  int prevLineIndex, int prevPrevLineIndex,
@@ -114,7 +113,7 @@ public class DeepIndentRule implements IndentRule
 		}
 	} //}}}
 
-	//{{{ getIndent() method
+	// getIndent() method
 	/**
 	 * Returns the length of the string as if it were indented with
 	 * spaces instead of tabs.
@@ -141,7 +140,7 @@ public class DeepIndentRule implements IndentRule
 		return cnt;
 	} //}}}
 
-	//{{{ Parens class
+	// Parens class
 	/**
 	 * A token filter that looks for the position of the open and
 	 * close characters in the line being parsed. Characters inside

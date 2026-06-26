@@ -1,7 +1,6 @@
 /*
  * VFSFile.java - A file residing on a virtual file system
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2005 Slava Pestov
  * Portions copyright (C) 2007 Matthieu Casanova
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.awt.Color;
 import java.io.*;
 import java.io.Closeable;
@@ -40,7 +39,6 @@ import javax.swing.*;
 
 import static org.gjt.sp.jedit.MiscUtilities.getFileExtension;
 import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
-//}}}
 
 /**
  * A directory entry returned from a file listing.
@@ -48,7 +46,7 @@ import static org.gjt.sp.jedit.MiscUtilities.isUncPath;
  */
 public class VFSFile implements Serializable
 {
-	//{{{ findCompletion() method
+	// findCompletion() method
 	/**
 	 * Return the index of a file whose name matches the given string,
 	 * in a case-insensitive manner. Exact matches are preferred,
@@ -99,7 +97,7 @@ public class VFSFile implements Serializable
 		return iPotentialMatch;
 	} //}}}
 
-	//{{{ findCompletion() method
+	// findCompletion() method
 	public static String findCompletion(String path, String complete,
 		VFSBrowser browser, boolean dirsOnly)
 	{
@@ -154,7 +152,7 @@ public class VFSFile implements Serializable
 		return null;
 	} //}}}
 
-	//{{{ getIcon() method
+	// getIcon() method
 	/**
 	 * Returns the icon for the file.
 	 *
@@ -167,7 +165,7 @@ public class VFSFile implements Serializable
 		return getIcon(expanded, bufferManager._getBuffer(getSymlinkPath()).isPresent());
 	} //}}}
 
-	//{{{ getIcon() method
+	// getIcon() method
 	/**
 	 * Returns the icon for the file.
 	 * Implementations of File system browsers can override this method
@@ -179,7 +177,7 @@ public class VFSFile implements Serializable
 		return getDefaultIcon(expanded, openBuffer);
 	} //}}}
 
-	//{{{ getDefaultIcon() method
+	// getDefaultIcon() method
 	/**
 	 * Returns the default icon for the file.
 	 *
@@ -197,7 +195,7 @@ public class VFSFile implements Serializable
 			return FileCellRenderer.fileIcon;
 	} //}}}
 
-	//{{{ getDefaultIcon() method
+	// getDefaultIcon() method
 	/**
 	 * Returns the default icon of the file.
 	 *
@@ -211,13 +209,12 @@ public class VFSFile implements Serializable
 		return getDefaultIcon(expanded, bufferManager._getBuffer(getSymlinkPath()).isPresent());
 	} //}}}
 
-	//{{{ File types
+	// File types
 	public static final int FILE = 0;
 	public static final int DIRECTORY = 1;
 	public static final int FILESYSTEM = 2;
-	//}}}
 
-	//{{{ Instance variables
+	// Instance variables
 	private String name;
 	private String path;
 	private String symlinkPath;
@@ -227,9 +224,8 @@ public class VFSFile implements Serializable
 	private boolean hidden;
 	private boolean canRead;
 	private boolean canWrite;
-	//}}}
 
-	//{{{ VFSFile constructor
+	// VFSFile constructor
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -237,7 +233,7 @@ public class VFSFile implements Serializable
 	{
 	} //}}}
 
-	//{{{ VFSFile constructor
+	// VFSFile constructor
 	public VFSFile(String name, String path, String deletePath,
 		int type, long length, boolean hidden)
 	{
@@ -257,7 +253,7 @@ public class VFSFile implements Serializable
 		}
 	} //}}}
 
-	//{{{ getVFS() method
+	// getVFS() method
 	/**
 	 * @return The originating virtual file system of this file.
 	 */
@@ -266,19 +262,19 @@ public class VFSFile implements Serializable
 		return VFSManager.getVFSForPath(path);
 	} //}}}
 
-	//{{{ getName() method
+	// getName() method
 	public String getName()
 	{
 		return name;
 	} //}}}
 
-	//{{{ setName() method
+	// setName() method
 	public void setName(String name)
 	{
 		this.name = name;
 	} //}}}
 
-	//{{{ isBinary() method
+	// isBinary() method
 	/**
 	 * Check if a file is binary file.
 	 *
@@ -305,97 +301,97 @@ public class VFSFile implements Serializable
 		}
 	} //}}}
 
-	//{{{ getPath() method
+	// getPath() method
 	public String getPath()
 	{
 		return path;
 	} //}}}
 
-	//{{{ setPath() method
+	// setPath() method
 	public void setPath(String path)
 	{
 		this.path = path;
 	} //}}}
 
-	//{{{ getSymlinkPath() method
+	// getSymlinkPath() method
 	public String getSymlinkPath()
 	{
 		return symlinkPath;
 	} //}}}
 
-	//{{{ setSymlinkPath() method
+	// setSymlinkPath() method
 	public void setSymlinkPath(String symlinkPath)
 	{
 		this.symlinkPath = symlinkPath;
 	} //}}}
 
-	//{{{ getDeletePath() method
+	// getDeletePath() method
 	public String getDeletePath()
 	{
 		return deletePath;
 	} //}}}
 
-	//{{{ setDeletePath() method
+	// setDeletePath() method
 	public void setDeletePath(String deletePath)
 	{
 		this.deletePath = deletePath;
 	} //}}}
 
-	//{{{ getType() method
+	// getType() method
 	public int getType()
 	{
 		return type;
 	} //}}}
 
-	//{{{ setType() method
+	// setType() method
 	public void setType(int type)
 	{
 		this.type = type;
 	} //}}}
 
-	//{{{ getLength() method
+	// getLength() method
 	public long getLength()
 	{
 		return length;
 	} //}}}
 
-	//{{{ setLength() method
+	// setLength() method
 	public void setLength(long length)
 	{
 		this.length = length;
 	} //}}}
 
-	//{{{ isHidden() method
+	// isHidden() method
 	public boolean isHidden()
 	{
 		return hidden;
 	} //}}}
 
-	//{{{ setHidden() method
+	// setHidden() method
 	public void setHidden(boolean hidden)
 	{
 		this.hidden = hidden;
 	} //}}}
 
-	//{{{ isReadable() method
+	// isReadable() method
 	public boolean isReadable()
 	{
 		return canRead;
 	} //}}}
 
-	//{{{ setReadable() method
+	// setReadable() method
 	public void setReadable(boolean canRead)
 	{
 		this.canRead = canRead;
 	} //}}}
 
-	//{{{ isWriteable() method
+	// isWriteable() method
 	public boolean isWriteable()
 	{
 		return canWrite;
 	} //}}}
 
-	//{{{ setWriteable() method
+	// setWriteable() method
 	public void setWriteable(boolean canWrite)
 	{
 		this.canWrite = canWrite;
@@ -404,7 +400,7 @@ public class VFSFile implements Serializable
 	protected boolean colorCalculated;
 	protected Color color;
 
-	//{{{ getExtendedAttribute() method
+	// getExtendedAttribute() method
 	/**
 	 * Returns the value of an extended attribute. Note that this
 	 * returns formatted strings (eg, "10 Mb" for a file size of
@@ -461,7 +457,7 @@ public class VFSFile implements Serializable
 			return null;
 	} //}}}
 
-	//{{{ getColor() method
+	// getColor() method
 	/**
 	 * Returns the color that will be used to display the file.
 	 *
@@ -478,13 +474,13 @@ public class VFSFile implements Serializable
 		return color;
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return name;
 	} //}}}
 
-	//{{{ fetchedAttrs() method
+	// fetchedAttrs() method
 	/**
 	 * Returns true if the attributes are already fetched.
 	 *
@@ -496,7 +492,7 @@ public class VFSFile implements Serializable
 		return fetchedAttrs;
 	} //}}}
 
-	//{{{ fetchAttrs() method
+	// fetchAttrs() method
 	/**
 	 * Fetch some attributes of the file.
 	 * Some attributes are not fetched during

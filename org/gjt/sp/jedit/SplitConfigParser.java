@@ -1,6 +1,5 @@
 /*
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2004 Slava Pestov
  *
@@ -38,15 +37,14 @@ import org.gjt.sp.jedit.io.VFSManager;
 public class SplitConfigParser 
 {
 
-	//{{{ private members
+	// private members
         private String splitConfig;
 
         private boolean includeSplits = true;
         private boolean includeFiles = true;
         private boolean includeRemotes = false;
-        //}}}
         
-        //{{{ SplitConfigParser constructor
+        // SplitConfigParser constructor
 	/**
 	 * @param splitConfig The string to parse and adjust.
 	 */
@@ -54,9 +52,8 @@ public class SplitConfigParser
         {
                 this.splitConfig = splitConfig == null ? "" : splitConfig;
         }
-        //}}}
 
-        //{{{ Setters
+        // Setters
 	/**
 	 * @param b If true, retain any splits in the split configuration.
 	 */
@@ -81,9 +78,8 @@ public class SplitConfigParser
         {
                 includeRemotes = includeFiles && b;
         }
-        //}}}
 
-        //{{{ parse()
+        // parse()
 	/**
 	 * Parses the given split configuration string and removes splits, file names,
 	 * and remote file names bases on the settings for this parser.
@@ -197,9 +193,8 @@ public class SplitConfigParser
                 }
                 return splitConfig;
         }
-        //}}}
 
-        //{{{ BufferSet
+        // BufferSet
         // Represents a set of file names for buffers.
         private class BufferSet 
         {
@@ -268,9 +263,8 @@ public class SplitConfigParser
                         return sb.toString();
                 }
         }
-        //}}}
 
-        //{{{ Split
+        // Split
         private class Split 
         {
                 Object left = null;
@@ -317,5 +311,4 @@ public class SplitConfigParser
                         return sb.toString();
                 }
         }
-        //}}}
 }

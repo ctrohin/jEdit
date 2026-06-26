@@ -1,7 +1,6 @@
 /*
  * jEdit - Programmer's Text Editor
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright © 2010 jEdit contributors
  *
@@ -27,7 +26,7 @@ public class ColumnBlockLine
 	int colEndIndex;
 	float lineLength;
 	
-	//{{{ ColumnBlockLine() method
+	// ColumnBlockLine() method
 	public ColumnBlockLine(int line,int lineStartIndex,int lineEndIndex)
 	{
 		this.line = line;
@@ -35,43 +34,43 @@ public class ColumnBlockLine
 		this.colStartIndex = lineStartIndex;
 	}//}}}
 	
-	//{{{  getLine() method
+	// getLine() method
 	public int getLine()
 	{
 		return line;
 	}//}}}
 	
-	//{{{ getColumnStartIndex() method
+	// getColumnStartIndex() method
 	public int getColumnStartIndex()
 	{
 		return colStartIndex;
 	}//}}}
 	
-	//{{{ getColumnEndIndex() method
+	// getColumnEndIndex() method
 	public int getColumnEndIndex()
 	{
 		return colEndIndex;
 	}//}}}
 	
-	//{{{ setLineLength() method
+	// setLineLength() method
 	public void setLineLength(float lineLength)
 	{
 		this.lineLength = lineLength;
 	}//}}}
 	
-	//{{{  getLineLength() method
+	// getLineLength() method
 	public float getLineLength()
 	{
 		return lineLength;
 	}//}}}
 	
-	//{{{ toString() method
+	// toString() method
 	public String toString()
 	{
 		return "[ColumnBlockLine]colStartIndex:"+colStartIndex+"  colEndIndex:"+ colEndIndex+" lineLength:"+lineLength+" line:"+line;
 	}//}}}
 	
-	//{{{ updateLineNo() method
+	// updateLineNo() method
 	public void updateLineNo(int line )
 	{
 		this.line+=line;

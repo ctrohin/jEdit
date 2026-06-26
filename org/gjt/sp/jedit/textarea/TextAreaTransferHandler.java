@@ -1,7 +1,6 @@
 /*
  * TextAreaTransferHandler.java - Drag and drop support
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.bufferio.IoTask;
 import org.gjt.sp.jedit.bufferset.BufferSetManager;
@@ -41,7 +40,6 @@ import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -69,7 +67,7 @@ public class TextAreaTransferHandler extends TransferHandler
 	}
 	*/
 
-	//{{{ createTransferable
+	// createTransferable
 	@Override
 	protected Transferable createTransferable(JComponent c)
 	{
@@ -84,14 +82,14 @@ public class TextAreaTransferHandler extends TransferHandler
 		}
 	} //}}}
 
-	//{{{ getSourceActions
+	// getSourceActions
 	@Override
 	public int getSourceActions(JComponent c)
 	{
 		return COPY_OR_MOVE;
 	} //}}}
 
-	//{{{ importData
+	// importData
 	@Override
 	public boolean importData(JComponent c, Transferable t)
 	{
@@ -145,7 +143,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		return returnValue;
 	} //}}}
 
-	//{{{ importFile
+	// importFile
 	private boolean importFile(JComponent c, Transferable t)
 		throws Exception
 	{
@@ -192,7 +190,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		return true;
 	} //}}}
 
-	//{{{ importURIList
+	// importURIList
 	private boolean importURIList(JComponent c, Transferable t,DataFlavor uriListStringDataFlavor)
 		throws Exception
 	{
@@ -261,7 +259,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		return true;
 	} //}}}
 	
-	//{{{ importText
+	// importText
 	private boolean importText(JComponent c, Transferable t)
 		throws Exception
 	{
@@ -351,7 +349,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		return true;
 	} //}}}
 
-	//{{{ exportDone() method
+	// exportDone() method
 	@Override
 	protected void exportDone(JComponent c, Transferable t,
 		int action)
@@ -418,7 +416,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		dragSource = null;
 	} //}}}
 
-	//{{{ isUriList() method
+	// isUriList() method
 	private boolean isUriList(DataFlavor flavor)
 	{
 		return ("text".equals(flavor.getPrimaryType()) &&
@@ -426,7 +424,7 @@ public class TextAreaTransferHandler extends TransferHandler
 			flavor.getRepresentationClass() == String.class);
 	} //}}}
 
-	//{{{ canImport() methods
+	// canImport() methods
 	@Override
 	public boolean canImport(TransferSupport support)
 	{
@@ -471,7 +469,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		return returnValue;
 	} //}}}
 
-	//{{{ TextAreaSelection class
+	// TextAreaSelection class
 	private static class TextAreaSelection extends StringSelection
 	{
 		final JEditTextArea textArea;
@@ -483,7 +481,7 @@ public class TextAreaTransferHandler extends TransferHandler
 		}
 	} //}}}
 
-	//{{{ DraggedURLLoader class
+	// DraggedURLLoader class
 	private static class DraggedURLLoader extends IoTask
 	{
 		private final JEditTextArea textArea;

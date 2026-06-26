@@ -1,7 +1,6 @@
 /*
  * ReloadWithEncodingProvider.java - Recent file list menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Marcelo Vanzin
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,7 +39,6 @@ import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.io.EncodingServer;
-//}}}
 
 /**
  * Menu provider for actions to reload the current buffer with a
@@ -52,14 +50,14 @@ public class ReloadWithEncodingProvider implements ActionListener, DynamicMenuPr
 {	
 	private View view;
 
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return false;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
@@ -111,7 +109,7 @@ public class ReloadWithEncodingProvider implements ActionListener, DynamicMenuPr
 		menu.add(other);
 	} //}}}
 
-	//{{{ actionPerformed() method
+	// actionPerformed() method
 	@Override
 	public void actionPerformed(ActionEvent ae)
 	{

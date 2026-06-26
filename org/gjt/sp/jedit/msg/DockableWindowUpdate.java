@@ -1,7 +1,6 @@
 /*
  * DockableWindowUpdate.java - Dockable window update message
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -37,7 +36,7 @@ import java.util.Objects;
  */
 public class DockableWindowUpdate extends EBMessage
 {
-	//{{{ Message types
+	// Message types
 	/**
 	 * Properties changed. Fired instead of global
 	 * <code>PropertiesChanged</code> for improved performance.
@@ -56,9 +55,8 @@ public class DockableWindowUpdate extends EBMessage
 	 * @since jEdit 4.2pre1
 	 */
 	public static final Object DEACTIVATED = "DEACTIVATED";
-	//}}}
 
-	//{{{ DockableWindowUpdate constructor
+	// DockableWindowUpdate constructor
 	/**
 	 * Creates a new dockable window update message.
 	 * @param wm The dockable window manager
@@ -73,7 +71,7 @@ public class DockableWindowUpdate extends EBMessage
 		this.dockable = dockable;
 	} //}}}
 
-	//{{{ getWhat() method
+	// getWhat() method
 	/**
 	 * Returns what caused this dockable update.
 	 */
@@ -82,7 +80,7 @@ public class DockableWindowUpdate extends EBMessage
 		return what;
 	} //}}}
 
-	//{{{ getDockable() method
+	// getDockable() method
 	/**
 	 * Returns the dockable in question, or null if the message type is
 	 * <code>PROPERTIES_CHANGED</code>.
@@ -92,15 +90,14 @@ public class DockableWindowUpdate extends EBMessage
 		return dockable;
 	} //}}}
 
-	//{{{ paramString() method
+	// paramString() method
 	@Override
 	public String paramString()
 	{
 		return "what=" + what + ",dockable=" + dockable + "," + super.paramString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private final Object what;
 	private final String dockable;
-	//}}}
 }

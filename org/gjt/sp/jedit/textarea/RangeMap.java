@@ -1,7 +1,6 @@
 /*
  * RangeMap.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2005 Slava Pestov
  *
@@ -42,21 +41,21 @@ import org.gjt.sp.util.Log;
  */
 class RangeMap
 {
-	//{{{ RangeMap constructor
+	// RangeMap constructor
 	RangeMap()
 	{
 		fvm = new int[2];
 		lastfvmget = -1;
 	} //}}}
 
-	//{{{ RangeMap constructor
+	// RangeMap constructor
 	RangeMap(RangeMap copy)
 	{
 		this.fvm = copy.fvm.clone();
 		this.fvmcount = copy.fvmcount;
 	} //}}}
 
-	//{{{ reset() method
+	// reset() method
 	void reset(int lines)
 	{
 		lastfvmget = -1;
@@ -65,25 +64,25 @@ class RangeMap
 		fvm[1] = lines;
 	} //}}}
 
-	//{{{ first() method
+	// first() method
 	int first()
 	{
 		return fvm[0];
 	} //}}}
 
-	//{{{ last() method
+	// last() method
 	int last()
 	{
 		return fvm[fvmcount - 1] - 1;
 	} //}}}
 
-	//{{{ lookup() method
+	// lookup() method
 	int lookup(int index)
 	{
 		return fvm[index];
 	} //}}}
 
-	//{{{ search() method
+	// search() method
 	/**
 	 * Returns the fold visibility map index for the given line.
 	 */
@@ -142,7 +141,7 @@ loop:		for(;;)
 		return lastfvmget;
 	} //}}}
 
-	//{{{ put() method
+	// put() method
 	/**
 	 * Replaces from <code>start</code> to <code>end-1</code> inclusive with
 	 * <code>put</code>. Update <code>fvmcount</code>.
@@ -196,7 +195,7 @@ loop:		for(;;)
 			throw new InternalError();
 	} //}}}
 
-	//{{{ put2() method
+	// put2() method
 	/**
 	 * Merge previous and next entry if necessary.
 	 */
@@ -237,7 +236,7 @@ loop:		for(;;)
 		}
 	} //}}}
 
-	//{{{ next() method
+	// next() method
 	int next(int line)
 	{
 		int index = search(line);
@@ -266,7 +265,7 @@ loop:		for(;;)
 			return line + 1;
 	} //}}}
 
-	//{{{ prev() method
+	// prev() method
 	int prev(int line)
 	{
 		int index = search(line);
@@ -294,7 +293,7 @@ loop:		for(;;)
 			return line - 1;
 	} //}}}
 
-	//{{{ show() method
+	// show() method
 	void show(int start, int end)
 	{
 		int starti = search(start);
@@ -335,7 +334,7 @@ loop:		for(;;)
 		lastfvmget = -1;
 	} //}}}
 	
-	//{{{ hide() method
+	// hide() method
 	void hide(int start, int end)
 	{
 		int starti = search(start);
@@ -375,13 +374,13 @@ loop:		for(;;)
 		lastfvmget = -1;
 	} //}}}
 
-	//{{{ count() method
+	// count() method
 	int count()
 	{
 		return fvmcount;
 	} //}}}
 
-	//{{{ dump() method
+	// dump() method
 	void dump()
 	{
 		if(Debug.FOLD_VIS_DEBUG)
@@ -398,7 +397,7 @@ loop:		for(;;)
 		}
 	} //}}}
 
-	//{{{ contentInserted() method
+	// contentInserted() method
 	void contentInserted(int startLine, int numLines)
 	{
 		if(numLines != 0)
@@ -414,7 +413,7 @@ loop:		for(;;)
 		}
 	} //}}}
 
-	//{{{ preContentRemoved() method
+	// preContentRemoved() method
 	/**
 	 * @return If the anchors should be reset.
 	 */
@@ -478,9 +477,8 @@ loop:		for(;;)
 		return returnValue;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private int[] fvm;
 	private int fvmcount;
 	private int lastfvmget;
-	//}}}
 }

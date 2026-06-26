@@ -20,7 +20,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -29,7 +29,6 @@ import java.net.URL;
 
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
-//}}}
 
 /** The splash screen displayed on startup.
  * @version $Id$
@@ -38,7 +37,7 @@ public class SplashScreen extends JComponent
 {
 	private static final long serialVersionUID = 1L;
 
-	//{{{ SplashScreen constructor
+	// SplashScreen constructor
 	public SplashScreen()
 	{
 		realSplash = java.awt.SplashScreen.getSplashScreen();
@@ -108,7 +107,7 @@ public class SplashScreen extends JComponent
 		}
 	} //}}}
 
-	//{{{ locateSplashImageUrl() method
+	// locateSplashImageUrl() method
 	/**
 	 * Classpath first; when running from the IDE, {@code jedit.home} often points
 	 * at the project root where the PNG lives in source but is not yet copied to
@@ -142,7 +141,7 @@ public class SplashScreen extends JComponent
 		return null;
 	} //}}}
 
-	//{{{ dispose() method
+	// dispose() method
 	public void dispose()
 	{
 		if(realSplash==null)
@@ -161,7 +160,7 @@ public class SplashScreen extends JComponent
 		}
 	} //}}}
 
-	//{{{ advance() methods
+	// advance() methods
 	public synchronized void advance()
 	{
 		logAdvanceTime(null);
@@ -181,7 +180,7 @@ public class SplashScreen extends JComponent
 		waitForSwingSplashPaint();
 	} //}}}
 
-	//{{{ waitForSwingSplashPaint() method
+	// waitForSwingSplashPaint() method
 	private void waitForSwingSplashPaint()
 	{
 		if (realSplash == null && win != null)
@@ -199,7 +198,7 @@ public class SplashScreen extends JComponent
 		}
 	} //}}}
 
-	//{{{ logAdvanceTime() method
+	// logAdvanceTime() method
 	private void logAdvanceTime(String label)
 	{
 		long currentTime = System.currentTimeMillis();
@@ -217,7 +216,7 @@ public class SplashScreen extends JComponent
 		}
 	} //}}}
 
-	//{{{ repaint() method
+	// repaint() method
 	@Override
 	public void repaint()
 	{
@@ -248,7 +247,7 @@ public class SplashScreen extends JComponent
 		realSplash.update();
 	} //}}}
 
-	//{{{ paintComponent() method
+	// paintComponent() method
 	@Override
 	public synchronized void paintComponent(Graphics g)
 	{
@@ -265,7 +264,7 @@ public class SplashScreen extends JComponent
 		notify();
 	} //}}}
 
-	//{{{ doPaintContents() method
+	// doPaintContents() method
 	/**
 	 *  Code common to the native and swing splash screens
 	 */
@@ -298,7 +297,7 @@ public class SplashScreen extends JComponent
 
 	} //}}}
 
-	//{{{ paintString() method
+	// paintString() method
 	private void paintString(Graphics g, String version, int drawOffsetX,
 				 int drawOffsetY)
 	{
@@ -311,7 +310,7 @@ public class SplashScreen extends JComponent
 		g.drawString( version, drawOffsetX + 1, drawOffsetY + 1 );
 	} //}}}
 
-	//{{{ private members
+	// private members
 	private final FontMetrics fm;
 	private final JWindow win;
 	private Image image;
@@ -326,5 +325,4 @@ public class SplashScreen extends JComponent
 	private Color versionColor1 = new Color(55, 55, 55);
 	private Color versionColor2 = new Color(255, 255, 255, 50);
 	private java.awt.SplashScreen realSplash;
-	//}}}
 }

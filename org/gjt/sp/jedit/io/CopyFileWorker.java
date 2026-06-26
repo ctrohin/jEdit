@@ -1,7 +1,6 @@
 /*
  * CopyFileWorker.java - a worker that will copy a file
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008, 2012 Matthieu Casanova
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.io;
 
-//{{{ Imports
+// Imports
 import java.awt.Component;
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +35,6 @@ import org.gjt.sp.jedit.MiscUtilities;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.util.Task;
 import org.gjt.sp.util.ThreadUtilities;
-//}}}
 
 /**
  * This worker will copy a file. Be careful it override files if the target
@@ -81,7 +79,7 @@ public class CopyFileWorker extends Task
 	 */
 	private CountDownLatch latch;
 
-	//{{{ CopyFileWorker constructors
+	// CopyFileWorker constructors
 	/**
 	 * Copy a file. Careful, it will <b>overwrite</b> the target.
 	 * @param comp   the component that will be used as parent in case of error
@@ -148,7 +146,7 @@ public class CopyFileWorker extends Task
 		this.behavior = behavior;
 	} //}}}
 
-	//{{{ _run() method
+	// _run() method
 	@Override
 	public void _run()
 	{
@@ -177,7 +175,7 @@ public class CopyFileWorker extends Task
 		}
 	} //}}}
 
-	//{{{ copyFileList() method
+	// copyFileList() method
 	private void copyFileList()
 	{
 		VFS vfs = VFSManager.getVFSForPath(target);
@@ -237,7 +235,7 @@ public class CopyFileWorker extends Task
 		}
 	} //}}}
 
-	//{{{ copy() method
+	// copy() method
 	private void copy(Object vfsSession, VFS vfs, String sourcePath, String sourceName, String targetPath)
 		throws  IOException, InterruptedException
 	{
@@ -252,7 +250,7 @@ public class CopyFileWorker extends Task
 		latch.await();
 	} //}}}
 
-	//{{{ getTargetName() method
+	// getTargetName() method
 	
 	private String getTargetName(Object session, VFS vfs, String path, String baseName) throws IOException
 	{

@@ -1,7 +1,6 @@
 /*
  * ListVFSFileTransferable.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2010, 2012 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.datatransfer;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.io.FileVFS;
 import org.gjt.sp.jedit.io.VFSFile;
 
@@ -31,7 +30,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -44,27 +42,27 @@ public class ListVFSFileTransferable implements Transferable
 	
 	private final List<VFSFile> files;
 
-	//{{{ ListVFSFileTransferable constructor
+	// ListVFSFileTransferable constructor
 	public ListVFSFileTransferable(VFSFile[] files)
 	{
 		this.files = List.of(files);
 	} //}}}
 
-	//{{{ getTransferDataFlavors() method
+	// getTransferDataFlavors() method
 	@Override
 	public DataFlavor[] getTransferDataFlavors()
 	{
 		return supported;
 	} //}}}
 
-	//{{{ isDataFlavorSupported() method
+	// isDataFlavorSupported() method
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor)
 	{
 		return jEditFileList.equals(flavor) || DataFlavor.stringFlavor.equals(flavor);
 	} //}}}
 
-	//{{{ getTransferData() method
+	// getTransferData() method
 	@Override
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException
 	{

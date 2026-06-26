@@ -1,7 +1,6 @@
 /*
  * BufferSetManager.java - Manages the buffersets.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008, 2010 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.bufferset;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.*;
 import org.gjt.sp.jedit.io.VFS;
 import org.gjt.sp.jedit.io.VFSManager;
@@ -32,7 +31,6 @@ import org.gjt.sp.jedit.visitors.JEditVisitorAdapter;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.jedit.EditBus.EBHandler;
 import java.util.*;
-//}}}
 
 /**
  * The buffersets manager. A singleton instance of this
@@ -44,7 +42,7 @@ import java.util.*;
  */
 public class BufferSetManager
 {
-	//{{{ BufferSetManager constructor
+	// BufferSetManager constructor
 	public BufferSetManager()
 	{
 		EditBus.addToBus(this);
@@ -59,7 +57,7 @@ public class BufferSetManager
 		}
 	} //}}}
 
-	//{{{ handleEditPaneUpdate() method
+	// handleEditPaneUpdate() method
 	@EBHandler
 	public void handleEditPaneUpdate(EditPaneUpdate message)
 	{
@@ -75,7 +73,7 @@ public class BufferSetManager
 		}
 	} //}}}
 
-	//{{{ handlePropertiesChanged() method
+	// handlePropertiesChanged() method
 	@EBHandler
 	public void handlePropertiesChanged(PropertiesChanged msg)
 	{
@@ -85,7 +83,7 @@ public class BufferSetManager
 		jEdit.getEditPaneManager().forEach(editPane -> editPane.getBufferSet().propertiesChanged());
 	} //}}}
 
-	//{{{ countBufferSets() method
+	// countBufferSets() method
 	/**
 	 * Count the bufferSets in which the buffer is.
 	 * @param buffer the buffer
@@ -97,7 +95,7 @@ public class BufferSetManager
 		return getOwners(buffer).size();
 	} //}}}
 
-	//{{{ setScope() method
+	// setScope() method
 	public void setScope(BufferSet.Scope scope)
 	{
 		if (scope == this.scope)
@@ -152,13 +150,13 @@ public class BufferSetManager
 		EditBus.send(new PropertiesChanged(this));
 	} //}}}
 
-	//{{{ getScope() method
+	// getScope() method
 	public BufferSet.Scope getScope()
 	{
 		return scope;
 	} //}}}
 
-	//{{{ addBuffer() methods
+	// addBuffer() methods
 	/**
 	 * Add a buffer into the current editPane of the given view.
 	 * If the view is null, it will be added to the current
@@ -200,7 +198,7 @@ public class BufferSetManager
 		}
 	} //}}}
 
-	//{{{ moveBuffer() method
+	// moveBuffer() method
 	/**
 	 * Moves a buffer from a old position to a new position in the
 	 * BufferSet used in an EditPane.
@@ -211,7 +209,7 @@ public class BufferSetManager
 		editPane.getBufferSet().moveBuffer(oldPosition, newPosition);
 	} //}}}
 
-	//{{{ removeBuffer() methods
+	// removeBuffer() methods
 	/**
 	 * Remove a buffer from the EditPane's bufferSet.
 	 *
@@ -263,7 +261,7 @@ public class BufferSetManager
 		}
 	} //}}}
 
-	//{{{ bufferRemoved() method
+	// bufferRemoved() method
 	/**
 	 * This method is called when a buffer has been removed from a bufferSet.
 	 * If it is empty, an untitled buffer is created and added to the bufferSet
@@ -289,7 +287,7 @@ public class BufferSetManager
 		return folder != null && !folder.isBlank();
 	}
 
-	//{{{ _removeBuffer() method
+	// _removeBuffer() method
 	/**
 	 * Remove a buffer from a bufferSet.
 	 * Used when closing an EditPane
@@ -310,7 +308,7 @@ public class BufferSetManager
 		}
 	} //}}}
 
-	//{{{ createUntitledBuffer() method
+	// createUntitledBuffer() method
 	/**
 	 * Create an untitled buffer
 	 * @return the new untitled buffer
@@ -349,9 +347,9 @@ public class BufferSetManager
 		return newEmptyBuffer;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ getOwners() method
+	// getOwners() method
 	/**
 	 * @return set of BufferSets that contain buffer
 	 * @since 4.4pre1
@@ -367,7 +365,7 @@ public class BufferSetManager
 		return candidates;
 	} //}}}
 
-	//{{{ getOwner() method
+	// getOwner() method
 	/**
 	 * Return the editpane that owns the BufferSet
 	 * @param bufferSet the bufferSet
@@ -392,5 +390,4 @@ public class BufferSetManager
 
 	/** The scope of the bufferSets. */
 	private BufferSet.Scope scope;
-	//}}}
 }

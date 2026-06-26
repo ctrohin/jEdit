@@ -1,7 +1,6 @@
 /*
  * TextAreaTransferHandler.java - Drag and drop support
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,14 +21,13 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.*;
 import java.awt.*;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.util.Log;
-//}}}
 
 /**
  * @author Slava Pestov
@@ -41,13 +39,13 @@ class TextAreaDropHandler extends DropTargetAdapter
 	private JEditBuffer savedBuffer;
 	private int savedCaret;
 
-	//{{{ TextAreaDropHandler constructor
+	// TextAreaDropHandler constructor
 	TextAreaDropHandler(TextArea textArea)
 	{
 		this.textArea = textArea;
 	} //}}}
 
-	//{{{ dragEnter() method
+	// dragEnter() method
 	@Override
 	public void dragEnter(DropTargetDragEvent dtde)
 	{
@@ -57,7 +55,7 @@ class TextAreaDropHandler extends DropTargetAdapter
 		savedCaret = textArea.getCaretPosition();
 	} //}}}
 
-	//{{{ dragOver() method
+	// dragOver() method
 	@Override
 	public void dragOver(DropTargetDragEvent dtde)
 	{
@@ -76,7 +74,7 @@ class TextAreaDropHandler extends DropTargetAdapter
 		}
 	} //}}}
 
-	//{{{ dragExit() method
+	// dragExit() method
 	@Override
 	public void dragExit(DropTargetEvent dtde)
 	{
@@ -90,7 +88,7 @@ class TextAreaDropHandler extends DropTargetAdapter
 		savedBuffer = null;
 	} //}}}
 
-	//{{{ drop() method
+	// drop() method
 	@Override
 	public void drop(DropTargetDropEvent dtde)
 	{

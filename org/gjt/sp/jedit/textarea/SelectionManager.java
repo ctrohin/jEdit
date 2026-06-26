@@ -1,7 +1,6 @@
 /*
  * SelectionManager.java
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2004 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit.textarea;
 
-//{{{ Imports
+// Imports
 import java.util.*;
 
 
 import org.gjt.sp.jedit.buffer.*;
-//}}}
 
 class SelectionManager
 {
@@ -35,14 +33,14 @@ class SelectionManager
 	// having to call getSelection() (which involves an array copy)
 	List<Selection> selection;
 
-	//{{{ SelectionManager constructor
+	// SelectionManager constructor
 	SelectionManager(TextArea textArea)
 	{
 		this.textArea = textArea;
 		selection = new ArrayList<>();
 	} //}}}
 
-	//{{{ getSelectionCount() method
+	// getSelectionCount() method
 	/**
 	 * Returns the number of selections. This can be used to test
 	 * for the existence of selections.
@@ -52,7 +50,7 @@ class SelectionManager
 		return selection.size();
 	} //}}}
 
-	//{{{ getSelection() method
+	// getSelection() method
 	/**
 	 * Returns the current selection.
 	 * @since jEdit 3.2pre1
@@ -63,7 +61,7 @@ class SelectionManager
 		return selection.toArray(new Selection[0]);
 	} //}}}
 
-	//{{{ setSelection() method
+	// setSelection() method
 	/**
 	 * Sets the selection. Nested and overlapping selections are merged
 	 * where possible.
@@ -74,7 +72,7 @@ class SelectionManager
 		addToSelection(selection);
 	} //}}}
 
-	//{{{ addToSelection() method
+	// addToSelection() method
 	/**
 	 * Adds to the selection. Nested and overlapping selections are merged
 	 * where possible. Null elements of the array are ignored.
@@ -93,7 +91,7 @@ class SelectionManager
 		}
 	} //}}}
 
-	//{{{ addToSelection() method
+	// addToSelection() method
 	void addToSelection(Selection addMe)
 	{
 		if(addMe.start > addMe.end)
@@ -148,7 +146,7 @@ class SelectionManager
 		textArea.invalidateLineRange(addMe.startLine,addMe.endLine);
 	} //}}}
 
-	//{{{ setSelection() method
+	// setSelection() method
 	/**
 	 * Clear the selection
 	 */
@@ -157,7 +155,7 @@ class SelectionManager
 		selection.clear();
 	} //}}}
 
-	//{{{ setSelection() method
+	// setSelection() method
 	/**
 	 * Sets the selection. Nested and overlapping selections are merged
 	 * where possible.
@@ -170,7 +168,7 @@ class SelectionManager
 			addToSelection(selection);
 	} //}}}
 
-	//{{{ getSelectionAtOffset() method
+	// getSelectionAtOffset() method
 	/**
 	 * Returns the selection containing the specific offset, or <code>null</code>
 	 * if there is no selection at that offset.
@@ -191,7 +189,7 @@ class SelectionManager
 		return null;
 	} //}}}
 
-	//{{{ removeFromSelection() method
+	// removeFromSelection() method
 	/**
 	 * Deactivates the specified selection.
 	 * @param sel The selection
@@ -201,7 +199,7 @@ class SelectionManager
 		selection.remove(sel);
 	} //}}}
 
-	//{{{ resizeSelection() method
+	// resizeSelection() method
 	/**
 	 * Resizes the selection at the specified offset, or creates a new
 	 * one if there is no selection at the specified offset. This is a
@@ -242,7 +240,7 @@ class SelectionManager
 		addToSelection(newSel);
 	} //}}}
 
-	//{{{ getSelectedLines() method
+	// getSelectedLines() method
 	/**
 	 * Returns a sorted array of line numbers on which a selection or
 	 * selections are present.<p>
@@ -277,7 +275,7 @@ class SelectionManager
 		return returnValue;
 	} //}}}
 
-	//{{{ invertSelection() method
+	// invertSelection() method
 	void invertSelection()
 	{
 		Selection[] newSelection = new Selection[selection.size() + 1];
@@ -294,7 +292,7 @@ class SelectionManager
 		setSelection(newSelection);
 	} //}}}
 
-	//{{{ getSelectionStartEndOnLine() method
+	// getSelectionStartEndOnLine() method
 	/**
 	 * Returns the x co-ordinates of the selection start and end on the
 	 * given line. May return null.
@@ -405,7 +403,7 @@ class SelectionManager
 		return new int[] { x1, x2 };
 	} //}}}
 
-	//{{{ insideSelection() method
+	// insideSelection() method
 	/**
 	 * Returns if the given point is inside a selection.
 	 * Used by drag and drop code in MouseHandler below.

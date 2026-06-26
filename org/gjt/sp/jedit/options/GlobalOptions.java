@@ -1,7 +1,6 @@
 /*
  * GlobalOptions.java - Global options dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -22,43 +21,42 @@
 
 package org.gjt.sp.jedit.options;
 
-//{{{ Imports
+// Imports
 import java.awt.Dialog;
 import java.awt.Frame;
 import org.gjt.sp.jedit.gui.OptionsDialog;
 import org.gjt.sp.jedit.msg.PropertiesChanging;
 import org.gjt.sp.jedit.*;
-//}}}
 /**
    A dialog that can open initially to one of the Global Option Panes.
 */
 public class GlobalOptions extends OptionsDialog
 {
-	//{{{ GlobalOptions constructor
+	// GlobalOptions constructor
 	public GlobalOptions(Frame frame)
 	{
 		super(frame,"options",jEdit.getProperty("options.last"));
 	} //}}}
 
-	//{{{ GlobalOptions constructor
+	// GlobalOptions constructor
 	public GlobalOptions(Frame frame, String pane)
 	{
 		super(frame,"options",pane);
 	} //}}}
 
-	//{{{ GlobalOptions constructor
+	// GlobalOptions constructor
 	public GlobalOptions(Dialog dialog)
 	{
 		super(dialog,"options",jEdit.getProperty("options.last"));
 	} //}}}
 
-	//{{{ GlobalOptions constructor
+	// GlobalOptions constructor
 	public GlobalOptions(Dialog dialog, String pane)
 	{
 		super(dialog,"options",pane);
 	} //}}}
 
-	//{{{ createOptionTreeModel() method
+	// createOptionTreeModel() method
 	@Override
 	@SuppressWarnings("deprecation")
 	protected OptionTreeModel createOptionTreeModel()
@@ -82,7 +80,7 @@ public class GlobalOptions extends OptionsDialog
 		return paneTreeModel;
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
@@ -92,7 +90,7 @@ public class GlobalOptions extends OptionsDialog
 		super.cancel();
 	} //}}}
 
-	//{{{ init() method
+	// init() method
 	@Override
 	protected void init(String name, String pane)
 	{
@@ -102,7 +100,7 @@ public class GlobalOptions extends OptionsDialog
 		super.init(name, pane);
 	} //}}}
 
-	//{{{ getDefaultGroup() method
+	// getDefaultGroup() method
 	@Override
 	protected OptionGroup getDefaultGroup()
 	{

@@ -1,7 +1,6 @@
 /*
  * EditAction.java - jEdit action listener
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2003 Slava Pestov
  *
@@ -22,12 +21,11 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.util.Log;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//}}}
 
 /**
  * An action that can be bound to a menu item, tool bar button or keystroke.
@@ -41,7 +39,7 @@ import java.awt.event.ActionListener;
  */
 public abstract class EditAction extends JEditAbstractEditAction<View>
 {
-	//{{{ EditAction constructors
+	// EditAction constructors
 	/**
 	 * Creates a new edit action with the specified name.
 	 * @param name The action name
@@ -56,7 +54,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		super(name, newArgs);
 	} //}}}
 			
-	//{{{ getLabel() method
+	// getLabel() method
 	/**
 	 * @return the action's label. This returns the
 	 * value of the property named by {@link #getName()} suffixed
@@ -72,7 +70,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return jEdit.getProperty(name + ".label");
 	} //}}}
 
-	//{{{ getMouseOverText() method
+	// getMouseOverText() method
 	/**
 	 * @return the action's mouse over message. This returns the
 	 * value of the property named by {@link #getName()} suffixed
@@ -83,7 +81,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return jEdit.getProperty(name + ".mouse-over");
 	} //}}}
 
-	//{{{ getToolTip() method
+	// getToolTip() method
 	/**
 	 * @return the action's tooltip text. This returns the
 	 * value of the property named by {@link #getName()} suffixed
@@ -94,7 +92,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return jEdit.getProperty(name + ".tooltip");
 	} //}}}
 
-	//{{{ invoke() method
+	// invoke() method
 	/**
 	 * Invokes the action. This is an implementation of the Command pattern,
 	 * and concrete actions should override this.
@@ -105,9 +103,8 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 	 */
 	@Override
 	public abstract void invoke(View view);
-	//}}}
 
-	//{{{ isToggle() method
+	// isToggle() method
 	/**
 	 * @return if this edit action should be displayed as a check box
 	 * in menus. This returns the
@@ -121,7 +118,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return jEdit.getBooleanProperty(name + ".toggle");
 	} //}}}
 
-	//{{{ isSelected() method
+	// isSelected() method
 	/**
 	 * @return If this edit action is a toggle, returns if it is selected or not.
 	 * @param comp The component
@@ -132,7 +129,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return false;
 	} //}}}
 
-	//{{{ noRepeat() method
+	// noRepeat() method
 	/**
 	 * @return if this edit action should not be repeated. Returns false
 	 * by default.
@@ -143,7 +140,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return false;
 	} //}}}
 
-	//{{{ noRecord() method
+	// noRecord() method
 	/**
 	 * @return if this edit action should not be recorded. Returns false
 	 * by default.
@@ -154,7 +151,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return false;
 	} //}}}
 
-	//{{{ noRememberLast() method
+	// noRememberLast() method
 	/**
 	 * @return if this edit action should not be remembered as the most
 	 * recently invoked action.
@@ -165,7 +162,7 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 		return false;
 	} //}}}
 
-	//{{{ getCode() method
+	// getCode() method
 	/**
 	 * @return the BeanShell code that will replay this action.
 	 * BeanShellAction.getCode() returns something more interesting for Actions that were loaded
@@ -181,9 +178,8 @@ public abstract class EditAction extends JEditAbstractEditAction<View>
 	{
 		return "jEdit.getAction(" + name + ").invoke(view); ";
 	}
-	//}}}
 	
-	//{{{ Wrapper class
+	// Wrapper class
 	/**
 	 * 'Wrap' EditActions in this class to turn them into AWT
 	 * ActionListeners, that can be attached to buttons, menu items, etc.

@@ -1,7 +1,6 @@
 /*
  * ColorChooserDialog.java - Shows a dialog with a color chooser.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2015 Dale Anson
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.colorchooser.ColorSelectionModel;
@@ -34,17 +33,15 @@ import java.util.Arrays;
 
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 
 public class ColorChooserDialog extends JDialog 
 {
-    //{{{ Fields
+    // Fields
     private Color initialColor = null;
     private JColorChooser colorChooser = null;
-    //}}}
     
-    //{{{ ColorChooserDialog
+    // ColorChooserDialog
     public ColorChooserDialog(Window owner, Color initialColor) 
     {
         super(owner);
@@ -52,10 +49,9 @@ public class ColorChooserDialog extends JDialog
         this.initialColor = initialColor;
         init();
     }
-    //}}}
 
 
-    //{{{ init()
+    // init()
     private void init()
     {
         setTitle(jEdit.getProperty("colorChooser.title"));
@@ -97,7 +93,6 @@ public class ColorChooserDialog extends JDialog
         setVisible(true);
     }
 
-    //}}}
 
     private void hideColorTransparency(AbstractColorChooserPanel panel) {
         panel.setColorTransparencySelectionEnabled(false);
@@ -108,11 +103,10 @@ public class ColorChooserDialog extends JDialog
         this.dispose();
     }
 
-    //{{{ getColor()
+    // getColor()
     public Color getColor()
     {
         Color selectedColor = colorChooser.getColor();
         return selectedColor == null ? initialColor : selectedColor;	
     }
-    //}}}
 }

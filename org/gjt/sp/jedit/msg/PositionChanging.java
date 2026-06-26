@@ -1,7 +1,6 @@
 /*
  * PositionChanging.java - Cursor position changing (specialized Edit Pane update message)
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2006 Alan Ezust
  *

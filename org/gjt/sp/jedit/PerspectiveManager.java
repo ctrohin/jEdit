@@ -1,7 +1,6 @@
 /*
  * PerspectiveManager.java - Saves view configuration
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -47,7 +46,7 @@ public class PerspectiveManager
 {
 	private static final String PERSPECTIVE_FILENAME = "perspective";
 
-	//{{{ isPerspectiveDirty() method
+	// isPerspectiveDirty() method
 	/**
 	 * We only autosave the perspective if it has changed, to avoid spinning
 	 * up the disk on laptops.
@@ -58,7 +57,7 @@ public class PerspectiveManager
 		return dirty;
 	} //}}}
 
-	//{{{ setPerspectiveDirty() method
+	// setPerspectiveDirty() method
 	/**
 	 * We only autosave the perspective if it has changed, to avoid spinning
 	 * up the disk on laptops.
@@ -69,7 +68,7 @@ public class PerspectiveManager
 		PerspectiveManager.dirty = dirty;
 	} //}}}
 
-	//{{{ isPerspectiveEnabled() method
+	// isPerspectiveEnabled() method
 	/**
 	 * We disable saving of the perspective while the 'close all' dialog is
 	 * showing.
@@ -80,7 +79,7 @@ public class PerspectiveManager
 		return enabled;
 	} //}}}
 
-	//{{{ setPerspectiveEnabled() method
+	// setPerspectiveEnabled() method
 	/**
 	 * We disable saving of the perspective while the 'close all' dialog is
 	 * showing.
@@ -91,7 +90,7 @@ public class PerspectiveManager
 		PerspectiveManager.enabled = enabled;
 	} //}}}
 
-	//{{{ loadPerspective() method
+	// loadPerspective() method
 	public static View loadPerspective(boolean restoreFiles)
 	{
 		if(perspectiveXML == null)
@@ -114,7 +113,7 @@ public class PerspectiveManager
 		return handler.view;
 	} //}}}
 
-	//{{{ savePerspective() method
+	// savePerspective() method
 	public static void savePerspective(boolean autosave)
 	{
 		if(!isPerspectiveEnabled() || !jEdit.isStartupDone())
@@ -243,12 +242,11 @@ public class PerspectiveManager
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static boolean dirty, enabled = true;
 	private static SettingsXML perspectiveXML;
-	//}}}
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		String settingsDirectory = jEdit.getSettingsDirectory();
@@ -258,7 +256,7 @@ public class PerspectiveManager
 		}
 	} //}}}
 
-	//{{{ PerspectiveHandler class
+	// PerspectiveHandler class
 	private static class PerspectiveHandler extends DefaultHandler
 	{
 		View view;
@@ -402,5 +400,4 @@ public class PerspectiveManager
 		}
 
 	}
-	//}}}
 }

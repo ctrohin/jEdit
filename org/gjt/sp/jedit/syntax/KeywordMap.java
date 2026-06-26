@@ -1,7 +1,6 @@
 /*
  * KeywordMap.java - Fast keyword->id map
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1998, 2002 Slava Pestov
  * Copyright (C) 1999 Mike Dillon
@@ -36,7 +35,7 @@ import java.util.ArrayList;
  */
 public class KeywordMap
 {
-	//{{{ KeywordMap constructor
+	// KeywordMap constructor
 	/**
 	 * Creates a new <code>KeywordMap</code>.
 	 * @param ignoreCase True if keys are case insensitive
@@ -48,7 +47,7 @@ public class KeywordMap
 		noWordSep = new StringBuilder();
 	} //}}}
 
-	//{{{ KeywordMap constructor
+	// KeywordMap constructor
 	/**
 	 * Creates a new <code>KeywordMap</code>.
 	 * @param ignoreCase True if the keys are case insensitive
@@ -62,7 +61,7 @@ public class KeywordMap
 		map = new Keyword[mapLength];
 	} //}}}
 
-	//{{{ lookup() method
+	// lookup() method
 	/**
 	 * Looks up a key.
 	 * @param text The text segment
@@ -89,7 +88,7 @@ public class KeywordMap
 		return Token.NULL;
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	/**
 	 * Adds a key-value mapping.
 	 * @param keyword The key
@@ -100,7 +99,7 @@ public class KeywordMap
 		add(keyword.toCharArray(),id);
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	/**
 	 * Adds a key-value mapping.
 	 * @param keyword The key
@@ -131,7 +130,7 @@ loop:
 		map[key] = new Keyword(keyword,id,map[key]);
 	} //}}}
 
-	//{{{ getNonAlphaNumericChars() method
+	// getNonAlphaNumericChars() method
 	/**
 	 * Returns all non-alphanumeric characters that appear in the
 	 * keywords of this keyword map.
@@ -142,7 +141,7 @@ loop:
 		return noWordSep.toString();
 	} //}}}
 
-	//{{{ getKeywords() method
+	// getKeywords() method
 	/**
 	 * Returns an array containing all keywords in this keyword map.
 	 * @since jEdit 4.0pre3
@@ -164,7 +163,7 @@ loop:
 		return retVal;
 	} //}}}
 
-	//{{{ getIgnoreCase() method
+	// getIgnoreCase() method
 	/**
 	 * Returns true if the keyword map is set to be case insensitive,
 	 * false otherwise.
@@ -174,7 +173,7 @@ loop:
 		return ignoreCase;
 	} //}}}
 
-	//{{{ setIgnoreCase() method
+	// setIgnoreCase() method
 	/**
 	 * Sets if the keyword map should be case insensitive.
 	 * @param ignoreCase True if the keyword map should be case
@@ -185,7 +184,7 @@ loop:
 		this.ignoreCase = ignoreCase;
 	} //}}}
 
-	//{{{ add() method
+	// add() method
 	/**
 	 * Adds the content of another keyword map to this one.
 	 * @since jEdit 4.2pre3
@@ -203,16 +202,15 @@ loop:
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final int mapLength;
 	private final Keyword[] map;
 	private boolean ignoreCase;
 	private StringBuilder noWordSep;
-	//}}}
 
-	//{{{ getStringMapKey() method
+	// getStringMapKey() method
 	private int getStringMapKey(char[] s)
 	{
 		return (Character.toUpperCase(s[0]) +
@@ -220,7 +218,7 @@ loop:
 				% mapLength;
 	} //}}}
 
-	//{{{ getSegmentMapKey() method
+	// getSegmentMapKey() method
 	protected int getSegmentMapKey(Segment s, int off, int len)
 	{
 		return (Character.toUpperCase(s.array[off]) +
@@ -228,9 +226,8 @@ loop:
 				% mapLength;
 	} //}}}
 
-	//}}}
 
-	//{{{ Keyword class
+	// Keyword class
 	private static class Keyword
 	{
 		Keyword(char[] keyword, byte id, Keyword next)

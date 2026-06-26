@@ -1,7 +1,6 @@
 /*
  * SelectLineRange.java - Selects a range of lines
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 1999, 2000 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -30,12 +29,11 @@ import java.awt.event.*;
 import org.gjt.sp.jedit.textarea.*;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /** Dialog for selection of a range of lines */
 public class SelectLineRange extends EnhancedDialog implements ActionListener
 {
-	//{{{ SelectLineRange constructor
+	// SelectLineRange constructor
 	public SelectLineRange(View view)
 	{
 		super(view,jEdit.getProperty("selectlinerange.title"),true);
@@ -78,7 +76,7 @@ public class SelectLineRange extends EnhancedDialog implements ActionListener
 		setVisible(true);
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -118,14 +116,14 @@ public class SelectLineRange extends EnhancedDialog implements ActionListener
 		dispose();
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
 		dispose();
 	} //}}}
 
-	//{{{ actionPerformed() method
+	// actionPerformed() method
 	@Override
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -136,17 +134,16 @@ public class SelectLineRange extends EnhancedDialog implements ActionListener
 			cancel();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ Instance variables
+	// Instance variables
 	private final View view;
 	private NumericTextField startField;
 	private NumericTextField endField;
 	private final JButton ok;
 	private final JButton cancel;
-	//}}}
 
-	//{{{ createFieldPanel() method
+	// createFieldPanel() method
 	private JPanel createFieldPanel()
 	{
 		GridBagLayout layout = new GridBagLayout();
@@ -203,5 +200,4 @@ public class SelectLineRange extends EnhancedDialog implements ActionListener
 		return panel;
 	} //}}}
 
-	//}}}
 }

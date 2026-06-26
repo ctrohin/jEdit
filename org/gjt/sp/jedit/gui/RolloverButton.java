@@ -1,7 +1,6 @@
 /*
  * RolloverButton.java - Class for buttons that implement rollovers
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Kris Kopicki
  * Portions copyright (C) 2003 Slava Pestov
@@ -23,7 +22,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -32,7 +31,6 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 import org.gjt.sp.jedit.OperatingSystem;
 
-//}}}
 
 /** Class for buttons that implement rollovers
  *
@@ -48,7 +46,7 @@ import org.gjt.sp.jedit.OperatingSystem;
  */
 public class RolloverButton extends JButton
 {
-	//{{{ RolloverButton constructor
+	// RolloverButton constructor
 	/**
 	 * Setup the border (invisible initially)
 	 */
@@ -58,7 +56,7 @@ public class RolloverButton extends JButton
 		addMouseListener(new MouseOverHandler());
 	} //}}}
 
-	//{{{ RolloverButton constructor
+	// RolloverButton constructor
 	/**
 	 * Setup the border (invisible initially)
 	 *
@@ -76,7 +74,7 @@ public class RolloverButton extends JButton
 		setToolTipText(tooltip);
 	}
 
-	//{{{ updateUI() method
+	// updateUI() method
 	public void updateUI()
 	{
 		super.updateUI();
@@ -86,7 +84,7 @@ public class RolloverButton extends JButton
 		setMargin(new Insets(1,1,1,1));
 	} //}}}
 
-	//{{{ setEnabled() method
+	// setEnabled() method
 	public void setEnabled(boolean b)
 	{
 		super.setEnabled(b);
@@ -94,7 +92,7 @@ public class RolloverButton extends JButton
 		repaint();
 	} //}}}
 
-	//{{{ setBorderPainted() method
+	// setBorderPainted() method
 	public void setBorderPainted(boolean b)
 	{
 		try
@@ -109,7 +107,7 @@ public class RolloverButton extends JButton
 		}
 	} //}}}
 
-	//{{{ revalidate() method
+	// revalidate() method
 	/**
 	 * We block calls to revalidate() from a setBorderPainted(), for
 	 * performance reasons.
@@ -120,7 +118,7 @@ public class RolloverButton extends JButton
 			super.revalidate();
 	} //}}}
 
-	//{{{ paint() method
+	// paint() method
 	public void paint(Graphics g)
 	{
 		if(isEnabled())
@@ -133,13 +131,13 @@ public class RolloverButton extends JButton
 		}
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final AlphaComposite c = AlphaComposite.getInstance(
 		AlphaComposite.SRC_OVER, 0.5f);
 
 	private boolean revalidateBlocked;
 
-	//{{{ MouseHandler class
+	// MouseHandler class
 	/**
 	 * Make the border visible/invisible on rollovers
 	 */
@@ -157,5 +155,4 @@ public class RolloverButton extends JButton
 			setBorderPainted(false);
 		}
 	} //}}}
-	//}}}
 }

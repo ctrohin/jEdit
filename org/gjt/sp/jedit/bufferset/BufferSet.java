@@ -1,7 +1,6 @@
 /*
  * BufferSet.java - An ordered list of buffers.
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008, 2010 Matthieu Casanova
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.bufferset;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.util.Log;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-//}}}
 
 /** An ordered list of buffers, normally attached to an EditPane
  *  and viewed in a BufferSwitcher.
@@ -46,7 +44,7 @@ public class BufferSet
 	/** Possible scopes for BufferSets. */
 	public enum Scope { editpane, view, global }
 
-	//{{{ BufferSet constructor
+	// BufferSet constructor
 	public BufferSet(BufferSet source)
 	{
 		if (source == null)
@@ -64,7 +62,7 @@ public class BufferSet
 		}
 	}//}}}
 
-	//{{{ addBuffer() method
+	// addBuffer() method
 	/**
 	 * Internal use only, use
 	 * {@link org.gjt.sp.jedit.bufferset.BufferSetManager#addBuffer(org.gjt.sp.jedit.View, org.gjt.sp.jedit.Buffer)}
@@ -77,7 +75,7 @@ public class BufferSet
 		addBufferAt(buffer,  -1);
 	} //}}}
 
-	//{{{ addBufferAt() method
+	// addBufferAt() method
 	/**
 	 * Internal use only, use
 	 * {@link org.gjt.sp.jedit.bufferset.BufferSetManager#addBuffer(org.gjt.sp.jedit.View, org.gjt.sp.jedit.Buffer)}
@@ -144,7 +142,7 @@ public class BufferSet
 		}
 	} //}}}
 
-	//{{{ getBuffer() method
+	// getBuffer() method
 	/**
 	 * Returns the Buffer at the given index.
 	 * @param index the index. The index must exists
@@ -155,7 +153,7 @@ public class BufferSet
 		return buffers.get(index);
 	} //}}}
 
-	//{{{ getSorter()
+	// getSorter()
 	/** @return the Comparator used for this bufferset
 	    can be null if there is no sorting 
 		@since jEdit 5.2
@@ -165,7 +163,7 @@ public class BufferSet
 		return sorter;
 	}//}}}
 	
-	//{{{ getPreviousBuffer() method
+	// getPreviousBuffer() method
 	public Buffer getPreviousBuffer(int index)
 	{
 		if (buffers.isEmpty())
@@ -177,7 +175,7 @@ public class BufferSet
 		return buffers.get(index - 1);
 	} //}}}
 
-	//{{{ getNextBuffer() method
+	// getNextBuffer() method
 	public Buffer getNextBuffer(int index)
 	{
 		if (buffers.isEmpty())
@@ -189,13 +187,13 @@ public class BufferSet
 		return buffers.get(index + 1);
 	} //}}}
 
-	//{{{ indexOf() method
+	// indexOf() method
 	public int indexOf(Buffer buffer)
 	{
 		return buffers.indexOf(buffer);
 	} //}}}
 
-	//{{{ contains() method
+	// contains() method
 	/**
 	 * Check if the BufferSet contains the given buffer
 	 * @param buffer the buffer to search
@@ -207,13 +205,13 @@ public class BufferSet
 		return buffers.contains(buffer);
 	} //}}}
 
-	//{{{ size() method
+	// size() method
 	public int size()
 	{
 		return buffers.size();
 	} //}}}
 
-	//{{{ getAllBuffers() methods
+	// getAllBuffers() methods
 	public void getAllBuffers(BufferSetListener listener)
 	{
 		synchronized (buffers)
@@ -238,7 +236,7 @@ public class BufferSet
 		return this.buffers.toArray(buffers);
 	} //}}}
 
-	//{{{ addBufferSetListener() method
+	// addBufferSetListener() method
 	/**
 	 * Add a BufferSetListener.
 	 * @param listener the new BufferSetListener
@@ -249,7 +247,7 @@ public class BufferSet
 		listeners.add(BufferSetListener.class, listener);
 	} //}}}
 
-	//{{{ removeBufferSetListener() method
+	// removeBufferSetListener() method
 	/**
 	 * Remove a BufferSetListener.
 	 * If there are no listeners anymore, remove all buffers from the bufferSet.
@@ -261,14 +259,14 @@ public class BufferSet
 		listeners.remove(BufferSetListener.class, listener);
 	} //}}}
 
-	//{{{ toString() method
+	// toString() method
 	@Override
 	public String toString()
 	{
 		return "BufferSet[nbBuffers="+size()+']';
 	} //}}}
 
-	//{{{ sort() method
+	// sort() method
 	/**
 	 * Sort the bufferSet (useful if a buffer has been renamed for example
 	 * @since jEdit 4.4pre1
@@ -288,9 +286,9 @@ public class BufferSet
 		}
 	} //}}}
 
-	//{{{ Package-private members
+	// Package-private members
 
-	//{{{ handleMessage
+	// handleMessage
 	/**
 	 * This method is called by BufferSetManager to signal that this
 	 * BufferSet needs to react to a change in the sorting properties.
@@ -314,7 +312,7 @@ public class BufferSet
 		}
 	} //}}}
 
-	//{{{ moveBuffer() method
+	// moveBuffer() method
 	void moveBuffer(int oldPosition, int newPosition)
 	{
 		if (sorter != null)
@@ -341,7 +339,7 @@ public class BufferSet
 		}
 	} //}}}
 
-	//{{{ removeBuffer() method
+	// removeBuffer() method
 	void removeBuffer(Buffer buffer)
 	{
 		int index;
@@ -361,17 +359,15 @@ public class BufferSet
 		}
 	} //}}}
 
-	//}}}
 
-	//{{{ Private members
+	// Private members
 	private final List<Buffer> buffers;
 	private final EventListenerList listeners;
 	private static final Comparator<Buffer> nameSorter = new NameSorter();
 	private static final Comparator<Buffer> pathSorter = new PathSorter();
 	private Comparator<Buffer> sorter;
-	//}}}
 
-	//{{{ NameSorter class
+	// NameSorter class
 	public static class NameSorter implements Comparator<Buffer>
 	{
 		@Override
@@ -386,7 +382,7 @@ public class BufferSet
 		}
 	} //}}}
 
-	//{{{ PathSorter class
+	// PathSorter class
 	public static class PathSorter implements Comparator<Buffer>
 	{
 		@Override

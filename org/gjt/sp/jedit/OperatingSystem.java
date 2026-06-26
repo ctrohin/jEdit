@@ -1,7 +1,6 @@
 /*
  * OperatingSystem.java - OS detection
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002, 2005 Slava Pestov
  *
@@ -42,7 +41,7 @@ import org.gjt.sp.util.Log;
  */
 public class OperatingSystem
 {
-	//{{{ getScreenBounds() method
+	// getScreenBounds() method
 	/**
 	 * Returns the bounds of the default screen.
 	 */
@@ -77,7 +76,7 @@ public class OperatingSystem
 		return new Rectangle(x,y,w,h);
 	} //}}}
 
-	//{{{ getScreenBounds() method
+	// getScreenBounds() method
 	/**
 	 * Returns the bounds of the (virtual) screen that the window should be in
 	 * @param window The bounds of the window to get the screen for
@@ -149,7 +148,7 @@ public class OperatingSystem
 		return new Rectangle(x,y,w,h);
 	} //}}}
 
-	//{{{ isWindows() method
+	// isWindows() method
 	/**
 	 * Returns if we're running Windows 95/98/ME/NT/2000/XP/Vista/Win7.
 	 */
@@ -158,7 +157,7 @@ public class OperatingSystem
 		return os == WINDOWS_9x || os == WINDOWS_NT;
 	} //}}}
 
-	//{{{ isWindows9x() method
+	// isWindows9x() method
 	/**
 	 * Returns if we're running Windows 95/98/ME.
 	 */
@@ -167,7 +166,7 @@ public class OperatingSystem
 		return os == WINDOWS_9x;
 	} //}}}
 
-	//{{{ isWindowsNT() method
+	// isWindowsNT() method
 	/**
 	 * Returns if we're running Windows NT/2000/XP/Vista/Win7.
 	 */
@@ -176,7 +175,7 @@ public class OperatingSystem
 		return os == WINDOWS_NT;
 	} //}}}
 
-	//{{{ isOS2() method
+	// isOS2() method
 	/**
 	 * Returns if we're running OS/2.
 	 */
@@ -185,7 +184,7 @@ public class OperatingSystem
 		return os == OS2;
 	} //}}}
 
-	//{{{ isUnix() method
+	// isUnix() method
 	/**
 	 * Returns if we're running Unix (this includes macOS).
 	 */
@@ -194,7 +193,7 @@ public class OperatingSystem
 		return os == UNIX || os == MAC_OS_X;
 	} //}}}
 
-	//{{{ isMacOS() method
+	// isMacOS() method
 	/**
 	 * Returns if we're running macOS.
 	 */
@@ -203,7 +202,7 @@ public class OperatingSystem
 		return os == MAC_OS_X;
 	} //}}}
 
-	//{{{ isX11() method
+	// isX11() method
 	/**
 	 * Returns if this OS is likely to be using X11 as the graphics
 	 * system.
@@ -214,7 +213,7 @@ public class OperatingSystem
 		return os == UNIX;
 	} //}}}
 
-	//{{{ isVMS() method
+	// isVMS() method
 	/**
 	 * Returns if we're running VMS.
 	 */
@@ -223,7 +222,7 @@ public class OperatingSystem
 		return os == VMS;
 	} //}}}
 
-	//{{{ isMacOSLF() method
+	// isMacOSLF() method
 	/**
 	* Returns if we're running macOS and using the native look and feel.
 	*/
@@ -232,7 +231,7 @@ public class OperatingSystem
 		return isMacOS() && UIManager.getLookAndFeel().isNativeLookAndFeel();
 	} //}}}
 
-	//{{{ hasScreenMenuBar() method
+	// hasScreenMenuBar() method
 	/**
 	 * Returns whether the screen menu bar on macOS is in use.
 	 * @since jEdit 4.2pre1
@@ -252,7 +251,7 @@ public class OperatingSystem
 		return hasScreenMenuBar == 1;
 	} //}}}
 
-	//{{{ isCaseInsensitiveFS() method
+	// isCaseInsensitiveFS() method
 	/**
 	 * @since jEdit 4.3pre2
 	 */
@@ -261,7 +260,7 @@ public class OperatingSystem
 		return isWindows() || isMacOS();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private static final int UNIX = 0x31337;
 	private static final int WINDOWS_9x = 0x640;
 	private static final int WINDOWS_NT = 0x666;
@@ -273,7 +272,7 @@ public class OperatingSystem
 	private static int os;
 	private static int hasScreenMenuBar = -1;
 
-	//{{{ Class initializer
+	// Class initializer
 	static
 	{
 		String osName = System.getProperty("os.name");
@@ -319,5 +318,4 @@ public class OperatingSystem
 		// java17 = javaVersion.compareTo("1.7") >= 0;
 	} //}}}
 
-	//}}}
 }

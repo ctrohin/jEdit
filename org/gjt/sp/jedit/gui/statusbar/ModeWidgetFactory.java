@@ -1,7 +1,6 @@
 /*
  * ModeWidgetFactory.java - The mode widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -35,7 +34,6 @@ import org.gjt.sp.jedit.gui.DialogChooser;
 import javax.swing.*;
 
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -43,14 +41,14 @@ import static org.gjt.sp.util.StandardUtilities.castUnchecked;
  */
 public class ModeWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new ModeWidget(view);
 	} //}}}
 
-	//{{{ ModeWidget class
+	// ModeWidget class
 	private static class ModeWidget extends AbstractLabelWidget
 	{
 		ModeWidget(View view)

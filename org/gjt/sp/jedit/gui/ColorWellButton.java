@@ -1,7 +1,6 @@
 /*
  * ColorWellButton.java - Shows color chooser when clicked
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -30,7 +29,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import org.gjt.sp.jedit.OperatingSystem;
 import org.gjt.sp.util.GenericGUIUtilities;
-//}}}
 
 /** A button that, when clicked, shows a color chooser.
  *
@@ -41,7 +39,7 @@ import org.gjt.sp.util.GenericGUIUtilities;
  */
 public class ColorWellButton extends JButton
 {
-	//{{{ ColorWellButton constructor
+	// ColorWellButton constructor
 	public ColorWellButton(Color color)
 	{
 		setIcon(new ColorWell(color));
@@ -53,13 +51,13 @@ public class ColorWellButton extends JButton
 			putClientProperty("JButton.buttonType","toolbar");
 	} //}}}
 
-	//{{{ getSelectedColor() method
+	// getSelectedColor() method
 	public Color getSelectedColor()
 	{
 		return ((ColorWell)getIcon()).color;
 	} //}}}
 
-	//{{{ setSelectedColor() method
+	// setSelectedColor() method
 	public void setSelectedColor(Color color)
 	{
 		((ColorWell)getIcon()).color = color;
@@ -67,7 +65,7 @@ public class ColorWellButton extends JButton
 		fireStateChanged();
 	} //}}}
 
-	//{{{ ColorWell class
+	// ColorWell class
 	private static class ColorWell implements Icon
 	{
 		Color color;
@@ -106,7 +104,7 @@ public class ColorWellButton extends JButton
 		}
 	} //}}}
 
-	//{{{ ActionHandler class
+	// ActionHandler class
 	private class ActionHandler implements ActionListener
 	{
 		@Override

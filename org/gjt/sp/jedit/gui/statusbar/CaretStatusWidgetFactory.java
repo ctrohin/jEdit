@@ -1,7 +1,6 @@
 /*
  * IndentWidgetFactory.java - The indent widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2021 Matthieu Casanova
  *
@@ -22,7 +21,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import org.gjt.sp.jedit.Buffer;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
@@ -31,7 +30,6 @@ import org.gjt.sp.util.StandardUtilities;
 
 import javax.swing.text.Segment;
 import java.awt.event.MouseEvent;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -45,7 +43,7 @@ public class CaretStatusWidgetFactory implements StatusWidgetFactory
 		return new CaretStatusWidgetFactory.CaretStatus(view);
 	}
 
-	//{{{ IndentWidget class
+	// IndentWidget class
 	private static class CaretStatus extends AbstractLabelWidget
 	{
 		private final StringBuilder buf;

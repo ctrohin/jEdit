@@ -1,7 +1,6 @@
 /*
  * TextAreaExtension.java - Custom painter and tool tip handler
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2002 Slava Pestov
  *
@@ -40,7 +39,7 @@ import java.awt.Graphics2D;
  */
 public abstract class TextAreaExtension
 {
-	//{{{ paintScreenLineRange() method
+	// paintScreenLineRange() method
 	/**
 	 * Paints a range of screen lines. The default implementation calls
 	 * {@link #paintValidLine(Graphics2D,int,int,int,int,int)} and
@@ -75,7 +74,7 @@ public abstract class TextAreaExtension
 		}
 	} //}}}
 
-	//{{{ paintValidLine() method
+	// paintValidLine() method
 	/**
 	 * Called by the text area when the extension is to paint a
 	 * screen line which has an associated physical line number in
@@ -97,7 +96,7 @@ public abstract class TextAreaExtension
 	public void paintValidLine(Graphics2D gfx, int screenLine,
 		int physicalLine, int start, int end, int y) {} //}}}
 
-	//{{{ paintInvalidLine() method
+	// paintInvalidLine() method
 	/**
 	 * Called by the text area when the extension is to paint a
 	 * screen line which is not part of the buffer. This can happen
@@ -113,7 +112,7 @@ public abstract class TextAreaExtension
 	public void paintInvalidLine(Graphics2D gfx, int screenLine,
 		int y) {} //}}}
 
-	//{{{ getToolTipText() method
+	// getToolTipText() method
 	/**
 	 * Called by the text area when the mouse hovers over the
 	 * location specified in the mouse event.

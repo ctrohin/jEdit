@@ -1,7 +1,6 @@
 /*
  * MiscUtilities.java - Various miscellaneous utility functions
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright \<copyright> 1999-2013 Slava Pestov, Richard S. Hall, Dirk Moebius,
  *    jgellene, ezust, vanza, kpouer, Vampire0, Jarekczek, k_satoda, voituk,
@@ -25,7 +24,7 @@
 
 package org.gjt.sp.jedit;
 
-//{{{ Imports
+// Imports
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -46,7 +45,6 @@ import org.gjt.sp.util.StringList;
 
 
 
-//}}}
 
 /**
  * Path, URL name manipulation, string manipulation, and more.<p>
@@ -64,9 +62,9 @@ import org.gjt.sp.util.StringList;
  */
 public class MiscUtilities
 {
-	//{{{ Path name methods
+	// Path name methods
 
-	//{{{ canonPath() method
+	// canonPath() method
 	/**
 	 * @return the canonical form of the specified path name. Currently
 	 * only expands a leading <code>~</code>. <b>For local path names
@@ -122,7 +120,7 @@ public class MiscUtilities
 			return path;
 	} //}}}
 
-	//{{{ expandVariables() method
+	// expandVariables() method
 	static final String varPatternString = "(\\$([a-zA-Z0-9_]+))";
 	static final String varPatternString2 = "(\\$\\{([^}]+)\\})";
 	static final String winPatternString  = "(%([^%]+)%)";
@@ -202,7 +200,7 @@ public class MiscUtilities
 		return arg;
 	} //}}}
 
-	//{{{ abbreviate() methods
+	// abbreviate() methods
 	/** The reverse of expandVariables(), returns a shortened path if possible.
 	 *
 	 *  Uses platform convention (%varname% on windows, $varname on other platforms)
@@ -228,7 +226,7 @@ public class MiscUtilities
 		return abbreviate(path);
 	} //}}}
 
-	//{{{ resolveSymlinks() method
+	// resolveSymlinks() method
 	/**
 	 * Resolves any symbolic links in the path name specified
 	 * using <code>File.getCanonicalPath()</code>. <b>For local path
@@ -263,7 +261,7 @@ public class MiscUtilities
 		}
 	} //}}}
 
-	//{{{ isAbsolutePath() method
+	// isAbsolutePath() method
 	/**
 	 * Returns if the specified path name is an absolute path or URL.
 	 * @since jEdit 4.1pre11
@@ -304,7 +302,7 @@ public class MiscUtilities
 		return false;
 	} //}}}
 
-	//{{{ constructPath() methods
+	// constructPath() methods
 	/**
 	 * Constructs an absolute path name from a directory and another
 	 * path name. This method is VFS-aware.
@@ -383,7 +381,7 @@ public class MiscUtilities
 		return constructPath(constructPath(parent,path1),path2);
 	} //}}}
 
-	//{{{ concatPath() method
+	// concatPath() method
 	/**
 	 * Like {@link #constructPath}, except <code>path</code> will be
 	 * appended to <code>parent</code> even if it is absolute.
@@ -409,7 +407,7 @@ public class MiscUtilities
 			return parent + File.separator + path;
 	} //}}}
 
-	//{{{ getFirstSeparatorIndex() method
+	// getFirstSeparatorIndex() method
 	/**
 	 * Return the first index of either / or the OS-specific file
 	 * separator.
@@ -430,7 +428,7 @@ public class MiscUtilities
 		return Math.min(sepIndex,slashIndex);
 	} //}}}
 
-	//{{{ getLastSeparatorIndex() method
+	// getLastSeparatorIndex() method
 	/**
 	 * Return the last index of either / or the OS-specific file
 	 * separator.
@@ -465,7 +463,7 @@ public class MiscUtilities
 				path.lastIndexOf('/',lastIndex));
 	} //}}}
 
-	//{{{ getFileExtension() method
+	// getFileExtension() method
 	/**
 	 * Returns the extension of the specified filename, starting with the last dot.
 	 * @param path The path
@@ -489,7 +487,7 @@ public class MiscUtilities
 			return path.substring(index);
 	} //}}}
 
-	//{{{ getFileName() method
+	// getFileName() method
 	/**
 	 * Returns the last component of the specified path.
 	 * This method is VFS-aware.
@@ -500,7 +498,7 @@ public class MiscUtilities
 		return VFSManager.getVFSForPath(path).getFileName(path);
 	} //}}}
 
-	//{{{ getCompleteBaseName() method
+	// getCompleteBaseName() method
 	/**
 	 * @return the complete basename of a fileName (before the last period).
 	 * i.e. if your filename is
@@ -521,7 +519,7 @@ public class MiscUtilities
 		return name.substring(0, index);
 	} //}}}
 
-	//{{{ getBaseName() method
+	// getBaseName() method
 	/**
 	 * @return the base name of a fileName (before the first period).
 	 * i.e. If your filename is
@@ -542,7 +540,7 @@ public class MiscUtilities
 			return name.substring(0,index);
 	} //}}}
 
-	//{{{ getParentOfPath() method
+	// getParentOfPath() method
 	/**
 	 * Returns the parent of the specified path. This method is VFS-aware.
 	 * @param path The path name
@@ -553,7 +551,7 @@ public class MiscUtilities
 		return VFSManager.getVFSForPath(path).getParentOfPath(path);
 	} //}}}
 
-	//{{{ getProtocolOfURL() method
+	// getProtocolOfURL() method
 	/**
 	 * Returns the protocol specified by a URL.
 	 * @param url The URL
@@ -564,7 +562,7 @@ public class MiscUtilities
 		return url.substring(0,url.indexOf(':'));
 	} //}}}
 
-	//{{{ isURL() method
+	// isURL() method
 	/**
 	 * Checks if the specified string is a URL.
 	 * @param str The string to check
@@ -611,7 +609,7 @@ public class MiscUtilities
 				|| ((str.charAt(0) == '/') && (str.charAt(1) == '/')));
 	} //}}}
 
-	//{{{ getNthBackupFile method
+	// getNthBackupFile method
 	/**
 	 * Gets the file to store the Nth backup of the given file.
 	 * @param name The last part of the filename of the file being
@@ -643,7 +641,7 @@ public class MiscUtilities
 		return backupFile;
 	} //}}}
 
-	//{{{ openInDesktop() method
+	// openInDesktop() method
 	/** Opens a file or URI using the desktop file associations.
 		<p>
 		Uses native desktop commands for each platform, which ask the user to choose an
@@ -705,7 +703,7 @@ public class MiscUtilities
 		}
 	}// }}}
 
-	//{{{ prepareAutosaveDirectory method
+	// prepareAutosaveDirectory method
 	/**
 	 * Prepares the directory to autosave the specified file.
 	 * A jEdit property is used to determine the directory.
@@ -753,7 +751,7 @@ public class MiscUtilities
 	} //}}}
 
 
-	//{{{ getBackupDirectory method
+	// getBackupDirectory method
 	/**
 	 * Get backup.directory property, or null.
 	 * @return backup.directory property, or null
@@ -770,7 +768,7 @@ public class MiscUtilities
 		}
 	}// }}}
 
-	//{{{ prepareBackupDirectory method
+	// prepareBackupDirectory method
 	/**
 	 * Prepares the directory to backup the specified file.
 	 * A jEdit property is used to determine the directory.
@@ -817,7 +815,7 @@ public class MiscUtilities
 
 	} //}}}
 
-	//{{{ prepareBackupFile methods
+	// prepareBackupFile methods
 	/**
 	 * Prepares the filename for performing backup of the given file.
 	 * In case of multiple backups does necessary backup renumbering.
@@ -923,7 +921,7 @@ public class MiscUtilities
 		return backupFile;
 	} //}}}
 
-	//{{{ saveBackup() methods
+	// saveBackup() methods
 	/**
 	 * Saves a backup (optionally numbered) of a file. Reads
 	 * jedit properties to determine backup parameters, like
@@ -1003,9 +1001,8 @@ public class MiscUtilities
 		if (!file.renameTo(backupFile))
 			IOUtilities.moveFile(file, backupFile);
 	}
-	//}}}
 
-	//{{{ isBinary() methods
+	// isBinary() methods
 	/**
 	 * Check if an InputStream is binary.
 	 * First this tries encoding auto detection. If an encoding is
@@ -1046,7 +1043,7 @@ public class MiscUtilities
 		}
 	} //}}}
 
-	//{{{ isBackup() method
+	// isBackup() method
 	/**
 	 * Check if the filename is a backup file.
 	 * @param filename the filename to check
@@ -1118,7 +1115,7 @@ public class MiscUtilities
 		return false;
 	} //}}}
 
-	//{{{ autodetect() method
+	// autodetect() method
 	/**
 	 * Tries to detect if the stream is gzipped, and if it has an encoding
 	 * specified with an XML PI.
@@ -1175,7 +1172,7 @@ public class MiscUtilities
 		return result;
 	} //}}}
 
-	//{{{ fileToClass() method
+	// fileToClass() method
 	/**
 	 * Converts a file name to a class name. All slash characters are
 	 * replaced with periods and the trailing '.class' is removed.
@@ -1190,7 +1187,7 @@ public class MiscUtilities
 		return new String(clsName,0,clsName.length - 6);
 	} //}}}
 
-	//{{{ classToFile() method
+	// classToFile() method
 	/**
 	 * Converts a class name to a file name. All periods are replaced
 	 * with slashes and the '.class' extension is added.
@@ -1201,7 +1198,7 @@ public class MiscUtilities
 		return name.replace('.','/').concat(".class");
 	} //}}}
 
-	//{{{ pathsEqual() method
+	// pathsEqual() method
 	/**
 	 * @param p1 A path name
 	 * @param p2 A path name
@@ -1229,11 +1226,10 @@ public class MiscUtilities
 			return p1.equals(p2);
 	} //}}}
 
-	//}}}
 
-	//{{{ Text methods
+	// Text methods
 
-	//{{{ escapesToChars() method
+	// escapesToChars() method
 	/**
 	 * Converts "\n" and "\t" escapes in the specified string to
 	 * newlines and tabs.
@@ -1275,7 +1271,7 @@ public class MiscUtilities
 		return buf.toString();
 	} //}}}
 
-	//{{{ getLongestPrefix() methods
+	// getLongestPrefix() methods
 	/**
 	 * Returns the longest common prefix in the given set of strings.
 	 * @param str The strings
@@ -1354,9 +1350,8 @@ loop:		for(;;)
 		return first.substring(0,prefixLength);
 	} //}}}
 
-	//}}}
 
-	//{{{ buildToVersion() method
+	// buildToVersion() method
 	/**
 	 * Converts an internal version number (build) into a
 	 * `human-readable' form.
@@ -1379,7 +1374,7 @@ loop:		for(;;)
 			+ (beta != 99 ? "pre" + beta : "." + micro);
 	} //}}}
 
-	//{{{ isToolsJarAvailable() method
+	// isToolsJarAvailable() method
 	/**
 	 * If on JDK 1.2 or higher, make sure that tools.jar is available.
 	 * This method should be called by plugins requiring the classes
@@ -1409,7 +1404,7 @@ loop:		for(;;)
 
 		Collection<String> paths = new LinkedList<>();
 
-		//{{{ 1. Check whether tools.jar is in the system classpath:
+		// 1. Check whether tools.jar is in the system classpath:
 		paths.add("System classpath: "
 			+ System.getProperty("java.class.path"));
 
@@ -1435,7 +1430,7 @@ loop:		for(;;)
 			//	"- is not in system classpath.");
 		} //}}}
 
-		//{{{ 2. Check whether it is in the jEdit user settings jars folder:
+		// 2. Check whether it is in the jEdit user settings jars folder:
 		String settingsDir = jEdit.getSettingsDirectory();
 		if(settingsDir != null)
 		{
@@ -1451,7 +1446,7 @@ loop:		for(;;)
 			}
 		} //}}}
 
-		//{{{ 3. Check whether it is in jEdit's system jars folder:
+		// 3. Check whether it is in jEdit's system jars folder:
 		String jEditDir = jEdit.getJEditHome();
 		if(jEditDir != null)
 		{
@@ -1466,7 +1461,7 @@ loop:		for(;;)
 			}
 		} //}}}
 
-		//{{{ 4. Check whether it is in <java.home>/lib:
+		// 4. Check whether it is in <java.home>/lib:
 		String toolsPath = System.getProperty("java.home");
 		if(toolsPath.toLowerCase().endsWith(File.separator + "jre"))
 			toolsPath = toolsPath.substring(0, toolsPath.length() - 4);
@@ -1482,7 +1477,7 @@ loop:		for(;;)
 			return false;
 		} //}}}
 
-		//{{{ Load it, if not yet done:
+		// Load it, if not yet done:
 		PluginJAR jar = jEdit.getPluginJAR(toolsPath);
 		if(jar == null)
 		{
@@ -1493,12 +1488,11 @@ loop:		for(;;)
 		else
 			Log.log(Log.DEBUG, MiscUtilities.class,
 				"- has been loaded before.");
-		//}}}
 
 		return true;
 	} //}}}
 
-	//{{{ parsePermissions() method
+	// parsePermissions() method
 	/**
 	 * Parse a Unix-style permission string (rwxrwxrwx).
 	 * @param s The string (must be 9 characters long).
@@ -1545,7 +1539,7 @@ loop:		for(;;)
 		return permissions;
 	} //}}}
 
-	//{{{ getEncodings() methods
+	// getEncodings() methods
 	/**
 	 * Returns a list of supported character encodings.
 	 * @since jEdit 4.3
@@ -1565,7 +1559,7 @@ loop:		for(;;)
 		return set.toArray(StandardUtilities.EMPTY_STRING_ARRAY);
 	} //}}}
 
-	//{{{ throwableToString() method
+	// throwableToString() method
 	/**
 	 * Returns a string containing the stack trace of the given throwable.
 	 * @since jEdit 4.2pre6
@@ -1577,10 +1571,10 @@ loop:		for(;;)
 		return s.toString();
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private MiscUtilities() {}
 
-	//{{{ compareChars() method
+	// compareChars() method
 	/**
 	 * Compares two chars.
 	 * should this be public?
@@ -1596,7 +1590,7 @@ loop:		for(;;)
 			return ch1 == ch2;
 	} //}}}
 
-	//{{{ containsNullCharacter() method
+	// containsNullCharacter() method
 	private static boolean containsNullCharacter(Reader reader)
 		throws IOException
 	{
@@ -1617,7 +1611,7 @@ loop:		for(;;)
 		return false;
 	} //}}}
 
-	//{{{ replaceNonPathChars
+	// replaceNonPathChars
 	/**
 	 * Replaces the characters which are usually invalid as part of pathname.
 	 * Used by backup routines to convert remote filenames to local paths.
@@ -1640,9 +1634,8 @@ loop:		for(;;)
 		return path.replaceAll("[" + sbForeignCharsEsc + "]", replaceWith);
 	} //}}}
 
-	//}}}
 
-	//{{{ storeProperties() method
+	// storeProperties() method
 	/**
 	 * Stores properties with sorted keys.
 	 * @param props  Given properties.
@@ -1675,7 +1668,7 @@ loop:		for(;;)
 	
 	static VarCompressor svc;
 
-	//{{{ VarCompressor class
+	// VarCompressor class
 	/**
 	 * Singleton class for quickly "compressing" paths into variable-prefixed values.
 	 * @author alan ezust
@@ -1687,7 +1680,7 @@ loop:		for(;;)
 		/** previously compressed strings saved for quick access later */
 		final Map<String, String> previous = new HashMap<>();
 
-		//{{{ VarCompressor constructor
+		// VarCompressor constructor
 		VarCompressor()
 		{
 			ProcessBuilder pb = new ProcessBuilder();
@@ -1728,7 +1721,7 @@ loop:		for(;;)
 
 		} //}}}
 
-		//{{{ compress() method
+		// compress() method
 		String compress(String path)
 		{
 			String original = path;
@@ -1772,7 +1765,7 @@ loop:		for(;;)
 			return path;
 		} //}}}
 
-		//{{{ canBePathPrefix() method
+		// canBePathPrefix() method
 		// Returns true if the argument may absolutely point a directory.
 		// For speed, no access to file system or network should happen.
 		private static boolean canBePathPrefix(String s)

@@ -1,6 +1,5 @@
 /* {{{ StringList.java - a List of Strings with split() and join() methods
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2005 Alan Ezust
  *
@@ -21,11 +20,10 @@
 
 package org.gjt.sp.util;
 
-//{{{ imports
+// imports
 
 import java.util.ArrayList;
 import java.util.Collection;
-//}}}
 
 /**
  * A List&lt;String&gt; with some perl-like convenience functions (split/join primarily),

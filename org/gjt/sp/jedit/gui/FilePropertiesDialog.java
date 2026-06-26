@@ -1,7 +1,6 @@
 /*
  * FilePropertiesDialog.java - A File property dialog
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 VladimirR
  *
@@ -21,7 +20,7 @@
  */
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.io.File;
 
 import java.awt.BorderLayout;
@@ -46,7 +45,6 @@ import org.gjt.sp.jedit.io.FileVFS.LocalFile;
 import org.gjt.sp.util.GenericGUIUtilities;
 import org.gjt.sp.util.IOUtilities;
 import org.gjt.sp.util.StandardUtilities;
-//}}}
 
 /**
  * File's Properties dialog. This class create and show a window from the selected file or files.
@@ -57,7 +55,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 	private final VFSFile[] selectedFiles;
 	private final VFSFile local;
 
-	//{{{ FilePropertiesDialog(View view, VFSBrowser browser) constructor
+	// FilePropertiesDialog(View view, VFSBrowser browser) constructor
 	/**
 	 * The FilePropertiesDialog's constructor
 	 * @param view The view
@@ -78,7 +76,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		createAndShowGUI();
 	} //}}}
 
-	//{{{ addComponentsToPane() method
+	// addComponentsToPane() method
 	public void addComponentsToPane()
 	{
 		JPanel content = new JPanel(new BorderLayout());
@@ -98,7 +96,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		content.add(BorderLayout.SOUTH, createSouthPanel());
 	} //}}}
 
-	//{{{createNorthPanelAll() method
+	// createNorthPanelAll() method
 	public JPanel createNorthPanelAll()
 	{
 		JPanel northPanel = new JPanel(new BorderLayout());
@@ -126,7 +124,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		return northPanel;
 	} //}}}
 
-	//{{{createCenterPanelAll() method
+	// createCenterPanelAll() method
 	public JPanel createCenterPanelAll()
 	{
 		long filesSize = 0L;
@@ -164,7 +162,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		return centerPanel;
 	} //}}}
 
-	//{{{ createNorthPanel() method
+	// createNorthPanel() method
 	public JPanel createNorthPanel()
 	{
 		JPanel northPanel = new JPanel(new BorderLayout());
@@ -198,7 +196,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		return northPanel;
 	} //}}}
 
-	//{{{ createCenterPanel() method
+	// createCenterPanel() method
 	public JPanel createCenterPanel()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -248,7 +246,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		return centerPanel;
 	} //}}}
 
-	//{{{ createSouthPanel() method
+	// createSouthPanel() method
 	public JPanel createSouthPanel()
 	{
 		ButtonActionHandler actionHandler = new ButtonActionHandler();
@@ -274,7 +272,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		return panel;
 	} //}}}
 
-	//{{{ ok() method
+	// ok() method
 	@Override
 	public void ok()
 	{
@@ -291,7 +289,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		setVisible(false);
 	} //}}}
 
-	//{{{ cancel() method
+	// cancel() method
 	@Override
 	public void cancel()
 	{
@@ -299,7 +297,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		setVisible(false);
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 	private JButton okButton;
 	private JButton cancelButton;
 	private JTextField nameTextField;
@@ -307,7 +305,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 	private JCheckBox readable;
 	private JCheckBox write;
 
-	//{{{ createAndShowGUI() method
+	// createAndShowGUI() method
 	private void createAndShowGUI()
 	{
 		addComponentsToPane();
@@ -321,7 +319,7 @@ public class FilePropertiesDialog extends EnhancedDialog
 		setVisible(true);
 	} //}}}
 
-	//{{{ ButtonActionHandler class
+	// ButtonActionHandler class
 	private class ButtonActionHandler implements ActionListener
 	{
 		public void actionPerformed(ActionEvent evt)
@@ -339,5 +337,4 @@ public class FilePropertiesDialog extends EnhancedDialog
 			}
 		}
 	} //}}}
-	//}}}
 }

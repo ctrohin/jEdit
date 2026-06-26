@@ -1,7 +1,6 @@
 /*
  * SegmentBuffer.java - A Segment you can append stuff to
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -29,13 +28,13 @@ import javax.swing.text.Segment;
  */
 public class SegmentBuffer extends Segment
 {
-	//{{{ SegmentBuffer constructor
+	// SegmentBuffer constructor
 	public SegmentBuffer(int capacity)
 	{
 		ensureCapacity(capacity);
 	} //}}}
 
-	//{{{ append() methods
+	// append() methods
 	public void append(char ch)
 	{
 		ensureCapacity(count + 1);
@@ -59,7 +58,7 @@ public class SegmentBuffer extends Segment
 		count += len;
 	} //}}}
 
-	//{{{ insert() methods
+	// insert() methods
 	/**
 	 * Insert some text
 	 * @param index the position where the text will be inserted
@@ -88,9 +87,9 @@ public class SegmentBuffer extends Segment
 		count += len;
 	} //}}}
 
-	//{{{ Private members
+	// Private members
 
-	//{{{ ensureCapacity() method
+	// ensureCapacity() method
 	private void ensureCapacity(int capacity)
 	{
 		if(array == null)
@@ -103,5 +102,4 @@ public class SegmentBuffer extends Segment
 		}
 	} //}}}
 
-	//}}}
 }

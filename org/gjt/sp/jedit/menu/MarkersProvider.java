@@ -1,7 +1,6 @@
 /*
  * MarkersProvider.java - Markers menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001, 2003 Slava Pestov
  *
@@ -22,24 +21,23 @@
 
 package org.gjt.sp.jedit.menu;
 
-//{{{ Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 import org.gjt.sp.jedit.*;
-//}}}
 
 public class MarkersProvider implements DynamicMenuProvider
 {
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return true;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
@@ -82,10 +80,10 @@ public class MarkersProvider implements DynamicMenuProvider
 		}
 	} //}}}
 
-	//{{{ MarkersMenuItem class
+	// MarkersMenuItem class
 	private static class MarkersMenuItem extends JMenuItem
 	{
-		//{{{ MarkersMenuItem constructor
+		// MarkersMenuItem constructor
 		MarkersMenuItem(Buffer buffer, int lineNo, char shortcut)
 		{
 			String text = buffer.getLineText(lineNo).trim();
@@ -97,7 +95,7 @@ public class MarkersProvider implements DynamicMenuProvider
 			this.shortcut = shortcut;
 		} //}}}
 
-		//{{{ getPreferredSize() method
+		// getPreferredSize() method
 		@Override
 		public Dimension getPreferredSize()
 		{
@@ -113,7 +111,7 @@ public class MarkersProvider implements DynamicMenuProvider
 			return d;
 		} //}}}
 
-		//{{{ paint() method
+		// paint() method
 		@Override
 		public void paint(Graphics g)
 		{
@@ -137,14 +135,14 @@ public class MarkersProvider implements DynamicMenuProvider
 			}
 		} //}}}
 
-		//{{{ Private members
+		// Private members
 		private final String shortcutProp;
 		private final char shortcut;
 		private static final Font acceleratorFont;
 		private static final Color acceleratorForeground;
 		private static final Color acceleratorSelectionForeground;
 
-		//{{{ getShortcut() method
+		// getShortcut() method
 		private String getShortcut()
 		{
 			if(shortcut == '\0')
@@ -162,7 +160,7 @@ public class MarkersProvider implements DynamicMenuProvider
 			}
 		} //}}}
 
-		//{{{ Class initializer
+		// Class initializer
 		static
 		{
 			acceleratorFont = GUIUtilities.menuAcceleratorFont();
@@ -172,6 +170,5 @@ public class MarkersProvider implements DynamicMenuProvider
 				.getColor("MenuItem.acceleratorSelectionForeground");
 		} //}}}
 
-		//}}}
 	} //}}}
 }

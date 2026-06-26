@@ -1,7 +1,6 @@
 /*
  * PluginsProvider.java - Plugins menu
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2003 Slava Pestov
  *
@@ -29,14 +28,14 @@ import org.gjt.sp.util.Log;
 
 public class PluginsProvider implements DynamicMenuProvider
 {
-	//{{{ updateEveryTime() method
+	// updateEveryTime() method
 	@Override
 	public boolean updateEveryTime()
 	{
 		return false;
 	} //}}}
 
-	//{{{ update() method
+	// update() method
 	@Override
 	public void update(JMenu menu)
 	{
@@ -137,7 +136,7 @@ public class PluginsProvider implements DynamicMenuProvider
 		}
 	} //}}}
 
-	//{{{ addToLetterMap() method
+	// addToLetterMap() method
 	private void addToLetterMap(List<List<JMenuItem>> letters, JMenuItem item)
 	{
 		char ch = item.getText().charAt(0);

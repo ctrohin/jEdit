@@ -1,7 +1,6 @@
 /*
  * WrapWidgetFactory.java - The wrap widget service
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2008 Matthieu Casanova
  * Portions Copyright (C) 2001, 2004 Slava Pestov
@@ -24,7 +23,7 @@
 
 package org.gjt.sp.jedit.gui.statusbar;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -38,7 +37,6 @@ import javax.swing.*;
 import static org.gjt.sp.jedit.buffer.WordWrap.none;
 import static org.gjt.sp.jedit.buffer.WordWrap.soft;
 import static org.gjt.sp.util.StandardUtilities.castUnchecked;
-//}}}
 
 /**
  * @author Matthieu Casanova
@@ -46,17 +44,17 @@ import static org.gjt.sp.util.StandardUtilities.castUnchecked;
  */
 public class WrapWidgetFactory implements StatusWidgetFactory
 {
-	//{{{ getWidget() method
+	// getWidget() method
 	@Override
 	public Widget getWidget(View view)
 	{
 		return new WrapWidget(view);
 	} //}}}
 
-	//{{{ WrapWidget class
+	// WrapWidget class
 	private static class WrapWidget extends AbstractLabelWidget
 	{
-		//{{{ WrapWidget constructor
+		// WrapWidget constructor
 		WrapWidget(View view)
 		{
 			super(view);
@@ -80,7 +78,7 @@ public class WrapWidgetFactory implements StatusWidgetFactory
 				WordWrap.values());
 		}
 
-		//{{{ update() method
+		// update() method
 		@Override
 		public void update()
 		{
@@ -99,7 +97,7 @@ public class WrapWidgetFactory implements StatusWidgetFactory
 			label.setText("Wrap: " + wrap);
 		} //}}}
 
-		//{{{ largeBufferDeactivateWrap() method
+		// largeBufferDeactivateWrap() method
 		private boolean largeBufferDeactivateWrap()
 		{
 			Buffer buffer = view.getBuffer();

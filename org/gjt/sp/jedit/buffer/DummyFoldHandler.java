@@ -1,7 +1,6 @@
 /*
  * DummyFoldHandler.java - Fold handler used when folding is switched off
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -32,14 +31,13 @@ import javax.swing.text.Segment;
  */
 public class DummyFoldHandler extends FoldHandler
 {
-	//{{{ DummyFoldHandler constructor
+	// DummyFoldHandler constructor
 	public DummyFoldHandler()
 	{
 		super("none");
 	}
-	//}}}
 
-	//{{{ getFoldLevel() method
+	// getFoldLevel() method
 	/**
 	 * Returns the fold level of the specified line.
 	 * @param buffer The buffer in question

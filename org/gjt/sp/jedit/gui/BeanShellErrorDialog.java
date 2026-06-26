@@ -1,7 +1,6 @@
 /*
  * BeanShellErrorDialog.java - BeanShell execution error dialog box
  * :tabSize=4:indentSize=4:noTabs=false:
- * :folding=explicit:collapseFolds=1:
  *
  * Copyright (C) 2001 Slava Pestov
  *
@@ -22,10 +21,9 @@
 
 package org.gjt.sp.jedit.gui;
 
-//{{{ Imports
+// Imports
 import java.awt.*;
 import org.gjt.sp.jedit.*;
-//}}}
 
 /** A dialog box showing a stack trace. Perhaps badly named, since any error, not just a BeanShell error can be shown.
  * @author Slava Pestov
