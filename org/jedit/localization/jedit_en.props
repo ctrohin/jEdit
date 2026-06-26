@@ -2683,7 +2683,10 @@ workspace.add-folder=Add folder to workspace
 workspace.remove-folder=Remove from workspace
 workspace.remove-primary-root.denied=The primary project folder cannot be removed here. Use Open folder to switch projects.
 
-git.blame.tooltip=Blame: {0}
+git.blame.tooltip=<html><b>{0}</b><br>{1}</html>
+git.blame.view=View
+git.blame.copy-commit-id=Copy commit ID
+git.blame.select-in-history=Select commit ID in history
 git.blame.enabled=false
 git.blame.columnWidth=96
 git.ref-menu.stash=Stash

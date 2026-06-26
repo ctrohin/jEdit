@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.MouseInputAdapter;
 
 import org.gjt.sp.util.Log;
 
@@ -41,6 +42,27 @@ public class BlameGutter extends JComponent {
     private Border focusBorder;
     private Border noFocusBorder;
 
+    private final MouseInputAdapter toolTipMouseHandler = new MouseInputAdapter() {
+        private int toolTipInitialDelay;
+        private int toolTipReshowDelay;
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            ToolTipManager ttm = ToolTipManager.sharedInstance();
+            toolTipInitialDelay = ttm.getInitialDelay();
+            toolTipReshowDelay = ttm.getReshowDelay();
+            ttm.setInitialDelay(0);
+            ttm.setReshowDelay(0);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            ToolTipManager ttm = ToolTipManager.sharedInstance();
+            ttm.setInitialDelay(toolTipInitialDelay);
+            ttm.setReshowDelay(toolTipReshowDelay);
+        }
+    };
+
     public BlameGutter(TextArea textArea) {
         this.textArea = textArea;
         extensionMgr = new ExtensionManager();
@@ -48,6 +70,8 @@ public class BlameGutter extends JComponent {
         setAutoscrolls(true);
         setOpaque(true);
         setRequestFocusEnabled(false);
+        addMouseListener(toolTipMouseHandler);
+        addMouseMotionListener(toolTipMouseHandler);
         recalculateDimensions();
     }
 

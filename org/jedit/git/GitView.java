@@ -67,6 +67,8 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
     private final JButton refButton;
     private final DefaultListModel<GitModels.FileChange> changeModel = new DefaultListModel<>();
     private final JList<GitModels.FileChange> changeList;
+    private final JTabbedPane tabs;
+    private final JPanel logPanel;
     private final DefaultListModel<GitModels.Commit> logModel = new DefaultListModel<>();
     private final JList<GitModels.Commit> logList;
     private final DefaultListModel<GitModels.Branch> branchModel = new DefaultListModel<>();
@@ -153,7 +155,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
                 handleLogMouse(e);
             }
         });
-        JPanel logPanel = new JPanel(new BorderLayout(0, 4));
+        logPanel = new JPanel(new BorderLayout(0, 4));
         logPanel.add(buttonRow(
             actionButton("MatIcons.REMOVE_RED_EYE:22", "git.show-commit", this::showSelectedCommit),
             actionButton("MatIcons.COMPARE_ARROWS:22", "git.diff-commit", this::diffSelectedCommit),
@@ -187,7 +189,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         branchesPanel.add(branchControls, BorderLayout.NORTH);
         branchesPanel.add(new JScrollPane(branchList), BorderLayout.CENTER);
 
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         tabs.addTab(jEdit.getProperty("git.tab.changes"), changesPanel);
         tabs.addTab(jEdit.getProperty("git.tab.history"), logPanel);
         tabs.addTab(jEdit.getProperty("git.tab.branches"), branchesPanel);
@@ -509,6 +511,24 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         });
     }
 
+    public void selectCommitInHistory(String hash) {
+        if (hash == null || hash.isBlank()) {
+            return;
+        }
+        tabs.setSelectedComponent(logPanel);
+        for (int i = 0; i < logModel.size(); i++) {
+            GitModels.Commit commit = logModel.getElementAt(i);
+            if (hash.equals(commit.hash)
+                || commit.hash.startsWith(hash)
+                || hash.startsWith(commit.hash)) {
+                logList.setSelectedIndex(i);
+                logList.ensureIndexIsVisible(i);
+                logList.requestFocusInWindow();
+                return;
+            }
+        }
+    }
+
     private void showSelectedCommit() {
         GitModels.Commit commit = logList.getSelectedValue();
         showCommit(commit);
@@ -518,17 +538,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         if (commit == null || repoRoot == null) {
             return;
         }
-        File root = repoRoot;
-        GitAsync.run(root, runner -> {
-            GitRunner.Result result = runner.run(root, "show", "--stat", commit.hash);
-            String text = result.output;
-            if (text == null || text.isBlank()) {
-                text = jEdit.getProperty("git.diff.empty-body",
-                    new String[] {"commit " + commit.shortHash});
-            }
-            String finalText = text;
-            SwingUtilities.invokeLater(() -> GitCommitDialog.show(view, commit, finalText));
-        });
+        GitCommitUI.showCommit(view, repoRoot, commit);
     }
 
     private void handleLogMouse(MouseEvent e) {

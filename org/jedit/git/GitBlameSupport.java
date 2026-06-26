@@ -20,56 +20,36 @@ package org.jedit.git;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
-
 import java.awt.Graphics2D;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
-
 import java.util.ArrayList;
-
 import java.util.Map;
-
 import java.util.WeakHashMap;
-
 import java.util.function.Consumer;
 
-
-
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-
 import javax.swing.UIManager;
 
-
-
 import org.gjt.sp.jedit.Buffer;
-
 import org.gjt.sp.jedit.EBComponent;
-
 import org.gjt.sp.jedit.EBMessage;
-
 import org.gjt.sp.jedit.EditBus;
-
 import org.gjt.sp.jedit.EditPane;
-
 import org.gjt.sp.jedit.View;
-
 import org.gjt.sp.jedit.jEdit;
-
 import org.gjt.sp.jedit.msg.BufferUpdate;
-
 import org.gjt.sp.jedit.msg.EditPaneUpdate;
-
 import org.gjt.sp.jedit.msg.PropertiesChanged;
-
 import org.gjt.sp.jedit.options.GutterOptionPane;
-
 import org.gjt.sp.jedit.textarea.BlameGutter;
 import org.gjt.sp.jedit.textarea.Gutter;
-
 import org.gjt.sp.jedit.textarea.JEditTextArea;
-
 import org.gjt.sp.jedit.textarea.TextAreaExtension;
-
+import org.gjt.sp.jedit.textarea.TextAreaMouseHandler;
 import org.gjt.sp.util.ThreadUtilities;
 
 
@@ -306,6 +286,8 @@ public final class GitBlameSupport implements EBComponent {
 
         blameGutter.addExtension(extension);
 
+        extension.installMouseHandler(blameGutter);
+
         updateBlameGutterForEditPane(editPane);
 
         extensions.put(editPane, extension);
@@ -325,6 +307,8 @@ public final class GitBlameSupport implements EBComponent {
         }
 
         BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
+
+        extension.uninstallMouseHandler(blameGutter);
 
         blameGutter.removeExtension(extension);
 
@@ -450,6 +434,43 @@ public final class GitBlameSupport implements EBComponent {
 
         private final Color blameColor;
 
+        private final MouseAdapter mouseHandler = new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleMouse(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                handleMouse(e);
+            }
+
+            private void handleMouse(MouseEvent e) {
+                if (!isEnabled()) {
+                    return;
+                }
+                BlameGutter blameGutter = editPane.getTextArea().getBlameGutter();
+                if (!blameGutter.isBlameEnabled()) {
+                    return;
+                }
+                BlameLine blameLine = blameLineAt(e.getX(), e.getY());
+                if (blameLine == null || blameLine.isEmpty()) {
+                    return;
+                }
+                if (TextAreaMouseHandler.isPopupTrigger(e)) {
+                    e.consume();
+                    showPopupMenu(e, blameLine);
+                    return;
+                }
+                if (e.getID() == MouseEvent.MOUSE_RELEASED
+                    && e.getButton() == MouseEvent.BUTTON1
+                    && !e.isPopupTrigger()) {
+                    showCommit(blameLine);
+                }
+            }
+        };
+
 
 
         BlameExtension(EditPane editPane) {
@@ -459,6 +480,22 @@ public final class GitBlameSupport implements EBComponent {
             Color disabled = UIManager.getColor("Label.disabledForeground");
 
             blameColor = disabled != null ? disabled : Color.GRAY;
+
+        }
+
+
+
+        void installMouseHandler(BlameGutter blameGutter) {
+
+            blameGutter.addMouseListener(mouseHandler);
+
+        }
+
+
+
+        void uninstallMouseHandler(BlameGutter blameGutter) {
+
+            blameGutter.removeMouseListener(mouseHandler);
 
         }
 
@@ -494,9 +531,9 @@ public final class GitBlameSupport implements EBComponent {
 
             BlameCache cache = cacheFor(buffer);
 
-            String author = cache.authorForLine(physicalLine + 1);
+            BlameLine blameLine = cache.lineForLine(physicalLine + 1);
 
-            if (author == null) {
+            if (blameLine == null) {
 
                 cache.scheduleLoad(buffer, GitBlameSupport.this::repaintBuffer);
 
@@ -504,11 +541,13 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            if (author.isBlank()) {
+            if (blameLine.isEmpty()) {
 
                 return;
 
             }
+
+            String author = blameLine.author;
 
             FontMetrics fm = gfx.getFontMetrics();
 
@@ -552,6 +591,24 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
+            BlameLine blameLine = blameLineAt(x, y);
+
+            if (blameLine == null || blameLine.isEmpty()) {
+
+                return null;
+
+            }
+
+            return jEdit.getProperty("git.blame.tooltip",
+
+                new Object[] { blameLine.shortHash(), blameLine.summary });
+
+        }
+
+
+
+        private BlameLine blameLineAt(int x, int y) {
+
             JEditTextArea textArea = editPane.getTextArea();
 
             int lineHeight = textArea.getPainter().getLineHeight();
@@ -562,11 +619,17 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            int screenLine = textArea.getFirstLine() + (y / lineHeight);
+            int screenLine = y / lineHeight;
 
-            if (screenLine < textArea.getFirstLine()
+            if (screenLine < 0 || screenLine >= textArea.getVisibleLines()) {
 
-                || screenLine >= textArea.getFirstLine() + textArea.getVisibleLines()) {
+                return null;
+
+            }
+
+            int physicalLine = textArea.getPhysicalLineOfScreenLine(screenLine);
+
+            if (physicalLine < 0) {
 
                 return null;
 
@@ -580,19 +643,57 @@ public final class GitBlameSupport implements EBComponent {
 
             }
 
-            int physicalLine = textArea.getPhysicalLineOfScreenLine(screenLine);
-            if (physicalLine < 0) {
-                return null;
+            return cacheFor(buffer).lineForLine(physicalLine + 1);
+
+        }
+
+
+
+        private void showCommit(BlameLine blameLine) {
+
+            File repo = repositoryFor(editPane.getBuffer());
+
+            if (repo == null) {
+
+                return;
+
             }
-            String author = cacheFor(buffer).authorForLine(physicalLine + 1);
 
-            if (author == null || author.isBlank()) {
+            GitCommitUI.showCommit(editPane.getView(), repo, blameLine);
 
-                return null;
+        }
 
-            }
 
-            return jEdit.getProperty("git.blame.tooltip", new Object[] { author });
+
+        private void showPopupMenu(MouseEvent e, BlameLine blameLine) {
+
+            JPopupMenu menu = new JPopupMenu();
+
+            JMenuItem viewItem = new JMenuItem(jEdit.getProperty("git.blame.view"));
+
+            viewItem.addActionListener(ev -> showCommit(blameLine));
+
+            menu.add(viewItem);
+
+            JMenuItem copyItem = new JMenuItem(
+
+                jEdit.getProperty("git.blame.copy-commit-id"));
+
+            copyItem.addActionListener(ev -> GitCommitUI.copyCommitId(blameLine));
+
+            menu.add(copyItem);
+
+            JMenuItem selectItem = new JMenuItem(
+
+                jEdit.getProperty("git.blame.select-in-history"));
+
+            selectItem.addActionListener(ev ->
+
+                GitCommitUI.selectCommitInHistory(editPane.getView(), blameLine.hash));
+
+            menu.add(selectItem);
+
+            menu.show(e.getComponent(), e.getX(), e.getY());
 
         }
 
@@ -638,9 +739,23 @@ public final class GitBlameSupport implements EBComponent {
 
 
 
+    private static File repositoryFor(Buffer buffer) {
+
+        if (buffer == null || buffer.getPath() == null) {
+
+            return null;
+
+        }
+
+        return GitRepository.findRoot(new File(buffer.getPath()).getParentFile());
+
+    }
+
+
+
     private static final class BlameCache {
 
-        private volatile String[] authors;
+        private volatile BlameLine[] lines;
 
         private volatile boolean loading;
 
@@ -650,7 +765,7 @@ public final class GitBlameSupport implements EBComponent {
 
         void invalidate() {
 
-            authors = null;
+            lines = null;
 
             loading = false;
 
@@ -660,9 +775,9 @@ public final class GitBlameSupport implements EBComponent {
 
 
 
-        String authorForLine(int line) {
+        BlameLine lineForLine(int line) {
 
-            String[] data = authors;
+            BlameLine[] data = lines;
 
             if (data == null || line <= 0 || line > data.length) {
 
@@ -678,7 +793,7 @@ public final class GitBlameSupport implements EBComponent {
 
         int maxAuthorWidth(FontMetrics fm) {
 
-            String[] data = authors;
+            BlameLine[] data = lines;
 
             if (data == null) {
 
@@ -688,11 +803,11 @@ public final class GitBlameSupport implements EBComponent {
 
             int max = 0;
 
-            for (String author : data) {
+            for (BlameLine line : data) {
 
-                if (author != null && !author.isBlank()) {
+                if (line != null && !line.author.isBlank()) {
 
-                    max = Math.max(max, fm.stringWidth(author));
+                    max = Math.max(max, fm.stringWidth(line.author));
 
                 }
 
@@ -728,7 +843,7 @@ public final class GitBlameSupport implements EBComponent {
 
             if (repo == null) {
 
-                authors = new String[0];
+                lines = new BlameLine[0];
 
                 loadAttempted = true;
 
@@ -750,13 +865,13 @@ public final class GitBlameSupport implements EBComponent {
 
                     repo, "blame", "--line-porcelain", "--", relative);
 
-                String[] parsed = result.success()
+                BlameLine[] parsed = result.success()
 
                     ? parsePorcelainBlame(result.output, buffer.getLineCount())
 
-                    : new String[0];
+                    : new BlameLine[0];
 
-                authors = parsed;
+                lines = parsed;
 
                 loading = false;
 
@@ -796,41 +911,139 @@ public final class GitBlameSupport implements EBComponent {
 
 
 
-        private static String[] parsePorcelainBlame(String output, int lineCount) {
+        private static BlameLine[] parsePorcelainBlame(String output, int lineCount) {
 
-            String[] authors = new String[Math.max(lineCount, 1)];
+            BlameLine[] blameLines = new BlameLine[Math.max(lineCount, 1)];
 
             if (output == null || output.isBlank()) {
 
-                return authors;
+                return blameLines;
 
             }
 
             int index = 0;
 
+            String pendingHash = null;
+
             String pendingAuthor = null;
+
+            String pendingSummary = null;
 
             for (String line : output.split("\\R", -1)) {
 
-                if (line.startsWith("author ")) {
+                if (line.startsWith("\t")) {
 
-                    pendingAuthor = line.substring(7);
+                    if (index < blameLines.length && pendingHash != null) {
 
-                } else if (line.startsWith("\t")) {
+                        blameLines[index++] = new BlameLine(
 
-                    if (index < authors.length && pendingAuthor != null) {
-
-                        authors[index++] = pendingAuthor;
+                            pendingHash, pendingAuthor, pendingSummary);
 
                     }
 
+                    pendingHash = null;
+
                     pendingAuthor = null;
+
+                    pendingSummary = null;
+
+                } else if (line.startsWith("author ")) {
+
+                    pendingAuthor = line.substring(7);
+
+                } else if (line.startsWith("summary ")) {
+
+                    pendingSummary = line.substring(8);
+
+                } else if (!line.isEmpty() && !isMetadataLine(line)) {
+
+                    int space = line.indexOf(' ');
+
+                    if (space > 0) {
+
+                        pendingHash = line.substring(0, space);
+
+                    }
 
                 }
 
             }
 
-            return authors;
+            return blameLines;
+
+        }
+
+
+
+        private static boolean isMetadataLine(String line) {
+
+            return line.startsWith("author-mail ")
+
+                || line.startsWith("author-time ")
+
+                || line.startsWith("author-tz ")
+
+                || line.startsWith("committer ")
+
+                || line.startsWith("committer-mail ")
+
+                || line.startsWith("committer-time ")
+
+                || line.startsWith("committer-tz ")
+
+                || line.startsWith("previous ")
+
+                || line.startsWith("filename ")
+
+                || line.startsWith("boundary");
+
+        }
+
+    }
+
+
+
+    static final class BlameLine {
+
+        final String hash;
+
+        final String author;
+
+        final String summary;
+
+
+
+        BlameLine(String hash, String author, String summary) {
+
+            this.hash = hash != null ? hash : "";
+
+            this.author = author != null ? author : "";
+
+            this.summary = summary != null ? summary : "";
+
+        }
+
+
+
+        boolean isEmpty() {
+
+            return hash.isBlank();
+
+        }
+
+
+
+        String shortHash() {
+
+            return hash.length() > 7 ? hash.substring(0, 7) : hash;
+
+        }
+
+
+
+        GitModels.Commit toCommit() {
+
+            return new GitModels.Commit(hash, shortHash(), author, "", summary);
 
         }
 
