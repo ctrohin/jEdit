@@ -582,13 +582,13 @@ public class WorkspaceTreeView extends JPanel implements DefaultFocusComponent, 
         panelWest.add(Box.createHorizontalStrut(12));
         JPanel runPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         runProjectButton = new RolloverButton(
-            IconManager.loadIcon("MatIcons.PLAY_ARROW:22"),
+            IconManager.loadIcon("MatIcons.PLAY_ARROW:22:GREEN"),
             jEdit.getProperty("workspace-run.run"));
         runProjectButton.addActionListener(e -> runCurrentProject());
         runPanel.add(runProjectButton);
 
         runTestsButton = new RolloverButton(
-            IconManager.loadIcon("MatIcons.SCIENCE:22"),
+            IconManager.loadIcon("MatIcons.SCIENCE:22:BLUE"),
             jEdit.getProperty("workspace-test.run"));
         runTestsButton.addActionListener(e -> runCurrentTests());
         runPanel.add(runTestsButton);

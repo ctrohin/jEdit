@@ -49,7 +49,7 @@ final class BuildOutputTab {
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
         JButton clear = new RolloverButton(IconManager.loadIcon("MatIcons.CLEAR:22"), jEdit.getProperty("build-output.clear"));
         clear.addActionListener(e -> clearOutput());
-        JButton stop = new RolloverButton(IconManager.loadIcon("MatIcons.STOP:22"), jEdit.getProperty("build-output.stop"));
+        JButton stop = new RolloverButton(IconManager.loadIcon("MatIcons.STOP:22:RED"), jEdit.getProperty("build-output.stop"));
         stop.addActionListener(e -> stopRun());
         statusLabel = new JLabel(" ");
         left.add(clear);

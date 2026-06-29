@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-record IconAndSize(IconCode icon, int size) {
+record IconProperties(IconCode icon, int size, ColorCode colorCode) {
 }
 
 public class IconManager {
@@ -67,7 +67,7 @@ public class IconManager {
         }
         final var iconString = deprecatedIcons.getOrDefault(iconName, iconName);
         // TODO: Check if it is possible to render a multiresolution image properly
-        final IconAndSize fontIcon = parseIconCode(iconString); // material.get(iconString);
+        final IconProperties fontIcon = parseIconCode(iconString); // material.get(iconString);
         if (fontIcon == null) {
             Log.log(Log.ERROR, null, "Icon material mapping NOT found: " + iconString);
         }
@@ -111,11 +111,11 @@ public class IconManager {
 
     } //}}}
 
-    private static BaseMultiResolutionImage getMultiRes1(final IconAndSize icon) {
+    private static BaseMultiResolutionImage getMultiRes1(final IconProperties icon) {
         return new CachedDynamicMultiResolution(icon.icon(), icon.size());
     }
 
-    private static BaseMultiResolutionImage getMultiRes(final IconAndSize icon) {
+    private static BaseMultiResolutionImage getMultiRes(final IconProperties icon) {
         int[] res;
         if (resolutions.containsKey(icon.size())) {
             res = resolutions.get(icon.size());
@@ -125,7 +125,7 @@ public class IconManager {
         }
         Image[] imgs = new Image[res.length];
         for (int i = 0; i < res.length; i++) {
-            imgs[i] = IconFontSwing.buildImage(icon.icon(), res[i], NEUTRAL_GREY);
+            imgs[i] = IconFontSwing.buildImage(icon.icon(), res[i], colorCodes.getOrDefault(icon.colorCode(), NEUTRAL_GREY));
 //            Log.log(Log.ERROR,
 //                "",
 //                "Resolution scale " + res[i] + " initial size " + icon.size() + " Computed width " + imgs[i].getWidth(null) + " Computed height " + imgs[i].getHeight(null));
@@ -134,6 +134,14 @@ public class IconManager {
     }
 
     private static final Color NEUTRAL_GREY = new Color(128, 128, 128);
+
+    private static final Map<ColorCode, Color> colorCodes = Map.of(
+        ColorCode.GREY, NEUTRAL_GREY,
+        ColorCode.RED, new Color(255, 135, 143),
+        ColorCode.GREEN, new Color(70, 160, 81),
+        ColorCode.BLUE, new Color(0, 140, 255),
+        ColorCode.ORANGE, new Color(255, 131, 0)
+    );
 
     private static final HashMap<Integer, int[]> resolutions = new HashMap<>();
     private static final double[] SCALES = {1d, 1.25, 1.5, 2d, 2.5, 3};
@@ -379,7 +387,7 @@ public class IconManager {
 
     private static final String MAT_ICONS_PREFIX = "MatIcons.";
     private static final String FILE_ICONS_PREFIX = "FileIcons.";
-    private static IconAndSize parseIconCode(final String icon) {
+    private static IconProperties parseIconCode(final String icon) {
         if (!icon.startsWith(MAT_ICONS_PREFIX) && !icon.startsWith(FILE_ICONS_PREFIX)) {
             return null;
         }
@@ -393,7 +401,11 @@ public class IconManager {
         try {
             var ic = matIcon ? MatIcons.valueOf(split[0]) : FileIcons.valueOf(split[0]);
             var sz = Integer.parseInt(split[1]);
-            return new IconAndSize(ic, sz);
+            var colorCode = ColorCode.GREY;
+            if (split.length == 3) {
+                colorCode = ColorCode.valueOf(split[2]);
+            }
+            return new IconProperties(ic, sz, colorCode);
         } catch (Exception e) {}
         return null;
     }

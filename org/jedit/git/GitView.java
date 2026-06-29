@@ -199,7 +199,7 @@ public final class GitView extends JPanel implements DefaultFocusComponent {
         JPanel outputPanel = new JPanel(new BorderLayout(0, 4));
         outputPanel.add(buttonRow(
             actionButton("MatIcons.REMOVE:22", "git.output.clear", () -> output.setText("")),
-            actionButton("MatIcons.STOP:22", "git.output.stop", runner::stop)),
+            actionButton("MatIcons.STOP:22:RED", "git.output.stop", runner::stop)),
             BorderLayout.NORTH);
         outputPanel.add(new JScrollPane(output), BorderLayout.CENTER);
 

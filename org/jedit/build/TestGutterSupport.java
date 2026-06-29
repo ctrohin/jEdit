@@ -39,7 +39,7 @@ import javax.swing.*;
 public final class TestGutterSupport implements EBComponent {
 
     private static TestGutterSupport instance;
-    private static final Icon playIcon = IconManager.loadIcon("MatIcons.PLAY_ARROW:16");
+    private static final Icon playIcon = IconManager.loadIcon("MatIcons.PLAY_ARROW:16:BLUE");
 
     private final Map<EditPane, TestGutterExtension> extensions = new WeakHashMap<>();
 

@@ -40,7 +40,7 @@ final class TerminalTab {
 
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
         JButton kill = new RolloverButton(
-            IconManager.loadIcon("MatIcons.STOP:22"),
+            IconManager.loadIcon("MatIcons.STOP:22:RED"),
             jEdit.getProperty("terminal.kill"));
         kill.addActionListener(e -> session.close());
         toolbar.add(kill);
